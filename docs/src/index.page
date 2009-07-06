@@ -44,9 +44,25 @@ sort_info: 1
     {coderay} 
     
 .left
-  %h1 Examples
+  %h1 Windows Examples
 .right
   %p
-    Examples are the best way to demonstrate the functionality of jansi.
-  %p  
-    Soon to come:
+    Most unix terminals support rendering ANSI escape sequences when Java
+    sends them via 
+    %code System.out
+    but when this is done on Windows, they don't get interpreted and you get
+    garbage on the console similar to:
+  %img.example{:src=>"images/before-windows.png"}
+  
+  %p
+    If the application uses the jansi libary, things start to look
+    much better:
+  %img.example{:src=>"images/after-jansi-windows.png"}
+        
+  %p
+    But wait, it gets better.  If you also add the JNA library to the 
+    classpath, then jansi provides an even better ANSI handling implementation
+    which use a few windows Native methods to properly apply color attributes
+    and more precise cursor support.
+  %img.example{:src=>"images/after-jansi-jna-windows.png"}
+    

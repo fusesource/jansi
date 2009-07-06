@@ -128,3 +128,6 @@ a.main { font-size: 12pt; }
   margin-top:0px;
 }
 
+img.example {
+  padding: 10px;
+}
