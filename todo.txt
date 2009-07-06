@@ -1,0 +1,9 @@
+The TODO List
+=============
+* Figure out a way to detect if the stdout on unix acutally
+  renders ANSI output.
+* The default color table can be adjusted in Vista/2008 Server, 
+  via SetConsoleScreenBufferInfoEx.  Consider adjusting some
+  of the colors (especially the bold red color) so that they
+  match the colors used at: 
+  http://sixteencolors.net/packs/2007/sense27/smi-ar.ans.html

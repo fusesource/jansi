@@ -312,12 +312,20 @@ public class AnsiOutputStream extends FilterOutputStream {
 	}
 
 	protected void processCursorDownLine(int count) throws IOException {
+		// Poor mans impl..
+		for(int i=0; i < count; i++) {
+			out.write('\n');
+		}
 	}
 
 	protected void processCursorLeft(int count) throws IOException {
 	}
 
 	protected void processCursorRight(int count) throws IOException {
+		// Poor mans impl..
+		for(int i=0; i < count; i++) {
+			out.write(' ');
+		}
 	}
 
 	protected void processCursorDown(int count) throws IOException {

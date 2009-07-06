@@ -5,6 +5,7 @@ import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 
+
 /**
  * Provides consistent access to an ANSI aware console PrintStream.
  * 
@@ -12,7 +13,7 @@ import java.lang.reflect.Field;
  */
 public class AnsiConsole {
 
-	private static final PrintStream system_out = System.out;
+	static final PrintStream system_out = System.out;
 	public static final PrintStream out = createAnsiConsoleOut();
 	private static boolean installed;
 
@@ -45,7 +46,6 @@ public class AnsiConsole {
 			AnsiOutputStream out =  (AnsiOutputStream) constructor.newInstance(new Object[]{system_out}); 
 			return new PrintStream(out);
 		} catch (Throwable e) {
-			e.printStackTrace();
 		}
 		
 		// Use the ANSIOutputStream to strip out the ANSI escape sequences.
@@ -66,15 +66,51 @@ public class AnsiConsole {
 	}
 	
 	/**
-	 * Install Console.out to System.out
+	 * Defines an interface which installs the System.out field.  This
+	 * impl fails due to the System.out field being static.  Derived classes
+	 * can implement JVM specific hacks to get around that problem. 
+	 *  
+	 * @author chirino
+	 */
+	static class SystemOutInstaller {		
+		protected Field getOutField() throws NoSuchFieldException {
+			Field field = System.class.getField("out");
+			field.setAccessible(true);
+			return field;
+		}
+		
+		public void install() throws Exception {
+			getOutField().set(null, out);
+		}
+
+		public void uninstall() throws Exception {
+			getOutField().set(null, system_out);
+		}
+	}
+
+	private static SystemOutInstaller creatInstaller() {
+		// Try to load the Sun JVM specific installers first..
+		try {
+			Class<?> clazz = SystemOutInstaller.class.getClassLoader().loadClass("org.fusesource.jansi.SunSystemOutInstaller");
+			return (SystemOutInstaller)clazz.newInstance();
+		} catch (Throwable ignore) {
+		}
+		return new SystemOutInstaller();
+	}
+
+
+	/**
+	 * Install Console.out to System.out.  Since System.out is declared
+	 * as 'static final', the success of this call is highly dependent 
+	 * on the JVM being used.
+	 * 
 	 * @return true if successfully installed.
 	 */
 	public static boolean systemInstall() {
 		if( !installed && System.out != out ) {
 			try {
-				Field field = System.class.getField("out");
-				field.setAccessible(true);
-				field.set(null, out);
+				SystemOutInstaller installer = creatInstaller();
+				installer.install();
 				installed=true;
 				return true;
 			} catch (Throwable e) {
@@ -90,9 +126,8 @@ public class AnsiConsole {
 	public static boolean systemUninstall() {
 		if( installed ) {
 			try {
-				Field field = System.class.getField("out");
-				field.setAccessible(true);
-				field.set(null, system_out);
+				SystemOutInstaller installer = creatInstaller();
+				installer.uninstall();
 				installed=false;
 				return true;
 			} catch (Throwable e) {
