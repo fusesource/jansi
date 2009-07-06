@@ -82,6 +82,10 @@ public class AnsiOutputStream extends FilterOutputStream {
 				state = LOOKING_FOR_INT_ARG_END;				
 			} else if( ';' == data ) {
 				options.add(null);
+			} else if( '?' == data ) {
+				options.add(new Character('?'));
+			} else if( '=' == data ) {
+				options.add(new Character('='));
 			} else {
 				if( processEscapeCommand(options, data) ) {
 					pos=0;
