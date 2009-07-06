@@ -1,0 +1,25 @@
+--- name:paths
+# Copyright (C) 2009 Progress Software, Inc. All rights reserved.
+# http://fusesource.com
+#
+# The software in this package is published under the terms of the AGPL license
+# a copy of which has been included with this distribution in the license.txt file.
+
+#
+# You cand define metainfo for mutliple pages in this file.
+#
+
+**/*.page: # <-- That means the following attributes get applied to all pages
+     # in the site.
+
+  # -------------------------------------------------------------------
+  # You can easily switch the site from one look to another here:
+  # -------------------------------------------------------------------
+  template: /styles/default/main.template
+  
+  # -------------------------------------------------------------------
+  # Define the project properties here, these can be accessed in the 
+  # pages using the {var:} syntax.
+  # -------------------------------------------------------------------
+  project_name: "jansi"
+  project_slogan: 'Eliminating boring console output.'

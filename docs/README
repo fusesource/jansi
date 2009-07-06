@@ -1,0 +1,40 @@
+---
+# Copyright (C) 2009 Progress Software, Inc. All rights reserved.
+# http://fusesource.com
+#
+# The software in this package is published under the terms of the AGPL license
+# a copy of which has been included with this distribution in the license.txt file.
+
+title: Generating the Docs
+--- 
+
+Overview
+=============================
+
+We are using [webgen](http://webgen.rubyforge.org/) for generating nice HTML based documentation.
+
+Installing 
+-----------------------------
+
+You first need ruby and rubygems installed on your system. 
+You should have gems version of 1.3.4 or greater. You can check this via 
+
+gem --version
+
+To update gems do 
+gem update --system 
+
+Then you can install webgen with the following command.
+
+`sudo gem install webgen coderay feedtools haml RedCloth`
+
+Building 
+-----------------------------
+
+It's as simple as running `webgen` in the current directory.  Output is stored in 
+the `out` directory.
+
+
+
+
+

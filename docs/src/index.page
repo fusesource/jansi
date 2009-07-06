@@ -1,0 +1,52 @@
+---
+# Copyright (C) 2009 Progress Software, Inc. All rights reserved.
+# http://fusesource.com
+#
+# The software in this package is published under the terms of the AGPL license
+# a copy of which has been included with this distribution in the license.txt file.
+
+title: Home
+in_menu: true
+sort_info: 1
+--- name:overview pipeline:haml,tags
+
+%h1 Home
+{project_slogan:}
+
+--- name:content pipeline:haml,tags
+
+.left
+  %h1 What is Jansi?
+.right
+  %p
+    Jansi is a small java library that allows you to use ANSI escape sequences 
+    to format your console output which works even on windows.  
+  %p
+    Using jansi is easy.  Before you start sending ANSI escape sequences to
+    %code System.out
+    make sure you run:
+        
+  :plain
+    {coderay::java}
+    AnsiConsole.systemInstall();
+    {coderay}
+
+  %p
+    On Sun JVMs that should replace the System.out implementation, with an 
+    the right ANSI aware implementation depending on your Platform.  If 
+    you rather not mess with the System.out settings, you can use the
+    %code AnsiConsole.out
+    PrintStream instead.  For example:
+    
+  :plain
+    {coderay::java}
+    AnsiConsole.out.println("Hello World");
+    {coderay} 
+    
+.left
+  %h1 Examples
+.right
+  %p
+    Examples are the best way to demonstrate the functionality of jansi.
+  %p  
+    Soon to come:

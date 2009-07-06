@@ -1,0 +1,74 @@
+---
+# Copyright (C) 2009 Progress Software, Inc. All rights reserved.
+# http://fusesource.com
+#
+# The software in this package is published under the terms of the AGPL license
+# a copy of which has been included with this distribution in the license.txt file.
+
+template: ~
+---
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="{lang:}">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="description" content="{title:}" />
+    <meta name="keywords" content="jansi ANSI Java" />
+    <meta name="author" content="Hiram Chirino" />
+
+    <link href="{relocatable: css/site.css}" rel="stylesheet" type="text/css" />
+    
+    <title>{title:}</title>
+
+<% if node.node_info[:page].blocks.has_key?('head') %>
+    <webgen:block name='head' />
+<% end %>
+
+</script>
+</head>
+<body>
+  
+  <div id="navigation">
+  	<div class="wrapper">
+      {menu: {max_levels: 1, used_nodes: files}}
+  	</div>
+  </div>
+  
+<% if node.node_info[:page].blocks.has_key?('overview') %>
+  <div id="overview">
+    <div class="wrapper">
+      <div class="logo">
+        <img src="{relocatable:/images/project-logo.png}"/>
+      </div>
+      <div class="message">
+        <webgen:block name='overview' />
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<% if node.node_info[:page].blocks.has_key?('spot') %>
+  <div id='spot'>
+  	<div class='wrapper'>
+      <webgen:block name='spot' />
+  	</div>
+  </div>
+<% end %>
+
+<% if node.node_info[:page].blocks.has_key?('content') %>
+  <div id='content'>
+  	<div class='wrapper'>
+      <webgen:block name="content" />
+  	</div>
+  </div>
+<% end %>
+
+<% if node.node_info[:page].blocks.has_key?('blog') %>
+  <div id='blog'>
+  	<div class='wrapper'>
+      <webgen:block name="blog" />
+  	</div>
+  </div>
+<% end %>
+
+</body>
+</html>
