@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (C) 2009 Progress Software, Inc. All rights reserved.
+  http://fusesource.com
+ 
+  The software in this package is published under the terms of the AGPL license
+  a copy of which has been included with this distribution in the license.txt file.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+    http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.fusesource.jansi</groupId>
+  <artifactId>jansi</artifactId>
+  <packaging>jar</packaging>
+  
+  <name>jansi</name>
+  <version>1.0-SNAPSHOT</version>
+  <description>jansi is a java library for generating and interpreting ANSI escape sequences.</description>
+  <url>http://jansi.fusesource.org</url>
+  
+  <inceptionYear>2002</inceptionYear>
+
+  <issueManagement>
+    <system>jira</system>
+    <url>http://fusesource.com/issues/browse/JANSI</url>
+  </issueManagement>
+  <mailingLists>
+    <mailingList>
+      <name>jansi dev</name>
+      <post>jansi-dev@fusesource.org</post>
+      <subscribe>jansi-dev-subscribe@fusesource.org</subscribe>
+    </mailingList>
+    <mailingList>
+      <name>jansi commits</name>
+      <post>jansi-commits@fusesource.org</post>
+      <subscribe>jansi-commits-subscribe@fusesource.org</subscribe>
+    </mailingList>
+  </mailingLists>
+
+  <licenses>
+    <license>
+      <name>AGPL</name>
+      <url>license.txt</url>
+    </license>
+  </licenses>
+  
+  <scm>
+    <connection>scm:git:git://forge.fusesource.com/jansi.git</connection>
+    <developerConnection>scm:git:ssh://git@forge.fusesource.com/jansi.git</developerConnection>
+    <url>http://fusesource.com/forge/gitweb?p=jansi.git</url>
+  </scm>
+  
+  <repositories>
+    <!-- For the JNA dependency -->
+    <repository>
+      <id>maven2.java.net</id>
+      <name>Java.net Maven  Repository </name>
+      <url>http://download.java.net/maven/2</url>
+    </repository>
+  </repositories>
+    
+  <dependencies>
+    <dependency>
+      <groupId>net.java.dev.jna</groupId>
+      <artifactId>jna</artifactId>
+      <version>3.1.0</version>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jxr-maven-plugin</artifactId>
+        <configuration>
+          <aggregate>true</aggregate>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <aggregate>true</aggregate>
+          <linksource>true</linksource>
+          <links>
+            <link>http://java.sun.com/j2se/1.5.0/docs/api</link>
+            <link>https://jna.dev.java.net/nonav/javadoc</link>
+          </links>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>mailing-list</report>
+              <report>issue-tracking</report>
+              <report>license</report>
+              <report>scm</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>surefire-report-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </reporting>
+
+</project>
