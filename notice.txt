@@ -1,5 +1,0 @@
-
-3rd Party Notices:
-
-The 'src/test/resoruces/smi-ar.ans' sample ANSI file was obtained 
-from 'http://sixteencolors.net/packs/2007/sense27/smi-ar.ans.html'.
