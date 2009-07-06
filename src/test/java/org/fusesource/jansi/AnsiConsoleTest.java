@@ -7,9 +7,17 @@ import java.io.PrintStream;
 public class AnsiConsoleTest {
 
 	public static void main(String[] args) throws IOException {
-		AnsiConsole.systemInstall();
+        String file = "src/test/resources/jansi.ans";
+        if( args.length>0  )
+        	file = args[0];
+
+        // Allows us to disable ANSI processing. 
+        if( "true".equals(System.getProperty("jansi", "true")) ) {
+        	AnsiConsole.systemInstall();
+        }
+        
         PrintStream out = System.out;
-        FileInputStream f = new FileInputStream("src/test/resources/jansi.ans");
+		FileInputStream f = new FileInputStream(file);
         int c;
         while( (c=f.read())>=0 ) {
         	out.write(c);
