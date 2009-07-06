@@ -1,0 +1,7 @@
+\--- !omap
+- /javadoc.html:
+    title: Javadoc
+    in_menu: true
+    sort_info: 60
+    url: maven-sites/1.0-SNAPSHOT/apidocs/index.html
+  

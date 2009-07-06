@@ -7,18 +7,20 @@
  */
 package org.fusesource.jansi;
 
-import static org.fusesource.jansi.Kernel32.BACKGROUND_BLUE;
-import static org.fusesource.jansi.Kernel32.BACKGROUND_GREEN;
-import static org.fusesource.jansi.Kernel32.BACKGROUND_RED;
-import static org.fusesource.jansi.Kernel32.FOREGROUND_BLUE;
-import static org.fusesource.jansi.Kernel32.FOREGROUND_GREEN;
-import static org.fusesource.jansi.Kernel32.FOREGROUND_RED;
-import static org.fusesource.jansi.Kernel32.KERNEL32;
+import static org.fusesource.jansi.internal.Kernel32.BACKGROUND_BLUE;
+import static org.fusesource.jansi.internal.Kernel32.BACKGROUND_GREEN;
+import static org.fusesource.jansi.internal.Kernel32.BACKGROUND_RED;
+import static org.fusesource.jansi.internal.Kernel32.FOREGROUND_BLUE;
+import static org.fusesource.jansi.internal.Kernel32.FOREGROUND_GREEN;
+import static org.fusesource.jansi.internal.Kernel32.FOREGROUND_RED;
+import static org.fusesource.jansi.internal.Kernel32.KERNEL32;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.fusesource.jansi.Kernel32.CONSOLE_SCREEN_BUFFER_INFO;
+import org.fusesource.jansi.internal.Kernel32;
+import org.fusesource.jansi.internal.WindowsSupport;
+import org.fusesource.jansi.internal.Kernel32.CONSOLE_SCREEN_BUFFER_INFO;
 
 import com.sun.jna.Pointer;
 

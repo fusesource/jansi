@@ -20,7 +20,7 @@ import java.lang.reflect.Field;
  */
 public class AnsiConsole {
 
-	static final PrintStream system_out = System.out;
+	private static final PrintStream system_out = System.out;
 	public static final PrintStream out = createAnsiConsoleOut();
 	private static boolean installed;
 
@@ -79,7 +79,10 @@ public class AnsiConsole {
 	 *  
 	 * @author chirino
 	 */
-	static class SystemOutInstaller {		
+	public static class SystemOutInstaller {
+		protected PrintStream old_out = system_out;
+		protected PrintStream new_out = out;
+		
 		protected Field getOutField() throws NoSuchFieldException {
 			Field field = System.class.getField("out");
 			field.setAccessible(true);
@@ -87,11 +90,11 @@ public class AnsiConsole {
 		}
 		
 		public void install() throws Exception {
-			getOutField().set(null, out);
+			getOutField().set(null, new_out);
 		}
 
 		public void uninstall() throws Exception {
-			getOutField().set(null, system_out);
+			getOutField().set(null, old_out);
 		}
 	}
 
