@@ -2,9 +2,8 @@ package org.fusesource.jansi;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 
-public class AnsiConsoleTest {
+public class AnsiConsoleExample {
 
 	public static void main(String[] args) throws IOException {
         String file = "src/test/resources/jansi.ans";
@@ -16,11 +15,10 @@ public class AnsiConsoleTest {
         	AnsiConsole.systemInstall();
         }
         
-        PrintStream out = System.out;
 		FileInputStream f = new FileInputStream(file);
         int c;
         while( (c=f.read())>=0 ) {
-        	out.write(c);
+        	System.out.write(c);
         }
         f.close();
 	}
