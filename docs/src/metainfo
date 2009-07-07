@@ -30,5 +30,7 @@
   # Define the project properties here, these can be accessed in the 
   # pages using the {var:} syntax.
   # -------------------------------------------------------------------
-  project_name: "jansi"
+  project_name: "Jansi"
+  project_id: "jansi"
   project_slogan: 'Eliminating boring console output.'
+  project_version: 1.0-SNAPSHOT

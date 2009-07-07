@@ -51,8 +51,9 @@
 
   <licenses>
     <license>
-      <name>AGPL</name>
-      <url>license.txt</url>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
     </license>
   </licenses>
   
@@ -61,6 +62,25 @@
     <developerConnection>scm:git:ssh://git@forge.fusesource.com/jansi.git</developerConnection>
     <url>http://fusesource.com/forge/gitweb?p=jansi.git</url>
   </scm>
+  
+  <distributionManagement>
+    <repository>
+      <id>release.fusesource.org</id>
+      <name>RestMQ Release Repository</name>
+      <url>dav:http://fusesource.com/forge/dav/jansi/repo/release</url>
+    </repository>
+    <snapshotRepository>
+      <uniqueVersion>false</uniqueVersion>
+      <id>snapshot.fusesource.org</id>
+      <name>RestMQ Snapshot Repository</name>
+      <url>dav:http://fusesource.com/forge/dav/jansi/repo/snapshot</url>
+    </snapshotRepository>
+    <site>
+      <id>website.fusesource.org</id>
+      <name>website</name>
+      <url>dav:http://fusesource.com/forge/dav/jansi/maven/${project.version}</url>
+    </site>
+  </distributionManagement>  
   
   <repositories>
     <!-- For the JNA dependency -->
@@ -88,6 +108,15 @@
   </dependencies>
 
   <build>
+  
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-webdav-jackrabbit</artifactId>
+        <version>1.0-beta-5</version>
+      </extension>
+    </extensions>
+      
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

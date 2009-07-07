@@ -3,5 +3,9 @@
     title: Javadoc
     in_menu: true
     sort_info: 60
-    url: maven-sites/1.0-SNAPSHOT/apidocs/index.html
-  
+    url: http://jansi.fusesource.org/maven/1.0-SNAPSHOT/apidocs/index.html
+- /development.html:
+    title: Development
+    in_menu: true
+    sort_info: 60
+    url: http://jansi.fusesource.org/maven/1.0-SNAPSHOT/project-info.html

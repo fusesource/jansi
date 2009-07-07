@@ -329,7 +329,7 @@ public class Ansi {
 	}
 
 	public static Ansi ansi() {
-		return ansi();
+		return new Ansi();
 	}
 	
 }

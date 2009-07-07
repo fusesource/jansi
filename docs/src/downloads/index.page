@@ -17,11 +17,68 @@
 title: Downloads
 in_menu: true
 sort_info: 1
---- name:overview pipeline:haml,tags
+--- name:overview
 
-%h1 Downloads
-So your ready to start using it?
+# {project_name:}
+Download it Today!
 
 --- name:content pipeline:haml,tags
 
-Too bad cause we have not released anything yet.
+.left
+  %h1 Just need a jar?
+  
+.right
+  Try out the nightly build:
+  %ul
+    %li
+      %a{:href => "http://{project_id:}.fusesource.org/repo/snapshot/org/fusesource/{project_id:}/{project_id:}/{project_version:}/{project_id:}-{project_version:}.jar"}
+        {project_id:}-{project_version:}.jar
+    
+
+.left
+  %h1 Are you a Maven User?
+.right
+  %p
+    Just the following to your 
+    %code pom.xml
+    
+    :plain
+      {coderay:: xml}
+      <dependency>
+        <groupid>org.fusesource.{project_id:}</artifactid>
+        <artifactid>{project_id:}</artifactid>
+        <version>{project_version:}</version>
+      </dependency>
+      {coderay}
+
+  %p    
+    You you should ensure you have the {project_id:} maven repository defined in your
+    %code pom.xml
+    :plain
+      {coderay:: xml}  
+      <repositories>
+        <repository>
+          <id>{project_id:}.release.m2</id>
+          <name>{project_id:} Release Repository</name>
+          <url>http://{project_id:}.fusesource.org/repo/release</url>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+        </repository>
+        <repository>
+          <id>{project_id:}.snapshot.m2</id>
+          <name>{project_id:} Release Repository</name>
+          <url>http://{project_id:}.fusesource.org/repo/snapshot</url>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+          <releases>
+            <enabled>false</enabled>
+          </releases>
+        </repository>
+      </repositories>
+      {coderay}
+      
