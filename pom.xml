@@ -130,6 +130,35 @@
           <target>1.5</target>
         </configuration>
       </plugin>
+      
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <version>2.0.0</version>
+        <executions>
+          <execution>
+            <id>bundle-manifest</id>
+            <phase>process-classes</phase>
+            <goals>    
+              <goal>manifest</goal>
+            </goals>   
+            <configuration>
+              <instructions>
+                  <Import-Package>!org.fusesource.jansi*,com.sun.jna;resolution:=optional,sun.reflect;resolution:=optional,*</Import-Package>
+              </instructions>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>  
+            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+          </archive> 
+        </configuration>
+      </plugin>  
+      
     </plugins>
   </build>
 
