@@ -19,10 +19,8 @@ package org.fusesource.jansi;
 
 import static org.fusesource.jansi.internal.CLibrary.CLIBRARY;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.lang.reflect.Constructor;
 
 import org.fusesource.jansi.internal.CLibrary;
 
@@ -34,33 +32,38 @@ import org.fusesource.jansi.internal.CLibrary;
 public class AnsiConsole {
 
 	private static final PrintStream system_out = System.out;
-	public static final PrintStream out = createAnsiConsoleOut();
+	public static final PrintStream out = new PrintStream(wrapOutputStream(system_out));
 	private static int installed;
 	
-	private static boolean stdoutHasNativeAnsiSupport() {
+
+	public static OutputStream wrapOutputStream(OutputStream system_out) {
 		String os = System.getProperty("os.name");
 		if( os.startsWith("Windows") ) {
-			return false;
-		}		
-		return CLIBRARY.isatty(CLibrary.STDOUT_FILENO)!=0;
-	}
-
-	private static PrintStream createAnsiConsoleOut() {
-		if( stdoutHasNativeAnsiSupport() ) {
-			return system_out;
+			
+			// On windows we know the console does not interpret ANSI codes..
+			try {
+				return new WindowsAnsiOutputStream(system_out);
+			} catch (Throwable ignore) {
+				// this happens when JNA is not in the path.. or
+				// this happens when the stdout is being redirected to a file.
+			}
+			
+			// Use the ANSIOutputStream to strip out the ANSI escape sequences.
+			return new AnsiOutputStream(system_out);
 		}
 		
+		// We must be on some unix variant..
 		try {
-			return new PrintStream(new WindowsAnsiOutputStream(system_out));
-		} catch (NoClassDefFoundError ignore) {
-			// this happens when JNA is not in the path.
-		} catch (IOException e) {
-			// this happens when the stdout is not connected to a console.
+			// If we can detect that stdout is not a tty.. then setup
+			// to strip the ANSI sequences..
+			int rc = CLIBRARY.isatty(CLibrary.STDOUT_FILENO);
+			if( rc==0 ) {
+				return new AnsiOutputStream(system_out);
+			}
+		} catch (Throwable ignore) {
 		}
-		
-		// Use the ANSIOutputStream to strip out the ANSI escape sequences.
-		AnsiOutputStream out = new AnsiOutputStream(system_out);
-		return new PrintStream(out);
+		// By default we asume your Unix tty can handle ANSI codes.
+		return system_out;
 	}
 
 	/**

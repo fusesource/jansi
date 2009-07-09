@@ -67,6 +67,7 @@ public class Ansi {
 	
 	public enum Attribute {
 		
+		RESET(0,"CONCEAL_OFF"),
 		INTENSITY_BOLD(1,"INTENSITY_BOLD"),  	
 		INTENSITY_FAINT(2,"INTENSITY_FAINT"),
 		ITALIC(3,"ITALIC"),
