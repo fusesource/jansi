@@ -45,8 +45,8 @@ Download it Today!
     :plain
       {coderay:: xml}
       <dependency>
-        <groupid>org.fusesource.{project_id:}</artifactid>
-        <artifactid>{project_id:}</artifactid>
+        <groupId>org.fusesource.{project_id:}</groupId>
+        <artifactId>{project_id:}</artifactId>
         <version>{project_version:}</version>
       </dependency>
       {coderay}
