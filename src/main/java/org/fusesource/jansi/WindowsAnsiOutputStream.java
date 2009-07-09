@@ -146,6 +146,19 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
 	}
 	
 	@Override
+	protected void processCursorTo(int x, int y) throws IOException {
+		getConsoleInfo();
+		info.cursorPosition.y = (short) Math.max(0, Math.min(info.maximumWindowSize.y, y-1));
+		info.cursorPosition.x = (short) Math.max(0, Math.min(info.maximumWindowSize.x, x-1));
+		applyCursorPosition();		
+	}
+
+	@Override
+	protected void processEraseScreen(int eraseOption) {
+		// TODO:
+	}
+	
+	@Override
 	protected void processSetForegroundColor(int color) throws IOException {
 		info.attributes = (short)((info.attributes & ~0x0007 ) | ANSI_FOREGROUND_COLOR_MAP[color]);
 		applyAttribute();
@@ -162,7 +175,7 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
 		info.attributes = (short)((info.attributes & ~0x00FF ) | FOREGROUND_WHITE | BACKGROUND_BLACK);
 		applyAttribute();
 	}
-
+	
 	@Override
 	protected void processSetAttribute(int attribute) throws IOException {
 		switch(attribute) {

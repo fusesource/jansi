@@ -17,11 +17,14 @@
 
 package org.fusesource.jansi;
 
+import static org.fusesource.jansi.internal.CLibrary.CLIBRARY;
+
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 
+import org.fusesource.jansi.internal.CLibrary;
 
 /**
  * Provides consistent access to an ANSI aware console PrintStream.
@@ -32,21 +35,14 @@ public class AnsiConsole {
 
 	private static final PrintStream system_out = System.out;
 	public static final PrintStream out = createAnsiConsoleOut();
-	private static boolean installed;
-
+	private static int installed;
 	
 	private static boolean stdoutHasNativeAnsiSupport() {
 		String os = System.getProperty("os.name");
 		if( os.startsWith("Windows") ) {
 			return false;
-		}
-		
-		// TODO: Improve Unix Support
-		// Most Unix terminals have native ANSI support, but it depends
-		// on the connected terminal.  Would need to dive deeper
-		// to figure out if the stdout is connected to a terminal that 
-		// does support ANSI.
-		return true;
+		}		
+		return CLIBRARY.isatty(CLibrary.STDOUT_FILENO)!=0;
 	}
 
 	private static PrintStream createAnsiConsoleOut() {
@@ -54,15 +50,12 @@ public class AnsiConsole {
 			return system_out;
 		}
 		
-		// Try to dynamically load the WindowsANSIOutputStream.  This may fail due to:
-		//  * JNA not being in the path
-		//  * Not being attached to a console
 		try {
-			Class<?> clazz = AnsiOutputStream.class.getClassLoader().loadClass("org.fusesource.jansi.WindowsAnsiOutputStream");
-			Constructor<?> constructor = clazz.getConstructor(new Class []{OutputStream.class});
-			AnsiOutputStream out =  (AnsiOutputStream) constructor.newInstance(new Object[]{system_out}); 
-			return new PrintStream(out);
-		} catch (Throwable e) {
+			return new PrintStream(new WindowsAnsiOutputStream(system_out));
+		} catch (NoClassDefFoundError ignore) {
+			// this happens when JNA is not in the path.
+		} catch (IOException e) {
+			// this happens when the stdout is not connected to a console.
 		}
 		
 		// Use the ANSIOutputStream to strip out the ANSI escape sequences.
@@ -83,77 +76,25 @@ public class AnsiConsole {
 	}
 	
 	/**
-	 * Defines an interface which installs the System.out field.  This
-	 * impl fails due to the System.out field being static.  Derived classes
-	 * can implement JVM specific hacks to get around that problem. 
-	 *  
-	 * @author chirino
+	 * Install Console.out to System.out.
 	 */
-	public static class SystemOutInstaller {
-		protected PrintStream old_out = system_out;
-		protected PrintStream new_out = out;
-		
-		protected Field getOutField() throws NoSuchFieldException {
-			Field field = System.class.getField("out");
-			field.setAccessible(true);
-			return field;
+	synchronized static public void systemInstall() {
+		installed++;
+		if( installed==1 ) {
+			System.setOut(out);
 		}
-		
-		public void install() throws Exception {
-			getOutField().set(null, new_out);
-		}
-
-		public void uninstall() throws Exception {
-			getOutField().set(null, old_out);
-		}
-	}
-
-	private static SystemOutInstaller creatInstaller() {
-		// Try to load the Sun JVM specific installers first..
-		try {
-			Class<?> clazz = SystemOutInstaller.class.getClassLoader().loadClass("org.fusesource.jansi.SunSystemOutInstaller");
-			return (SystemOutInstaller)clazz.newInstance();
-		} catch (Throwable ignore) {
-		}
-		return new SystemOutInstaller();
-	}
-
-
-	/**
-	 * Install Console.out to System.out.  Since System.out is declared
-	 * as 'static final', the success of this call is highly dependent 
-	 * on the JVM being used.
-	 * 
-	 * @return true if successfully installed.
-	 */
-	public static boolean systemInstall() {
-		if( !installed && System.out != out ) {
-			try {
-				SystemOutInstaller installer = creatInstaller();
-				installer.install();
-				installed=true;
-				return true;
-			} catch (Throwable e) {
-			}
-		}
-		return false;
 	}
 	
 	/**
-	 * undo a previous {@link #systemInstall()}
-	 * @return true if successfully uninstalled.
+	 * undo a previous {@link #systemInstall()}.  If {@link #systemInstall()} was called 
+	 * multiple times, it {@link #systemUninstall()} must call the same number of times before
+	 * it is actually uninstalled.
 	 */
-	public static boolean systemUninstall() {
-		if( installed ) {
-			try {
-				SystemOutInstaller installer = creatInstaller();
-				installer.uninstall();
-				installed=false;
-				return true;
-			} catch (Throwable e) {
-			}
+	synchronized public static void systemUninstall() {
+		installed--;
+		if( installed==0 ) {
+			System.setOut(out);
 		}
-		return false;
 	}
 	
 }
