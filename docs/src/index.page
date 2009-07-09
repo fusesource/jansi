@@ -41,9 +41,7 @@ sort_info: 1
     {coderay}
 
   %p
-    On Sun JVMs that should replace the System.out implementation, with an 
-    the right ANSI aware implementation depending on your Platform.  If 
-    you rather not mess with the System.out settings, you can use the
+    If you would rather not mess with the System.out settings, you can use the
     %code AnsiConsole.out
     PrintStream instead.  For example:
     
@@ -74,4 +72,6 @@ sort_info: 1
     which use a few windows Native methods to properly apply color attributes
     and more precise cursor support.
   %img.example{:src=>"images/after-jansi-jna-windows.png"}
+    
+    
     
