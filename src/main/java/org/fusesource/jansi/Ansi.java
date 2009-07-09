@@ -161,7 +161,14 @@ public class Ansi {
 		@Override
 		public void dump(StringBuilder builder) {
 			previous.dump(builder);
-			dumpEscapeSequence(builder, 'm', options.toArray());
+			// Optimize a little... reset can be short handed.
+			if( options.size()==1 && options.get(0)==0 ) {
+				builder.append(FIRST_ESC_CHAR);
+				builder.append(SECOND_ESC_CHAR);
+				builder.append('m');  				
+			} else {
+				dumpEscapeSequence(builder, 'm', options.toArray());
+			}
 		}
 		
 		@Override
@@ -315,6 +322,9 @@ public class Ansi {
 		return rc;
 	}
 	
+	public Ansi reset() {
+		return a(Attribute.RESET);
+	}
 	
 	public void dump(StringBuilder builder) {
 	}
