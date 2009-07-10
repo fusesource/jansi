@@ -252,32 +252,32 @@ public class AnsiOutputStream extends FilterOutputStream {
 				}
 				return false;
 			}
-		} catch (IllegalArgumentException ignore) {
+		} catch (IllegalArgumentException ignore)  {
 		}
 		return false;
 	}
 
-	protected void processRestoreCursorPosition() {
+	protected void processRestoreCursorPosition() throws IOException {
 	}
-	protected void processSaveCursorPosition() {
+	protected void processSaveCursorPosition() throws IOException {
 	}
-	protected void processScrollDown(int optionInt) {
+	protected void processScrollDown(int optionInt) throws IOException {
 	}
-	protected void processScrollUp(int optionInt) {
+	protected void processScrollUp(int optionInt) throws IOException {
 	}
 
 	protected static final int ERASE_SCREEN_TO_END=0;
-	protected static final int ERASE_SCREEN_TO_BEGINING=2;
+	protected static final int ERASE_SCREEN_TO_BEGINING=1;
 	protected static final int ERASE_SCREEN=2;
 	
-	protected void processEraseScreen(int eraseOption) {
+	protected void processEraseScreen(int eraseOption) throws IOException {
 	}
 
 	protected static final int ERASE_LINE_TO_END=0;
-	protected static final int ERASE_LINE_TO_BEGINING=2;
+	protected static final int ERASE_LINE_TO_BEGINING=1;
 	protected static final int ERASE_LINE=2;
 	
-	protected void processEraseLine(int eraseOption) {
+	protected void processEraseLine(int eraseOption) throws IOException {
 	}
 
 	protected static final int ATTRIBUTE_INTENSITY_BOLD 	= 1; // 	Intensity: Bold 	

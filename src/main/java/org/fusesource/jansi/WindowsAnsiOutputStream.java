@@ -30,8 +30,10 @@ import java.io.OutputStream;
 import org.fusesource.jansi.internal.Kernel32;
 import org.fusesource.jansi.internal.WindowsSupport;
 import org.fusesource.jansi.internal.Kernel32.CONSOLE_SCREEN_BUFFER_INFO;
+import org.fusesource.jansi.internal.Kernel32.COORD;
 
 import com.sun.jna.Pointer;
+import com.sun.jna.ptr.IntByReference;
 
 public final class WindowsAnsiOutputStream extends AnsiOutputStream {
 	
@@ -116,7 +118,23 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
 			throw new IOException(WindowsSupport.getLastErrorMessage());
 		}
 	}
-
+	
+	@Override
+	protected void processEraseScreen(int eraseOption) throws IOException {
+		getConsoleInfo();
+		switch(eraseOption) {
+		case ERASE_SCREEN:
+			int length = info.size.x * info.size.y;
+			COORD.ByValue coord = new COORD.ByValue();
+			coord.x = 0;
+			coord.y = 0;
+			IntByReference written = new IntByReference();
+			KERNEL32.FillConsoleOutputCharacter(console, ' ', length, coord, written);
+		case ERASE_SCREEN_TO_BEGINING:
+		case ERASE_SCREEN_TO_END:
+		}		
+	}
+	
 	@Override
 	protected void processCursorLeft(int count) throws IOException {
 		getConsoleInfo();
@@ -153,11 +171,6 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
 		applyCursorPosition();		
 	}
 
-	@Override
-	protected void processEraseScreen(int eraseOption) {
-		// TODO:
-	}
-	
 	@Override
 	protected void processSetForegroundColor(int color) throws IOException {
 		info.attributes = (short)((info.attributes & ~0x0007 ) | ANSI_FOREGROUND_COLOR_MAP[color]);

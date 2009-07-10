@@ -20,23 +20,23 @@ import java.util.ArrayList;
 
 /**
  * Provides a fluent API for generating ANSI escape sequences.
- *  
+ * 
  * @author chirino
  */
-public class Ansi {
-	
+final public class Ansi {
+
 	private static final char FIRST_ESC_CHAR = 27;
 	private static final char SECOND_ESC_CHAR = '[';
-	
-	public enum Color{
-		BLACK(0, "BLACK"),
-		RED(1, "RED"),
-		GREEN(2, "GREEN"),
-		YELLOW(3, "YELLOW"),
-		BLUE(4, "BLUE"),
-		MAGENTA(5, "MAGENTA"),
-		CYAN(6, "CYAN"),
-		WHITE(7, "WHITE");
+
+	public enum Color {
+		BLACK(0, "BLACK"), 
+		RED(1, "RED"), 
+		GREEN(2, "GREEN"), 
+		YELLOW(3, "YELLOW"), 
+		BLUE(4, "BLUE"), 
+		MAGENTA(5, "MAGENTA"), 
+		CYAN(6, "CYAN"), 
+		WHITE(7,"WHITE");
 
 		private final int value;
 		private final String name;
@@ -45,43 +45,41 @@ public class Ansi {
 			this.value = index;
 			this.name = name;
 		}
-		
+
 		@Override
 		public String toString() {
 			return name;
 		}
-		
+
 		public int value() {
 			return value;
 		}
-		
+
 		public int fg() {
-			return value+30;
+			return value + 30;
 		}
-		
+
 		public int bg() {
-			return value+40;
+			return value + 40;
 		}
 	};
-	
-	
+
 	public enum Attribute {
-		
-		RESET(0,"CONCEAL_OFF"),
-		INTENSITY_BOLD(1,"INTENSITY_BOLD"),  	
-		INTENSITY_FAINT(2,"INTENSITY_FAINT"),
-		ITALIC(3,"ITALIC"),
-		UNDERLINE(4,"UNDERLINE"), 	
-		BLINK_SLOW(5,"BLINK_SLOW"),
-		BLINK_FAST(6,"BLINK_FAST"),
-		NEGATIVE_ON(7,"NEGATIVE_ON"),
-		CONCEAL_ON(8,"CONCEAL_ON"),
-		UNDERLINE_DOUBLE(21,"UNDERLINE_DOUBLE"),
-		INTENSITY_NORMAL(2,"INTENSITY_NORMAL"),
-		UNDERLINE_OFF(24,"UNDERLINE_OFF"), 	
-		BLINK_OFF(25,"BLINK_OFF"), 	
-		NEGATIVE_OFF(27,"NEGATIVE_OFF"), 	
-		CONCEAL_OFF(28,"CONCEAL_OFF");
+		RESET(0, "RESET"), 
+		INTENSITY_BOLD(1, "INTENSITY_BOLD"), 
+		INTENSITY_FAINT(2, "INTENSITY_FAINT"), 
+		ITALIC(3, "ITALIC"), 
+		UNDERLINE(4,"UNDERLINE"), 
+		BLINK_SLOW(5, "BLINK_SLOW"), 
+		BLINK_FAST(6, "BLINK_FAST"), 
+		NEGATIVE_ON(7, "NEGATIVE_ON"), 
+		CONCEAL_ON(8, "CONCEAL_ON"), 
+		UNDERLINE_DOUBLE(21, "UNDERLINE_DOUBLE"), 
+		INTENSITY_NORMAL(2, "INTENSITY_NORMAL"), 
+		UNDERLINE_OFF(24, "UNDERLINE_OFF"), 
+		BLINK_OFF(25, "BLINK_OFF"), 
+		NEGATIVE_OFF(27, "NEGATIVE_OFF"), 
+		CONCEAL_OFF(28, "CONCEAL_OFF");
 
 		private final int value;
 		private final String name;
@@ -90,257 +88,274 @@ public class Ansi {
 			this.value = index;
 			this.name = name;
 		}
-		
+
 		@Override
 		public String toString() {
 			return name;
 		}
-		
+
 		public int value() {
 			return value;
 		}
-		
+
 	};
-		
-	protected boolean isAttributeAnsi() {
-		return false;
-	}
 
-	protected boolean isStringBuilderAnsi() {
-		return false;
-	}
-	
-	static private final class StringBuilderAnsi extends Ansi {
-		private final Ansi previous;
-		private final StringBuilder data = new StringBuilder();
+	public enum Erase {
+		ALL(2, "ALL"), 
+		BACKWARD(1, "BACKWARD"), 
+		FORWARD(0, "FORWARD");
 
-		private StringBuilderAnsi(Ansi previous) {
-			this.previous = previous;
+		private final int value;
+		private final String name;
+
+		Erase(int index, String name) {
+			this.value = index;
+			this.name = name;
 		}
 
 		@Override
-		public void dump(StringBuilder builder) {
-			previous.dump(builder);
-			builder.append(data);
-		}
-		
-		@Override
-		protected boolean isStringBuilderAnsi() {
-			return true;
-		}
-	}
-	
-	static abstract private class SimpleAnsi extends Ansi {
-		protected final Ansi previous;
-		private SimpleAnsi(Ansi previous) {
-			this.previous = previous;
-		}
-		
-	}
-
-	static void dumpEscapeSequence(StringBuilder builder, char command, Object... options) {
-		builder.append(FIRST_ESC_CHAR);
-		builder.append(SECOND_ESC_CHAR);
-		int size = options.length;
-		for (int i = 0; i < size; i++) {
-			if( i!=0 ) {
-				builder.append(';');
-			}
-			builder.append(options[i]);
-		}
-		builder.append(command);
-	}
-	
-	static private final class AttributeAnsi extends SimpleAnsi {
-		private final ArrayList<Integer> options = new ArrayList<Integer>(5);
-
-		private AttributeAnsi(Ansi previous) {
-			super(previous);
+		public String toString() {
+			return name;
 		}
 
-		@Override
-		public void dump(StringBuilder builder) {
-			previous.dump(builder);
-			// Optimize a little... reset can be short handed.
-			if( options.size()==1 && options.get(0)==0 ) {
-				builder.append(FIRST_ESC_CHAR);
-				builder.append(SECOND_ESC_CHAR);
-				builder.append('m');  				
-			} else {
-				dumpEscapeSequence(builder, 'm', options.toArray());
-			}
+		public int value() {
+			return value;
 		}
-		
-		@Override
-		protected boolean isAttributeAnsi() {
-			return true;
-		}
-	}
-	
-	public Ansi cursor(final int x, final int y) {
-		return new SimpleAnsi(this) {
-			@Override
-			public void dump(StringBuilder builder) {
-				previous.dump(builder);
-				dumpEscapeSequence(builder, 'H', x, y);
-			}
-		};
-	}
+	};
 
-	public Ansi cursorUp(final int y) {
-		return new SimpleAnsi(this) {
-			@Override
-			public void dump(StringBuilder builder) {
-				previous.dump(builder);
-				dumpEscapeSequence(builder, 'A', y);
-			}
-		};
-	}
 
-	public Ansi cursorDown(final int y) {
-		return new SimpleAnsi(this) {
-			@Override
-			public void dump(StringBuilder builder) {
-				previous.dump(builder);
-				dumpEscapeSequence(builder, 'B', y);
-			}
-		};
-	}
-	public Ansi cursorRight(final int x) {
-		return new SimpleAnsi(this) {
-			@Override
-			public void dump(StringBuilder builder) {
-				previous.dump(builder);
-				dumpEscapeSequence(builder, 'C', x);
-			}
-		};
-	}
-
-	public Ansi cursorLeft(final int x) {
-		return new SimpleAnsi(this) {
-			@Override
-			public void dump(StringBuilder builder) {
-				previous.dump(builder);
-				dumpEscapeSequence(builder, 'D', x);
-			}
-		};
-	}
-
-	public Ansi fg(Color color) {
-		AttributeAnsi rc = (AttributeAnsi) (isAttributeAnsi() ? this : new AttributeAnsi(this));
-		rc.options.add(color.fg());
-		return rc;
-	}
-	
-	public Ansi bg(Color color) {
-		AttributeAnsi rc = (AttributeAnsi) (isAttributeAnsi() ? this : new AttributeAnsi(this));
-		rc.options.add(color.bg());
-		return rc;
-	}
-
-	public Ansi a(Attribute attribute) {
-		AttributeAnsi rc = (AttributeAnsi) (isAttributeAnsi() ? this : new AttributeAnsi(this));
-		rc.options.add(attribute.value());
-		return rc;
-	}
-
-	public Ansi a(String value) {
-		StringBuilderAnsi rc = (StringBuilderAnsi) (isStringBuilderAnsi() ? this : new StringBuilderAnsi(this));
-		rc.data.append(value);
-		return rc;
-	}
-
-	public Ansi a(boolean value) {
-		StringBuilderAnsi rc = (StringBuilderAnsi) (isStringBuilderAnsi() ? this : new StringBuilderAnsi(this));
-		rc.data.append(value);
-		return rc;
-	}
-
-	public Ansi a(char value) {
-		StringBuilderAnsi rc = (StringBuilderAnsi) (isStringBuilderAnsi() ? this : new StringBuilderAnsi(this));
-		rc.data.append(value);
-		return rc;
-	}
-
-	public Ansi a(char[] value, int offset, int len) {
-		StringBuilderAnsi rc = (StringBuilderAnsi) (isStringBuilderAnsi() ? this : new StringBuilderAnsi(this));
-		rc.data.append(value, offset, len);
-		return rc;
-	}
-
-	public Ansi a(char[] value) {
-		StringBuilderAnsi rc = (StringBuilderAnsi) (isStringBuilderAnsi() ? this : new StringBuilderAnsi(this));
-		rc.data.append(value);
-		return rc;
-	}
-
-	public Ansi a(CharSequence value, int start, int end) {
-		StringBuilderAnsi rc = (StringBuilderAnsi) (isStringBuilderAnsi() ? this : new StringBuilderAnsi(this));
-		rc.data.append(value, start, end);
-		return rc;
-	}
-
-	public Ansi a(CharSequence value) {
-		StringBuilderAnsi rc = (StringBuilderAnsi) (isStringBuilderAnsi() ? this : new StringBuilderAnsi(this));
-		rc.data.append(value);
-		return rc;
-	}
-
-	public Ansi a(double value) {
-		StringBuilderAnsi rc = (StringBuilderAnsi) (isStringBuilderAnsi() ? this : new StringBuilderAnsi(this));
-		rc.data.append(value);
-		return rc;
-	}
-
-	public Ansi a(float value) {
-		StringBuilderAnsi rc = (StringBuilderAnsi) (isStringBuilderAnsi() ? this : new StringBuilderAnsi(this));
-		rc.data.append(value);
-		return rc;
-	}
-
-	public Ansi a(int value) {
-		StringBuilderAnsi rc = (StringBuilderAnsi) (isStringBuilderAnsi() ? this : new StringBuilderAnsi(this));
-		rc.data.append(value);
-		return rc;
-	}
-
-	public Ansi a(long value) {
-		StringBuilderAnsi rc = (StringBuilderAnsi) (isStringBuilderAnsi() ? this : new StringBuilderAnsi(this));
-		rc.data.append(value);
-		return rc;
-	}
-
-	public Ansi a(Object value) {
-		StringBuilderAnsi rc = (StringBuilderAnsi) (isStringBuilderAnsi() ? this : new StringBuilderAnsi(this));
-		rc.data.append(value);
-		return rc;
-	}
-
-	public Ansi a(StringBuffer value) {
-		StringBuilderAnsi rc = (StringBuilderAnsi) (isStringBuilderAnsi() ? this : new StringBuilderAnsi(this));
-		rc.data.append(value);
-		return rc;
-	}
-	
-	public Ansi reset() {
-		return a(Attribute.RESET);
-	}
-	
-	public void dump(StringBuilder builder) {
-	}
-	
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		dump(sb);
-		return sb.toString();
-	}
+	private final StringBuilder builder;
+	private final ArrayList<Integer> attributeOptions = new ArrayList<Integer>(5);
 	
 	public Ansi() {
+		this(new StringBuilder());
+	}
+	public Ansi(int size) {
+		this(new StringBuilder(size));
+	}
+	public Ansi(StringBuilder builder) {
+		this.builder = builder;
 	}
 
 	public static Ansi ansi() {
 		return new Ansi();
+	}
+	public static Ansi ansi(StringBuilder builder) {
+		return new Ansi(builder);
+	}
+	public static Ansi ansi(int size) {
+		return new Ansi(size);
+	}
+
+	public Ansi fg(Color color) {
+		attributeOptions.add(color.fg());
+		return this;
+	}
+
+	public Ansi bg(Color color) {
+		attributeOptions.add(color.bg());
+		return this;
+	}
+
+	public Ansi a(Attribute attribute) {
+		attributeOptions.add(attribute.value());
+		return this;
+	}
+	
+	public Ansi cursor(final int x, final int y) {
+		return appendEscapeSequence('H', x, y);
+	}
+
+	public Ansi cursorUp(final int y) {
+		return appendEscapeSequence('A', y);
+	}
+
+	public Ansi cursorDown(final int y) {
+		return appendEscapeSequence('B', y);
+	}
+
+	public Ansi cursorRight(final int x) {
+		return appendEscapeSequence('C', x);
+	}
+
+	public Ansi cursorLeft(final int x) {
+		return appendEscapeSequence('D', x);
+	}
+
+	public Ansi eraseScreen() {
+		return appendEscapeSequence('J');
+	}
+
+	public Ansi eraseScreen(final Erase kind) {
+		return appendEscapeSequence('J', kind.value());
+	}
+
+	public Ansi eraseLine() {
+		return appendEscapeSequence('K');
+	}
+
+	public Ansi eraseLine(final Erase kind) {
+		return appendEscapeSequence('K', kind.value());
+	}
+
+	public Ansi scrollUp(final int rows) {
+		return appendEscapeSequence('S', rows);
+	}
+
+	public Ansi scrollDown(final int rows) {
+		return appendEscapeSequence('T', rows);
+	}
+
+	public Ansi saveCursorPosition() {
+		return appendEscapeSequence('s');
+	}
+
+	public Ansi restorCursorPosition() {
+		return appendEscapeSequence('u');
+	}
+
+	public Ansi reset() {
+		return a(Attribute.RESET);
+	}
+
+	public Ansi a(String value) {
+		fushAtttributes();		
+		builder.append(value);
+		return this;
+	}
+
+	public Ansi a(boolean value) {
+		fushAtttributes();		
+		builder.append(value);
+		return this;
+	}
+
+	public Ansi a(char value) {
+		fushAtttributes();		
+		builder.append(value);
+		return this;
+	}
+
+	public Ansi a(char[] value, int offset, int len) {
+		fushAtttributes();		
+		builder.append(value, offset, len);
+		return this;
+	}
+
+	public Ansi a(char[] value) {
+		fushAtttributes();		
+		builder.append(value);
+		return this;
+	}
+
+	public Ansi a(CharSequence value, int start, int end) {
+		fushAtttributes();		
+		builder.append(value, start, end);
+		return this;
+	}
+
+	public Ansi a(CharSequence value) {
+		fushAtttributes();		
+		builder.append(value);
+		return this;
+	}
+
+	public Ansi a(double value) {
+		fushAtttributes();		
+		builder.append(value);
+		return this;
+	}
+
+	public Ansi a(float value) {
+		fushAtttributes();		
+		builder.append(value);
+		return this;
+	}
+
+	public Ansi a(int value) {
+		fushAtttributes();		
+		builder.append(value);
+		return this;
+	}
+
+	public Ansi a(long value) {
+		fushAtttributes();		
+		builder.append(value);
+		return this;
+	}
+
+	public Ansi a(Object value) {
+		fushAtttributes();		
+		builder.append(value);
+		return this;
+	}
+
+	public Ansi a(StringBuffer value) {
+		fushAtttributes();		
+		builder.append(value);
+		return this;
+	}
+
+	@Override
+	public String toString() {
+		fushAtttributes();		
+		return builder.toString();
+	}
+
+	///////////////////////////////////////////////////////////////////
+	// Private Helper Methods
+	///////////////////////////////////////////////////////////////////
+	
+	private Ansi appendEscapeSequence(char command) {
+		fushAtttributes();
+		builder.append(FIRST_ESC_CHAR);
+		builder.append(SECOND_ESC_CHAR);
+		builder.append(command);
+		return this;
+	}
+	
+	private Ansi appendEscapeSequence(char command, int option) {
+		fushAtttributes();
+		builder.append(FIRST_ESC_CHAR);
+		builder.append(SECOND_ESC_CHAR);
+		builder.append(option);
+		builder.append(command);
+		return this;
+	}
+	
+	private Ansi appendEscapeSequence(char command, Object... options) {
+		fushAtttributes();
+		return _appendEscapeSequence(command, options);
+	}
+
+	
+	private void fushAtttributes() {
+		if( attributeOptions.isEmpty() )
+			return;
+		if (attributeOptions.size() == 1 && attributeOptions.get(0) == 0) {
+			builder.append(FIRST_ESC_CHAR);
+			builder.append(SECOND_ESC_CHAR);
+			builder.append('m');
+		} else {
+			_appendEscapeSequence('m', attributeOptions.toArray());
+		}
+		attributeOptions.clear();
+	}
+	
+	private Ansi _appendEscapeSequence(char command, Object... options) {
+		builder.append(FIRST_ESC_CHAR);
+		builder.append(SECOND_ESC_CHAR);
+		int size = options.length;
+		for (int i = 0; i < size; i++) {
+			if (i != 0) {
+				builder.append(';');
+			}
+			if (options[i] != null) {
+				builder.append(options[i]);
+			}
+		}
+		builder.append(command);
+		return this;
 	}
 	
 }

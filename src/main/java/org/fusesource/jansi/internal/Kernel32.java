@@ -20,6 +20,7 @@ import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.win32.StdCallLibrary;
 
 /**
@@ -127,8 +128,7 @@ public interface Kernel32 extends StdCallLibrary {
 	 */
 	Pointer GetStdHandle(int stdHandle);
 
-	// see: http://msdn.microsoft.com/en-us/library/ms682088%28VS.85%29.aspx#_win32_character_attributes
-    // and: http://doc.ddart.net/msdn/header/include/wincon.h.html
+    // see: http://msdn.microsoft.com/en-us/library/ms682013%28VS.85%29.aspx
 	static final short  FOREGROUND_BLUE      = 0x0001;
 	static final short  FOREGROUND_GREEN     = 0x0002;
 	static final short  FOREGROUND_RED       = 0x0004;
@@ -152,5 +152,18 @@ public interface Kernel32 extends StdCallLibrary {
 	 * @return
 	 */
 	int SetConsoleCursorPosition(Pointer consoleOutput, COORD.ByValue cursorPosition);
+
+	/**
+	 * see: http://msdn.microsoft.com/en-us/library/ms682663%28VS.85%29.aspx
+	 * 
+	 * @param consoleOutput
+	 * @param character
+	 * @param length
+	 * @param dwWriteCoord
+	 * @param numberOfCharsWritten
+	 * @return
+	 */
+	int FillConsoleOutputCharacter(Pointer consoleOutput, int character, int length, COORD.ByValue dwWriteCoord, IntByReference numberOfCharsWritten);
+
 
 }
