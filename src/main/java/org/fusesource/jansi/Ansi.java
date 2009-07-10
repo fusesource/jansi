@@ -101,9 +101,9 @@ final public class Ansi {
 	};
 
 	public enum Erase {
-		ALL(2, "ALL"), 
+		FORWARD(0, "FORWARD"),
 		BACKWARD(1, "BACKWARD"), 
-		FORWARD(0, "FORWARD");
+		ALL(2, "ALL"); 
 
 		private final int value;
 		private final String name;
@@ -183,7 +183,7 @@ final public class Ansi {
 	}
 
 	public Ansi eraseScreen() {
-		return appendEscapeSequence('J');
+		return appendEscapeSequence('J',Erase.ALL.value());
 	}
 
 	public Ansi eraseScreen(final Erase kind) {

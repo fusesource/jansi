@@ -129,7 +129,7 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
 			coord.x = 0;
 			coord.y = 0;
 			IntByReference written = new IntByReference();
-			KERNEL32.FillConsoleOutputCharacter(console, ' ', length, coord, written);
+			KERNEL32.FillConsoleOutputCharacterW(console, ' ', length, coord, written);
 		case ERASE_SCREEN_TO_BEGINING:
 		case ERASE_SCREEN_TO_END:
 		}		

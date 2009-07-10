@@ -31,7 +31,7 @@ import org.fusesource.jansi.internal.CLibrary;
  */
 public class AnsiConsole {
 
-	private static final PrintStream system_out = System.out;
+	public static final PrintStream system_out = System.out;
 	public static final PrintStream out = new PrintStream(wrapOutputStream(system_out));
 	private static int installed;
 	

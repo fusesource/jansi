@@ -163,7 +163,7 @@ public interface Kernel32 extends StdCallLibrary {
 	 * @param numberOfCharsWritten
 	 * @return
 	 */
-	int FillConsoleOutputCharacter(Pointer consoleOutput, int character, int length, COORD.ByValue dwWriteCoord, IntByReference numberOfCharsWritten);
+	int FillConsoleOutputCharacterW(Pointer consoleOutput, char character, int length, COORD.ByValue writeCoord, IntByReference numberOfCharsWritten);
 
 
 }
