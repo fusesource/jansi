@@ -107,19 +107,16 @@ public class AnsiOutputStream extends FilterOutputStream {
 		case LOOKING_FOR_INT_ARG_END:
 			buffer[pos++] = (byte)data;
 			if( !('0' <= data && data <= '9') ) {
-				Integer value = new Integer(new String(buffer, startOfValue, (pos-1)-startOfValue, "UTF-8"));
+				String strValue = new String(buffer, startOfValue, (pos-1)-startOfValue, "UTF-8");
+				Integer value = new Integer(strValue);
 				options.add(value);
 				if( data == ';' ) {
 					state = LOOKING_FOR_NEXT_ARG;
 				} else {
-					if( data == ';' ) {
-						state = LOOKING_FOR_NEXT_ARG;
-					} else {
-						if( processEscapeCommand(options, data) ) {
-							pos=0;
-						}
-						reset();
+					if( processEscapeCommand(options, data) ) {
+						pos=0;
 					}
+					reset();
 				}
 			}
 			break;

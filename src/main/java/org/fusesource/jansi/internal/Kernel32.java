@@ -44,6 +44,13 @@ public interface Kernel32 extends StdCallLibrary {
 		public short top;
 		public short right;
 		public short bottom;
+		
+		public short width() {
+			return (short) (right-left);
+		}
+		public short height() {
+			return (short) (bottom-top);
+		}
 	}
 	
 	/**
@@ -79,7 +86,7 @@ public interface Kernel32 extends StdCallLibrary {
 		public COORD      size = new COORD();
 		public COORD      cursorPosition = new COORD();
 		public short      attributes;
-		public SMALL_RECT srWindow = new SMALL_RECT();
+		public SMALL_RECT window = new SMALL_RECT();
 		public COORD      maximumWindowSize = new COORD();		
 	}
 	

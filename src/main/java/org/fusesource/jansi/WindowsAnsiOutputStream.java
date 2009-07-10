@@ -124,10 +124,10 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
 		getConsoleInfo();
 		switch(eraseOption) {
 		case ERASE_SCREEN:
-			int length = info.size.x * info.size.y;
 			COORD.ByValue coord = new COORD.ByValue();
 			coord.x = 0;
-			coord.y = 0;
+			coord.y = info.window.top;
+			int length = info.window.height() * info.size.x;
 			IntByReference written = new IntByReference();
 			KERNEL32.FillConsoleOutputCharacterW(console, ' ', length, coord, written);
 		case ERASE_SCREEN_TO_BEGINING:
@@ -145,29 +145,29 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
 	@Override
 	protected void processCursorRight(int count) throws IOException {
 		getConsoleInfo();
-		info.cursorPosition.x = (short)Math.min(info.maximumWindowSize.x, info.cursorPosition.x+count);
+		info.cursorPosition.x = (short)Math.min(info.window.width(), info.cursorPosition.x+count);
 		applyCursorPosition();		
 	}
 	
 	@Override
 	protected void processCursorDown(int count) throws IOException {
 		getConsoleInfo();
-		info.cursorPosition.y = (short) Math.min(info.maximumWindowSize.y, info.cursorPosition.y+count);
+		info.cursorPosition.y = (short) Math.min(info.size.y, info.cursorPosition.y+count);
 		applyCursorPosition();		
 	}
 	
 	@Override
 	protected void processCursorUp(int count) throws IOException {
 		getConsoleInfo();
-		info.cursorPosition.y = (short) Math.max(0, info.cursorPosition.y-count);
+		info.cursorPosition.y = (short) Math.max(info.window.top, info.cursorPosition.y-count);
 		applyCursorPosition();		
 	}
 	
 	@Override
 	protected void processCursorTo(int x, int y) throws IOException {
 		getConsoleInfo();
-		info.cursorPosition.y = (short) Math.max(0, Math.min(info.maximumWindowSize.y, y-1));
-		info.cursorPosition.x = (short) Math.max(0, Math.min(info.maximumWindowSize.x, x-1));
+		info.cursorPosition.y = (short) Math.max(info.window.top, Math.min(info.size.y, info.window.top+y-1));
+		info.cursorPosition.x = (short) Math.max(0, Math.min(info.window.width(), x-1));
 		applyCursorPosition();		
 	}
 
