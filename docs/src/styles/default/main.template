@@ -28,7 +28,7 @@ template: ~
     
     <title>{title:}</title>
 
-<% if node.node_info[:page].blocks.has_key?('head') %>
+<% if context.node.node_info[:page].blocks.has_key?('head') %>
     <webgen:block name='head' />
 <% end %>
 
@@ -42,7 +42,7 @@ template: ~
   	</div>
   </div>
   
-<% if node.node_info[:page].blocks.has_key?('overview') %>
+<% if context.node.node_info[:page].blocks.has_key?('overview') %>
   <div id="overview">
     <div class="wrapper">
       <div class="logo">
@@ -55,7 +55,7 @@ template: ~
   </div>
 <% end %>
 
-<% if node.node_info[:page].blocks.has_key?('spot') %>
+<% if context.node.node_info[:page].blocks.has_key?('spot') %>
   <div id='spot'>
   	<div class='wrapper'>
       <webgen:block name='spot' />
@@ -63,7 +63,7 @@ template: ~
   </div>
 <% end %>
 
-<% if node.node_info[:page].blocks.has_key?('content') %>
+<% if context.node.node_info[:page].blocks.has_key?('content') %>
   <div id='content'>
   	<div class='wrapper'>
       <webgen:block name="content" />
@@ -71,7 +71,7 @@ template: ~
   </div>
 <% end %>
 
-<% if node.node_info[:page].blocks.has_key?('blog') %>
+<% if context.node.node_info[:page].blocks.has_key?('blog') %>
   <div id='blog'>
   	<div class='wrapper'>
       <webgen:block name="blog" />
