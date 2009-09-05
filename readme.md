@@ -55,7 +55,7 @@ Project Links
 * [Project Home][2]
 * [Release Downloads](http://jansi.fusesource.org/downloads/index.html)
 * [GitHub](http://github.com/chirino/jansi/tree/master)
-* Source: `git clone git://forge.fusesource.com/mop.git`
+* Source: `git clone git://forge.fusesource.com/jansi.git`
 
 [1]: http://jansi.fusesource.org/images/project-logo.png "Jansi"
 [2]: http://jansi.fusesource.org/ "Jansi"
