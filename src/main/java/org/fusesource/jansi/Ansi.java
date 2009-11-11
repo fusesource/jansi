@@ -36,7 +36,8 @@ final public class Ansi {
 		BLUE(4, "BLUE"), 
 		MAGENTA(5, "MAGENTA"), 
 		CYAN(6, "CYAN"), 
-		WHITE(7,"WHITE");
+		WHITE(7,"WHITE"),
+		DEFAULT(9,"DEFAULT");
 
 		private final int value;
 		private final String name;
@@ -62,25 +63,36 @@ final public class Ansi {
 		public int bg() {
 			return value + 40;
 		}
+		
+		public int fgBright() {
+			return value + 90;
+		}
+		
+		public int bgBright() {
+			return value + 100;
+		}
 	};
 
 	public enum Attribute {
-		RESET(0, "RESET"), 
-		INTENSITY_BOLD(1, "INTENSITY_BOLD"), 
-		INTENSITY_FAINT(2, "INTENSITY_FAINT"), 
-		ITALIC(3, "ITALIC"), 
-		UNDERLINE(4,"UNDERLINE"), 
-		BLINK_SLOW(5, "BLINK_SLOW"), 
-		BLINK_FAST(6, "BLINK_FAST"), 
-		NEGATIVE_ON(7, "NEGATIVE_ON"), 
-		CONCEAL_ON(8, "CONCEAL_ON"), 
-		UNDERLINE_DOUBLE(21, "UNDERLINE_DOUBLE"), 
-		INTENSITY_NORMAL(2, "INTENSITY_NORMAL"), 
-		UNDERLINE_OFF(24, "UNDERLINE_OFF"), 
-		BLINK_OFF(25, "BLINK_OFF"), 
-		NEGATIVE_OFF(27, "NEGATIVE_OFF"), 
-		CONCEAL_OFF(28, "CONCEAL_OFF");
-
+		RESET						(  0, "RESET"), 
+		INTENSITY_BOLD				(  1, "INTENSITY_BOLD"), 
+		INTENSITY_FAINT				(  2, "INTENSITY_FAINT"), 
+		ITALIC						(  3, "ITALIC_ON"), 
+		UNDERLINE					(  4, "UNDERLINE_ON"), 
+		BLINK_SLOW					(  5, "BLINK_SLOW"), 
+		BLINK_FAST					(  6, "BLINK_FAST"), 
+		NEGATIVE_ON					(  7, "NEGATIVE_ON"), 
+		CONCEAL_ON					(  8, "CONCEAL_ON"),
+		STRIKETHROUGH_ON			(  9, "STRIKETHROUGH_ON"),
+		UNDERLINE_DOUBLE			( 21, "UNDERLINE_DOUBLE"), 
+		INTENSITY_BOLD_OFF			( 22, "INTENSITY_BOLD_OFF"),
+		ITALIC_OFF					( 23, "ITALIC_OFF"),
+		UNDERLINE_OFF				( 24, "UNDERLINE_OFF"), 
+		BLINK_OFF					( 25, "BLINK_OFF"), 
+		NEGATIVE_OFF				( 27, "NEGATIVE_OFF"), 
+		CONCEAL_OFF					( 28, "CONCEAL_OFF"),
+		STRIKETHROUGH_OFF			( 29, "STRIKETHROUGH_OFF");
+		
 		private final int value;
 		private final String name;
 
