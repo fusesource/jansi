@@ -74,12 +74,14 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
     };
 	
 	private final CONSOLE_SCREEN_BUFFER_INFO.ByReference info = new CONSOLE_SCREEN_BUFFER_INFO.ByReference();
-
+    private final short originalColors;
+    
 	private boolean negative;
 	
 	public WindowsAnsiOutputStream(OutputStream os) throws IOException {
 		super(os);
 		getConsoleInfo();
+		originalColors = info.attributes;
 	}
 
 	private void getConsoleInfo() throws IOException {
@@ -91,6 +93,15 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
 			info.attributes = invertAttributeColors(info.attributes); 
 		}
 	}	
+	
+ 	@Override
+ 	public void close() throws IOException {
+ 	    out.flush();
+ 		info.attributes = originalColors;
+ 		this.negative = false;
+ 		applyAttribute();
+ 		super.close();
+ 	}
 	
 	private void applyAttribute() throws IOException {
 		out.flush();

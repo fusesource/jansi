@@ -4,6 +4,7 @@
 [Jansi 1.1][1_1], Release Pending
 ----------------------------------
 
+* [JANSI-4](http://fusesource.com/issues/browse/JANSI-4): Restore command console after closing wrapped OutputStream on Windows.
 * [JANSI-1](http://fusesource.com/issues/browse/JANSI-1): Added extensions for colors and other attributes to Ansi builder. 
 
 [Jansi 1.0][1_0], released 2009-08-25
