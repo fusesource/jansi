@@ -116,6 +116,10 @@ public class AnsiRenderer
 
     public static enum Code
     {
+        //
+        // TODO: Find a better way to keey Code insync with Color/Attribute/Erase
+        //
+        
         // Colors
         BLACK(Color.BLACK),
         RED(Color.RED),
