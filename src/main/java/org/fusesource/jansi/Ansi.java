@@ -17,6 +17,7 @@
 package org.fusesource.jansi;
 
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
 
 /**
  * Provides a fluent API for generating ANSI escape sequences.
@@ -138,22 +139,31 @@ public class Ansi {
 
     public static final String DISABLE = Ansi.class.getName() + ".disable";
 
-    /**
-     * Tries to detect if the current system supports ANSI.
-     */
-    private static boolean detect() {
-        return !Boolean.getBoolean(DISABLE);
+    private static Callable<Boolean> detector = new Callable<Boolean>() {
+        public Boolean call() throws Exception {
+            return !Boolean.getBoolean(DISABLE);
+        }
+    };
+
+    public static void setDetector(final Callable<Boolean> detector) {
+        if (detector == null) throw new IllegalArgumentException();
+        Ansi.detector = detector;
     }
 
     public static boolean isDetected() {
-        return detect();
+        try {
+            return detector.call();
+        }
+        catch (Exception e) {
+            return true;
+        }
     }
 
     private static final InheritableThreadLocal<Boolean> holder = new InheritableThreadLocal<Boolean>()
     {
         @Override
         protected Boolean initialValue() {
-            return detect();
+            return isDetected();
         }
     };
 
