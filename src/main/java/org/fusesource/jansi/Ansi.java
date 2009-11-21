@@ -22,13 +22,14 @@ import java.util.ArrayList;
  * Provides a fluent API for generating ANSI escape sequences.
  * 
  * @author chirino
+ * @since 1.0
  */
-final public class Ansi {
+public final class Ansi {
 
 	private static final char FIRST_ESC_CHAR = 27;
 	private static final char SECOND_ESC_CHAR = '[';
 
-	public enum Color {
+	public static enum Color {
 		BLACK(0, "BLACK"), 
 		RED(1, "RED"), 
 		GREEN(2, "GREEN"), 
@@ -73,7 +74,7 @@ final public class Ansi {
 		}
 	};
 
-	public enum Attribute {
+	public static enum Attribute {
 		RESET						(  0, "RESET"), 
 		INTENSITY_BOLD				(  1, "INTENSITY_BOLD"), 
 		INTENSITY_FAINT				(  2, "INTENSITY_FAINT"), 
@@ -112,7 +113,7 @@ final public class Ansi {
 
 	};
 
-	public enum Erase {
+	public static enum Erase {
 		FORWARD(0, "FORWARD"),
 		BACKWARD(1, "BACKWARD"), 
 		ALL(2, "ALL"); 
@@ -308,6 +309,12 @@ final public class Ansi {
 		return this;
 	}
 
+    public Ansi format(String pattern, Object... args) {
+        fushAtttributes();
+        builder.append(String.format(pattern, args));
+        return this;
+    }
+
 	@Override
 	public String toString() {
 		fushAtttributes();		
@@ -340,6 +347,7 @@ final public class Ansi {
 		return _appendEscapeSequence(command, options);
 	}
 
+    // What is fush?  Should this be flush?
 	
 	private void fushAtttributes() {
 		if( attributeOptions.isEmpty() )
