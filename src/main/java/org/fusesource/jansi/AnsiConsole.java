@@ -28,28 +28,32 @@ import org.fusesource.jansi.internal.CLibrary;
  * Provides consistent access to an ANSI aware console PrintStream.
  * 
  * @author chirino
+ * @since 1.0
  */
 public class AnsiConsole {
 
 	public static final PrintStream system_out = System.out;
-	public static final PrintStream out = new PrintStream(wrapOutputStream(system_out));
-	private static int installed;
-	
+    public static final PrintStream out = new PrintStream(wrapOutputStream(system_out));
 
-	public static OutputStream wrapOutputStream(OutputStream system_out) {
+    public static final PrintStream system_err = System.err;
+    public static final PrintStream err = new PrintStream(wrapOutputStream(system_err));
+
+    private static int installed;
+
+	public static OutputStream wrapOutputStream(final OutputStream stream) {
 		String os = System.getProperty("os.name");
 		if( os.startsWith("Windows") ) {
 			
 			// On windows we know the console does not interpret ANSI codes..
 			try {
-				return new WindowsAnsiOutputStream(system_out);
+				return new WindowsAnsiOutputStream(stream);
 			} catch (Throwable ignore) {
 				// this happens when JNA is not in the path.. or
 				// this happens when the stdout is being redirected to a file.
 			}
 			
 			// Use the ANSIOutputStream to strip out the ANSI escape sequences.
-			return new AnsiOutputStream(system_out);
+			return new AnsiOutputStream(stream);
 		}
 		
 		// We must be on some unix variant..
@@ -58,12 +62,13 @@ public class AnsiConsole {
 			// to strip the ANSI sequences..
 			int rc = CLIBRARY.isatty(CLibrary.STDOUT_FILENO);
 			if( rc==0 ) {
-				return new AnsiOutputStream(system_out);
+				return new AnsiOutputStream(stream);
 			}
 		} catch (Throwable ignore) {
 		}
-		// By default we asume your Unix tty can handle ANSI codes.
-		return system_out;
+
+		// By default we assume your Unix tty can handle ANSI codes.
+		return stream;
 	}
 
 	/**
@@ -77,6 +82,18 @@ public class AnsiConsole {
 	public static PrintStream out() {
 		return out;
 	}
+
+    /**
+	 * If the standard out natively supports ANSI escape codes, then this just
+	 * returns System.err, otherwise it will provide an ANSI aware PrintStream
+	 * which strips out the ANSI escape sequences or which implement the escape
+	 * sequences.
+	 *
+	 * @return a PrintStream which is ANSI aware.
+	 */
+    public static PrintStream err() {
+        return err;
+    }
 	
 	/**
 	 * Install Console.out to System.out.
@@ -85,6 +102,7 @@ public class AnsiConsole {
 		installed++;
 		if( installed==1 ) {
 			System.setOut(out);
+            System.setErr(err);
 		}
 	}
 	
@@ -96,7 +114,8 @@ public class AnsiConsole {
 	synchronized public static void systemUninstall() {
 		installed--;
 		if( installed==0 ) {
-			System.setOut(out);
+			System.setOut(system_out);
+            System.setErr(system_err);
 		}
 	}
 	
