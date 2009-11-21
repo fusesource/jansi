@@ -24,9 +24,9 @@ import java.util.ArrayList;
  * @author chirino
  * @since 1.0
  */
-public final class Ansi {
+public class Ansi {
 
-	private static final char FIRST_ESC_CHAR = 27;
+    private static final char FIRST_ESC_CHAR = 27;
 	private static final char SECOND_ESC_CHAR = '[';
 
 	public static enum Color {
@@ -136,6 +136,132 @@ public final class Ansi {
 		}
 	};
 
+    public static final String DISABLE = Ansi.class.getName() + ".disable";
+
+    /**
+     * Tries to detect if the current system supports ANSI.
+     */
+    private static boolean detect() {
+        return !Boolean.getBoolean(DISABLE);
+    }
+
+    public static boolean isDetected() {
+        return detect();
+    }
+
+    private static final InheritableThreadLocal<Boolean> holder = new InheritableThreadLocal<Boolean>()
+    {
+        @Override
+        protected Boolean initialValue() {
+            return detect();
+        }
+    };
+
+    public static void setEnabled(final boolean flag) {
+        holder.set(flag);
+    }
+
+    public static boolean isEnabled() {
+        return holder.get();
+    }
+
+    public static Ansi ansi() {
+        if (isEnabled()) {
+            return new Ansi();
+        }
+        else {
+            return new NoAnsi();
+        }
+    }
+
+    private static class NoAnsi
+        extends Ansi
+    {
+        @Override
+        public Ansi fg(Color color) {
+            return this;
+        }
+
+        @Override
+        public Ansi bg(Color color) {
+            return this;
+        }
+
+        @Override
+        public Ansi a(Attribute attribute) {
+            return this;
+        }
+
+        @Override
+        public Ansi cursor(int x, int y) {
+            return this;
+        }
+
+        @Override
+        public Ansi cursorUp(int y) {
+            return this;
+        }
+
+        @Override
+        public Ansi cursorRight(int x) {
+            return this;
+        }
+
+        @Override
+        public Ansi cursorDown(int y) {
+            return this;
+        }
+
+        @Override
+        public Ansi cursorLeft(int x) {
+            return this;
+        }
+
+        @Override
+        public Ansi eraseScreen() {
+            return this;
+        }
+
+        @Override
+        public Ansi eraseScreen(Erase kind) {
+            return this;
+        }
+
+        @Override
+        public Ansi eraseLine() {
+            return this;
+        }
+
+        @Override
+        public Ansi eraseLine(Erase kind) {
+            return this;
+        }
+
+        @Override
+        public Ansi scrollUp(int rows) {
+            return this;
+        }
+
+        @Override
+        public Ansi scrollDown(int rows) {
+            return this;
+        }
+
+        @Override
+        public Ansi saveCursorPosition() {
+            return this;
+        }
+
+        @Override
+        public Ansi restorCursorPosition() {
+            return this;
+        }
+
+        @Override
+        public Ansi reset() {
+            return this;
+        }
+    }
 
 	private final StringBuilder builder;
 	private final ArrayList<Integer> attributeOptions = new ArrayList<Integer>(5);
@@ -143,16 +269,15 @@ public final class Ansi {
 	public Ansi() {
 		this(new StringBuilder());
 	}
-	public Ansi(int size) {
+
+    public Ansi(int size) {
 		this(new StringBuilder(size));
 	}
-	public Ansi(StringBuilder builder) {
+
+    public Ansi(StringBuilder builder) {
 		this.builder = builder;
 	}
 
-	public static Ansi ansi() {
-		return new Ansi();
-	}
 	public static Ansi ansi(StringBuilder builder) {
 		return new Ansi(builder);
 	}

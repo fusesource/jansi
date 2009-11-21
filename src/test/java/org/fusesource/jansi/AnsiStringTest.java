@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 the original author(s).
+ * Copyright (C) 2009 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,30 +21,24 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Tests for the {@link Ansi} class.
+ * Tests for {@link AnsiString}.
  *
  * @author <a href="mailto:jason@planet57.com">Jason Dillon</a>
  */
-public class AnsiTest
+public class AnsiStringTest
 {
     @Test
-    public void testSetEnabled() throws Exception {
-        Ansi.setEnabled(false);
-        new Thread()
-        {
-            @Override
-            public void run() {
-                assertEquals(false, Ansi.isEnabled());
-            }
-        }.run();
+    public void testNotEncoded() throws Exception {
+        AnsiString as = new AnsiString("foo");
+        assertEquals("foo", as.getEncoded());
+        assertEquals("foo", as.getPlain());
+        assertEquals(3, as.length());
+    }
 
-        Ansi.setEnabled(true);
-        new Thread()
-        {
-            @Override
-            public void run() {
-                assertEquals(true, Ansi.isEnabled());
-            }
-        }.run();
+    @Test
+    public void testEncoded() throws Exception {
+        AnsiString as = new AnsiString(Ansi.ansi().a(Ansi.Attribute.INTENSITY_BOLD).a("foo").reset().toString());
+        assertEquals("foo", as.getPlain());
+        assertEquals(3, as.length());
     }
 }

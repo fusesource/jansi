@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 the original author(s).
+ * Copyright (C) 2009 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,35 +16,43 @@
 
 package org.fusesource.jansi;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+
+import java.io.ByteArrayOutputStream;
 
 import static org.junit.Assert.assertEquals;
 
 /**
- * Tests for the {@link Ansi} class.
+ * Tests for the {@link AnsiRenderWriter} class.
  *
  * @author <a href="mailto:jason@planet57.com">Jason Dillon</a>
  */
-public class AnsiTest
+public class AnsiRenderWriterTest
 {
-    @Test
-    public void testSetEnabled() throws Exception {
-        Ansi.setEnabled(false);
-        new Thread()
-        {
-            @Override
-            public void run() {
-                assertEquals(false, Ansi.isEnabled());
-            }
-        }.run();
+    private ByteArrayOutputStream baos;
 
-        Ansi.setEnabled(true);
-        new Thread()
-        {
-            @Override
-            public void run() {
-                assertEquals(true, Ansi.isEnabled());
-            }
-        }.run();
+    private AnsiRenderWriter out;
+
+    @Before
+    public void setUp() {
+        baos = new ByteArrayOutputStream();
+        out = new AnsiRenderWriter(baos);
+    }
+
+    @After
+    public void tearDown() {
+        out = null;
+        baos = null;
+    }
+
+    @Test
+    public void testRenderNothing() {
+        out.print("foo");
+        out.flush();
+
+        String result = new String(baos.toByteArray());
+        assertEquals("foo", result);
     }
 }
