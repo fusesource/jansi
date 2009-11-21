@@ -35,6 +35,9 @@ import org.fusesource.jansi.internal.Kernel32.COORD;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 
+/**
+ * @since 1.0
+ */
 public final class WindowsAnsiOutputStream extends AnsiOutputStream {
 	
 	private static final Pointer console = KERNEL32.GetStdHandle(Kernel32.STD_OUTPUT_HANDLE);

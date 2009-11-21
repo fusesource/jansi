@@ -35,10 +35,11 @@ import java.util.ArrayList;
  * actually perform the ANSI escape behaviors.
  * 
  * @author chirino
+ * @since 1.0
  */
 public class AnsiOutputStream extends FilterOutputStream {
 
-	public AnsiOutputStream(OutputStream 	os) {
+	public AnsiOutputStream(OutputStream os) {
 		super(os);
 	}
 
