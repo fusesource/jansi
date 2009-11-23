@@ -1,7 +1,7 @@
 ![Jansi][logo]
 ===========
 
-[Jansi 1.1][1_1], Release Pending
+[Jansi 1.1][1_1], released 2009-11-23
 ----------------------------------
 * AnsiRender can now be used in a static way and made easier to use with the Ansi builder.
 * Merged [Jason Dillon's Fork](http://github.com/jdillon/jansi/tree/bb86e0e79bec850167ddfd8c4a86fb9ffef704e5): 
