@@ -26,7 +26,7 @@ import com.sun.jna.win32.StdCallLibrary;
 /**
  * Interface to access some low level Windows kernel functions.
  * 
- * @author chirino
+ * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  */
 public interface Kernel32 extends StdCallLibrary {
 

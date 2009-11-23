@@ -21,16 +21,18 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Locale;
 
+import static org.fusesource.jansi.AnsiRenderer.*;
+
 /**
  * Print writer which supports automatic ANSI color rendering via {@link AnsiRenderer}.
  *
  * @author <a href="mailto:jason@planet57.com">Jason Dillon</a>
+ * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  * @since 1.1
  */
 public class AnsiRenderWriter
     extends PrintWriter
 {
-    private final AnsiRenderer renderer = new AnsiRenderer();
 
     public AnsiRenderWriter(final OutputStream out) {
         super(out);
@@ -50,8 +52,8 @@ public class AnsiRenderWriter
 
     @Override
     public void write(final String s) {
-        if (AnsiRenderer.test(s)) {
-            super.write(renderer.render(s));
+        if (test(s)) {
+            super.write(render(s));
         }
         else {
             super.write(s);

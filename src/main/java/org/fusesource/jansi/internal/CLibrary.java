@@ -22,7 +22,7 @@ import com.sun.jna.Native;
 /**
  * Interface to access some low level POSIX functions.
  * 
- * @author chirino
+ * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  */
 public interface CLibrary extends Library {
 

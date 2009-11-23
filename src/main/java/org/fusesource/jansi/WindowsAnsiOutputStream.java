@@ -36,7 +36,11 @@ import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 
 /**
+ * A Windows ANSI escape processor, uses JNA to access native platform
+ * API's to change the console attributes.
+ * 
  * @since 1.0
+ * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  */
 public final class WindowsAnsiOutputStream extends AnsiOutputStream {
 	

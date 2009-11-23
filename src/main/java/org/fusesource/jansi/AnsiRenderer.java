@@ -30,6 +30,7 @@ import org.fusesource.jansi.Ansi.Color;
  * </pre>
  *
  * @author <a href="mailto:jason@planet57.com">Jason Dillon</a>
+ * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  * @since 1.1
  */
 public class AnsiRenderer
@@ -46,7 +47,7 @@ public class AnsiRenderer
 
     public static final String CODE_LIST_SEPARATOR = ",";
 
-    public String render(final String input) throws IllegalArgumentException {
+    static public String render(final String input) throws IllegalArgumentException {
         StringBuffer buff = new StringBuffer();
 
         int i = 0;
@@ -88,9 +89,8 @@ public class AnsiRenderer
         }
     }
 
-    private String render(final String text, final String... codes) {
-        org.fusesource.jansi.Ansi ansi = Ansi.ansi();
-
+    static private String render(final String text, final String... codes) {
+        Ansi ansi = Ansi.ansi();
         for (String name : codes) {
             Code code = Code.valueOf(name.toUpperCase());
 
@@ -117,7 +117,7 @@ public class AnsiRenderer
     public static enum Code
     {
         //
-        // TODO: Find a better way to keey Code insync with Color/Attribute/Erase
+        // TODO: Find a better way to keep Code in sync with Color/Attribute/Erase
         //
         
         // Colors
@@ -170,15 +170,18 @@ public class AnsiRenderer
         BOLD(Attribute.INTENSITY_BOLD),
         FAINT(Attribute.INTENSITY_FAINT),;
 
+        @SuppressWarnings("unchecked")
         private final Enum n;
 
         private final boolean background;
 
+        @SuppressWarnings("unchecked")
         private Code(final Enum n, boolean background) {
             this.n = n;
             this.background = background;
         }
 
+        @SuppressWarnings("unchecked")
         private Code(final Enum n) {
             this(n, false);
         }

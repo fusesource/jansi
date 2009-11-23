@@ -16,13 +16,14 @@
 
 package org.fusesource.jansi;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.fusesource.jansi.Ansi.*;
+import static org.fusesource.jansi.Ansi.Attribute.*;
+import static org.fusesource.jansi.Ansi.Color.*;
+import static org.fusesource.jansi.AnsiRenderer.*;
+import static org.junit.Assert.*;
 
 /**
  * Tests for the {@link AnsiRenderer} class.
@@ -31,72 +32,73 @@ import static org.junit.Assert.assertTrue;
  */
 public class AnsiRendererTest
 {
-    private AnsiRenderer renderer;
-
     @Before
     public void setUp() {
         Ansi.setEnabled(true);
-        renderer = new AnsiRenderer();
-    }
-
-    @After
-    public void tearDown() {
-        renderer = null;
     }
 
     @Test
     public void testTest() throws Exception {
-        assertFalse(AnsiRenderer.test("foo"));
-        assertTrue(AnsiRenderer.test("@|foo|"));
-        assertTrue(AnsiRenderer.test("@|foo"));
+        assertFalse(test("foo"));
+        assertTrue(test("@|foo|"));
+        assertTrue(test("@|foo"));
     }
 
     @Test
     public void testRender() {
-        String str = renderer.render("@|bold foo|@");
+        String str = render("@|bold foo|@");
         System.out.println(str);
-        assertEquals(Ansi.ansi().a(Ansi.Attribute.INTENSITY_BOLD).a("foo").reset().toString(), str);
+        assertEquals(ansi().a(INTENSITY_BOLD).a("foo").reset().toString(), str);
     }
 
     @Test
     public void testRender2() {
-        String str = renderer.render("@|bold,red foo|@");
+        String str = render("@|bold,red foo|@");
         System.out.println(str);
-        assertEquals(Ansi.ansi().a(Ansi.Attribute.INTENSITY_BOLD).fg(Ansi.Color.RED).a("foo").reset().toString(), str);
+        assertEquals(Ansi.ansi().a(INTENSITY_BOLD).fg(RED).a("foo").reset().toString(), str);
     }
 
     @Test
     public void testRender3() {
-        String str = renderer.render("@|bold,red foo bar baz|@");
+        String str = render("@|bold,red foo bar baz|@");
         System.out.println(str);
-        assertEquals(Ansi.ansi().a(Ansi.Attribute.INTENSITY_BOLD).fg(Ansi.Color.RED).a("foo bar baz").reset().toString(), str);
+        assertEquals(ansi().a(INTENSITY_BOLD).fg(RED).a("foo bar baz").reset().toString(), str);
     }
 
     @Test
     public void testRender4() {
-        String str = renderer.render("@|bold,red foo bar baz|@ ick @|bold,red foo bar baz|@");
+        String str = render("@|bold,red foo bar baz|@ ick @|bold,red foo bar baz|@");
         System.out.println(str);
-        assertEquals(Ansi.ansi()
-                .a(Ansi.Attribute.INTENSITY_BOLD).fg(Ansi.Color.RED).a("foo bar baz").reset()
+        assertEquals(ansi()
+                .a(INTENSITY_BOLD).fg(RED).a("foo bar baz").reset()
                 .a(" ick ")
-                .a(Ansi.Attribute.INTENSITY_BOLD).fg(Ansi.Color.RED).a("foo bar baz").reset()
+                .a(INTENSITY_BOLD).fg(RED).a("foo bar baz").reset()
                 .toString(), str);
     }
+    
+    @Test
+    public void testRender5() {
+        // Check the ansi() render method.
+        String str = ansi().render("@|bold Hello|@").toString();
+        System.out.println(str);
+        assertEquals(ansi().a(INTENSITY_BOLD).a("Hello").reset().toString(), str);
+    }
+    
 
     @Test
     public void testRenderNothing() {
-        assertEquals("foo", renderer.render("foo"));
+        assertEquals("foo", render("foo"));
     }
 
     @Test
     public void testRenderInvalidMissingEnd() {
-        String str = renderer.render("@|bold foo");
+        String str = render("@|bold foo");
         assertEquals("@|bold foo", str);
     }
 
     @Test
     public void testRenderInvalidMissingText() {
-        String str = renderer.render("@|bold|@");
+        String str = render("@|bold|@");
         assertEquals("@|bold|@", str);
     }
 }

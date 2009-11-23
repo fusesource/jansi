@@ -20,6 +20,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import static org.fusesource.jansi.Ansi.*;
 
+/**
+ * 
+ * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
+ */
 public class AnsiConsoleExample2 {
 
 	public static void main(String[] args) throws IOException {

@@ -22,7 +22,7 @@ import java.util.concurrent.Callable;
 /**
  * Provides a fluent API for generating ANSI escape sequences.
  * 
- * @author chirino
+ * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  * @since 1.0
  */
 public class Ansi {
@@ -367,92 +367,117 @@ public class Ansi {
 	}
 
 	public Ansi a(String value) {
-		fushAtttributes();		
+		flushAtttributes();		
 		builder.append(value);
 		return this;
 	}
 
 	public Ansi a(boolean value) {
-		fushAtttributes();		
+		flushAtttributes();		
 		builder.append(value);
 		return this;
 	}
 
 	public Ansi a(char value) {
-		fushAtttributes();		
+		flushAtttributes();		
 		builder.append(value);
 		return this;
 	}
 
 	public Ansi a(char[] value, int offset, int len) {
-		fushAtttributes();		
+		flushAtttributes();		
 		builder.append(value, offset, len);
 		return this;
 	}
 
 	public Ansi a(char[] value) {
-		fushAtttributes();		
+		flushAtttributes();		
 		builder.append(value);
 		return this;
 	}
 
 	public Ansi a(CharSequence value, int start, int end) {
-		fushAtttributes();		
+		flushAtttributes();		
 		builder.append(value, start, end);
 		return this;
 	}
 
 	public Ansi a(CharSequence value) {
-		fushAtttributes();		
+		flushAtttributes();		
 		builder.append(value);
 		return this;
 	}
 
 	public Ansi a(double value) {
-		fushAtttributes();		
+		flushAtttributes();		
 		builder.append(value);
 		return this;
 	}
 
 	public Ansi a(float value) {
-		fushAtttributes();		
+		flushAtttributes();		
 		builder.append(value);
 		return this;
 	}
 
 	public Ansi a(int value) {
-		fushAtttributes();		
+		flushAtttributes();		
 		builder.append(value);
 		return this;
 	}
 
 	public Ansi a(long value) {
-		fushAtttributes();		
+		flushAtttributes();		
 		builder.append(value);
 		return this;
 	}
 
 	public Ansi a(Object value) {
-		fushAtttributes();		
+		flushAtttributes();		
 		builder.append(value);
 		return this;
 	}
 
 	public Ansi a(StringBuffer value) {
-		fushAtttributes();		
+		flushAtttributes();		
 		builder.append(value);
 		return this;
 	}
 
     public Ansi format(String pattern, Object... args) {
-        fushAtttributes();
+        flushAtttributes();
         builder.append(String.format(pattern, args));
+        return this;
+    }
+
+    /**
+     * Uses the {@link AnsiRenderer} 
+     * to generate the ANSI escape sequences for the supplied text.
+     * 
+     * @since 1.1
+     * @param text
+     */
+    public Ansi render(final String text) {
+        a(AnsiRenderer.render(text));
+        return this;
+    }
+
+    /**
+     * String formats and renders the supplied arguments.  Uses the {@link AnsiRenderer} 
+     * to generate the ANSI escape sequences.
+     * 
+     * @since 1.1
+     * @param text
+     * @param args
+     */
+    public Ansi render(final String text, Object... args) {
+        a(String.format(AnsiRenderer.render(text), args));
         return this;
     }
 
 	@Override
 	public String toString() {
-		fushAtttributes();		
+		flushAtttributes();		
 		return builder.toString();
 	}
 
@@ -461,7 +486,7 @@ public class Ansi {
 	///////////////////////////////////////////////////////////////////
 	
 	private Ansi appendEscapeSequence(char command) {
-		fushAtttributes();
+		flushAtttributes();
 		builder.append(FIRST_ESC_CHAR);
 		builder.append(SECOND_ESC_CHAR);
 		builder.append(command);
@@ -469,7 +494,7 @@ public class Ansi {
 	}
 	
 	private Ansi appendEscapeSequence(char command, int option) {
-		fushAtttributes();
+		flushAtttributes();
 		builder.append(FIRST_ESC_CHAR);
 		builder.append(SECOND_ESC_CHAR);
 		builder.append(option);
@@ -478,13 +503,11 @@ public class Ansi {
 	}
 	
 	private Ansi appendEscapeSequence(char command, Object... options) {
-		fushAtttributes();
+		flushAtttributes();
 		return _appendEscapeSequence(command, options);
 	}
 
-    // What is fush?  Should this be flush?
-	
-	private void fushAtttributes() {
+	private void flushAtttributes() {
 		if( attributeOptions.isEmpty() )
 			return;
 		if (attributeOptions.size() == 1 && attributeOptions.get(0) == 0) {

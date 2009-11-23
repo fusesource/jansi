@@ -27,7 +27,7 @@ import org.fusesource.jansi.internal.CLibrary;
 /**
  * Provides consistent access to an ANSI aware console PrintStream.
  * 
- * @author chirino
+ * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  * @since 1.0
  */
 public class AnsiConsole {
