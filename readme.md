@@ -31,7 +31,7 @@ Example Usage
 
 Enabling the Jansi ANSI support into your application is as simple as doing a simple static method call:
 
-    import org.fusesource.jansi;
+    import org.fusesource.jansi.AnsiConsole;
     ...
     AnsiConsole.systemInstall();
 
@@ -40,6 +40,19 @@ Disabling it is also done via a static method:
     AnsiConsole.systemUninstall();
 
 It is safe to call those methods multiple times, they keep track of how many times `systemInstall()` has been called and only uninstalls when the `systemUninstall()` method is called a corresponding number of times.
+
+Using the Ansi escape sequence builder:
+
+		import static org.fusesource.jansi.Ansi.*;
+		import static org.fusesource.jansi.Ansi.Color.*;
+		...
+		System.out.println( ansi().eraseScreen().fg(RED).a("Hello").fg.(GREEN).a(" World").reset() )
+
+The above will clear the screen, write `Hello ` in red and ` World` in green, then reset the color attributes so that subsequent data printed to the stream used the default colors.
+
+But there is an even simpler way to accomplish the above using the render method:
+
+		System.out.println( ansi().eraseScreen().render("@|red Hello|@ @|green World|@") )
 
 Optional Dependencies
 ---------------------
@@ -56,6 +69,8 @@ Project Links
 * [Release Downloads](http://jansi.fusesource.org/downloads/index.html)
 * [GitHub](http://github.com/chirino/jansi/tree/master)
 * Source: `git clone git://forge.fusesource.com/jansi.git`
+* [Issue Tracker](http://fusesource.com/issues/browse/JANSI)
+* [Mailing Lists](http://fusesource.com/forge/projects/JANSI/mailing-lists)
 
 [1]: http://jansi.fusesource.org/images/project-logo.png "Jansi"
 [2]: http://jansi.fusesource.org/ "Jansi"
