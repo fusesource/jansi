@@ -199,7 +199,7 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
 
 	@Override
 	protected void processAttributeRest() throws IOException {
-		info.attributes = (short)((info.attributes & ~0x00FF ) | FOREGROUND_WHITE | BACKGROUND_BLACK);
+		info.attributes = (short)((info.attributes & ~0x00FF ) | originalColors);
 		applyAttribute();
 	}
 	
