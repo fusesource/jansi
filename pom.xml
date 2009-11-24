@@ -33,6 +33,7 @@
     <system>jira</system>
     <url>http://fusesource.com/issues/browse/JANSI</url>
   </issueManagement>
+    
   <mailingLists>
     <mailingList>
       <name>jansi dev</name>
@@ -87,7 +88,11 @@
       <url>http://download.java.net/maven/2</url>
     </repository>
   </repositories>
-    
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>net.java.dev.jna</groupId>
