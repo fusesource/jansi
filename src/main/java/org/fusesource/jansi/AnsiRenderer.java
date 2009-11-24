@@ -21,12 +21,22 @@ import org.fusesource.jansi.Ansi.Color;
 
 /**
  * Renders ANSI color escape-codes in strings by parsing out some special syntax to pick up the correct fluff to use.
- * <p/>
+ *
  * <p/>
  * The syntax for embedded ANSI codes is:
- * <p/>
+ *
  * <pre>
- *     @|<code>(,<code>)*<space><text>|@
+ *   <tt>@|</tt><em>code</em>(<tt>,</tt><em>code</em>)* <em>text</em><tt>|@</tt>
+ * </pre>
+ *
+ * Examples:
+ *
+ * <pre>
+ *   <tt>@|bold Hello|@</tt>
+ * </pre>
+ *
+ * <pre>
+ *   <tt>@|bold,red Warning!|@</tt>
  * </pre>
  *
  * @author <a href="mailto:jason@planet57.com">Jason Dillon</a>
