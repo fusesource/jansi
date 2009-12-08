@@ -99,7 +99,7 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
 		if( negative ) {
 			info.attributes = invertAttributeColors(info.attributes); 
 		}
-	}	
+	}
 	
  	@Override
  	public void close() throws IOException {
@@ -140,17 +140,49 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
 	@Override
 	protected void processEraseScreen(int eraseOption) throws IOException {
 		getConsoleInfo();
+		IntByReference written = new IntByReference();
 		switch(eraseOption) {
 		case ERASE_SCREEN:
-			COORD.ByValue coord = new COORD.ByValue();
-			coord.x = 0;
-			coord.y = info.window.top;
-			int length = info.window.height() * info.size.x;
-			IntByReference written = new IntByReference();
-			KERNEL32.FillConsoleOutputCharacterW(console, ' ', length, coord, written);
+			COORD.ByValue topLeft = new COORD.ByValue();
+			topLeft.x = 0;
+			topLeft.y = info.window.top;
+			int screenLength = info.window.height() * info.size.x;
+			KERNEL32.FillConsoleOutputCharacterW(console, ' ', screenLength, topLeft, written);
+			break;
 		case ERASE_SCREEN_TO_BEGINING:
+			COORD.ByValue topLeft2 = new COORD.ByValue();
+			topLeft2.x = 0;
+			topLeft2.y = info.window.top;
+			int lengthToCursor = (info.cursorPosition.y - info.window.top) * info.size.x 
+				+ info.cursorPosition.x;
+			KERNEL32.FillConsoleOutputCharacterW(console, ' ', lengthToCursor, topLeft2, written);
+			break;
 		case ERASE_SCREEN_TO_END:
+			int lengthToEnd = (info.window.bottom - info.cursorPosition.y) * info.size.x + 
+				(info.size.x - info.cursorPosition.x);
+			KERNEL32.FillConsoleOutputCharacterW(console, ' ', lengthToEnd, info.cursorPosition.copy(), written);
 		}		
+	}
+	
+	@Override
+	protected void processEraseLine(int eraseOption) throws IOException {
+		getConsoleInfo();
+		IntByReference written = new IntByReference();
+		switch(eraseOption) {
+		case ERASE_LINE:
+			COORD.ByValue leftColCurrRow = info.cursorPosition.copy();
+			leftColCurrRow.x = 0;
+			KERNEL32.FillConsoleOutputCharacterW(console, ' ', info.size.x, leftColCurrRow, written);
+			break;
+		case ERASE_LINE_TO_BEGINING:
+			COORD.ByValue leftColCurrRow2 = info.cursorPosition.copy();
+			leftColCurrRow2.x = 0;
+			KERNEL32.FillConsoleOutputCharacterW(console, ' ', info.cursorPosition.x, leftColCurrRow2, written);
+			break;
+		case ERASE_LINE_TO_END:
+			int lengthToLastCol = info.size.x - info.cursorPosition.x;
+			KERNEL32.FillConsoleOutputCharacterW(console, ' ', lengthToLastCol, info.cursorPosition.copy(), written);
+		}
 	}
 	
 	@Override
@@ -189,6 +221,13 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
 		applyCursorPosition();		
 	}
 
+	@Override
+	protected void processCursorToColumn(int x) throws IOException {
+		getConsoleInfo();
+		info.cursorPosition.x = (short) Math.max(0, Math.min(info.window.width(), x-1));
+		applyCursorPosition();
+	}
+	
 	@Override
 	protected void processSetForegroundColor(int color) throws IOException {
 		info.attributes = (short)((info.attributes & ~0x0007 ) | ANSI_FOREGROUND_COLOR_MAP[color]);
