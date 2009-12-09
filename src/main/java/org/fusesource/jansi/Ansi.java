@@ -444,6 +444,12 @@ public class Ansi {
 		return this;
 	}
 
+    public Ansi newline() {
+        flushAtttributes();
+		builder.append(System.getProperty("line.separator"));
+		return this;
+    }
+
     public Ansi format(String pattern, Object... args) {
         flushAtttributes();
         builder.append(String.format(pattern, args));
