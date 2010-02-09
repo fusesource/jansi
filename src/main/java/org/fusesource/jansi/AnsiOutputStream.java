@@ -181,6 +181,7 @@ public class AnsiOutputStream extends FilterOutputStream {
 				return true;
 			case 'F':
 				processCursorUpLine(optionInt(options, 0, 1));
+				return true;
 			case 'G':
 				processCursorToColumn(optionInt(options, 0));
 				return true;
