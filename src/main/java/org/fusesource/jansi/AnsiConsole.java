@@ -19,6 +19,8 @@ package org.fusesource.jansi;
 
 import static org.fusesource.jansi.internal.CLibrary.CLIBRARY;
 
+import java.io.FilterOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
@@ -68,7 +70,16 @@ public class AnsiConsole {
 		}
 
 		// By default we assume your Unix tty can handle ANSI codes.
-		return stream;
+		// Just wrap it up so that when we get closed, we reset the 
+		// attributes.
+		return new FilterOutputStream(stream) {
+		    @Override
+		    public void close() throws IOException {
+		        write(AnsiOutputStream.REST_CODE);
+		        flush();
+		        super.close();
+		    }
+		};
 	}
 
 	/**

@@ -39,7 +39,7 @@ import java.util.ArrayList;
  */
 public class AnsiOutputStream extends FilterOutputStream {
 
-    byte [] REST_CODE = resetCode();
+    public static final byte [] REST_CODE = resetCode();
 
 	public AnsiOutputStream(OutputStream os) {
 		super(os);

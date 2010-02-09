@@ -1,6 +1,14 @@
 ![Jansi][logo]
 ===========
 
+[Jansi 1.2][1_2], released 2010-02-09
+----------------------------------
+* Improved Java Docs
+* Better windows ansi handling of: erase screen and line and move to col
+* new method: Ansi.newline()
+* Fixed missing return statement in cursor up case.. 
+* Reset the attributes when the ansi output stream is closed on unix.
+
 [Jansi 1.1][1_1], released 2009-11-23
 ----------------------------------
 * AnsiRender can now be used in a static way and made easier to use with the Ansi builder.
@@ -17,6 +25,7 @@
 
 * Initial Release
 
+[1_2]: http://jansi.fusesource.org/repo/release/org/fusesource/jansi/jansi/1.2
 [1_1]: http://jansi.fusesource.org/repo/release/org/fusesource/jansi/jansi/1.1
 [1_0]: http://jansi.fusesource.org/repo/release/org/fusesource/jansi/jansi/1.0
 [logo]: http://jansi.fusesource.org/images/project-logo.png "Jansi"
