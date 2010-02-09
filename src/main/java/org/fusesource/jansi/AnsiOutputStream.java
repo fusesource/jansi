@@ -18,9 +18,9 @@
 package org.fusesource.jansi;
 
 import java.io.FilterOutputStream;
-
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 /**
@@ -38,6 +38,8 @@ import java.util.ArrayList;
  * @since 1.0
  */
 public class AnsiOutputStream extends FilterOutputStream {
+
+    byte [] REST_CODE = resetCode();
 
 	public AnsiOutputStream(OutputStream os) {
 		super(os);
@@ -371,5 +373,20 @@ public class AnsiOutputStream extends FilterOutputStream {
 		}
 		return defaultValue;		
 	}
+	
+	@Override
+	public void close() throws IOException {
+	    write(REST_CODE);
+	    flush();
+	    super.close();
+	}
+	
+    static private byte[] resetCode() {
+        try {
+            return new Ansi().reset().toString().getBytes("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 }

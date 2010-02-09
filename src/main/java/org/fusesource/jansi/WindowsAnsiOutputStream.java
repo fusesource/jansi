@@ -100,16 +100,7 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
 			info.attributes = invertAttributeColors(info.attributes); 
 		}
 	}
-	
- 	@Override
- 	public void close() throws IOException {
- 	    out.flush();
- 		info.attributes = originalColors;
- 		this.negative = false;
- 		applyAttribute();
- 		super.close();
- 	}
-	
+		
 	private void applyAttribute() throws IOException {
 		out.flush();
 		short attributes = info.attributes;
@@ -243,6 +234,7 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
 	@Override
 	protected void processAttributeRest() throws IOException {
 		info.attributes = (short)((info.attributes & ~0x00FF ) | originalColors);
+        this.negative = false;
 		applyAttribute();
 	}
 	
