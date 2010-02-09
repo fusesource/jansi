@@ -23,7 +23,7 @@
   <packaging>jar</packaging>
   
   <name>jansi</name>
-  <version>1.2-SNAPSHOT</version>
+  <version>1.2</version>
   <description>jansi is a java library for generating and interpreting ANSI escape sequences.</description>
   <url>http://jansi.fusesource.org</url>
   
