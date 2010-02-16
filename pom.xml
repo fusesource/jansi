@@ -81,13 +81,33 @@
   </distributionManagement>  
   
   <repositories>
-    <!-- For the JNA dependency -->
+    <!-- For hawtjni -->
     <repository>
-      <id>maven2.java.net</id>
-      <name>Java.net Maven  Repository </name>
-      <url>http://download.java.net/maven/2</url>
-    </repository>
+      <id>hawtjni.snapshot.fusesource.org</id>
+      <name>MeshKeeper Snapshot Repo</name>
+      <url>http://hawtjni.fusesource.org/repo/snapshot</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </repository>    
   </repositories>
+  <pluginRepositories>
+    <!-- For the Uberize plugin -->
+    <pluginRepository>
+      <id>mvnplugins.release.fusesource.org</id>
+      <name>MeshKeeper Snapshot Repo</name>
+      <url>http://mvnplugins.fusesource.org/repo/release</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </pluginRepository>
+  </pluginRepositories>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -95,12 +115,10 @@
 
   <dependencies>
     <dependency>
-      <groupId>net.java.dev.jna</groupId>
-      <artifactId>jna</artifactId>
-      <version>3.2.3</version>
-      <optional>true</optional>
+      <groupId>org.fusesource.hawtjni</groupId>
+      <artifactId>hawtjni-runtime</artifactId>
+      <version>1.0-SNAPSHOT</version>
     </dependency>
-
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -119,6 +137,75 @@
     </extensions>
       
     <plugins>
+      <!-- the older clean plugin has trouble deleting directories with symlinks in them -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>2.3</version>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.fusesource.hawtjni</groupId>
+        <artifactId>maven-hawtjni-plugin</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate</goal>
+              <goal>build</goal>
+              <goal>package-jar</goal>
+              <goal>package-source</goal>
+            </goals>
+            <configuration>
+              <copyright><![CDATA[
+/*******************************************************************************
+ * Copyright (C) 2009, Progress Software Corporation and/or its 
+ * subsidiaries or affiliates.  All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
+              ]]></copyright>
+            </configuration>
+          </execution>
+        </executions>        
+      </plugin>
+      
+      <!-- include all the dependencies into the jar so it can run standalone -->
+      <plugin>
+        <groupId>org.fusesource.mvnplugins</groupId>
+        <artifactId>maven-uberize-plugin</artifactId>
+        <version>1.4</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals><goal>uberize</goal></goals>
+            <configuration>
+              
+              <transformers>
+                <!-- Make an executable jar -->
+                <transformer implementation="org.fusesource.mvnplugins.uberize.transformer.ManifestEditor">
+                  <manifestEntries>
+                    <Main-Class>test.Platform</Main-Class>
+                    <Specification-Version>${pom.version}</Specification-Version>
+                    <Implementation-Version>${pom.version}</Implementation-Version>
+                  </manifestEntries>
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>

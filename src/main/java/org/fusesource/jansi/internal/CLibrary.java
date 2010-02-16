@@ -16,23 +16,40 @@
  */
 package org.fusesource.jansi.internal;
 
-import com.sun.jna.Library;
-import com.sun.jna.Native;
+import static org.fusesource.hawtjni.runtime.FieldFlag.CONSTANT;
+import static org.fusesource.hawtjni.runtime.MethodFlag.CONSTANT_INITIALIZER;
+
+import org.fusesource.hawtjni.runtime.JniField;
+import org.fusesource.hawtjni.runtime.JniMethod;
+import org.fusesource.hawtjni.runtime.Library;
 
 /**
  * Interface to access some low level POSIX functions.
  * 
  * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  */
-public interface CLibrary extends Library {
-
-	public static CLibrary CLIBRARY = (CLibrary) Native.loadLibrary("c", CLibrary.class);
-
-	public static final int STDIN_FILENO=0;
-	public static final int STDOUT_FILENO=1;
-	public static final int STDERR_FILENO=2;
+public class CLibrary {
 	
-    public int isatty(int fd);
+    private static final Library LIBRARY = new Library("jansi", CLibrary.class);    
+	static {
+        LIBRARY.load();
+        init();
+	}
+
+    @JniMethod(flags={CONSTANT_INITIALIZER})
+    private static final native void init();
+
+    @JniField(flags={CONSTANT})
+	public static int STDIN_FILENO;
+    @JniField(flags={CONSTANT})
+	public static int STDOUT_FILENO;
+    @JniField(flags={CONSTANT})
+	public static int STDERR_FILENO;
+
+    @JniField(flags={CONSTANT}, accessor="1", conditional="defined(HAVE_ISATTY)")
+	public static boolean HAVE_ISATTY;	    
+    @JniMethod(conditional="defined(HAVE_ISATTY)")
+    public static final native int isatty(int fd);
 
 
 }

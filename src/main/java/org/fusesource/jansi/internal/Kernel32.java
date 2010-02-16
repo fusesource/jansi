@@ -16,161 +16,367 @@
  */
 package org.fusesource.jansi.internal;
 
-import com.sun.jna.Memory;
-import com.sun.jna.Native;
-import com.sun.jna.Pointer;
-import com.sun.jna.Structure;
-import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.win32.StdCallLibrary;
+import org.fusesource.hawtjni.runtime.ClassFlag;
+import org.fusesource.hawtjni.runtime.JniArg;
+import org.fusesource.hawtjni.runtime.JniClass;
+import org.fusesource.hawtjni.runtime.JniField;
+import org.fusesource.hawtjni.runtime.JniMethod;
+import org.fusesource.hawtjni.runtime.Library;
+
+import static org.fusesource.hawtjni.runtime.ArgFlag.*;
+import static org.fusesource.hawtjni.runtime.ClassFlag.STRUCT;
+import static org.fusesource.hawtjni.runtime.ClassFlag.TYPEDEF;
+import static org.fusesource.hawtjni.runtime.FieldFlag.*;
+import static org.fusesource.hawtjni.runtime.MethodFlag.*;
+import static org.fusesource.hawtjni.runtime.Pointer.*;
 
 /**
- * Interface to access some low level Windows kernel functions.
  * 
  * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  */
-public interface Kernel32 extends StdCallLibrary {
-
-	public static Kernel32 KERNEL32 = (Kernel32) Native.loadLibrary("kernel32", Kernel32.class);
-
-	
-	/**
-	 * http://msdn.microsoft.com/en-us/library/ms686311%28VS.85%29.aspx
-	 */
-	public static class SMALL_RECT extends Structure {
-		static public class ByValue extends SMALL_RECT implements Structure.ByValue { }
-		static public class ByReference extends SMALL_RECT implements Structure.ByReference { }
-
-		public short left;
-		public short top;
-		public short right;
-		public short bottom;
-		
-		public short width() {
-			return (short) (right-left);
-		}
-		public short height() {
-			return (short) (bottom-top);
-		}
+@JniClass(conditional="defined(_WIN32) || defined(_WIN64)")
+public class Kernel32 {
+    
+    private static final Library LIBRARY = new Library("jansi", Kernel32.class);    
+	static {
+        LIBRARY.load();
+        init();
 	}
-	
-	/**
-	 * see http://msdn.microsoft.com/en-us/library/ms686047%28VS.85%29.aspx
-	 * @param consoleOutput
-	 * @param attributes
-	 * @return
-	 */
-	int SetConsoleTextAttribute(Pointer consoleOutput, short attributes);
 
-	public static class COORD extends Structure {
-		static public class ByValue extends COORD implements Structure.ByValue { }
-		static public class ByReference extends COORD implements Structure.ByReference { }
+    @JniMethod(flags={CONSTANT_INITIALIZER})
+    private static final native void init();
 
-		public short x;
-		public short y;
-		
-		public ByValue copy() {
-			ByValue copy = new ByValue();
-			copy.x=x;
-			copy.y=y;
-			return copy;
-		}
-	}
-	
-	/**
-	 * http://msdn.microsoft.com/en-us/library/ms682093%28VS.85%29.aspx
-	 */
-	public static class CONSOLE_SCREEN_BUFFER_INFO extends Structure {		
-		static public class ByValue extends CONSOLE_SCREEN_BUFFER_INFO implements Structure.ByValue { }
-		static public class ByReference extends CONSOLE_SCREEN_BUFFER_INFO implements Structure.ByReference { }
+    @JniField(flags={CONSTANT})
+    public static short FOREGROUND_BLUE;
+    @JniField(flags={CONSTANT})
+    public static short FOREGROUND_GREEN;
+    @JniField(flags={CONSTANT})
+    public static short FOREGROUND_RED;
+    @JniField(flags={CONSTANT})
+    public static short FOREGROUND_INTENSITY;
+    @JniField(flags={CONSTANT})
+    public static short BACKGROUND_BLUE;
+    @JniField(flags={CONSTANT})
+    public static short BACKGROUND_GREEN;
+    @JniField(flags={CONSTANT})
+    public static short BACKGROUND_RED;
+    @JniField(flags={CONSTANT})
+    public static short BACKGROUND_INTENSITY;
+    @JniField(flags={CONSTANT})
+    public static short COMMON_LVB_LEADING_BYTE;
+    @JniField(flags={CONSTANT})
+    public static short COMMON_LVB_TRAILING_BYTE;
+    @JniField(flags={CONSTANT})
+    public static short COMMON_LVB_GRID_HORIZONTAL;
+    @JniField(flags={CONSTANT})
+    public static short COMMON_LVB_GRID_LVERTICAL;
+    @JniField(flags={CONSTANT})
+    public static short COMMON_LVB_GRID_RVERTICAL;
+    @JniField(flags={CONSTANT})
+    public static short COMMON_LVB_REVERSE_VIDEO;
+    @JniField(flags={CONSTANT})
+    public static short COMMON_LVB_UNDERSCORE;    
+    @JniField(flags={CONSTANT})
+    public static int FORMAT_MESSAGE_FROM_SYSTEM;
+    @JniField(flags={CONSTANT})
+    public static int STD_INPUT_HANDLE;
+    @JniField(flags={CONSTANT})
+    public static int STD_OUTPUT_HANDLE;
+    @JniField(flags={CONSTANT})
+    public static int STD_ERROR_HANDLE;
 
-		public COORD      size = new COORD();
-		public COORD      cursorPosition = new COORD();
-		public short      attributes;
-		public SMALL_RECT window = new SMALL_RECT();
-		public COORD      maximumWindowSize = new COORD();		
-	}
-	
-	
-	/**
-	 * see: http://msdn.microsoft.com/en-us/library/ms724211%28VS.85%29.aspx
-	 * 
-	 * @param handle
-	 * @return
-	 */
-	int CloseHandle(Pointer handle);
+    @JniMethod(cast="void *")
+    public static final native long malloc(
+            @JniArg(cast="size_t") long size);
 
-	public static final int FORMAT_MESSAGE_FROM_SYSTEM = 0x1000;
+    public static final native void free(
+            @JniArg(cast="void *") long ptr);
 
-	/**
-	 * 
-	 * @param flags
-	 * @param source
-	 * @param messageId
-	 * @param languageId
-	 * @param buffer
-	 * @param size
-	 * @param arguments
-	 * @return
-	 */
-	int FormatMessageW(int flags, Pointer source, int messageId,
-			int languageId, Memory buffer, int size, Object... arguments);
-	
-	
-	/**
-	 * See: http://msdn.microsoft.com/en-us/library/ms683171%28VS.85%29.aspx
-	 * @param consoleOutput
-	 * @param consoleScreenBufferInfo
-	 * @return
-	 */
-	int GetConsoleScreenBufferInfo(Pointer consoleOutput, CONSOLE_SCREEN_BUFFER_INFO.ByReference consoleScreenBufferInfo);
+//    public static final native void memmove (
+//            @JniArg(cast="void *") long dest, 
+//            @JniArg(cast="const void *") long src, 
+//            @JniArg(cast="size_t") long size);
+//
+//    public static final native void memmove (
+//            @JniArg(cast="void *") long dest, 
+//            @JniArg(cast="const void *", flags={NO_OUT, CRITICAL}) byte[] src, 
+//            @JniArg(cast="size_t") long size);
+//
+//    public static final native void memmove (
+//            @JniArg(cast="void *") long dest, 
+//            @JniArg(cast="const void *", flags={NO_OUT, CRITICAL}) char[] src, 
+//            @JniArg(cast="size_t") long size);
+//
+//    public static final native void memmove (
+//            @JniArg(cast="void *") long dest, 
+//            @JniArg(cast="const void *", flags={NO_OUT, CRITICAL})  short[] src, 
+//            @JniArg(cast="size_t") long size);
+//
+//    public static final native void memmove (
+//            @JniArg(cast="void *") long dest, 
+//            @JniArg(cast="const void *", flags={NO_OUT, CRITICAL})  int[] src, 
+//            @JniArg(cast="size_t") long size);
+//
+//    public static final native void memmove (
+//            @JniArg(cast="void *") long dest, 
+//            @JniArg(cast="const void *", flags={NO_OUT, CRITICAL}, pointer=FALSE) long[] src, 
+//            @JniArg(cast="size_t") long size);
+//
+//    public static final native void memmove (
+//            @JniArg(cast="void *") long dest, 
+//            @JniArg(cast="const void *", flags={NO_OUT, CRITICAL}) float[] src, 
+//            @JniArg(cast="size_t") long size);
+//
+//    public static final native void memmove (
+//            @JniArg(cast="void *") long dest, 
+//            @JniArg(cast="const void *", flags={NO_OUT, CRITICAL}) double[] src, 
+//            @JniArg(cast="size_t") long size);
+//
+//    
+//    
+//    public static final native void memmove (
+//            @JniArg(cast="void *", flags={NO_IN, CRITICAL}) byte[] dest, 
+//            @JniArg(cast="const void *") long src, 
+//            @JniArg(cast="size_t") long size);
+//
+//    public static final native void memmove (
+//            @JniArg(cast="void *", flags={NO_IN, CRITICAL}) char[] dest, 
+//            @JniArg(cast="const void *") long src, 
+//            @JniArg(cast="size_t") long size);
+//
+//    public static final native void memmove (
+//            @JniArg(cast="void *", flags={NO_IN, CRITICAL}) short[] dest, 
+//            @JniArg(cast="const void *") long src, 
+//            @JniArg(cast="size_t") long size);
+//
+//    public static final native void memmove (
+//            @JniArg(cast="void *", flags={NO_IN, CRITICAL}) int[] dest, 
+//            @JniArg(cast="const void *") long src, 
+//            @JniArg(cast="size_t") long size);
+//
+//    public static final native void memmove (
+//            @JniArg(cast="void *", flags={NO_IN, CRITICAL}, pointer=FALSE) long[] dest, 
+//            @JniArg(cast="const void *") long src, 
+//            @JniArg(cast="size_t") long size);
+//    
+//    public static final native void memmove (
+//            @JniArg(cast="void *", flags={NO_IN, CRITICAL}) float[] dest, 
+//            @JniArg(cast="const void *") long src, 
+//            @JniArg(cast="size_t") long size);
+//
+//    public static final native void memmove (
+//            @JniArg(cast="void *", flags={NO_IN, CRITICAL}) double[] dest, 
+//            @JniArg(cast="const void *") long src, 
+//            @JniArg(cast="size_t") long size);
+//
+//    public static final native void memmove (
+//            @JniArg(cast="void *", flags={NO_IN, CRITICAL}) byte[] dest, 
+//            @JniArg(cast="const void *", flags={NO_OUT, CRITICAL})  char[] src, 
+//            @JniArg(cast="size_t") long size);
+//
+//    public static final native void memmove (
+//            @JniArg(cast="void *", flags={NO_IN, CRITICAL}) int[] dest, 
+//            @JniArg(cast="const void *", flags={NO_OUT, CRITICAL}) byte[] src, 
+//            @JniArg(cast="size_t") long size);
+//
+//    @JniMethod(cast="void *")
+//    public static final native long memset (
+//            @JniArg(cast="void *") long buffer, 
+//            int c, 
+//            @JniArg(cast="size_t") long num);
+//    
+//    public static final native int strlen(
+//            @JniArg(cast="char *")long s);
+//    
+//    public static final native void memmove (
+//            @JniArg(cast="void *") long dest, 
+//            @JniArg(cast="const void *", flags={NO_OUT, CRITICAL}) foo src, 
+//            @JniArg(cast="size_t") long size);
+//    
+//    public static final native void memmove (
+//            @JniArg(cast="void *", flags={NO_IN, CRITICAL}) foo dest, 
+//            @JniArg(cast="const void *") long src, 
+//            @JniArg(cast="size_t") long size);
+    
+    /**
+     * http://msdn.microsoft.com/en-us/library/ms686311%28VS.85%29.aspx
+     */
+    @JniClass(flags={STRUCT,TYPEDEF}, conditional="defined(_WIN32) || defined(_WIN64)")
+    static public class SMALL_RECT {
+        static {
+            LIBRARY.load();
+            init();
+        }
+        
+        @JniMethod(flags={CONSTANT_INITIALIZER})
+        private static final native void init();
+        @JniField(flags={CONSTANT}, accessor="sizeof(SMALL_RECT)")
+        public static int SIZEOF;
 
-	static final int STD_INPUT_HANDLE = -10;
-	static final int STD_OUTPUT_HANDLE=-11;
-	static final int STD_ERROR_HANDLE=-12;
-	
-	/**
-	 * see: http://msdn.microsoft.com/en-us/library/ms683231%28VS.85%29.aspx
-	 * @param stdHandle
-	 * @return
-	 */
-	Pointer GetStdHandle(int stdHandle);
+        @JniField(accessor="Left")
+        public short left;
+        @JniField(accessor="Top")
+        public short top;
+        @JniField(accessor="Right")
+        public short right;
+        @JniField(accessor="Bottom")
+        public short bottom;
+        
+        public short width() {
+            return (short) (right-left);
+        }
+        public short height() {
+            return (short) (bottom-top);
+        }
+    }    
 
-    // see: http://msdn.microsoft.com/en-us/library/ms682013%28VS.85%29.aspx
-	static final short  FOREGROUND_BLUE      = 0x0001;
-	static final short  FOREGROUND_GREEN     = 0x0002;
-	static final short  FOREGROUND_RED       = 0x0004;
-	static final short  FOREGROUND_INTENSITY = 0x0008;
-	static final short  BACKGROUND_BLUE      = 0x0010;
-	static final short  BACKGROUND_GREEN     = 0x0020;
-	static final short  BACKGROUND_RED       = 0x0040;
-	static final short  BACKGROUND_INTENSITY = 0x0080;
-	static final short  COMMON_LVB_LEADING_BYTE    = 0x0100;
-	static final short  COMMON_LVB_TRAILING_BYTE   = 0x0200;
-	static final short  COMMON_LVB_GRID_HORIZONTAL = 0x0400;
-	static final short  COMMON_LVB_GRID_LVERTICAL  = 0x0800;
-	static final short  COMMON_LVB_GRID_RVERTICAL  = 0x1000;
-	static final short  COMMON_LVB_REVERSE_VIDEO   = 0x4000;
-	static final short  COMMON_LVB_UNDERSCORE      = (short) 0x8000;
+    /**
+     * see http://msdn.microsoft.com/en-us/library/ms686047%28VS.85%29.aspx
+     * @param consoleOutput
+     * @param attributes
+     * @return
+     */
+    public static final native int SetConsoleTextAttribute(
+            @JniArg(cast="HANDLE")long consoleOutput, 
+            short attributes);
 
-	/**
-	 * http://msdn.microsoft.com/en-us/library/ms686025%28VS.85%29.aspx
-	 * @param consoleOutput
-	 * @param cursorPosition
-	 * @return
-	 */
-	int SetConsoleCursorPosition(Pointer consoleOutput, COORD.ByValue cursorPosition);
+    @JniClass(flags={ClassFlag.STRUCT,TYPEDEF}, conditional="defined(_WIN32) || defined(_WIN64)")
+    public static class COORD {
 
-	/**
-	 * see: http://msdn.microsoft.com/en-us/library/ms682663%28VS.85%29.aspx
-	 * 
-	 * @param consoleOutput
-	 * @param character
-	 * @param length
-	 * @param dwWriteCoord
-	 * @param numberOfCharsWritten
-	 * @return
-	 */
-	int FillConsoleOutputCharacterW(Pointer consoleOutput, char character, int length, COORD.ByValue writeCoord, IntByReference numberOfCharsWritten);
+        static {
+            LIBRARY.load();
+            init();
+        }
+        
+        @JniMethod(flags={CONSTANT_INITIALIZER})
+        private static final native void init();
+        @JniField(flags={CONSTANT}, accessor="sizeof(COORD)")
+        public static int SIZEOF;
 
+        @JniField(accessor="X")
+        public short x;
+        @JniField(accessor="Y")
+        public short y;
+        
+        public COORD copy() {
+        	COORD rc = new COORD();
+        	rc.x = x;
+        	rc.y = y;
+        	return rc;
+        }
+    }
+    
+    /**
+     * http://msdn.microsoft.com/en-us/library/ms682093%28VS.85%29.aspx
+     */
+    @JniClass(flags={ClassFlag.STRUCT,TYPEDEF}, conditional="defined(_WIN32) || defined(_WIN64)")
+    public static class CONSOLE_SCREEN_BUFFER_INFO { 
+        
+        static {
+            LIBRARY.load();
+            init();
+        }
+        
+        @JniMethod(flags={CONSTANT_INITIALIZER})
+        private static final native void init();
+        @JniField(flags={CONSTANT}, accessor="sizeof(CONSOLE_SCREEN_BUFFER_INFO)")
+        public static int SIZEOF;
 
+        @JniField(accessor="dwSize")
+        public COORD      size = new COORD();
+        @JniField(accessor="dwCursorPosition")
+        public COORD      cursorPosition = new COORD();
+        @JniField(accessor="wAttributes")
+        public short      attributes;
+        @JniField(accessor="srWindow")
+        public SMALL_RECT window = new SMALL_RECT();
+        @JniField(accessor="dwMaximumWindowSize")
+        public COORD      maximumWindowSize = new COORD();
+    }
+    
+    
+    /**
+     * see: http://msdn.microsoft.com/en-us/library/ms724211%28VS.85%29.aspx
+     * 
+     * @param handle
+     * @return
+     */
+    public static final native int CloseHandle(@JniArg(cast="HANDLE")long handle);
+
+    
+    /**
+     * see: http://msdn.microsoft.com/en-us/library/ms679360(VS.85).aspx
+     * 
+     * @param handle
+     * @return
+     */
+    public static final native int GetLastError();
+
+    /**
+     * 
+     * @param flags
+     * @param source
+     * @param messageId
+     * @param languageId
+     * @param buffer
+     * @param size
+     * @param arguments
+     * @return
+     */
+    public static final native int FormatMessageW(
+            int flags, 
+            @JniArg(cast="void *")long  source, 
+            int messageId,
+            int languageId, 
+            @JniArg(cast="void *", flags={NO_IN, CRITICAL})byte[] buffer, 
+            int size,
+            @JniArg(cast="void *", flags={NO_IN, CRITICAL, SENTINEL})long []args
+            );
+    
+    
+    /**
+     * See: http://msdn.microsoft.com/en-us/library/ms683171%28VS.85%29.aspx
+     * @param consoleOutput
+     * @param consoleScreenBufferInfo
+     * @return
+     */
+    public static final native int GetConsoleScreenBufferInfo(
+            @JniArg(cast="HANDLE", pointer=TRUE)long consoleOutput, 
+            CONSOLE_SCREEN_BUFFER_INFO consoleScreenBufferInfo);
+    
+    /**
+     * see: http://msdn.microsoft.com/en-us/library/ms683231%28VS.85%29.aspx
+     * @param stdHandle
+     * @return
+     */
+    @JniMethod(cast="HANDLE", pointer=TRUE)
+    public static final native long GetStdHandle(int stdHandle);
+
+    /**
+     * http://msdn.microsoft.com/en-us/library/ms686025%28VS.85%29.aspx
+     * @param consoleOutput
+     * @param cursorPosition
+     * @return
+     */
+    public static final native int SetConsoleCursorPosition(
+            @JniArg(cast="HANDLE", pointer=TRUE)long consoleOutput, 
+            @JniArg(flags={BY_VALUE}) COORD cursorPosition);
+
+    /**
+     * see: http://msdn.microsoft.com/en-us/library/ms682663%28VS.85%29.aspx
+     * 
+     * @param consoleOutput
+     * @param character
+     * @param length
+     * @param dwWriteCoord
+     * @param numberOfCharsWritten
+     * @return
+     */
+    public static final native int FillConsoleOutputCharacterW(
+            @JniArg(cast="HANDLE", pointer=TRUE) long consoleOutput, 
+            char character, 
+            int length, 
+            @JniArg(flags={BY_VALUE}) COORD writeCoord, 
+            int[] numberOfCharsWritten);
+    
 }

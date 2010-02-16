@@ -17,14 +17,13 @@
 
 package org.fusesource.jansi;
 
-import static org.fusesource.jansi.internal.CLibrary.CLIBRARY;
+import static org.fusesource.jansi.internal.CLibrary.STDOUT_FILENO;
+import static org.fusesource.jansi.internal.CLibrary.isatty;
 
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-
-import org.fusesource.jansi.internal.CLibrary;
 
 /**
  * Provides consistent access to an ANSI aware console PrintStream.
@@ -62,7 +61,7 @@ public class AnsiConsole {
 		try {
 			// If we can detect that stdout is not a tty.. then setup
 			// to strip the ANSI sequences..
-			int rc = CLIBRARY.isatty(CLibrary.STDOUT_FILENO);
+			int rc = isatty(STDOUT_FILENO);
 			if( rc==0 ) {
 				return new AnsiOutputStream(stream);
 			}

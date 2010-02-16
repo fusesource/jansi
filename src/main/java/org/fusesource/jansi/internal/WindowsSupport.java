@@ -16,12 +16,7 @@
  */
 package org.fusesource.jansi.internal;
 
-import static org.fusesource.jansi.internal.Kernel32.FORMAT_MESSAGE_FROM_SYSTEM;
-import static org.fusesource.jansi.internal.Kernel32.KERNEL32;
-
-import com.sun.jna.Memory;
-import com.sun.jna.Native;
-import com.sun.jna.Pointer;
+import static org.fusesource.jansi.internal.Kernel32.*;
 
 /**
  * 
@@ -30,10 +25,11 @@ import com.sun.jna.Pointer;
 public class WindowsSupport {
 	
 	public static String getLastErrorMessage() {
-		int errorCode = Native.getLastError();
-		Memory buffer = new Memory(160);
-		KERNEL32.FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, Pointer.NULL, errorCode, 0, buffer, (int)buffer.getSize());
-		return buffer.getString(0, true).trim();
+		int errorCode = GetLastError();
+		int bufferSize = 160;
+		byte data[] = new byte[bufferSize]; 
+		FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, 0, errorCode, 0, data, bufferSize, null);
+		return new String(data);
 	}
 	
 }

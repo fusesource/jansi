@@ -18,22 +18,25 @@ package org.fusesource.jansi;
 
 import static org.fusesource.jansi.internal.Kernel32.BACKGROUND_BLUE;
 import static org.fusesource.jansi.internal.Kernel32.BACKGROUND_GREEN;
+import static org.fusesource.jansi.internal.Kernel32.BACKGROUND_INTENSITY;
 import static org.fusesource.jansi.internal.Kernel32.BACKGROUND_RED;
 import static org.fusesource.jansi.internal.Kernel32.FOREGROUND_BLUE;
 import static org.fusesource.jansi.internal.Kernel32.FOREGROUND_GREEN;
+import static org.fusesource.jansi.internal.Kernel32.FOREGROUND_INTENSITY;
 import static org.fusesource.jansi.internal.Kernel32.FOREGROUND_RED;
-import static org.fusesource.jansi.internal.Kernel32.KERNEL32;
+import static org.fusesource.jansi.internal.Kernel32.FillConsoleOutputCharacterW;
+import static org.fusesource.jansi.internal.Kernel32.GetConsoleScreenBufferInfo;
+import static org.fusesource.jansi.internal.Kernel32.GetStdHandle;
+import static org.fusesource.jansi.internal.Kernel32.STD_OUTPUT_HANDLE;
+import static org.fusesource.jansi.internal.Kernel32.SetConsoleCursorPosition;
+import static org.fusesource.jansi.internal.Kernel32.SetConsoleTextAttribute;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.fusesource.jansi.internal.Kernel32;
 import org.fusesource.jansi.internal.WindowsSupport;
 import org.fusesource.jansi.internal.Kernel32.CONSOLE_SCREEN_BUFFER_INFO;
 import org.fusesource.jansi.internal.Kernel32.COORD;
-
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.IntByReference;
 
 /**
  * A Windows ANSI escape processor, uses JNA to access native platform
@@ -44,19 +47,19 @@ import com.sun.jna.ptr.IntByReference;
  */
 public final class WindowsAnsiOutputStream extends AnsiOutputStream {
 	
-	private static final Pointer console = KERNEL32.GetStdHandle(Kernel32.STD_OUTPUT_HANDLE);
+	private static final long console = GetStdHandle(STD_OUTPUT_HANDLE);
 
     private static final short FOREGROUND_BLACK   = 0;
-    private static final short FOREGROUND_YELLOW  = FOREGROUND_RED|FOREGROUND_GREEN;    
-    private static final short FOREGROUND_MAGENTA = FOREGROUND_BLUE|FOREGROUND_RED;    
-    private static final short FOREGROUND_CYAN    = FOREGROUND_BLUE|FOREGROUND_GREEN;
-    private static final short FOREGROUND_WHITE   = FOREGROUND_RED|FOREGROUND_GREEN|FOREGROUND_BLUE;
+    private static final short FOREGROUND_YELLOW  = (short) (FOREGROUND_RED|FOREGROUND_GREEN);    
+    private static final short FOREGROUND_MAGENTA = (short) (FOREGROUND_BLUE|FOREGROUND_RED);    
+    private static final short FOREGROUND_CYAN    = (short) (FOREGROUND_BLUE|FOREGROUND_GREEN);
+    private static final short FOREGROUND_WHITE   = (short) (FOREGROUND_RED|FOREGROUND_GREEN|FOREGROUND_BLUE);
 
     private static final short BACKGROUND_BLACK   = 0;
-    private static final short BACKGROUND_YELLOW  = BACKGROUND_RED|BACKGROUND_GREEN;    
-    private static final short BACKGROUND_MAGENTA = BACKGROUND_BLUE|BACKGROUND_RED;    
-    private static final short BACKGROUND_CYAN    = BACKGROUND_BLUE|BACKGROUND_GREEN;
-    private static final short BACKGROUND_WHITE   = BACKGROUND_RED|BACKGROUND_GREEN|BACKGROUND_BLUE;
+    private static final short BACKGROUND_YELLOW  = (short) (BACKGROUND_RED|BACKGROUND_GREEN);    
+    private static final short BACKGROUND_MAGENTA = (short) (BACKGROUND_BLUE|BACKGROUND_RED);    
+    private static final short BACKGROUND_CYAN    = (short) (BACKGROUND_BLUE|BACKGROUND_GREEN);
+    private static final short BACKGROUND_WHITE   = (short) (BACKGROUND_RED|BACKGROUND_GREEN|BACKGROUND_BLUE);
     
     private static final short ANSI_FOREGROUND_COLOR_MAP[] = {
     	FOREGROUND_BLACK,
@@ -80,7 +83,7 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
     	BACKGROUND_WHITE,
     };
 	
-	private final CONSOLE_SCREEN_BUFFER_INFO.ByReference info = new CONSOLE_SCREEN_BUFFER_INFO.ByReference();
+	private final CONSOLE_SCREEN_BUFFER_INFO info = new CONSOLE_SCREEN_BUFFER_INFO();
     private final short originalColors;
     
 	private boolean negative;
@@ -93,7 +96,7 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
 
 	private void getConsoleInfo() throws IOException {
 		out.flush();
-		if( KERNEL32.GetConsoleScreenBufferInfo(console, info) == 0 ) {
+		if( GetConsoleScreenBufferInfo(console, info) == 0 ) {
 			throw new IOException("Could not get the screen info: "+WindowsSupport.getLastErrorMessage());
 		}
 		if( negative ) {
@@ -107,7 +110,7 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
 		if( negative ) {
 			attributes = invertAttributeColors(attributes); 
 		}
-		if( KERNEL32.SetConsoleTextAttribute(console, attributes) == 0 ) {
+		if( SetConsoleTextAttribute(console, attributes) == 0 ) {
 			throw new IOException(WindowsSupport.getLastErrorMessage());
 		}
 	}
@@ -123,7 +126,7 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
 	}
 
 	private void applyCursorPosition() throws IOException {
-		if( KERNEL32.SetConsoleCursorPosition(console, info.cursorPosition.copy()) == 0 ) {
+		if( SetConsoleCursorPosition(console, info.cursorPosition.copy()) == 0 ) {
 			throw new IOException(WindowsSupport.getLastErrorMessage());
 		}
 	}
@@ -131,48 +134,48 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
 	@Override
 	protected void processEraseScreen(int eraseOption) throws IOException {
 		getConsoleInfo();
-		IntByReference written = new IntByReference();
+		int[] written = new int[1];
 		switch(eraseOption) {
 		case ERASE_SCREEN:
-			COORD.ByValue topLeft = new COORD.ByValue();
+			COORD topLeft = new COORD();
 			topLeft.x = 0;
 			topLeft.y = info.window.top;
 			int screenLength = info.window.height() * info.size.x;
-			KERNEL32.FillConsoleOutputCharacterW(console, ' ', screenLength, topLeft, written);
+			FillConsoleOutputCharacterW(console, ' ', screenLength, topLeft, written);
 			break;
 		case ERASE_SCREEN_TO_BEGINING:
-			COORD.ByValue topLeft2 = new COORD.ByValue();
+			COORD topLeft2 = new COORD();
 			topLeft2.x = 0;
 			topLeft2.y = info.window.top;
 			int lengthToCursor = (info.cursorPosition.y - info.window.top) * info.size.x 
 				+ info.cursorPosition.x;
-			KERNEL32.FillConsoleOutputCharacterW(console, ' ', lengthToCursor, topLeft2, written);
+			FillConsoleOutputCharacterW(console, ' ', lengthToCursor, topLeft2, written);
 			break;
 		case ERASE_SCREEN_TO_END:
 			int lengthToEnd = (info.window.bottom - info.cursorPosition.y) * info.size.x + 
 				(info.size.x - info.cursorPosition.x);
-			KERNEL32.FillConsoleOutputCharacterW(console, ' ', lengthToEnd, info.cursorPosition.copy(), written);
+			FillConsoleOutputCharacterW(console, ' ', lengthToEnd, info.cursorPosition.copy(), written);
 		}		
 	}
 	
 	@Override
 	protected void processEraseLine(int eraseOption) throws IOException {
 		getConsoleInfo();
-		IntByReference written = new IntByReference();
+		int[] written = new int[1];
 		switch(eraseOption) {
 		case ERASE_LINE:
-			COORD.ByValue leftColCurrRow = info.cursorPosition.copy();
+			COORD leftColCurrRow = info.cursorPosition.copy();
 			leftColCurrRow.x = 0;
-			KERNEL32.FillConsoleOutputCharacterW(console, ' ', info.size.x, leftColCurrRow, written);
+			FillConsoleOutputCharacterW(console, ' ', info.size.x, leftColCurrRow, written);
 			break;
 		case ERASE_LINE_TO_BEGINING:
-			COORD.ByValue leftColCurrRow2 = info.cursorPosition.copy();
+			COORD leftColCurrRow2 = info.cursorPosition.copy();
 			leftColCurrRow2.x = 0;
-			KERNEL32.FillConsoleOutputCharacterW(console, ' ', info.cursorPosition.x, leftColCurrRow2, written);
+			FillConsoleOutputCharacterW(console, ' ', info.cursorPosition.x, leftColCurrRow2, written);
 			break;
 		case ERASE_LINE_TO_END:
 			int lengthToLastCol = info.size.x - info.cursorPosition.x;
-			KERNEL32.FillConsoleOutputCharacterW(console, ' ', lengthToLastCol, info.cursorPosition.copy(), written);
+			FillConsoleOutputCharacterW(console, ' ', lengthToLastCol, info.cursorPosition.copy(), written);
 		}
 	}
 	
@@ -242,22 +245,22 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
 	protected void processSetAttribute(int attribute) throws IOException {
 		switch(attribute) {
 			case ATTRIBUTE_INTENSITY_BOLD:
-				info.attributes = (short)(info.attributes | Kernel32.FOREGROUND_INTENSITY );
+				info.attributes = (short)(info.attributes | FOREGROUND_INTENSITY );
 				applyAttribute();
 				break;
 			case ATTRIBUTE_INTENSITY_NORMAL:
-				info.attributes = (short)(info.attributes & ~Kernel32.FOREGROUND_INTENSITY );
+				info.attributes = (short)(info.attributes & ~FOREGROUND_INTENSITY );
 				applyAttribute();
 				break;
 			
 			// Yeah, setting the background intensity is not underlining.. but it's best we can do 
 			// using the Windows console API 
 			case ATTRIBUTE_UNDERLINE:
-				info.attributes = (short)(info.attributes | Kernel32.BACKGROUND_INTENSITY );
+				info.attributes = (short)(info.attributes | BACKGROUND_INTENSITY );
 				applyAttribute();
 				break;
 			case ATTRIBUTE_UNDERLINE_OFF:
-				info.attributes = (short)(info.attributes & ~Kernel32.BACKGROUND_INTENSITY );
+				info.attributes = (short)(info.attributes & ~BACKGROUND_INTENSITY );
 				applyAttribute();
 				break;
 				
