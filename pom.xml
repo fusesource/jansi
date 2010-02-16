@@ -84,14 +84,14 @@
     <!-- For hawtjni -->
     <repository>
       <id>hawtjni.snapshot.fusesource.org</id>
-      <name>MeshKeeper Snapshot Repo</name>
+      <name>HawtJNI Snapshot Repo</name>
       <url>http://hawtjni.fusesource.org/repo/snapshot</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
       <releases>
         <enabled>false</enabled>
       </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
     </repository>    
   </repositories>
   <pluginRepositories>
@@ -100,12 +100,23 @@
       <id>mvnplugins.release.fusesource.org</id>
       <name>MeshKeeper Snapshot Repo</name>
       <url>http://mvnplugins.fusesource.org/repo/release</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
       <releases>
         <enabled>true</enabled>
       </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </pluginRepository>
+    <pluginRepository>
+      <id>hawtjni.snapshot.fusesource.org</id>
+      <name>HawtJNI Snapshot Repo</name>
+      <url>http://hawtjni.fusesource.org/repo/snapshot</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
     </pluginRepository>
   </pluginRepositories>
 
