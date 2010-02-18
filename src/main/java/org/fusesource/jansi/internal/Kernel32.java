@@ -24,11 +24,9 @@ import org.fusesource.hawtjni.runtime.JniMethod;
 import org.fusesource.hawtjni.runtime.Library;
 
 import static org.fusesource.hawtjni.runtime.ArgFlag.*;
-import static org.fusesource.hawtjni.runtime.ClassFlag.STRUCT;
-import static org.fusesource.hawtjni.runtime.ClassFlag.TYPEDEF;
+import static org.fusesource.hawtjni.runtime.ClassFlag.*;
 import static org.fusesource.hawtjni.runtime.FieldFlag.*;
 import static org.fusesource.hawtjni.runtime.MethodFlag.*;
-import static org.fusesource.hawtjni.runtime.Pointer.*;
 
 /**
  * 
@@ -341,7 +339,7 @@ public class Kernel32 {
      * @return
      */
     public static final native int GetConsoleScreenBufferInfo(
-            @JniArg(cast="HANDLE", pointer=TRUE)long consoleOutput, 
+            @JniArg(cast="HANDLE", flags={POINTER_ARG})long consoleOutput, 
             CONSOLE_SCREEN_BUFFER_INFO consoleScreenBufferInfo);
     
     /**
@@ -349,7 +347,7 @@ public class Kernel32 {
      * @param stdHandle
      * @return
      */
-    @JniMethod(cast="HANDLE", pointer=TRUE)
+    @JniMethod(cast="HANDLE", flags={POINTER_RETURN})
     public static final native long GetStdHandle(int stdHandle);
 
     /**
@@ -359,7 +357,7 @@ public class Kernel32 {
      * @return
      */
     public static final native int SetConsoleCursorPosition(
-            @JniArg(cast="HANDLE", pointer=TRUE)long consoleOutput, 
+            @JniArg(cast="HANDLE", flags={POINTER_ARG})long consoleOutput, 
             @JniArg(flags={BY_VALUE}) COORD cursorPosition);
 
     /**
@@ -373,7 +371,7 @@ public class Kernel32 {
      * @return
      */
     public static final native int FillConsoleOutputCharacterW(
-            @JniArg(cast="HANDLE", pointer=TRUE) long consoleOutput, 
+            @JniArg(cast="HANDLE", flags={POINTER_ARG}) long consoleOutput, 
             char character, 
             int length, 
             @JniArg(flags={BY_VALUE}) COORD writeCoord, 
