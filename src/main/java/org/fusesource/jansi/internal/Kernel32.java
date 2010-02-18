@@ -82,6 +82,9 @@ public class Kernel32 {
     public static int STD_OUTPUT_HANDLE;
     @JniField(flags={CONSTANT})
     public static int STD_ERROR_HANDLE;
+    @JniField(flags={CONSTANT})
+    public static int INVALID_HANDLE_VALUE;
+    
 
     @JniMethod(cast="void *")
     public static final native long malloc(
@@ -290,6 +293,14 @@ public class Kernel32 {
         public SMALL_RECT window = new SMALL_RECT();
         @JniField(accessor="dwMaximumWindowSize")
         public COORD      maximumWindowSize = new COORD();
+        
+        public int windowWidth() {
+            return window.width() + 1;
+        }
+        
+        public int windowHeight() {
+            return window.height() + 1;
+        }
     }
     
     
@@ -376,5 +387,32 @@ public class Kernel32 {
             int length, 
             @JniArg(flags={BY_VALUE}) COORD writeCoord, 
             int[] numberOfCharsWritten);
+ 
+   
+    /**
+     * see: http://msdn.microsoft.com/en-us/library/ms683167%28VS.85%29.aspx
+     * @param handle
+     * @param mode
+     * @return
+     */
+    public static final native int GetConsoleMode(
+            @JniArg(cast="HANDLE", flags={POINTER_ARG}) long handle, 
+            int[] mode);
     
+    /**
+     * see: http://msdn.microsoft.com/en-us/library/ms686033%28VS.85%29.aspx
+     * @param handle
+     * @param mode
+     * @return
+     */
+    public static final native int SetConsoleMode(
+            @JniArg(cast="HANDLE", flags={POINTER_ARG}) long handle, 
+            int mode);
+
+    /**
+     * see: http://msdn.microsoft.com/en-us/library/ms235446%28VS.80%29.aspx
+     * @return
+     */
+    public static final native int getch();
+
 }

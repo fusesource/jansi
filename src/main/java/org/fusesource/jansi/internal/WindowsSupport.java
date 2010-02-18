@@ -18,6 +18,8 @@ package org.fusesource.jansi.internal;
 
 import static org.fusesource.jansi.internal.Kernel32.*;
 
+import org.fusesource.jansi.internal.Kernel32.CONSOLE_SCREEN_BUFFER_INFO;
+
 /**
  * 
  * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
@@ -32,4 +34,44 @@ public class WindowsSupport {
 		return new String(data);
 	}
 	
+    //////////////////////////////////////////////////////////////////////////
+    //
+    // The following helper methods are for jline 
+    //
+    //////////////////////////////////////////////////////////////////////////
+    
+    public static int readByte() {
+        return getch();
+    }
+    
+    public static int getConsoleMode() {
+        long hConsole = GetStdHandle (STD_INPUT_HANDLE);
+        if (hConsole == INVALID_HANDLE_VALUE)
+            return -1;
+        int mode[] = new int[1];
+        if (GetConsoleMode (hConsole, mode)==0)
+            return -1;
+        return mode[0];
+    }
+
+    public static void setConsoleMode(int mode) {
+        long hConsole = GetStdHandle (STD_INPUT_HANDLE);
+        if (hConsole == INVALID_HANDLE_VALUE)
+            return;
+        SetConsoleMode (hConsole, mode);
+    }
+    
+    public static int getWindowsTerminalWidth() {
+        long outputHandle = GetStdHandle (STD_OUTPUT_HANDLE);
+        CONSOLE_SCREEN_BUFFER_INFO info = new CONSOLE_SCREEN_BUFFER_INFO(); 
+        GetConsoleScreenBufferInfo (outputHandle, info);
+        return info.windowWidth();        
+    }
+
+    public static int getWindowsTerminalHeight() {
+        long outputHandle = GetStdHandle (STD_OUTPUT_HANDLE);
+        CONSOLE_SCREEN_BUFFER_INFO info = new CONSOLE_SCREEN_BUFFER_INFO(); 
+        GetConsoleScreenBufferInfo (outputHandle, info);
+        return info.windowHeight();        
+    }
 }
