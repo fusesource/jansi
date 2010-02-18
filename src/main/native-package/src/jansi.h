@@ -26,6 +26,7 @@
     #define HAVE_STDLIB_H 1
     #define HAVE_STRINGS_H 1
     #include <windows.h>
+    #include <conio.h>
   #endif
 #endif
 

@@ -41,7 +41,7 @@ public class WindowsSupport {
     //////////////////////////////////////////////////////////////////////////
     
     public static int readByte() {
-        return getch();
+        return _getch();
     }
     
     public static int getConsoleMode() {

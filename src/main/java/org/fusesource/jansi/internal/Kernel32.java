@@ -410,9 +410,9 @@ public class Kernel32 {
             int mode);
 
     /**
-     * see: http://msdn.microsoft.com/en-us/library/ms235446%28VS.80%29.aspx
+     * see: http://msdn.microsoft.com/en-us/library/078sfkak(VS.80).aspx
      * @return
      */
-    public static final native int getch();
+    public static final native int _getch();
 
 }
