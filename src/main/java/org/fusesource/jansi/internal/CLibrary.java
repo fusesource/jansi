@@ -41,11 +41,11 @@ public class CLibrary {
     @JniMethod(flags={CONSTANT_INITIALIZER})
     private static final native void init();
 
-    @JniField(flags={CONSTANT})
+    @JniField(flags={CONSTANT}, conditional="defined(STDIN_FILENO)")
 	public static int STDIN_FILENO;
-    @JniField(flags={CONSTANT})
+    @JniField(flags={CONSTANT}, conditional="defined(STDIN_FILENO)")
 	public static int STDOUT_FILENO;
-    @JniField(flags={CONSTANT})
+    @JniField(flags={CONSTANT}, conditional="defined(STDIN_FILENO)")
 	public static int STDERR_FILENO;
 
     @JniField(flags={CONSTANT}, accessor="1", conditional="defined(HAVE_ISATTY)")
