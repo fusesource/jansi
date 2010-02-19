@@ -19,6 +19,7 @@ package org.fusesource.jansi.internal;
 import static org.fusesource.hawtjni.runtime.FieldFlag.CONSTANT;
 import static org.fusesource.hawtjni.runtime.MethodFlag.CONSTANT_INITIALIZER;
 
+import org.fusesource.hawtjni.runtime.JniClass;
 import org.fusesource.hawtjni.runtime.JniField;
 import org.fusesource.hawtjni.runtime.JniMethod;
 import org.fusesource.hawtjni.runtime.Library;
@@ -28,6 +29,7 @@ import org.fusesource.hawtjni.runtime.Library;
  * 
  * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  */
+@JniClass()
 public class CLibrary {
 	
     private static final Library LIBRARY = new Library("jansi", CLibrary.class);    

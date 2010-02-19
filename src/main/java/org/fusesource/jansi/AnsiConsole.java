@@ -65,7 +65,10 @@ public class AnsiConsole {
 			if( rc==0 ) {
 				return new AnsiOutputStream(stream);
 			}
-		} catch (Throwable ignore) {
+			
+        // These erros happen if the JNI lib is not available for your platform.
+        } catch (NoClassDefFoundError ignore) {
+		} catch (UnsatisfiedLinkError ignore) {
 		}
 
 		// By default we assume your Unix tty can handle ANSI codes.
