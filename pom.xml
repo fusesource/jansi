@@ -93,6 +93,39 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>    
+    <repository>
+      <id>hawtjni.release.fusesource.org</id>
+      <name>HawtJNI Release Repo</name>
+      <url>http://hawtjni.fusesource.org/repo/release</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>    
+    <repository>
+      <id>jansi.snapshot.fusesource.org</id>
+      <name>Jansi Snapshot Repo</name>
+      <url>http://jansi.fusesource.org/repo/snapshot</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>    
+    <repository>
+      <id>jansi.release.fusesource.org</id>
+      <name>Jansi Release Repo</name>
+      <url>http://jansi.fusesource.org/repo/release</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>    
   </repositories>
   <pluginRepositories>
     <!-- For the Uberize plugin -->
@@ -116,6 +149,17 @@
       </releases>
       <snapshots>
         <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+    <pluginRepository>
+      <id>hawtjni.release.fusesource.org</id>
+      <name>HawtJNI Release Repo</name>
+      <url>http://hawtjni.fusesource.org/repo/release</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
       </snapshots>
     </pluginRepository>
   </pluginRepositories>
