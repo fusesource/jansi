@@ -212,6 +212,7 @@
               <goal>package-source</goal>
             </goals>
             <configuration>
+              <callbacks>false</callbacks>
               <copyright><![CDATA[
 /*******************************************************************************
  * Copyright (C) 2009, Progress Software Corporation and/or its 
