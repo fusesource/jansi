@@ -393,6 +393,12 @@
             <groupId>org.fusesource.hawtjni</groupId>
             <artifactId>maven-hawtjni-plugin</artifactId>
             <configuration>
+              <osgiPlatforms>
+                <osgiPlatform>osname=MacOS;processor=x86-64</osgiPlatform>
+                <osgiPlatform>osname=MacOS;processor=x86</osgiPlatform>
+                <osgiPlatform>osname=MacOS;processor=PowerPC</osgiPlatform>
+                <osgiPlatform>*</osgiPlatform>
+              </osgiPlatforms>
               <configureArgs>
                 <arg>--with-universal</arg>
               </configureArgs>
