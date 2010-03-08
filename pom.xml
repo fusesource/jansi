@@ -18,32 +18,46 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
+
   <groupId>org.fusesource.jansi</groupId>
   <artifactId>jansi</artifactId>
+  <version>1.2.1-SNAPSHOT</version>
   <packaging>jar</packaging>
   
   <name>jansi</name>
-  <version>1.2</version>
   <description>jansi is a java library for generating and interpreting ANSI escape sequences.</description>
-  <url>http://jansi.fusesource.org</url>
   
-  <inceptionYear>2002</inceptionYear>
+  <properties>
+    <forge-project-id>jansi</forge-project-id>
+    <forge-project-id-uc>JANSI</forge-project-id-uc>
+    
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <release-altGitURL>scm:git:ssh://git@forge.fusesource.com/${forge-project-id}.git</release-altGitURL>
+  </properties>
+  
+  <url>http://${forge-project-id}.fusesource.org</url>
+  <inceptionYear>2009</inceptionYear>
+
+  <organization>
+    <name>Progress Software Inc.</name>
+    <url>http://fusesource.com/</url>
+  </organization> 
 
   <issueManagement>
     <system>jira</system>
-    <url>http://fusesource.com/issues/browse/JANSI</url>
+    <url>http://fusesource.com/issues/browse/${forge-project-id-uc}</url>
   </issueManagement>
-    
+  
   <mailingLists>
     <mailingList>
-      <name>jansi dev</name>
-      <post>jansi-dev@fusesource.org</post>
-      <subscribe>jansi-dev-subscribe@fusesource.org</subscribe>
+      <name>${forge-project-id} dev</name>
+      <post>${forge-project-id}-dev@fusesource.org</post>
+      <subscribe>${forge-project-id}-dev-subscribe@fusesource.org</subscribe>
     </mailingList>
     <mailingList>
-      <name>jansi commits</name>
-      <post>jansi-commits@fusesource.org</post>
-      <subscribe>jansi-commits-subscribe@fusesource.org</subscribe>
+      <name>${forge-project-id} commits</name>
+      <post>${forge-project-id}-commits@fusesource.org</post>
+      <subscribe>${forge-project-id}-commits-subscribe@fusesource.org</subscribe>
     </mailingList>
   </mailingLists>
 
@@ -56,43 +70,40 @@
   </licenses>
   
   <scm>
-    <connection>scm:git:git://forge.fusesource.com/jansi.git</connection>
-    <developerConnection>scm:git:ssh://git@forge.fusesource.com/jansi.git</developerConnection>
-    <url>http://fusesource.com/forge/gitweb?p=jansi.git</url>
+    <connection>scm:git:git://forge.fusesource.com/${forge-project-id}.git</connection>
+    <!-- Work around for issue: http://jira.codehaus.org/browse/SCM-444 -->
+    <developerConnection>${release-altGitURL}</developerConnection>
+    <url>http://fusesource.com/forge/gitweb?p=${forge-project-id}.git</url>
   </scm>
-  
+
   <distributionManagement>
     <repository>
-      <id>release.fusesource.org</id>
-      <name>RestMQ Release Repository</name>
-      <url>dav:http://fusesource.com/forge/dav/jansi/repo/release</url>
+      <id>fusesource-nexus-staging</id>
+      <name>Fusesource Release Repository</name>
+      <url>http://repo.fusesource.com/nexus/service/local/staging/deploy/maven2</url>
     </repository>
     <snapshotRepository>
-      <uniqueVersion>false</uniqueVersion>
-      <id>snapshot.fusesource.org</id>
-      <name>RestMQ Snapshot Repository</name>
-      <url>dav:http://fusesource.com/forge/dav/jansi/repo/snapshot</url>
+      <id>fusesource-nexus-snapshots</id>
+      <name>Fusesource Nexus Snapshots</name>
+      <url>http://repo.fusesource.com/nexus/content/repositories/snapshots</url>
     </snapshotRepository>
     <site>
       <id>website.fusesource.org</id>
       <name>website</name>
-      <url>dav:http://fusesource.com/forge/dav/jansi/maven/${project.version}</url>
+      <url>dav:http://fusesource.com/forge/dav/${forge-project-id}/maven/${project.version}</url>
     </site>
-  </distributionManagement>  
+  </distributionManagement>
   
-  <repositories>
-    <!-- For the JNA dependency -->
-    <repository>
-      <id>maven2.java.net</id>
-      <name>Java.net Maven  Repository </name>
-      <url>http://download.java.net/maven/2</url>
-    </repository>
-  </repositories>
-
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
-
+  <developers>
+    <developer>
+      <id>chirino</id>
+      <name>Hiram Chirino</name>
+      <email>hiram@hiramchirino.com</email>
+      <url>http://hiramchirino.com</url>
+      <timezone>GMT-5</timezone>
+    </developer>
+  </developers>
+  
   <dependencies>
     <dependency>
       <groupId>net.java.dev.jna</groupId>
@@ -114,7 +125,7 @@
       <extension>
         <groupId>org.apache.maven.wagon</groupId>
         <artifactId>wagon-webdav-jackrabbit</artifactId>
-        <version>1.0-beta-5</version>
+        <version>1.0-beta-6</version>
       </extension>
     </extensions>
       
@@ -178,11 +189,12 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-scm-plugin</artifactId>
+        <version>1.3</version>
         <dependencies>
           <dependency>
             <groupId>org.apache.maven.scm</groupId>
             <artifactId>maven-scm-provider-gitexe</artifactId>
-            <version>1.2</version>
+            <version>1.3</version>
           </dependency>
         </dependencies>
       </plugin>      
@@ -194,6 +206,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>jxr-maven-plugin</artifactId>
+        <version>2.0-beta-1</version>
         <configuration>
           <aggregate>true</aggregate>
         </configuration>
@@ -201,26 +214,26 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.6</version>
         <configuration>
           <excludePackageNames>*.internal</excludePackageNames>
-          <aggregate>true</aggregate>
           <linksource>true</linksource>
           <links>
             <link>http://java.sun.com/j2se/1.5.0/docs/api</link>
-            <link>https://jna.dev.java.net/nonav/javadoc</link>
           </links>
         </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-pmd-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>2.1.1</version>
         <reportSets>
           <reportSet>
             <reports>
+              <report>index</report>
+              <report>sumary</report>
+              <report>plugins</report>
+              <report>dependencies</report>
               <report>mailing-list</report>
               <report>issue-tracking</report>
               <report>license</report>
@@ -232,8 +245,91 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>surefire-report-maven-plugin</artifactId>
+        <version>2.0-beta-1</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-plugin-plugin</artifactId>
+        <version>2.5</version>
       </plugin>
     </plugins>
   </reporting>
+
+  <profiles>
+    <!--
+      To generate a graph of the project dependencies, run: mvn -P graph
+      graph:project
+    -->
+    <profile>
+      <id>graph</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.fusesource.mvnplugins</groupId>
+            <artifactId>maven-graph-plugin</artifactId>
+            <version>1.5</version>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <!-- We want to sign the artifact, the POM, and all attached artifacts -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.0</version>
+            <configuration>
+              <passphrase>${gpg.passphrase}</passphrase>
+            </configuration>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>2.1.1</version>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>2.6</version>
+            
+            <configuration>
+              <encoding>${project.build.sourceEncoding}</encoding>
+            </configuration>
+            
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    
+  </profiles>
 
 </project>
