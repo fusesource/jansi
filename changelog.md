@@ -1,6 +1,14 @@
 ![Jansi][logo]
 ===========
 
+[Jansi 1.3][1_3], released 2010-03-08
+----------------------------------
+* Switched to a HawtJNI generated native library instead of using JNA to access native functions
+
+[Jansi 1.2.1][1_2_1], released 2010-03-08
+----------------------------------
+* Released to Maven Central
+
 [Jansi 1.2][1_2], released 2010-02-09
 ----------------------------------
 * Improved Java Docs
@@ -25,6 +33,8 @@
 
 * Initial Release
 
+[1_2_1]: http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/jansi/jansi/1.3
+[1_2_1]: http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/jansi/jansi/1.2.1
 [1_2]: http://jansi.fusesource.org/repo/release/org/fusesource/jansi/jansi/1.2
 [1_1]: http://jansi.fusesource.org/repo/release/org/fusesource/jansi/jansi/1.1
 [1_0]: http://jansi.fusesource.org/repo/release/org/fusesource/jansi/jansi/1.0
