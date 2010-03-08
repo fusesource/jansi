@@ -21,7 +21,7 @@
 
   <groupId>org.fusesource.jansi</groupId>
   <artifactId>jansi</artifactId>
-  <version>1.2.2-SNAPSHOT</version>
+  <version>1.2.1-SNAPSHOT</version>
   <packaging>jar</packaging>
   
   <name>jansi</name>
@@ -186,6 +186,19 @@
         </configuration>
       </plugin>  
       
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.0</version>
+        <configuration>
+          <autoVersionSubmodules>true</autoVersionSubmodules>
+          <allowTimestampedSnapshots>false</allowTimestampedSnapshots>
+          <preparationGoals>clean install</preparationGoals>
+          <goals>deploy</goals>
+          <arguments>-Prelease</arguments>
+        </configuration>
+      </plugin>
+            
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-scm-plugin</artifactId>
