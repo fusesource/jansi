@@ -87,6 +87,8 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
     private final short originalColors;
     
 	private boolean negative;
+	private short savedX = -1;
+	private short savedY = -1;
 	
 	public WindowsAnsiOutputStream(OutputStream os) throws IOException {
 		super(os);
@@ -272,6 +274,24 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
 				negative = false;
 				applyAttribute();
 				break;
+		}
+	}
+	
+	@Override
+	protected void processSaveCursorPosition() throws IOException {
+		getConsoleInfo();
+		savedX = info.cursorPosition.x;
+		savedY = info.cursorPosition.y;
+	}
+	
+	@Override
+	protected void processRestoreCursorPosition() throws IOException {
+		// restore only if there was a save operation first
+		if (savedX != -1 && savedY != -1) {
+			out.flush();
+			info.cursorPosition.x = savedX;
+			info.cursorPosition.y = savedY;
+			applyCursorPosition();
 		}
 	}
 }
