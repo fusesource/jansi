@@ -317,7 +317,7 @@ public class AnsiOutputStream extends FilterOutputStream {
 	protected void processAttributeRest() throws IOException {
 	}
 
-	protected void processCursorTo(int x, int y) throws IOException {
+	protected void processCursorTo(int row, int col) throws IOException {
 	}
 
 	protected void processCursorToColumn(int x) throws IOException {
