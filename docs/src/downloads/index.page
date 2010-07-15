@@ -28,46 +28,43 @@ Download it Today!
   %h1 Just need a jar?
   
 .right
-  Try out the nightly build:
+  The latest released version is {project_version:}: 
   %ul
     %li
-      %a{:href => "http://{project_id:}.fusesource.org/repo/release/org/fusesource/{project_id:}/{project_id:}/{project_version:}/{project_id:}-{project_version:}.jar"}
+      
+      %a{:href => "http://repo.fusesource.com/nexus/content/repositories/releases-to-central/org/fusesource/{project_id:}/{project_id:}/{project_version:}/{project_id:}-{project_version:}.jar"}
         {project_id:}-{project_version:}.jar
-    
 
 .left
   %h1 Are you a Maven User?
 .right
-  %p
-    Just the following to your 
-    %code pom.xml
+  :markdown
+    Just the following to your `pom.xml` file:
     
-    :plain
-      {coderay:: xml}
-      <dependency>
-        <groupId>org.fusesource.{project_id:}</groupId>
-        <artifactId>{project_id:}</artifactId>
-        <version>{project_version:}</version>
-      </dependency>
-      {coderay}
+  :plain
+    {coderay:: xml}
+    <dependency>
+      <groupId>org.fusesource.{project_id:}</groupId>
+      <artifactId>{project_id:}</artifactId>
+      <version>{project_version:}</version>
+    </dependency>
+    {coderay}
 
-  %p    
-    You you should ensure you have the {project_id:} maven repository defined in your
-    %code pom.xml
-    :plain
-      {coderay:: xml}  
-      <repositories>
-        <repository>
-          <id>{project_id:}.release.m2</id>
-          <name>{project_id:} Release Repository</name>
-          <url>http://{project_id:}.fusesource.org/repo/release</url>
-          <snapshots>
-            <enabled>false</enabled>
-          </snapshots>
-          <releases>
-            <enabled>true</enabled>
-          </releases>
-        </repository>
-      </repositories>
-      {coderay}
+  %h3 Building Against Snapshots
+  :markdown
+    If you want to run against a SNAPSHOT which has not made it into the
+    maven central repository, just add the Fusesource snapshot repository
+    to your `pom.xml` file:
+    
+  :plain
+    {coderay:: xml}  
+    <repositories>
+      <repository>
+        <id>fusesource.snapshot</id>
+        <url>http://repo.fusesource.com/nexus/content/repositories/snapshots/</url>
+        <snapshots><enabled>true</enabled></snapshots>
+        <releases><enabled>false</enabled></releases>
+      </repository>
+    </repositories>
+    {coderay}
       

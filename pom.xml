@@ -118,12 +118,10 @@
       <artifactId>jansi-native</artifactId>
       <version>${jansi-native-version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.fusesource.jansi</groupId>
-      <artifactId>jansi-native</artifactId>
-      <classifier>osx</classifier>
-      <version>${jansi-native-version}</version>
-    </dependency>
+
+    <!-- Bundle in the native libs for Windows, OS X, and 
+         Linux out of the box since those are the most popular 
+         platforms -->
     <dependency>
       <groupId>org.fusesource.jansi</groupId>
       <artifactId>jansi-native</artifactId>
@@ -139,7 +137,19 @@
     <dependency>
       <groupId>org.fusesource.jansi</groupId>
       <artifactId>jansi-native</artifactId>
+      <classifier>osx</classifier>
+      <version>${jansi-native-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.fusesource.jansi</groupId>
+      <artifactId>jansi-native</artifactId>
       <classifier>linux32</classifier>
+      <version>${jansi-native-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.fusesource.jansi</groupId>
+      <artifactId>jansi-native</artifactId>
+      <classifier>linux64</classifier>
       <version>${jansi-native-version}</version>
     </dependency>
 

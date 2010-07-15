@@ -15,7 +15,7 @@
 # limitations under the License.
 
 title: TODO
-in_menu: true
+in_menu: false
 --- name:overview pipeline:haml,tags
 
 %h1 The TODO list
@@ -24,10 +24,6 @@ Stuff that still needs to get done.  Contributions Welcomed!
 
 --- name:content pipeline:textile
 
-
-* Figure out a way to detect if the stdout on unix acutally
-  renders ANSI output.
-  
 * The default color table can be adjusted in Vista/2008 Server, 
   via SetConsoleScreenBufferInfoEx.  Consider adjusting some
   of the colors (especially the bold red color) so that they

@@ -21,9 +21,9 @@ in_menu: false
     title: Javadoc
     in_menu: true
     sort_info: 60
-    url: http://jansi.fusesource.org/maven/1.2/apidocs/index.html
+    url: http://jansi.fusesource.org/maven/1.4/apidocs/index.html
 - /development.html:
     title: Development
     in_menu: true
     sort_info: 60
-    url: http://jansi.fusesource.org/maven/1.2/project-info.html
+    url: http://jansi.fusesource.org/maven/1.4/project-info.html

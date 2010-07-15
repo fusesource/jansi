@@ -27,23 +27,21 @@ sort_info: 1
 .left
   %h1 What is Jansi?
 .right
-  %p
+  :markdown
     Jansi is a small java library that allows you to use ANSI escape sequences 
     to format your console output which works even on windows.  
-  %p
+
     Using jansi is easy.  Before you start sending ANSI escape sequences to
-    %code System.out
-    make sure you run:
+    `System.out` make sure you run:
         
   :plain
     {coderay::java}
     AnsiConsole.systemInstall();
     {coderay}
 
-  %p
+  :markdown
     If you would rather not mess with the System.out settings, you can use the
-    %code AnsiConsole.out
-    PrintStream instead.  For example:
+    `AnsiConsole.out` PrintStream instead.  For example:
     
   :plain
     {coderay::java}
@@ -53,25 +51,17 @@ sort_info: 1
 .left
   %h1 Windows Examples
 .right
-  %p
+  :markdown
     Most unix terminals support rendering ANSI escape sequences when Java
-    sends them via 
-    %code System.out
-    but when this is done on Windows, they don't get interpreted and you get
-    garbage on the console similar to:
-  %img.example{:src=>"images/before-windows.png"}
+    sends them via `System.out` but when this is done on Windows, they 
+    don't get interpreted and you get garbage on the console similar to:
+    
+    ![before](images/before-windows.png)
   
-  %p
     If the application uses the jansi libary, things start to look
     much better:
-  %img.example{:src=>"images/after-jansi-windows.png"}
-        
-  %p
-    But wait, it gets better.  If you also add the JNA library to the 
-    classpath, then jansi provides an even better ANSI handling implementation
-    which use a few windows Native methods to properly apply color attributes
-    and more precise cursor support.
-  %img.example{:src=>"images/after-jansi-jna-windows.png"}
+    
+    ![after](images/after-jansi-windows.png)
     
     
     
