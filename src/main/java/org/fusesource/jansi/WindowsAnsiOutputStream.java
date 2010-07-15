@@ -210,10 +210,10 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
 	}
 	
 	@Override
-	protected void processCursorTo(int x, int y) throws IOException {
+	protected void processCursorTo(int row, int col) throws IOException {
 		getConsoleInfo();
-		info.cursorPosition.y = (short) Math.max(info.window.top, Math.min(info.size.y, info.window.top+y-1));
-		info.cursorPosition.x = (short) Math.max(0, Math.min(info.window.width(), x-1));
+		info.cursorPosition.y = (short) Math.max(info.window.top, Math.min(info.size.y, info.window.top+row-1));
+		info.cursorPosition.x = (short) Math.max(0, Math.min(info.window.width(), col-1));
 		applyCursorPosition();		
 	}
 
