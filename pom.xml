@@ -34,7 +34,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <release-altGitURL>scm:git:ssh://git@forge.fusesource.com/${forge-project-id}.git</release-altGitURL>
     
-    <jansi-native-version>1.0</jansi-native-version>
+    <jansi-native-version>1.1-SNAPSHOT</jansi-native-version>
   </properties>
   
   <url>http://${forge-project-id}.fusesource.org</url>

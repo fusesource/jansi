@@ -35,6 +35,7 @@ import java.util.ArrayList;
  * actually perform the ANSI escape behaviors.
  * 
  * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
+ * @author Joris Kuipers
  * @since 1.0
  */
 public class AnsiOutputStream extends FilterOutputStream {
@@ -56,11 +57,18 @@ public class AnsiOutputStream extends FilterOutputStream {
 	private static final int LOOKING_FOR_NEXT_ARG = 2;
 	private static final int LOOKING_FOR_STR_ARG_END = 3;
 	private static final int LOOKING_FOR_INT_ARG_END = 4;
+	private static final int LOOKING_FOR_OSC_COMMAND = 5;
+	private static final int LOOKING_FOR_OSC_COMMAND_END = 6;
+	private static final int LOOKING_FOR_OSC_PARAM = 7;
+	private static final int LOOKING_FOR_ST = 8;
 
 	int state = LOOKING_FOR_FIRST_ESC_CHAR;
 	
 	private static final int FIRST_ESC_CHAR = 27;
 	private static final int SECOND_ESC_CHAR = '[';
+	private static final int SECOND_OSC_CHAR = ']';
+	private static final int BEL = 7;
+	private static final int SECOND_ST_CHAR = '\\';
 
 	// TODO: implement to get perf boost: public void write(byte[] b, int off, int len)
 	
@@ -79,9 +87,10 @@ public class AnsiOutputStream extends FilterOutputStream {
 			buffer[pos++] = (byte) data;
 			if( data == SECOND_ESC_CHAR ) {
 				state = LOOKING_FOR_NEXT_ARG;
+			} else if ( data == SECOND_OSC_CHAR ) {
+				state = LOOKING_FOR_OSC_COMMAND;
 			} else {
-				buffer[pos++] = (byte) data;
-				reset();
+				reset(false);
 			}
 			break;
 			
@@ -100,13 +109,10 @@ public class AnsiOutputStream extends FilterOutputStream {
 			} else if( '=' == data ) {
 				options.add(new Character('='));
 			} else {
-				if( processEscapeCommand(options, data) ) {
-					pos=0;
-				}
-				reset();
+				reset( processEscapeCommand(options, data) );
 			}
 			break;
-			
+
 		case LOOKING_FOR_INT_ARG_END:
 			buffer[pos++] = (byte)data;
 			if( !('0' <= data && data <= '9') ) {
@@ -116,10 +122,7 @@ public class AnsiOutputStream extends FilterOutputStream {
 				if( data == ';' ) {
 					state = LOOKING_FOR_NEXT_ARG;
 				} else {
-					if( processEscapeCommand(options, data) ) {
-						pos=0;
-					}
-					reset();
+					reset( processEscapeCommand(options, data) );
 				}
 			}
 			break;
@@ -132,23 +135,75 @@ public class AnsiOutputStream extends FilterOutputStream {
 				if( data == ';' ) {
 					state = LOOKING_FOR_NEXT_ARG;
 				} else {
-					if( processEscapeCommand(options, data) ) {
-						pos=0;
-					}
-					reset();
+					reset( processEscapeCommand(options, data) );
 				}
+			}
+			break;
+			
+		case LOOKING_FOR_OSC_COMMAND:
+			buffer[pos++] = (byte)data;
+			if( '0' <= data && data <= '9') {
+				startOfValue=pos-1;
+				state = LOOKING_FOR_OSC_COMMAND_END;				
+			} else {
+				reset(false);
+			}
+			break;
+		
+		case LOOKING_FOR_OSC_COMMAND_END:
+			buffer[pos++] = (byte)data;
+			if ( ';' == data ) {
+				String strValue = new String(buffer, startOfValue, (pos-1)-startOfValue, "UTF-8");
+				Integer value = new Integer(strValue);
+				options.add(value);
+				startOfValue=pos;
+				state = LOOKING_FOR_OSC_PARAM;
+			} else if ('0' <= data && data <= '9') {
+				// already pushed digit to buffer, just keep looking
+			} else {
+				// oops, did not expect this
+				reset(false);
+			}
+			break;
+			
+		case LOOKING_FOR_OSC_PARAM:
+			buffer[pos++] = (byte)data;
+			if ( BEL == data ) {
+				String value = new String(buffer, startOfValue, (pos-1)-startOfValue, "UTF-8");
+				options.add(value);
+				reset( processOperatingSystemCommand(options) );
+			} else if ( FIRST_ESC_CHAR == data ) {
+				state = LOOKING_FOR_ST;
+			} else {
+				// just keep looking while adding text
+			}
+			break;
+			
+		case LOOKING_FOR_ST:
+			buffer[pos++] = (byte)data;
+			if ( SECOND_ST_CHAR == data ) {
+				String value = new String(buffer, startOfValue, (pos-2)-startOfValue, "UTF-8");
+				options.add(value);
+				reset( processOperatingSystemCommand(options) );
+			} else {
+				state = LOOKING_FOR_OSC_PARAM;
 			}
 			break;
 		}
 		
 		// Is it just too long?
 		if( pos >= buffer.length ) {
-			reset();
+			reset(false);
 		}
 	}
 
-	private void reset() throws IOException {
-		if( pos > 0 ) {
+	/**
+	 * Resets all state to continue with regular parsing
+	 * @param skipBuffer if current buffer should be skipped or written to out
+	 * @throws IOException
+	 */
+	private void reset(boolean skipBuffer) throws IOException {
+		if( !skipBuffer ) {
 			out.write(buffer, 0, pos);
 		}
 		pos=0;
@@ -258,6 +313,38 @@ public class AnsiOutputStream extends FilterOutputStream {
 		return false;
 	}
 
+	/**
+	 * 
+	 * @param options
+	 * @return true if the operating system command was processed.
+	 */
+	private boolean processOperatingSystemCommand(ArrayList<Object> options) throws IOException {
+		int command = optionInt(options, 0);
+		String label = (String) options.get(1);
+		// for command > 2 label could be composed (i.e. contain ';'), but we'll leave
+		// it to processUnknownOperatingSystemCommand implementations to handle that
+		try {
+			switch (command) {
+			case 0:
+				processChangeIconNameAndWindowTitle(label);
+				return true;
+			case 1:
+				processChangeIconName(label);
+				return true;
+			case 2:
+				processChangeWindowTitle(label);
+				return true;
+				
+			default:
+				// not exactly unknown, but not supported through dedicated process methods:
+				processUnknownOperatingSystemCommand(command, label);
+				return true;
+			}
+		} catch (IllegalArgumentException ignore) {
+		}
+		return false;
+	}
+	
 	protected void processRestoreCursorPosition() throws IOException {
 	}
 	protected void processSaveCursorPosition() throws IOException {
@@ -350,6 +437,20 @@ public class AnsiOutputStream extends FilterOutputStream {
 	}
 	
 	protected void processUnknownExtension(ArrayList<Object> options, int command) {
+	}
+	
+	protected void processChangeIconNameAndWindowTitle(String label) {
+        processChangeIconName(label);
+        processChangeWindowTitle(label);
+	}
+
+	protected void processChangeIconName(String label) {
+	}
+
+	protected void processChangeWindowTitle(String label) {
+	}
+	
+	protected void processUnknownOperatingSystemCommand(int command, String param) {
 	}
 
 	private int optionInt(ArrayList<Object> options, int index) {

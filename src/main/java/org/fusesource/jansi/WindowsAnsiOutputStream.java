@@ -30,6 +30,7 @@ import static org.fusesource.jansi.internal.Kernel32.GetStdHandle;
 import static org.fusesource.jansi.internal.Kernel32.STD_OUTPUT_HANDLE;
 import static org.fusesource.jansi.internal.Kernel32.SetConsoleCursorPosition;
 import static org.fusesource.jansi.internal.Kernel32.SetConsoleTextAttribute;
+import static org.fusesource.jansi.internal.Kernel32.SetConsoleTitle;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -44,6 +45,7 @@ import org.fusesource.jansi.internal.Kernel32.COORD;
  * 
  * @since 1.0
  * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
+ * @author Joris Kuipers
  */
 public final class WindowsAnsiOutputStream extends AnsiOutputStream {
 	
@@ -293,5 +295,10 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
 			info.cursorPosition.y = savedY;
 			applyCursorPosition();
 		}
+	}
+	
+	@Override
+	protected void processChangeWindowTitle(String label) {
+		SetConsoleTitle(label);
 	}
 }
