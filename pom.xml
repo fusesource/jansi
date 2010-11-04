@@ -18,14 +18,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
-
+  <parent>
+    <groupId>org.fusesource</groupId>
+    <artifactId>fusesource-pom</artifactId>
+    <version>1.2</version>
+  </parent>
+  
   <groupId>org.fusesource.jansi</groupId>
   <artifactId>jansi</artifactId>
   <version>1.5-SNAPSHOT</version>
-  <packaging>jar</packaging>
   
-  <name>jansi</name>
-  <description>jansi is a java library for generating and interpreting ANSI escape sequences.</description>
+  <name>${project.artifactId}</name>
+  <description>Jansi is a java library for generating and interpreting ANSI escape sequences.</description>
   
   <properties>
     <forge-project-id>jansi</forge-project-id>
@@ -33,17 +37,10 @@
     
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <release-altGitURL>scm:git:ssh://git@forge.fusesource.com/${forge-project-id}.git</release-altGitURL>
-    
-    <jansi-native-version>1.1-SNAPSHOT</jansi-native-version>
   </properties>
   
   <url>http://${forge-project-id}.fusesource.org</url>
   <inceptionYear>2009</inceptionYear>
-
-  <organization>
-    <name>Progress Software Inc.</name>
-    <url>http://fusesource.com/</url>
-  </organization> 
 
   <issueManagement>
     <system>jira</system>
@@ -79,16 +76,6 @@
   </scm>
 
   <distributionManagement>
-    <repository>
-      <id>fusesource-nexus-staging</id>
-      <name>Fusesource Release Repository</name>
-      <url>http://repo.fusesource.com/nexus/service/local/staging/deploy/maven2</url>
-    </repository>
-    <snapshotRepository>
-      <id>fusesource-nexus-snapshots</id>
-      <name>Fusesource Nexus Snapshots</name>
-      <url>http://repo.fusesource.com/nexus/content/repositories/snapshots</url>
-    </snapshotRepository>
     <site>
       <id>website.fusesource.org</id>
       <name>website</name>
@@ -110,13 +97,13 @@
     <dependency>
       <groupId>org.fusesource.hawtjni</groupId>
       <artifactId>hawtjni-runtime</artifactId>
-      <version>1.0</version>
+      <version>1.1</version>
     </dependency>
 
     <dependency>
       <groupId>org.fusesource.jansi</groupId>
       <artifactId>jansi-native</artifactId>
-      <version>${jansi-native-version}</version>
+      <version>1.1</version>
     </dependency>
 
     <!-- Bundle in the native libs for Windows, OS X, and 
@@ -126,31 +113,31 @@
       <groupId>org.fusesource.jansi</groupId>
       <artifactId>jansi-native</artifactId>
       <classifier>windows32</classifier>
-      <version>${jansi-native-version}</version>
+      <version>1.1</version>
     </dependency>
     <dependency>
       <groupId>org.fusesource.jansi</groupId>
       <artifactId>jansi-native</artifactId>
       <classifier>windows64</classifier>
-      <version>${jansi-native-version}</version>
+      <version>1.1</version>
     </dependency>
     <dependency>
       <groupId>org.fusesource.jansi</groupId>
       <artifactId>jansi-native</artifactId>
       <classifier>osx</classifier>
-      <version>${jansi-native-version}</version>
+      <version>1.0</version>
     </dependency>
     <dependency>
       <groupId>org.fusesource.jansi</groupId>
       <artifactId>jansi-native</artifactId>
       <classifier>linux32</classifier>
-      <version>${jansi-native-version}</version>
+      <version>1.0</version>
     </dependency>
     <dependency>
       <groupId>org.fusesource.jansi</groupId>
       <artifactId>jansi-native</artifactId>
       <classifier>linux64</classifier>
-      <version>${jansi-native-version}</version>
+      <version>1.0</version>
     </dependency>
 
     <dependency>
@@ -162,14 +149,6 @@
   </dependencies>
 
   <build>
-    <extensions>
-      <extension>
-        <groupId>org.apache.maven.wagon</groupId>
-        <artifactId>wagon-webdav-jackrabbit</artifactId>
-        <version>1.0-beta-6</version>
-      </extension>
-    </extensions>
-      
     <plugins>
     
       <!-- the older clean plugin has trouble deleting directories with symlinks in them -->
@@ -247,32 +226,7 @@
           </archive> 
         </configuration>
       </plugin>  
-      
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-release-plugin</artifactId>
-        <version>2.0</version>
-        <configuration>
-          <autoVersionSubmodules>true</autoVersionSubmodules>
-          <allowTimestampedSnapshots>false</allowTimestampedSnapshots>
-          <preparationGoals>clean install</preparationGoals>
-          <goals>deploy</goals>
-          <arguments>-Prelease</arguments>
-        </configuration>
-      </plugin>
-            
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-scm-plugin</artifactId>
-        <version>1.3</version>
-        <dependencies>
-          <dependency>
-            <groupId>org.apache.maven.scm</groupId>
-            <artifactId>maven-scm-provider-gitexe</artifactId>
-            <version>1.3</version>
-          </dependency>
-        </dependencies>
-      </plugin>      
+       
     </plugins>
   </build>
 
@@ -331,80 +285,7 @@
   </reporting>
 
   <profiles>
-    <!--
-      To generate a graph of the project dependencies, run: mvn -P graph
-      graph:project
-    -->
-    <profile>
-      <id>graph</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.fusesource.mvnplugins</groupId>
-            <artifactId>maven-graph-plugin</artifactId>
-            <version>1.5</version>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-    <profile>
-      <id>release</id>
-      <build>
-        <plugins>
-          <!-- We want to sign the artifact, the POM, and all attached artifacts -->
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-gpg-plugin</artifactId>
-            <version>1.0</version>
-            <configuration>
-              <passphrase>${gpg.passphrase}</passphrase>
-            </configuration>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>sign</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-source-plugin</artifactId>
-            <version>2.1.1</version>
-            <executions>
-              <execution>
-                <id>attach-sources</id>
-                <goals>
-                  <goal>jar-no-fork</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-          
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <version>2.6</version>
-            
-            <configuration>
-              <encoding>${project.build.sourceEncoding}</encoding>
-            </configuration>
-            
-            <executions>
-              <execution>
-                <id>attach-javadocs</id>
-                <goals>
-                  <goal>jar</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
+   
     <!-- enables extra repositories which may have some
          goodies that have not reached central yet -->
     <profile>
