@@ -1,11 +1,17 @@
 # ![Jansi][logo]
 [logo]: http://jansi.fusesource.org/images/project-logo.png "Jansi"
 
+## [Jansi 1.5][1_5], released 2010-11-05
+[1_5]: http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/jansi/jansi/1.5
+
+* Support for parsing Operating System Command (OSC) control sequences
+* Windows: added support for setting the console title through an OSC command, like on xterm
+
 ## [Jansi 1.4][1_4], released 2010-07-15
 [1_4]: http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/jansi/jansi/1.4
 
 * JNI libs are now bundled in the jansi jar
-* Windows: added support for save and restore of cursor position
+* Windows: added support for save and restore of cursor position, fixed bug in processCursorTo
 
 ## [Jansi 1.3][1_3], released 2010-03-08
 [1_3]: http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/jansi/jansi/1.3
@@ -31,7 +37,7 @@
 
 * AnsiRender can now be used in a static way and made easier to use with the Ansi builder.
 * Merged [Jason Dillon's Fork](http://github.com/jdillon/jansi/tree/bb86e0e79bec850167ddfd8c4a86fb9ffef704e5): 
-	* Pluggable ASNI support detection
+	* Pluggable ANSI support detection
 	* ANSI builder can be configured to not generate ANSI escapes.
 	* AnsiRender provides an easier way to generate escape sequences.
 * [JANSI-5](http://fusesource.com/issues/browse/JANSI-5): Attribute Reset escape should respect original console colors
