@@ -42,6 +42,13 @@ public class AnsiConsole {
     private static int installed;
 
 	public static OutputStream wrapOutputStream(final OutputStream stream) {
+
+        // If the jansi.strip property is set, then we just strip the
+        // the ansi escapes.
+        if( Boolean.getBoolean("jansi.strip") ) {
+          return new AnsiOutputStream(stream);
+        }
+
 		String os = System.getProperty("os.name");
 		if( os.startsWith("Windows") ) {
 			

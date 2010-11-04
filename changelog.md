@@ -1,11 +1,11 @@
-# ![Jansi][logo]
-[logo]: http://jansi.fusesource.org/images/project-logo.png "Jansi"
+# ![Jansi](http://jansi.fusesource.org/images/project-logo.png)
 
-## [Jansi 1.5][1_5], released 2010-11-05
+## [Jansi 1.5][1_5], released 2010-11-04
 [1_5]: http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/jansi/jansi/1.5
 
 * Support for parsing Operating System Command (OSC) control sequences
 * Windows: added support for setting the console title through an OSC command, like on xterm
+* add option to strip ansi escapes if the 'jansi.strip' system property is set to true.
 
 ## [Jansi 1.4][1_4], released 2010-07-15
 [1_4]: http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/jansi/jansi/1.4
