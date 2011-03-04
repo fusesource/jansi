@@ -280,6 +280,11 @@ public class Ansi {
 		this(new StringBuilder());
 	}
 
+	public Ansi(Ansi parent) {
+	    this(new StringBuilder(parent.builder));
+	    attributeOptions.addAll(parent.attributeOptions);
+	}
+
     public Ansi(int size) {
 		this(new StringBuilder(size));
 	}
@@ -541,5 +546,5 @@ public class Ansi {
 		builder.append(command);
 		return this;
 	}
-	
+
 }

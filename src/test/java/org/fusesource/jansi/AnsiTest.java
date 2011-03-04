@@ -16,6 +16,7 @@
 
 package org.fusesource.jansi;
 
+import org.fusesource.jansi.Ansi.Color;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -46,5 +47,13 @@ public class AnsiTest
                 assertEquals(true, Ansi.isEnabled());
             }
         }.run();
+    }
+
+    @Test
+    public void testClone() throws CloneNotSupportedException {
+        Ansi ansi = Ansi.ansi().a("Some text").bg(Color.BLACK).fg(Color.WHITE);
+        Ansi clone = new Ansi(ansi);
+
+        assertEquals(ansi.a("test").reset().toString(), clone.a("test").reset().toString());
     }
 }
