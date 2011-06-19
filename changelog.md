@@ -5,6 +5,7 @@
 
 * Upgrade to HawtJNI 1.2 to pick up a fix to support 32 and 64 bit JVMs on a single machine
 * Add copy constructor for Ansi class.
+* Port website doco to use Scalate instead of webgen
 
 ## [Jansi 1.5][1_5], released 2010-11-04
 [1_5]: http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/jansi/jansi/1.5

@@ -79,8 +79,4 @@ The ${project_name} community is here to help you
     
      * [http://groups.google.com/group/${project_id}-commits](http://groups.google.com/group/${project_id}-commits)    
 
-.left
-  h1 Developers
-.right
-  !~~ include("/community/developers.page")
 
