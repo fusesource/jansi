@@ -1,6 +1,7 @@
 ---
-# Copyright (C) 2009, Progress Software Corporation and/or its 
-# subsidiaries or affiliates.  All rights reserved.
+# Copyright (C) 2009-2011 the original author or authors.
+# See the notice.md file distributed with this work for additional
+# information regarding copyright ownership.
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,45 +14,41 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+title: Jansi
+--- name:overview
 
-title: Home
-in_menu: true
-sort_info: 1
---- name:overview pipeline:haml,tags
+${project_slogan}
 
-%h1 Home
-{project_slogan:}
-
---- name:content pipeline:haml,tags
+--- name:content pipeline:jade 
 
 .left
-  %h1 What is Jansi?
+  h1 What is Jansi?
 .right
   :markdown
+    
     Jansi is a small java library that allows you to use ANSI escape sequences 
     to format your console output which works even on windows.  
 
     Using jansi is easy.  Before you start sending ANSI escape sequences to
     `System.out` make sure you run:
         
-  :plain
-    {coderay::java}
+    {pygmentize::java}
     AnsiConsole.systemInstall();
-    {coderay}
+    {pygmentize}
 
   :markdown
     If you would rather not mess with the System.out settings, you can use the
     `AnsiConsole.out` PrintStream instead.  For example:
     
-  :plain
-    {coderay::java}
+    {pygmentize::java}
     AnsiConsole.out.println("Hello World");
-    {coderay} 
+    {pygmentize} 
     
 .left
-  %h1 Windows Examples
+  h1 Windows Examples
 .right
   :markdown
+  
     Most unix terminals support rendering ANSI escape sequences when Java
     sends them via `System.out` but when this is done on Windows, they 
     don't get interpreted and you get garbage on the console similar to:
@@ -62,6 +59,5 @@ sort_info: 1
     much better:
     
     ![after](images/after-jansi-windows.png)
-    
     
     

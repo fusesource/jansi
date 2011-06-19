@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (C) 2009, Progress Software Corporation and/or its 
+  subsidiaries or affiliates.  All rights reserved.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.fusesource.jansi</groupId>
+    <artifactId>jansi-project</artifactId>
+    <version>1.6-SNAPSHOT</version>
+  </parent>
+  
+  <artifactId>jansi</artifactId>
+  
+  <name>${project.artifactId}</name>
+  <description>Jansi is a java library for generating and interpreting ANSI escape sequences.</description>
+  
+  <dependencies>
+    <dependency>
+      <groupId>org.fusesource.hawtjni</groupId>
+      <artifactId>hawtjni-runtime</artifactId>
+      <version>1.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.fusesource.jansi</groupId>
+      <artifactId>jansi-native</artifactId>
+      <version>1.2</version>
+    </dependency>
+
+    <!-- Bundle in the native libs for Windows, OS X, and 
+         Linux out of the box since those are the most popular 
+         platforms -->
+    <dependency>
+      <groupId>org.fusesource.jansi</groupId>
+      <artifactId>jansi-native</artifactId>
+      <classifier>windows32</classifier>
+      <version>1.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.fusesource.jansi</groupId>
+      <artifactId>jansi-native</artifactId>
+      <classifier>windows64</classifier>
+      <version>1.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.fusesource.jansi</groupId>
+      <artifactId>jansi-native</artifactId>
+      <classifier>osx</classifier>
+      <version>1.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.fusesource.jansi</groupId>
+      <artifactId>jansi-native</artifactId>
+      <classifier>linux32</classifier>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.fusesource.jansi</groupId>
+      <artifactId>jansi-native</artifactId>
+      <classifier>linux64</classifier>
+      <version>1.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.7</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+    
+      <!-- the older clean plugin has trouble deleting directories with symlinks in them -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>2.3</version>
+      </plugin>
+      
+      <!-- include all the dependencies into the jar so it can run standalone -->
+      <plugin>
+        <groupId>org.fusesource.mvnplugins</groupId>
+        <artifactId>maven-uberize-plugin</artifactId>
+        <version>1.5</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals><goal>uberize</goal></goals>
+          </execution>
+        </executions>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.4.3</version>
+        <configuration>
+            <redirectTestOutputToFile>true</redirectTestOutputToFile>
+            <forkMode>once</forkMode>
+            <argLine>-ea</argLine>
+            <failIfNoTests>false</failIfNoTests>
+            <workingDirectory>${project.build.directory}</workingDirectory>
+            <excludes>
+                <exclude>**/Abstract*.java</exclude>
+                <exclude>**/Test*.java</exclude>
+            </excludes>
+            <includes>
+                <include>**/*Test.java</include>
+            </includes>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <version>2.0.1</version>
+        <executions>
+          <execution>
+            <id>bundle-manifest</id>
+            <phase>process-classes</phase>
+            <goals>    
+              <goal>manifest</goal>
+            </goals>   
+            <configuration>
+              <instructions>
+                  <Import-Package>!org.fusesource.jansi*,!org.fusesource.hawtjni*,sun.reflect;resolution:=optional,*</Import-Package>
+              </instructions>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>  
+            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+          </archive> 
+        </configuration>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        
+        <configuration>
+          <encoding>${project.build.sourceEncoding}</encoding>
+        </configuration>
+        
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+             
+    </plugins>
+  </build>
+
+</project>

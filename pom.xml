@@ -25,8 +25,9 @@
   </parent>
   
   <groupId>org.fusesource.jansi</groupId>
-  <artifactId>jansi</artifactId>
+  <artifactId>jansi-project</artifactId>
   <version>1.6-SNAPSHOT</version>
+  <packaging>pom</packaging>
   
   <name>${project.artifactId}</name>
   <description>Jansi is a java library for generating and interpreting ANSI escape sequences.</description>
@@ -36,7 +37,14 @@
     <forge-project-id-uc>JANSI</forge-project-id-uc>
     
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <release-altGitURL>scm:git:ssh://git@forge.fusesource.com/${forge-project-id}.git</release-altGitURL>
+    <release-altGitURL>scm:git:ssh://git@github.com:fusesources/hawtjni.git</release-altGitURL>
+    
+    <scalate-version>1.5.0</scalate-version>
+    <scalamd-version>1.5</scalamd-version>    
+    <slf4j-version>1.6.1</slf4j-version>
+    <jetty-plugin-version>7.0.1.v20091125</jetty-plugin-version>
+    <scala-plugin-version>2.15.2</scala-plugin-version>
+    <scala-version>2.9.0-1</scala-version>
   </properties>
   
   <url>http://${forge-project-id}.fusesource.org</url>
@@ -49,14 +57,18 @@
   
   <mailingLists>
     <mailingList>
-      <name>${forge-project-id} dev</name>
-      <post>${forge-project-id}-dev@fusesource.org</post>
-      <subscribe>${forge-project-id}-dev-subscribe@fusesource.org</subscribe>
+      <name>Discussion List</name>
+      <archive>http://groups.google.com/group/${forge-project-id}</archive>
+      <post>${forge-project-id}-dev@googlegroups.com</post>
+      <subscribe>${forge-project-id}-dev+subscribe@googlegroups.com</subscribe>
+      <unsubscribe>${forge-project-id}-dev+unsubscribe@googlegroups.com</unsubscribe>
     </mailingList>
     <mailingList>
-      <name>${forge-project-id} commits</name>
-      <post>${forge-project-id}-commits@fusesource.org</post>
-      <subscribe>${forge-project-id}-commits-subscribe@fusesource.org</subscribe>
+      <name>Commits and Issue Tracker List</name>
+      <archive>http://groups.google.com/group/${forge-project-id}-commits</archive>
+      <post>${forge-project-id}-commits@googlegroups.com</post>
+      <subscribe>${forge-project-id}-commits+subscribe@googlegroups.com</subscribe>
+      <unsubscribe>${forge-project-id}-commits+unsubscribe@googlegroups.com</unsubscribe>
     </mailingList>
   </mailingLists>
 
@@ -69,10 +81,10 @@
   </licenses>
   
   <scm>
-    <connection>scm:git:git://forge.fusesource.com/${forge-project-id}.git</connection>
+    <connection>scm:git:git://github.com/fusesource/${forge-project-id}.git</connection>
     <!-- Work around for issue: http://jira.codehaus.org/browse/SCM-444 -->
     <developerConnection>${release-altGitURL}</developerConnection>
-    <url>http://fusesource.com/forge/gitweb?p=${forge-project-id}.git</url>
+    <url>http://github.com/fusesource/{forge-project-id}.git</url>
   </scm>
 
   <distributionManagement>
@@ -93,196 +105,6 @@
     </developer>
   </developers>
   
-  <dependencies>
-    <dependency>
-      <groupId>org.fusesource.hawtjni</groupId>
-      <artifactId>hawtjni-runtime</artifactId>
-      <version>1.2</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.fusesource.jansi</groupId>
-      <artifactId>jansi-native</artifactId>
-      <version>1.2</version>
-    </dependency>
-
-    <!-- Bundle in the native libs for Windows, OS X, and 
-         Linux out of the box since those are the most popular 
-         platforms -->
-    <dependency>
-      <groupId>org.fusesource.jansi</groupId>
-      <artifactId>jansi-native</artifactId>
-      <classifier>windows32</classifier>
-      <version>1.2</version>
-    </dependency>
-    <dependency>
-      <groupId>org.fusesource.jansi</groupId>
-      <artifactId>jansi-native</artifactId>
-      <classifier>windows64</classifier>
-      <version>1.2</version>
-    </dependency>
-    <dependency>
-      <groupId>org.fusesource.jansi</groupId>
-      <artifactId>jansi-native</artifactId>
-      <classifier>osx</classifier>
-      <version>1.2</version>
-    </dependency>
-    <dependency>
-      <groupId>org.fusesource.jansi</groupId>
-      <artifactId>jansi-native</artifactId>
-      <classifier>linux32</classifier>
-      <version>1.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.fusesource.jansi</groupId>
-      <artifactId>jansi-native</artifactId>
-      <classifier>linux64</classifier>
-      <version>1.0</version>
-    </dependency>
-
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.7</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-
-  <build>
-    <plugins>
-    
-      <!-- the older clean plugin has trouble deleting directories with symlinks in them -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-clean-plugin</artifactId>
-        <version>2.3</version>
-      </plugin>
-      
-      <!-- include all the dependencies into the jar so it can run standalone -->
-      <plugin>
-        <groupId>org.fusesource.mvnplugins</groupId>
-        <artifactId>maven-uberize-plugin</artifactId>
-        <version>1.5</version>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals><goal>uberize</goal></goals>
-          </execution>
-        </executions>
-      </plugin>
-      
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.4.3</version>
-        <configuration>
-            <redirectTestOutputToFile>true</redirectTestOutputToFile>
-            <forkMode>once</forkMode>
-            <argLine>-ea</argLine>
-            <failIfNoTests>false</failIfNoTests>
-            <workingDirectory>${project.build.directory}</workingDirectory>
-            <excludes>
-                <exclude>**/Abstract*.java</exclude>
-                <exclude>**/Test*.java</exclude>
-            </excludes>
-            <includes>
-                <include>**/*Test.java</include>
-            </includes>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
-        </configuration>
-      </plugin>
-      
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <version>2.0.1</version>
-        <executions>
-          <execution>
-            <id>bundle-manifest</id>
-            <phase>process-classes</phase>
-            <goals>    
-              <goal>manifest</goal>
-            </goals>   
-            <configuration>
-              <instructions>
-                  <Import-Package>!org.fusesource.jansi*,!org.fusesource.hawtjni*,sun.reflect;resolution:=optional,*</Import-Package>
-              </instructions>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-jar-plugin</artifactId>
-        <configuration>
-          <archive>  
-            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
-          </archive> 
-        </configuration>
-      </plugin>  
-       
-    </plugins>
-  </build>
-
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>jxr-maven-plugin</artifactId>
-        <version>2.0-beta-1</version>
-        <configuration>
-          <aggregate>true</aggregate>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.6</version>
-        <configuration>
-          <excludePackageNames>*.internal</excludePackageNames>
-          <linksource>true</linksource>
-          <links>
-            <link>http://java.sun.com/j2se/1.5.0/docs/api</link>
-          </links>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>2.1.1</version>
-        <reportSets>
-          <reportSet>
-            <reports>
-              <report>index</report>
-              <report>sumary</report>
-              <report>plugins</report>
-              <report>dependencies</report>
-              <report>mailing-list</report>
-              <report>issue-tracking</report>
-              <report>license</report>
-              <report>scm</report>
-            </reports>
-          </reportSet>
-        </reportSets>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>surefire-report-maven-plugin</artifactId>
-        <version>2.0-beta-1</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-plugin-plugin</artifactId>
-        <version>2.5</version>
-      </plugin>
-    </plugins>
-  </reporting>
 
   <profiles>
    
@@ -307,4 +129,9 @@
     </profile>
 
   </profiles>
+  
+  <modules>
+    <module>jansi</module>
+    <module>jansi-website</module>
+  </modules>  
 </project>
