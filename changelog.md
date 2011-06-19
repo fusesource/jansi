@@ -1,5 +1,11 @@
 # ![Jansi](http://jansi.fusesource.org/images/project-logo.png)
 
+## [Jansi 1.6][1_6], released 2011-06-19
+[1_6]: http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/jansi/jansi/1.6
+
+* Upgrade to HawtJNI 1.2 to pick up a fix to support 32 and 64 bit JVMs on a single machine
+* Add copy constructor for Ansi class.
+
 ## [Jansi 1.5][1_5], released 2010-11-04
 [1_5]: http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/jansi/jansi/1.5
 
