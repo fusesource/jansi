@@ -207,6 +207,7 @@
                 <artifactItem>
                   <groupId>org.fusesource.jansi</groupId>
                   <artifactId>jansi</artifactId>
+                  <version>${project.version}</version>
                   <classifier>javadoc</classifier>
                   <outputDirectory>${basedir}/target/sitegen/documentation/api</outputDirectory>
                 </artifactItem>

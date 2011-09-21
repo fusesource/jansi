@@ -1,5 +1,12 @@
 # ![Jansi](http://jansi.fusesource.org/images/project-logo.png)
 
+## [Jansi 1.7][1_7], released 2011-09-21
+[1_7]: http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/jansi/jansi/1.7
+
+* Updated bundled native libraries:
+  * Windows: Adding support for PeekConsoleInputW, FlushConsoleInputBuffer so that CTRL-C can be handled by jline. Discarding mouse events on readConsoleInput.
+  * Linux: Built against glib 2.0 to be compatible with more versions of Linux.
+  
 ## [Jansi 1.6][1_6], released 2011-06-19
 [1_6]: http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/jansi/jansi/1.6
 
