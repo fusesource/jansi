@@ -39,7 +39,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <release-altGitURL>scm:git:ssh://git@github.com:fusesources/hawtjni.git</release-altGitURL>
     
-    <scalate-version>1.5.0</scalate-version>
+    <scalate-version>1.5.1</scalate-version>
     <scalamd-version>1.5</scalamd-version>    
     <slf4j-version>1.6.1</slf4j-version>
     <jetty-plugin-version>7.0.1.v20091125</jetty-plugin-version>
