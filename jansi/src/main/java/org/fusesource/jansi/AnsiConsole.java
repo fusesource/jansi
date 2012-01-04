@@ -43,6 +43,12 @@ public class AnsiConsole {
 
 	public static OutputStream wrapOutputStream(final OutputStream stream) {
 
+        // If the jansi.passthrough property is set, then don't interpret
+        // any of the ansi sequences.
+        if( Boolean.getBoolean("jansi.passthrough") ) {
+          return stream;
+        }
+
         // If the jansi.strip property is set, then we just strip the
         // the ansi escapes.
         if( Boolean.getBoolean("jansi.strip") ) {
