@@ -371,6 +371,14 @@ public class Ansi {
 		return a(Attribute.RESET);
 	}
 
+    public Ansi bold() {
+        return a(Attribute.INTENSITY_BOLD);
+    }
+
+    public Ansi boldOff() {
+        return a(Attribute.INTENSITY_BOLD_OFF);
+    }
+
 	public Ansi a(String value) {
 		flushAtttributes();		
 		builder.append(value);
