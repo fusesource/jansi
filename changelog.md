@@ -1,5 +1,13 @@
 # ![Jansi](http://jansi.fusesource.org/images/project-logo.png)
 
+## [Jansi 1.8][1_8], released 2012-02-15
+[1_7]: http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/jansi/jansi/1.8
+
+* Updated bundled native libraries:
+  * Windows: Added support for isatty and link against the system msvcrt.dll (so no need for VC redistributables)
+* Add some helper methods to turn bold on and off
+* if the jansi.passthrough system property is set, then jansi will not interpret any of the ansi sequences.
+
 ## [Jansi 1.7][1_7], released 2011-09-21
 [1_7]: http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/jansi/jansi/1.7
 
