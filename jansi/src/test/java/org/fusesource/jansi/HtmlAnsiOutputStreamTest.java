@@ -46,9 +46,6 @@ public class HtmlAnsiOutputStreamTest {
     }
 
 
-	/**
-	 * @throws IOException
-	 */
 	@Test
 	public void testNoMarkup() throws IOException {
 		assertEquals(colorize("line"), "line");
