@@ -7,7 +7,7 @@
 * Fixed handling of default text and background color.
 
 ## [Jansi 1.8][1_8], released 2012-02-15
-[1_7]: http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/jansi/jansi/1.8
+[1_8]: http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/jansi/jansi/1.8
 
 * Updated bundled native libraries:
   * Windows: Added support for isatty and link against the system msvcrt.dll (so no need for VC redistributables).
