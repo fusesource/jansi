@@ -3,7 +3,7 @@
 ## [Jansi Next][Next], not released yet
 [next]: http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/jansi/jansi/
 
-* Added HtmlAnsiOutputStream that converts ansi output to html.
+* Added HtmlAnsiOutputStream that converts ANSI output to HTML.
 * Fixed handling of default text and background color.
 
 ## [Jansi 1.8][1_8], released 2012-02-15
@@ -12,7 +12,7 @@
 * Updated bundled native libraries:
   * Windows: Added support for isatty and link against the system msvcrt.dll (so no need for VC redistributables).
 * Add some helper methods to turn bold on and off.
-* If the jansi.passthrough system property is set, then jansi will not interpret any of the ansi sequences.
+* If the jansi.passthrough system property is set, then Jansi will not interpret any of the ANSI sequences.
 
 ## [Jansi 1.7][1_7], released 2011-09-21
 [1_7]: http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/jansi/jansi/1.7
@@ -33,12 +33,12 @@
 
 * Support for parsing Operating System Command (OSC) control sequences.
 * Windows: added support for setting the console title through an OSC command, like on xterm.
-* Added option to strip ansi escapes if the 'jansi.strip' system property is set to true.
+* Added option to strip ANSI escapes if the 'jansi.strip' system property is set to true.
 
 ## [Jansi 1.4][1_4], released 2010-07-15
 [1_4]: http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/jansi/jansi/1.4
 
-* JNI libs are now bundled in the jansi jar.
+* JNI libs are now bundled in the Jansi jar.
 * Windows: added support for save and restore of cursor position, fixed bug in processCursorTo.
 
 ## [Jansi 1.3][1_3], released 2010-03-08
@@ -55,15 +55,15 @@
 [1_2]: http://jansi.fusesource.org/repo/release/org/fusesource/jansi/jansi/1.2
 
 * Improved Java Docs.
-* Better windows ansi handling of: erase screen and line and move to col.
+* Better windows ANSI handling of: erase screen and line and move to col.
 * new method: Ansi.newline().
 * Fixed missing return statement in cursor up case. 
-* Reset the attributes when the ansi output stream is closed on unix.
+* Reset the attributes when the ANSI output stream is closed on unix.
 
 ## [Jansi 1.1][1_1], released 2009-11-23
 [1_1]: http://jansi.fusesource.org/repo/release/org/fusesource/jansi/jansi/1.1
 
-* AnsiRender can now be used in a static way and made easier to use with the Ansi builder.
+* AnsiRender can now be used in a static way and made easier to use with the ANSI builder.
 * Merged [Jason Dillon's Fork](http://github.com/jdillon/jansi/tree/bb86e0e79bec850167ddfd8c4a86fb9ffef704e5): 
 	* Pluggable ANSI support detection.
 	* ANSI builder can be configured to not generate ANSI escapes.
@@ -76,4 +76,3 @@
 [1_0]: http://jansi.fusesource.org/repo/release/org/fusesource/jansi/jansi/1.0
 
 * Initial Release.
-
