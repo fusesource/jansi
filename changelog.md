@@ -56,7 +56,7 @@
 
 * Improved Java Docs.
 * Better windows ANSI handling of: erase screen and line and move to col.
-* new method: Ansi.newline().
+* New method: Ansi.newline().
 * Fixed missing return statement in cursor up case. 
 * Reset the attributes when the ANSI output stream is closed on unix.
 
