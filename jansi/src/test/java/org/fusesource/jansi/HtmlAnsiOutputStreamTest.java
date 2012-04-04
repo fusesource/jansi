@@ -41,6 +41,7 @@ public class HtmlAnsiOutputStreamTest {
 
     @After
     public void tearDown() {
+        hos = null;
         os = null;
     }
 
