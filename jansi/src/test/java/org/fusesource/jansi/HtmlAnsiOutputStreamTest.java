@@ -30,57 +30,58 @@ import org.junit.Test;
  */
 public class HtmlAnsiOutputStreamTest {
 
-    private HtmlAnsiOutputStream hos;
-    private ByteArrayOutputStream os;
-
-    @Before
-    public void setUp() {
-    	os = new ByteArrayOutputStream();
-        hos = new HtmlAnsiOutputStream(os);
-    }
-
-    @After
-    public void tearDown() {
-        hos = null;
-        os = null;
-    }
-
-
 	@Test
 	public void testNoMarkup() throws IOException {
-		assertEquals(colorize("line"), "line");
+		assertEquals("line", colorize("line"));
 	}
 
 	@Test
 	public void testClear() throws IOException {
-		assertEquals(colorize("[0m[K"), "");
-		assertEquals(colorize("[0mhello world"), "hello world");
+		assertEquals("", colorize("[0m[K"));
+		assertEquals("hello world", colorize("[0mhello world"));
 	}
 
 	@Test
 	public void testBold() throws IOException {
-		assertEquals(colorize("[1mhello world"), "<b>hello world</b>");
+		assertEquals("<b>hello world</b>", colorize("[1mhello world"));
 	}
 
 	@Test
 	public void testGreen() throws IOException {
-		assertEquals(colorize("[32mhello world"), 
-			"<span style=\"color: green;\">hello world</span>");
+		assertEquals("<span style=\"color: green;\">hello world</span>",
+				colorize("[32mhello world"));
 	}
 
 	@Test
 	public void testGreenOnWhite() throws IOException {
-		assertEquals(colorize("[47;32mhello world"),
-			"<span style=\"background-color: white;\"><span style=\"color: green;\">hello world</span></span>");
+		assertEquals("<span style=\"background-color: white;\"><span style=\"color: green;\">hello world</span></span>",
+				colorize("[47;32mhello world"));
 	}
 	
 	@Test
+	public void testEscapeHtml() throws IOException {
+		assertEquals("&quot;", colorize("\""));
+		assertEquals("&amp;", colorize("&"));
+		assertEquals("&lt;", colorize("<"));
+		assertEquals("&gt;", colorize(">"));
+		assertEquals("&quot;&amp;&lt;&gt;", colorize("\"&<>"));
+	}
+
+	@Test
 	public void testResetOnOpen() throws IOException {
-		assertEquals(colorize("[0;31;49mred[0m"),
-			"<span style=\"color: red;\">red</span>");
+		assertEquals("<span style=\"color: red;\">red</span>", 
+				colorize("[0;31;49mred[0m"));
+	}
+	
+	@Test
+	public void testUTF8Character() throws IOException {
+		assertEquals("<b>\u3053\u3093\u306b\u3061\u306f</b>", 
+				colorize("[1m\u3053\u3093\u306b\u3061\u306f"));
 	}
 
 	private String colorize(String text) throws IOException {
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		HtmlAnsiOutputStream hos = new HtmlAnsiOutputStream(os);
 		hos.write(text.getBytes());
 		hos.close();
 		return os.toString();
