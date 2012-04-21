@@ -1,12 +1,12 @@
-# ![Jansi][logo]
+# [![Jansi][logo]][Jansi]
 [logo]: http://jansi.fusesource.org/images/project-logo.png "Jansi"
 
 ## Description
 
-[Jansi][] is a small java library that allows you to use [ANSI escape
+[Jansi][Jansi] is a small java library that allows you to use [ANSI escape
 codes][ansi] to format your console output which works even on windows.
 
-[Janis]: http://jansi.fusesource.org/
+[Jansi]: http://jansi.fusesource.org/
 [ansi]: http://en.wikipedia.org/wiki/ANSI_escape_code "Wikipedia"
 
 ## Features
@@ -20,7 +20,7 @@ codes][ansi] to format your console output which works even on windows.
 ## Synopsis
 
 Most unix terminals support rendering ANSI escape codes when Java sends them
-via System.out, but when this is done on Windows, they don't get interpreted
+via `System.out`, but when this is done on Windows, they don't get interpreted
 and you get garbage on the console.
 
 Furthermore, even when on Unix, when process output is being redirected to a
@@ -57,19 +57,23 @@ times `systemInstall()` has been called and only uninstalls when the
 
 Using the Ansi escape sequence builder:
 
-		import static org.fusesource.jansi.Ansi.*;
-		import static org.fusesource.jansi.Ansi.Color.*;
-		...
-		System.out.println( ansi().eraseScreen().fg(RED).a("Hello").fg.(GREEN).a(" World").reset() )
+```java
+    import static org.fusesource.jansi.Ansi.*;
+    import static org.fusesource.jansi.Ansi.Color.*;
+    ...
+    System.out.println( ansi().eraseScreen().fg(RED).a("Hello").fg(GREEN).a(" World").reset() );
+```
 
-The above will clear the screen, write `Hello ` in red and ` World` in green,
+The above will clear the screen, write `Hello` in red and `World` in green,
 then reset the color attributes so that subsequent data printed to the stream
-used the default colors.
+uses the default colors.
 
-But there is an even simpler way to accomplish the above using the render
+But there is an even simpler way to accomplish the above using the `render`
 method:
 
-		System.out.println( ansi().eraseScreen().render("@|red Hello|@ @|green World|@") )
+```java
+    System.out.println( ansi().eraseScreen().render("@|red Hello|@ @|green World|@") );
+```
 
 ## Project Links
 
