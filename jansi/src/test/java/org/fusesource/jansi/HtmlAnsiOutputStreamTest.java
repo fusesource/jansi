@@ -80,8 +80,8 @@ public class HtmlAnsiOutputStreamTest {
 	private String colorize(String text) throws IOException {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		HtmlAnsiOutputStream hos = new HtmlAnsiOutputStream(os);
-		hos.write(text.getBytes());
+		hos.write(text.getBytes("UTF-8"));
 		hos.close();
-		return os.toString();
+		return new String(os.toByteArray(), "UTF-8");
 	}
 }
