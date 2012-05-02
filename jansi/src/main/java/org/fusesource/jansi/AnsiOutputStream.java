@@ -278,8 +278,14 @@ public class AnsiOutputStream extends FilterOutputStream {
 						} else {
 							switch ( value ) {
 							case 39: 
+								processDefaultTextColor();
+								break;
 							case 49:
-							case 0: processAttributeRest(); break;
+								processDefaultBackgroundColor();
+								break;
+							case 0: 
+								processAttributeRest(); 
+								break;
 							default:
 								processSetAttribute(value);
 							}
@@ -399,6 +405,12 @@ public class AnsiOutputStream extends FilterOutputStream {
 	}
 
 	protected void processSetBackgroundColor(int color) throws IOException {
+	}
+	
+	protected void processDefaultTextColor() throws IOException {
+	}
+	
+	protected void processDefaultBackgroundColor() throws IOException {
 	}
 
 	protected void processAttributeRest() throws IOException {
