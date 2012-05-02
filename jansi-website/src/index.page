@@ -26,7 +26,7 @@ ${project_slogan}
 .right
   :markdown
     
-    Jansi is a small java library that allows you to use ANSI escape sequences 
+    Jansi is a small ASl 2.0 licensed Java library that allows you to use ANSI escape sequences 
     to format your console output which works even on windows.  
 
     Using jansi is easy.  Before you start sending ANSI escape sequences to
