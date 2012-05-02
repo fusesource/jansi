@@ -75,6 +75,13 @@ method:
     System.out.println( ansi().eraseScreen().render("@|red Hello|@ @|green World|@") );
 ```
 
+## Windows XP Users
+
+The JNI library that JANSI uses depends on the "Microsoft Visual C++ 2008 SP1 Redistributable"
+You can get a free copy from MS at:
+
+http://www.microsoft.com/en-us/download/details.aspx?displaylang=en&id=5582
+
 ## Project Links
 
 * [Project Home](http://jansi.fusesource.org/)
