@@ -198,6 +198,16 @@ public class Ansi {
         }
 
         @Override
+        public Ansi fgBright(Color color) {
+            return this;
+        }
+
+        @Override
+        public Ansi bgBright(Color color) {
+            return this;
+        }
+
+        @Override
         public Ansi a(Attribute attribute) {
             return this;
         }
@@ -309,6 +319,16 @@ public class Ansi {
 		attributeOptions.add(color.bg());
 		return this;
 	}
+
+    public Ansi fgBright(Color color) {
+        attributeOptions.add(color.fgBright());
+        return this;
+    }
+
+    public Ansi bgBright(Color color) {
+        attributeOptions.add(color.bgBright());
+        return this;
+    }
 
 	public Ansi a(Attribute attribute) {
 		attributeOptions.add(attribute.value());
