@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.fusesource.jansi</groupId>
     <artifactId>jansi-project</artifactId>
-    <version>1.9</version>
+    <version>1.10-SNAPSHOT</version>
   </parent>
   
   <artifactId>jansi-website</artifactId>
@@ -80,7 +80,7 @@
     <dependency>
       <groupId>org.fusesource.jansi</groupId>
       <artifactId>jansi</artifactId>
-      <version>1.9</version>
+      <version>1.10-SNAPSHOT</version>
       <classifier>javadoc</classifier>
       <scope>test</scope>
     </dependency>
