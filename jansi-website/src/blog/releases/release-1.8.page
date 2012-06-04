@@ -27,16 +27,16 @@ the availability of ${project_name} 1.8. Jansi is a small java library that allo
 you to use ANSI escape sequences to format your console output which works 
 even on windows.
 
-Further information:
-
-* [Downloads](http://${website_base_url}/download.html)
-
 Changes:
 
-* Updated bundled native libraries:
+* Updated bundled native libraries
   * Windows: Added support for isatty and link against the system msvcrt.dll (so no need for VC redistributables)
 * Add some helper methods to turn bold on and off
 * if the jansi.passthrough system property is set, then jansi will not interpret any of the ansi sequences.
+
+Further information:
+
+* [Downloads](http://${website_base_url}/download.html)
 
 [Feedback](${website_base_url}/community/index.html) is always welcome! 
 

@@ -1,7 +1,7 @@
 # ![Jansi](http://jansi.fusesource.org/images/project-logo.png)
 
-## [Jansi Next][Next], not released yet
-[next]: http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/jansi/jansi/
+## [Jansi 1.9][1_9], released 2012-06-04
+[1_9]: http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/jansi/jansi/
 
 * Added HtmlAnsiOutputStream that converts ANSI output to HTML.
 * Fixed handling of default text and background color.
