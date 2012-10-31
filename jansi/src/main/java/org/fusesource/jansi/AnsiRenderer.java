@@ -16,6 +16,8 @@
 
 package org.fusesource.jansi;
 
+import java.util.Locale;
+
 import org.fusesource.jansi.Ansi.Attribute;
 import org.fusesource.jansi.Ansi.Color;
 
@@ -102,7 +104,7 @@ public class AnsiRenderer
     static private String render(final String text, final String... codes) {
         Ansi ansi = Ansi.ansi();
         for (String name : codes) {
-            Code code = Code.valueOf(name.toUpperCase());
+            Code code = Code.valueOf(name.toUpperCase(Locale.ENGLISH));
 
             if (code.isColor()) {
                 if (code.isBackground()) {
