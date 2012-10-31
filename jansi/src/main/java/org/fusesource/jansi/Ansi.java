@@ -310,24 +310,136 @@ public class Ansi {
 		return new Ansi(size);
 	}
 
-	public Ansi fg(Color color) {
-		attributeOptions.add(color.fg());
-		return this;
-	}
+    public Ansi fg(Color color) {
+        attributeOptions.add(color.fg());
+        return this;
+    }
+
+    public Ansi fgBlack() {
+        return this.fg(Color.BLACK);
+    }
+
+    public Ansi fgBlue() {        
+        return this.fg(Color.BLUE);
+    }
+
+    public Ansi fgCyan() {        
+        return this.fg(Color.CYAN);
+    }
+
+    public Ansi fgDefault() {        
+        return this.fg(Color.DEFAULT);
+    }
+
+    public Ansi fgGreen() {        
+        return this.fg(Color.GREEN);
+    }
+
+    public Ansi fgMagenta() {        
+        return this.fg(Color.MAGENTA);
+    }
+
+    public Ansi fgRed() {        
+        return this.fg(Color.RED);
+    }
+
+    public Ansi fgYellow() {        
+        return this.fg(Color.YELLOW);
+    }
 
 	public Ansi bg(Color color) {
 		attributeOptions.add(color.bg());
 		return this;
 	}
 
+    public Ansi bgCyan() {        
+        return this.fg(Color.CYAN);
+    }
+
+    public Ansi bgDefault() {        
+        return this.bg(Color.DEFAULT);
+    }
+
+    public Ansi bgGreen() {        
+        return this.bg(Color.GREEN);
+    }
+
+    public Ansi bgMagenta() {        
+        return this.bg(Color.MAGENTA);
+    }
+
+    public Ansi bgRed() {        
+        return this.bg(Color.RED);
+    }
+
+    public Ansi bgYellow() {        
+        return this.bg(Color.YELLOW);
+    }
+
     public Ansi fgBright(Color color) {
         attributeOptions.add(color.fgBright());
         return this;
     }
 
+    public Ansi fgBrightBlack() {
+        return this.fgBright(Color.BLACK);
+    }
+
+    public Ansi fgBrightBlue() {        
+        return this.fgBright(Color.BLUE);
+    }
+
+    public Ansi fgBrightCyan() {        
+        return this.fgBright(Color.CYAN);
+    }
+
+    public Ansi fgBrightDefault() {        
+        return this.fgBright(Color.DEFAULT);
+    }
+
+    public Ansi fgBrightGreen() {        
+        return this.fgBright(Color.GREEN);
+    }
+
+    public Ansi fgBrightMagenta() {        
+        return this.fgBright(Color.MAGENTA);
+    }
+
+    public Ansi fgBrightRed() {        
+        return this.fgBright(Color.RED);
+    }
+
+    public Ansi fgBrightYellow() {        
+        return this.fgBright(Color.YELLOW);
+    }
+    
     public Ansi bgBright(Color color) {
         attributeOptions.add(color.bgBright());
         return this;
+    }
+
+    public Ansi bgBrightCyan() {        
+        return this.fgBright(Color.CYAN);
+    }
+
+    public Ansi bgBrightDefault() {        
+        return this.bgBright(Color.DEFAULT);
+    }
+
+    public Ansi bgBrightGreen() {        
+        return this.bgBright(Color.GREEN);
+    }
+
+    public Ansi bgBrightMagenta() {        
+        return this.bg(Color.MAGENTA);
+    }
+
+    public Ansi bgBrightRed() {        
+        return this.bgBright(Color.RED);
+    }
+
+    public Ansi bgBrightYellow() {        
+        return this.bgBright(Color.YELLOW);
     }
 
 	public Ansi a(Attribute attribute) {
