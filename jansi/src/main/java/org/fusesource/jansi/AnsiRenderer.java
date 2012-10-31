@@ -16,6 +16,8 @@
 
 package org.fusesource.jansi;
 
+import java.util.Locale;
+
 import org.fusesource.jansi.Ansi.Attribute;
 import org.fusesource.jansi.Ansi.Color;
 
@@ -45,17 +47,150 @@ import org.fusesource.jansi.Ansi.Color;
  */
 public class AnsiRenderer
 {
+    public static enum Code
+    {
+        //
+        // TODO: Find a better way to keep Code in sync with Color/Attribute/Erase
+        //
+        
+        // Background Colors
+        BG_BLACK(Color.BLACK, true),
+        BG_BLUE(Color.BLUE, true),
+        BG_CYAN(Color.CYAN, true),
+        BG_GREEN(Color.GREEN, true),
+        BG_MAGENTA(Color.MAGENTA, true),
+        BG_RED(Color.RED, true),
+        BG_WHITE(Color.WHITE, true),
+        BG_YELLOW(Color.YELLOW, true),
+
+        // Colors
+        BLACK(Color.BLACK),
+        BLINK_FAST(Attribute.BLINK_FAST),
+        BLINK_OFF(Attribute.BLINK_OFF),
+        BLINK_SLOW(Attribute.BLINK_SLOW),
+        BLUE(Color.BLUE),
+        // Aliases
+        BOLD(Attribute.INTENSITY_BOLD),
+        CONCEAL_OFF(Attribute.CONCEAL_OFF),
+        CONCEAL_ON(Attribute.CONCEAL_ON),
+
+        CYAN(Color.CYAN),
+        FAINT(Attribute.INTENSITY_FAINT),
+        // Foreground Colors
+        FG_BLACK(Color.BLACK, false),
+        FG_BLUE(Color.BLUE, false),
+        FG_CYAN(Color.CYAN, false),
+        FG_GREEN(Color.GREEN, false),
+        FG_MAGENTA(Color.MAGENTA, false),
+        FG_RED(Color.RED, false),
+
+        FG_WHITE(Color.WHITE, false),
+        FG_YELLOW(Color.YELLOW, false),
+        GREEN(Color.GREEN),
+        INTENSITY_BOLD(Attribute.INTENSITY_BOLD),
+        INTENSITY_FAINT(Attribute.INTENSITY_FAINT),
+        ITALIC(Attribute.ITALIC),
+        MAGENTA(Color.MAGENTA),
+        NEGATIVE_OFF(Attribute.NEGATIVE_OFF),
+        NEGATIVE_ON(Attribute.NEGATIVE_ON),
+        RED(Color.RED),
+        // Attributes
+        RESET(Attribute.RESET),
+        UNDERLINE(Attribute.UNDERLINE),
+        UNDERLINE_DOUBLE(Attribute.UNDERLINE_DOUBLE),
+        UNDERLINE_OFF(Attribute.UNDERLINE_OFF),
+
+        WHITE(Color.WHITE),
+        YELLOW(Color.YELLOW),;
+
+        private final boolean background;
+
+        @SuppressWarnings("unchecked")
+        private final Enum n;
+
+        @SuppressWarnings("unchecked")
+        private Code(final Enum n) {
+            this(n, false);
+        }
+
+        @SuppressWarnings("unchecked")
+        private Code(final Enum n, boolean background) {
+            this.n = n;
+            this.background = background;
+        }
+
+        public Attribute getAttribute() {
+            return (Attribute) n;
+        }
+
+        public Ansi.Color getColor() {
+            return (Ansi.Color) n;
+        }
+
+        public boolean isAttribute() {
+            return n instanceof Attribute;
+        }
+
+        public boolean isBackground() {
+            return background;
+        }
+
+        public boolean isColor() {
+            return n instanceof Ansi.Color;
+        }
+    }
+
     public static final String BEGIN_TOKEN = "@|";
 
     private static final int BEGIN_TOKEN_LEN = 2;
+
+    public static final String CODE_LIST_SEPARATOR = ",";
+
+    public static final String CODE_TEXT_SEPARATOR = " ";
 
     public static final String END_TOKEN = "|@";
 
     private static final int END_TOKEN_LEN = 2;
 
-    public static final String CODE_TEXT_SEPARATOR = " ";
+    /**
+     * Renders {@link Code} names on the given Ansi.
+     * 
+     * @param ansi The Ansi to render upon
+     * @param codeNames The code names to render
+     * @since 1.10
+     */
+    public static Ansi render(Ansi ansi, final String... codeNames)
+    {
+        for (String codeName : codeNames) {
+            render(ansi, codeName);
+        }
+        return ansi;
+    }
 
-    public static final String CODE_LIST_SEPARATOR = ",";
+    /**
+     * Renders a {@link Code} name on the given Ansi.
+     * 
+     * @param ansi The Ansi to render upon
+     * @param codeName The code name to render
+     * @since 1.10
+     */
+    public static Ansi render(Ansi ansi, String codeName)
+    {
+        Code code = Code.valueOf(codeName.toUpperCase(Locale.ENGLISH));
+
+        if (code.isColor()) {
+            if (code.isBackground()) {
+                ansi = ansi.bg(code.getColor());
+            }
+            else {
+                ansi = ansi.fg(code.getColor());
+            }
+        }
+        else if (code.isAttribute()) {
+            ansi = ansi.a(code.getAttribute());
+        }
+        return ansi;
+    }
 
     static public String render(final String input) throws IllegalArgumentException {
         StringBuffer buff = new StringBuffer();
@@ -99,121 +234,19 @@ public class AnsiRenderer
         }
     }
 
-    static private String render(final String text, final String... codes) {
-        Ansi ansi = Ansi.ansi();
-        for (String name : codes) {
-            Code code = Code.valueOf(name.toUpperCase());
-
-            if (code.isColor()) {
-                if (code.isBackground()) {
-                    ansi = ansi.bg(code.getColor());
-                }
-                else {
-                    ansi = ansi.fg(code.getColor());
-                }
-            }
-            else if (code.isAttribute()) {
-                ansi = ansi.a(code.getAttribute());
-            }
-        }
-
+    /**
+     * Renders text using the {@link Code} names.
+     * 
+     * @param text The text to render
+     * @param codeNames The code names to render
+     * @since 1.10
+     */
+    static public String render(final String text, final String... codeNames) {
+        Ansi ansi = render(Ansi.ansi(), codeNames);
         return ansi.a(text).reset().toString();
     }
 
     public static boolean test(final String text) {
         return text != null && text.contains(BEGIN_TOKEN);
-    }
-
-    public static enum Code
-    {
-        //
-        // TODO: Find a better way to keep Code in sync with Color/Attribute/Erase
-        //
-        
-        // Colors
-        BLACK(Color.BLACK),
-        RED(Color.RED),
-        GREEN(Color.GREEN),
-        YELLOW(Color.YELLOW),
-        BLUE(Color.BLUE),
-        MAGENTA(Color.MAGENTA),
-        CYAN(Color.CYAN),
-        WHITE(Color.WHITE),
-
-        // Foreground Colors
-        FG_BLACK(Color.BLACK, false),
-        FG_RED(Color.RED, false),
-        FG_GREEN(Color.GREEN, false),
-        FG_YELLOW(Color.YELLOW, false),
-        FG_BLUE(Color.BLUE, false),
-        FG_MAGENTA(Color.MAGENTA, false),
-        FG_CYAN(Color.CYAN, false),
-        FG_WHITE(Color.WHITE, false),
-
-        // Background Colors
-        BG_BLACK(Color.BLACK, true),
-        BG_RED(Color.RED, true),
-        BG_GREEN(Color.GREEN, true),
-        BG_YELLOW(Color.YELLOW, true),
-        BG_BLUE(Color.BLUE, true),
-        BG_MAGENTA(Color.MAGENTA, true),
-        BG_CYAN(Color.CYAN, true),
-        BG_WHITE(Color.WHITE, true),
-
-        // Attributes
-        RESET(Attribute.RESET),
-        INTENSITY_BOLD(Attribute.INTENSITY_BOLD),
-        INTENSITY_FAINT(Attribute.INTENSITY_FAINT),
-        ITALIC(Attribute.ITALIC),
-        UNDERLINE(Attribute.UNDERLINE),
-        BLINK_SLOW(Attribute.BLINK_SLOW),
-        BLINK_FAST(Attribute.BLINK_FAST),
-        BLINK_OFF(Attribute.BLINK_OFF),
-        NEGATIVE_ON(Attribute.NEGATIVE_ON),
-        NEGATIVE_OFF(Attribute.NEGATIVE_OFF),
-        CONCEAL_ON(Attribute.CONCEAL_ON),
-        CONCEAL_OFF(Attribute.CONCEAL_OFF),
-        UNDERLINE_DOUBLE(Attribute.UNDERLINE_DOUBLE),
-        UNDERLINE_OFF(Attribute.UNDERLINE_OFF),
-
-        // Aliases
-        BOLD(Attribute.INTENSITY_BOLD),
-        FAINT(Attribute.INTENSITY_FAINT),;
-
-        @SuppressWarnings("unchecked")
-        private final Enum n;
-
-        private final boolean background;
-
-        @SuppressWarnings("unchecked")
-        private Code(final Enum n, boolean background) {
-            this.n = n;
-            this.background = background;
-        }
-
-        @SuppressWarnings("unchecked")
-        private Code(final Enum n) {
-            this(n, false);
-        }
-
-        public boolean isColor() {
-            return n instanceof Ansi.Color;
-        }
-
-        public Ansi.Color getColor() {
-            return (Ansi.Color) n;
-        }
-
-        public boolean isAttribute() {
-            return n instanceof Attribute;
-        }
-
-        public Attribute getAttribute() {
-            return (Attribute) n;
-        }
-
-        public boolean isBackground() {
-            return background;
-        }
     }
 }
