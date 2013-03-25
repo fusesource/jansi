@@ -26,7 +26,7 @@
   
   <groupId>org.fusesource.jansi</groupId>
   <artifactId>jansi-project</artifactId>
-  <version>1.10</version>
+  <version>1.11-SNAPSHOT</version>
   <packaging>pom</packaging>
   
   <name>${project.artifactId}</name>
