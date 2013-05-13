@@ -1,12 +1,17 @@
 # ![Jansi](http://jansi.fusesource.org/images/project-logo.png)
 
+## [Jansi 1.11][1_11], released 2013-05-13
+[1_10]: http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/jansi/jansi/1.11
+
+* Upgraded to the latest hawtjni version.
+
 ## [Jansi 1.10][1_10], released 2013-03-25
-[1_10]: http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/jansi/jansi/
+[1_10]: http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/jansi/jansi/1.10
 
 * Upgraded to the latest jansi native release (1.5).
 
 ## [Jansi 1.9][1_9], released 2012-06-04
-[1_9]: http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/jansi/jansi/
+[1_9]: http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/jansi/jansi/1.9
 
 * Added HtmlAnsiOutputStream that converts ANSI output to HTML.
 * Fixed handling of default text and background color.
