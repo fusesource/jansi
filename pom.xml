@@ -82,7 +82,7 @@
   <scm>
     <connection>scm:git:git://github.com/fusesource/${forge-project-id}.git</connection>
     <!-- Work around for issue: http://jira.codehaus.org/browse/SCM-444 -->
-    <developerConnection>scm:git:ssh://git@github.com:fusesources/hawtjni.git</developerConnection>
+    <developerConnection>scm:git:ssh://git@github.com:fusesources/jansi.git</developerConnection>
     <url>http://github.com/fusesource/{forge-project-id}.git</url>
   </scm>
 
