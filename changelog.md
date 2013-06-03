@@ -1,7 +1,7 @@
 # ![Jansi](http://jansi.fusesource.org/images/project-logo.png)
 
 ## [Jansi 1.11][1_11], released 2013-05-13
-[1_10]: http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/jansi/jansi/1.11
+[1_11]: http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/jansi/jansi/1.11
 
 * Upgraded to the latest hawtjni version.
 
