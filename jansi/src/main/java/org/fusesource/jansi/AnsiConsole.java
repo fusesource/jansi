@@ -72,10 +72,13 @@ public class AnsiConsole {
 		
 		// We must be on some unix variant..
 		try {
+			// If the jansi.force property is set, then we force to output 
+			// the ansi escapes for piping it into ansi color aware commands (e.g. less -r)
+			boolean forceColored = Boolean.getBoolean("jansi.force");
 			// If we can detect that stdout is not a tty.. then setup
 			// to strip the ANSI sequences..
 			int rc = isatty(STDOUT_FILENO);
-			if( rc==0 ) {
+			if( !forceColored && rc==0 ) {
 				return new AnsiOutputStream(stream);
 			}
 			
