@@ -239,6 +239,18 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
 	}
 
 	@Override
+	protected void processDefaultTextColor() throws IOException {
+		info.attributes = (short)((info.attributes & ~0x000F ) | (originalColors & 0xF));
+		applyAttribute();
+	}
+	
+	@Override
+	protected void processDefaultBackgroundColor() throws IOException {
+		info.attributes = (short)((info.attributes & ~0x00F0 ) | (originalColors & 0xF0));
+		applyAttribute();
+	}
+
+	@Override
 	protected void processAttributeRest() throws IOException {
 		info.attributes = (short)((info.attributes & ~0x00FF ) | originalColors);
         this.negative = false;
