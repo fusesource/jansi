@@ -85,7 +85,7 @@ http://www.microsoft.com/en-us/download/details.aspx?displaylang=en&id=5582
 ## Project Links
 
 * [Project Home](http://jansi.fusesource.org/)
-* [Release Downloads](http://jansi.fusesource.org/downloads/index.html)
-* [GitHub](http://github.com/chirino/jansi/tree/master)
-* [Issue Tracker](http://fusesource.com/issues/browse/JANSI)
-* [Mailing Lists](http://fusesource.com/forge/projects/JANSI/mailing-lists)
+* [Release Downloads](http://jansi.fusesource.org/download/)
+* [GitHub](https://github.com/fusesource/jansi)
+* [Issue Tracker](https://github.com/fusesource/jansi/issues)
+
