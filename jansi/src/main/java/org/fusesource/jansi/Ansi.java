@@ -218,6 +218,11 @@ public class Ansi {
         }
 
         @Override
+        public Ansi cursorToColumn(int x) {
+            return this;
+        }
+
+        @Override
         public Ansi cursorUp(int y) {
             return this;
         }
@@ -234,6 +239,26 @@ public class Ansi {
 
         @Override
         public Ansi cursorLeft(int x) {
+            return this;
+        }
+
+        @Override
+        public Ansi cursorDownLine() {
+            return this;
+        }
+
+        @Override
+        public Ansi cursorDownLine(final int n) {
+            return this;
+        }
+
+        @Override
+        public Ansi cursorUpLine() {
+            return this;
+        }
+
+        @Override
+        public Ansi cursorUpLine(final int n) {
             return this;
         }
 
@@ -339,6 +364,10 @@ public class Ansi {
 		return appendEscapeSequence('H', x, y);
 	}
 
+    public Ansi cursorToColumn(final int x) {
+        return appendEscapeSequence('G', x);
+    }
+
 	public Ansi cursorUp(final int y) {
 		return appendEscapeSequence('A', y);
 	}
@@ -354,6 +383,22 @@ public class Ansi {
 	public Ansi cursorLeft(final int x) {
 		return appendEscapeSequence('D', x);
 	}
+
+    public Ansi cursorDownLine() {
+        return appendEscapeSequence('E');
+    }
+
+    public Ansi cursorDownLine(final int n) {
+        return appendEscapeSequence('E', n);
+    }
+
+    public Ansi cursorUpLine() {
+        return appendEscapeSequence('F');
+    }
+
+    public Ansi cursorUpLine(final int n) {
+        return appendEscapeSequence('F', n);
+    }
 
 	public Ansi eraseScreen() {
 		return appendEscapeSequence('J',Erase.ALL.value());
