@@ -298,7 +298,13 @@ public class Ansi {
         }
 
         @Override
+        @Deprecated
         public Ansi restorCursorPosition() {
+            return this;
+        }
+
+        @Override
+        public Ansi restoreCursorPosition() {
             return this;
         }
 
@@ -428,7 +434,12 @@ public class Ansi {
 		return appendEscapeSequence('s');
 	}
 
+    @Deprecated
 	public Ansi restorCursorPosition() {
+		return appendEscapeSequence('u');
+	}
+
+	public Ansi restoreCursorPosition() {
 		return appendEscapeSequence('u');
 	}
 
@@ -445,91 +456,91 @@ public class Ansi {
     }
 
 	public Ansi a(String value) {
-		flushAtttributes();		
+		flushAttributes();
 		builder.append(value);
 		return this;
 	}
 
 	public Ansi a(boolean value) {
-		flushAtttributes();		
+		flushAttributes();
 		builder.append(value);
 		return this;
 	}
 
 	public Ansi a(char value) {
-		flushAtttributes();		
+		flushAttributes();
 		builder.append(value);
 		return this;
 	}
 
 	public Ansi a(char[] value, int offset, int len) {
-		flushAtttributes();		
+		flushAttributes();
 		builder.append(value, offset, len);
 		return this;
 	}
 
 	public Ansi a(char[] value) {
-		flushAtttributes();		
+		flushAttributes();
 		builder.append(value);
 		return this;
 	}
 
 	public Ansi a(CharSequence value, int start, int end) {
-		flushAtttributes();		
+		flushAttributes();
 		builder.append(value, start, end);
 		return this;
 	}
 
 	public Ansi a(CharSequence value) {
-		flushAtttributes();		
+		flushAttributes();
 		builder.append(value);
 		return this;
 	}
 
 	public Ansi a(double value) {
-		flushAtttributes();		
+		flushAttributes();
 		builder.append(value);
 		return this;
 	}
 
 	public Ansi a(float value) {
-		flushAtttributes();		
+		flushAttributes();
 		builder.append(value);
 		return this;
 	}
 
 	public Ansi a(int value) {
-		flushAtttributes();		
+		flushAttributes();
 		builder.append(value);
 		return this;
 	}
 
 	public Ansi a(long value) {
-		flushAtttributes();		
+		flushAttributes();
 		builder.append(value);
 		return this;
 	}
 
 	public Ansi a(Object value) {
-		flushAtttributes();		
+		flushAttributes();
 		builder.append(value);
 		return this;
 	}
 
 	public Ansi a(StringBuffer value) {
-		flushAtttributes();		
+		flushAttributes();
 		builder.append(value);
 		return this;
 	}
 
     public Ansi newline() {
-        flushAtttributes();
+        flushAttributes();
 		builder.append(System.getProperty("line.separator"));
 		return this;
     }
 
     public Ansi format(String pattern, Object... args) {
-        flushAtttributes();
+        flushAttributes();
         builder.append(String.format(pattern, args));
         return this;
     }
@@ -561,7 +572,7 @@ public class Ansi {
 
 	@Override
 	public String toString() {
-		flushAtttributes();		
+		flushAttributes();
 		return builder.toString();
 	}
 
@@ -570,7 +581,7 @@ public class Ansi {
 	///////////////////////////////////////////////////////////////////
 	
 	private Ansi appendEscapeSequence(char command) {
-		flushAtttributes();
+		flushAttributes();
 		builder.append(FIRST_ESC_CHAR);
 		builder.append(SECOND_ESC_CHAR);
 		builder.append(command);
@@ -578,7 +589,7 @@ public class Ansi {
 	}
 	
 	private Ansi appendEscapeSequence(char command, int option) {
-		flushAtttributes();
+		flushAttributes();
 		builder.append(FIRST_ESC_CHAR);
 		builder.append(SECOND_ESC_CHAR);
 		builder.append(option);
@@ -587,11 +598,11 @@ public class Ansi {
 	}
 	
 	private Ansi appendEscapeSequence(char command, Object... options) {
-		flushAtttributes();
+		flushAttributes();
 		return _appendEscapeSequence(command, options);
 	}
 
-	private void flushAtttributes() {
+	private void flushAttributes() {
 		if( attributeOptions.isEmpty() )
 			return;
 		if (attributeOptions.size() == 1 && attributeOptions.get(0) == 0) {

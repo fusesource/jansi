@@ -119,14 +119,14 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
 		}
 	}
 
-	private short invertAttributeColors(short attibutes) {
+	private short invertAttributeColors(short attributes) {
 		// Swap the the Foreground and Background bits.
-		int fg = 0x000F & attibutes;
+		int fg = 0x000F & attributes;
 		fg <<= 8;
-		int bg = 0X00F0 * attibutes;
+		int bg = 0X00F0 * attributes;
 		bg >>=8;
-		attibutes = (short) ((attibutes & 0xFF00) | fg | bg);
-		return attibutes;
+		attributes = (short) ((attributes & 0xFF00) | fg | bg);
+		return attributes;
 	}
 
 	private void applyCursorPosition() throws IOException {
