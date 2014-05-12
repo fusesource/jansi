@@ -56,6 +56,7 @@ public class AnsiConsole {
         }
 
 		String os = System.getProperty("os.name");
+		String tmpDir= System.getProperty("java.io.tmpdir");
 		if( os.startsWith("Windows") && !tmpDir.contains("cygwin") ) { //add check for Cygwin
 			
 			// On windows we know the console does not interpret ANSI codes..
