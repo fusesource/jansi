@@ -56,7 +56,7 @@ public class AnsiConsole {
         }
 
 		String os = System.getProperty("os.name");
-		if( os.startsWith("Windows") ) {
+		if( os.startsWith("Windows") && !tmpDir.contains("cygwin") ) { //add check for Cygwin
 			
 			// On windows we know the console does not interpret ANSI codes..
 			try {
@@ -78,6 +78,8 @@ public class AnsiConsole {
 			// If we can detect that stdout is not a tty.. then setup
 			// to strip the ANSI sequences..
 			int rc = isatty(STDOUT_FILENO);
+			if(tmpDir.contains("cygwin"))
+                		rc=1;//Detect if it's a Cygwin console. If it is, override this check because mintty doesn't report itself as a TTY correctly
 			if( !forceColored && rc==0 ) {
 				return new AnsiOutputStream(stream);
 			}
