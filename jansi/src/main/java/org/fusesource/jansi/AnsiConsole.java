@@ -61,7 +61,7 @@ public class AnsiConsole {
         }
 
 		String os = System.getProperty("os.name");
-		if( os.startsWith("Windows") ) {
+		if( os.startsWith("Windows") && !isCygwin() ) {
 			
 			// On windows we know the console does not interpret ANSI codes..
 			try {
@@ -75,7 +75,7 @@ public class AnsiConsole {
 			return new AnsiOutputStream(stream);
 		}
 		
-		// We must be on some unix variant..
+		// We must be on some Unix variant, including Cygwin or MSYS(2) on Windows...
 		try {
 			// If the jansi.force property is set, then we force to output 
 			// the ansi escapes for piping it into ansi color aware commands (e.g. less -r)
@@ -83,7 +83,7 @@ public class AnsiConsole {
 			// If we can detect that stdout is not a tty.. then setup
 			// to strip the ANSI sequences..
 			int rc = isatty(fileno);
-			if( !forceColored && rc==0 ) {
+			if( !isCygwin() && !forceColored && rc == 0 ) {
 				return new AnsiOutputStream(stream);
 			}
 			
@@ -103,6 +103,11 @@ public class AnsiConsole {
 		        super.close();
 		    }
 		};
+	}
+
+	private static boolean isCygwin() {
+		String term = System.getenv("TERM");
+		return term != null && term.equals("xterm");
 	}
 
 	/**
