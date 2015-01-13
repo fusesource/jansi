@@ -24,6 +24,8 @@ import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * Provides consistent access to an ANSI aware console PrintStream.
@@ -56,7 +58,7 @@ public class AnsiConsole {
         }
 
 		String os = System.getProperty("os.name");
-		if( os.startsWith("Windows") ) {
+		if( os.startsWith("Windows") && !isCygwin()) {
 			
 			// On windows we know the console does not interpret ANSI codes..
 			try {
@@ -78,6 +80,8 @@ public class AnsiConsole {
 			// If we can detect that stdout is not a tty.. then setup
 			// to strip the ANSI sequences..
 			int rc = isatty(STDOUT_FILENO);
+			if(isCygwin())
+				rc=1;
 			if( !forceColored && rc==0 ) {
 				return new AnsiOutputStream(stream);
 			}
@@ -98,6 +102,11 @@ public class AnsiConsole {
 		        super.close();
 		    }
 		};
+	}
+
+	private static boolean isCygwin(){
+		String term = System.getenv("TERM");
+		return (term != null && term.equals("cygwin"));
 	}
 
 	/**
