@@ -17,6 +17,7 @@
 
 package org.fusesource.jansi;
 
+import static org.fusesource.jansi.internal.CLibrary.STDERR_FILENO;
 import static org.fusesource.jansi.internal.CLibrary.STDOUT_FILENO;
 import static org.fusesource.jansi.internal.CLibrary.isatty;
 
@@ -37,11 +38,15 @@ public class AnsiConsole {
     public static final PrintStream out = new PrintStream(wrapOutputStream(system_out));
 
     public static final PrintStream system_err = System.err;
-    public static final PrintStream err = new PrintStream(wrapOutputStream(system_err));
+    public static final PrintStream err = new PrintStream(wrapOutputStream(system_err, STDERR_FILENO));
 
     private static int installed;
 
 	public static OutputStream wrapOutputStream(final OutputStream stream) {
+		return wrapOutputStream(stream, STDOUT_FILENO);
+	}
+
+	public static OutputStream wrapOutputStream(final OutputStream stream, int fileno) {
 
         // If the jansi.passthrough property is set, then don't interpret
         // any of the ansi sequences.
@@ -77,7 +82,7 @@ public class AnsiConsole {
 			boolean forceColored = Boolean.getBoolean("jansi.force");
 			// If we can detect that stdout is not a tty.. then setup
 			// to strip the ANSI sequences..
-			int rc = isatty(STDOUT_FILENO);
+			int rc = isatty(fileno);
 			if( !forceColored && rc==0 ) {
 				return new AnsiOutputStream(stream);
 			}
