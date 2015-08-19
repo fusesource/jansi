@@ -24,7 +24,6 @@ import org.fusesource.jansi.Ansi.Color;
 /**
  * Renders ANSI color escape-codes in strings by parsing out some special syntax to pick up the correct fluff to use.
  *
- * <p/>
  * The syntax for embedded ANSI codes is:
  *
  * <pre>

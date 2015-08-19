@@ -548,9 +548,11 @@ public class Ansi {
     /**
      * Uses the {@link AnsiRenderer} 
      * to generate the ANSI escape sequences for the supplied text.
-     * 
+     *
+	 * @param text text
+	 * @return this
+	 *
      * @since 1.1
-     * @param text
      */
     public Ansi render(final String text) {
         a(AnsiRenderer.render(text));
@@ -560,10 +562,12 @@ public class Ansi {
     /**
      * String formats and renders the supplied arguments.  Uses the {@link AnsiRenderer} 
      * to generate the ANSI escape sequences.
-     * 
+     *
+	 * @param text format
+	 * @param args arguments
+	 * @return this
+	 *
      * @since 1.1
-     * @param text
-     * @param args
      */
     public Ansi render(final String text, Object... args) {
         a(String.format(AnsiRenderer.render(text), args));
