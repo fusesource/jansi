@@ -272,9 +272,13 @@ public class AnsiOutputStream extends FilterOutputStream {
 						count++;
 						int value = ((Integer)next).intValue();
 						if( 30 <= value && value <= 37 ) {
-							processSetForegroundColor(value-30);
+							processSetForegroundColor(value-30, false);
 						} else if( 40 <= value && value <= 47 ) {
-							processSetBackgroundColor(value-40);
+							processSetBackgroundColor(value-40, false);
+						} else if ( 90 <= value && value <= 97 ) {
+							processSetForegroundColor(value-90, true);
+						} else if ( 100 <= value && value <= 107 ) {
+							processSetBackgroundColor(value-100, true);
 						} else {
 							switch ( value ) {
 							case 39: 
@@ -401,10 +405,10 @@ public class AnsiOutputStream extends FilterOutputStream {
 	protected static final int CYAN 	= 6;
 	protected static final int WHITE 	= 7;
 
-	protected void processSetForegroundColor(int color) throws IOException {
+	protected void processSetForegroundColor(int color, boolean bright) throws IOException {
 	}
 
-	protected void processSetBackgroundColor(int color) throws IOException {
+	protected void processSetBackgroundColor(int color, boolean bright) throws IOException {
 	}
 	
 	protected void processDefaultTextColor() throws IOException {

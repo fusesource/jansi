@@ -127,12 +127,12 @@ public class HtmlAnsiOutputStream extends AnsiOutputStream {
 	}
 
 	@Override
-	protected void processSetForegroundColor(int color) throws IOException {
+	protected void processSetForegroundColor(int color, boolean bright) throws IOException {
 		writeAttribute("span style=\"color: " + ANSI_COLOR_MAP[color] + ";\"");
 	}
 
 	@Override
-	protected void processSetBackgroundColor(int color) throws IOException {
+	protected void processSetBackgroundColor(int color, boolean bright) throws IOException {
 		writeAttribute("span style=\"background-color: " + ANSI_COLOR_MAP[color] + ";\"");
 	}
 }
