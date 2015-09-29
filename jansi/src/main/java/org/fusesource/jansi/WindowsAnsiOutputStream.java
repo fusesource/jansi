@@ -24,6 +24,7 @@ import static org.fusesource.jansi.internal.Kernel32.FOREGROUND_BLUE;
 import static org.fusesource.jansi.internal.Kernel32.FOREGROUND_GREEN;
 import static org.fusesource.jansi.internal.Kernel32.FOREGROUND_INTENSITY;
 import static org.fusesource.jansi.internal.Kernel32.FOREGROUND_RED;
+import static org.fusesource.jansi.internal.Kernel32.FillConsoleOutputAttributeW;
 import static org.fusesource.jansi.internal.Kernel32.FillConsoleOutputCharacterW;
 import static org.fusesource.jansi.internal.Kernel32.GetConsoleScreenBufferInfo;
 import static org.fusesource.jansi.internal.Kernel32.GetStdHandle;
@@ -145,6 +146,7 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
 			topLeft.x = 0;
 			topLeft.y = info.window.top;
 			int screenLength = info.window.height() * info.size.x;
+			FillConsoleOutputAttributeW(console, originalColors, screenLength, topLeft, written);
 			FillConsoleOutputCharacterW(console, ' ', screenLength, topLeft, written);
 			break;
 		case ERASE_SCREEN_TO_BEGINING:
@@ -153,11 +155,13 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
 			topLeft2.y = info.window.top;
 			int lengthToCursor = (info.cursorPosition.y - info.window.top) * info.size.x 
 				+ info.cursorPosition.x;
+			FillConsoleOutputAttributeW(console, originalColors, lengthToCursor, topLeft2, written);
 			FillConsoleOutputCharacterW(console, ' ', lengthToCursor, topLeft2, written);
 			break;
 		case ERASE_SCREEN_TO_END:
 			int lengthToEnd = (info.window.bottom - info.cursorPosition.y) * info.size.x + 
 				(info.size.x - info.cursorPosition.x);
+			FillConsoleOutputAttributeW(console, originalColors, lengthToEnd, info.cursorPosition.copy(), written);
 			FillConsoleOutputCharacterW(console, ' ', lengthToEnd, info.cursorPosition.copy(), written);
 		}		
 	}
@@ -170,15 +174,18 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
 		case ERASE_LINE:
 			COORD leftColCurrRow = info.cursorPosition.copy();
 			leftColCurrRow.x = 0;
+			FillConsoleOutputAttributeW(console, originalColors, info.size.x, leftColCurrRow, written);
 			FillConsoleOutputCharacterW(console, ' ', info.size.x, leftColCurrRow, written);
 			break;
 		case ERASE_LINE_TO_BEGINING:
 			COORD leftColCurrRow2 = info.cursorPosition.copy();
 			leftColCurrRow2.x = 0;
+			FillConsoleOutputAttributeW(console, originalColors, info.cursorPosition.x, leftColCurrRow2, written);
 			FillConsoleOutputCharacterW(console, ' ', info.cursorPosition.x, leftColCurrRow2, written);
 			break;
 		case ERASE_LINE_TO_END:
 			int lengthToLastCol = info.size.x - info.cursorPosition.x;
+			FillConsoleOutputAttributeW(console, originalColors, lengthToLastCol, info.cursorPosition.copy(), written);
 			FillConsoleOutputCharacterW(console, ' ', lengthToLastCol, info.cursorPosition.copy(), written);
 		}
 	}
