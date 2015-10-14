@@ -33,13 +33,13 @@
     <dependency>
       <groupId>org.fusesource.hawtjni</groupId>
       <artifactId>hawtjni-runtime</artifactId>
-      <version>1.8</version>
+      <version>1.9</version>
     </dependency>
 
     <dependency>
       <groupId>org.fusesource.jansi</groupId>
       <artifactId>jansi-native</artifactId>
-      <version>1.5</version>
+      <version>1.6-SNAPSHOT</version>
     </dependency>
 
     <!-- Bundle in the native libs for Windows, OS X, and 
@@ -49,31 +49,31 @@
       <groupId>org.fusesource.jansi</groupId>
       <artifactId>jansi-native</artifactId>
       <classifier>windows32</classifier>
-      <version>1.5</version>
+      <version>1.6-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.fusesource.jansi</groupId>
       <artifactId>jansi-native</artifactId>
       <classifier>windows64</classifier>
-      <version>1.5</version>
+      <version>1.6-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.fusesource.jansi</groupId>
       <artifactId>jansi-native</artifactId>
       <classifier>osx</classifier>
-      <version>1.5</version>
+      <version>1.6-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.fusesource.jansi</groupId>
       <artifactId>jansi-native</artifactId>
       <classifier>linux32</classifier>
-      <version>1.5</version>
+      <version>1.6-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.fusesource.jansi</groupId>
       <artifactId>jansi-native</artifactId>
       <classifier>linux64</classifier>
-      <version>1.5</version>
+      <version>1.6-SNAPSHOT</version>
     </dependency>
 
     <dependency>
