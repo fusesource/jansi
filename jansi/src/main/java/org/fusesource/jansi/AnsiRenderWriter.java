@@ -16,10 +16,8 @@
 
 package org.fusesource.jansi;
 
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.io.Writer;
-import java.util.Locale;
+import java.io.*;
+import java.util.*;
 
 import static org.fusesource.jansi.AnsiRenderer.*;
 
