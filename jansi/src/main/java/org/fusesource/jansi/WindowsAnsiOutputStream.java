@@ -16,29 +16,12 @@
  */
 package org.fusesource.jansi;
 
-import static org.fusesource.jansi.internal.Kernel32.BACKGROUND_BLUE;
-import static org.fusesource.jansi.internal.Kernel32.BACKGROUND_GREEN;
-import static org.fusesource.jansi.internal.Kernel32.BACKGROUND_INTENSITY;
-import static org.fusesource.jansi.internal.Kernel32.BACKGROUND_RED;
-import static org.fusesource.jansi.internal.Kernel32.FOREGROUND_BLUE;
-import static org.fusesource.jansi.internal.Kernel32.FOREGROUND_GREEN;
-import static org.fusesource.jansi.internal.Kernel32.FOREGROUND_INTENSITY;
-import static org.fusesource.jansi.internal.Kernel32.FOREGROUND_RED;
-import static org.fusesource.jansi.internal.Kernel32.FillConsoleOutputAttribute;
-import static org.fusesource.jansi.internal.Kernel32.FillConsoleOutputCharacterW;
-import static org.fusesource.jansi.internal.Kernel32.GetConsoleScreenBufferInfo;
-import static org.fusesource.jansi.internal.Kernel32.GetStdHandle;
-import static org.fusesource.jansi.internal.Kernel32.STD_OUTPUT_HANDLE;
-import static org.fusesource.jansi.internal.Kernel32.SetConsoleCursorPosition;
-import static org.fusesource.jansi.internal.Kernel32.SetConsoleTextAttribute;
-import static org.fusesource.jansi.internal.Kernel32.SetConsoleTitle;
+import static org.fusesource.jansi.internal.Kernel32.*;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 
 import org.fusesource.jansi.internal.WindowsSupport;
-import org.fusesource.jansi.internal.Kernel32.CONSOLE_SCREEN_BUFFER_INFO;
-import org.fusesource.jansi.internal.Kernel32.COORD;
+import org.fusesource.jansi.internal.Kernel32.*;
 
 /**
  * A Windows ANSI escape processor, uses JNA to access native platform
