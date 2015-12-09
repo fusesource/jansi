@@ -16,10 +16,9 @@
 
 package org.fusesource.jansi;
 
-import org.fusesource.jansi.AnsiOutputStream;
+import org.fusesource.jansi.*;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * An ANSI string which reports the size of rendered text correctly (ignoring any ANSI escapes).
