@@ -16,10 +16,9 @@
 
 package org.fusesource.jansi;
 
-import java.util.Locale;
+import java.util.*;
 
-import org.fusesource.jansi.Ansi.Attribute;
-import org.fusesource.jansi.Ansi.Color;
+import org.fusesource.jansi.Ansi.*;
 
 /**
  * Renders ANSI color escape-codes in strings by parsing out some special syntax to pick up the correct fluff to use.
