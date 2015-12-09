@@ -18,6 +18,7 @@ package org.fusesource.jansi;
 
 import java.util.*;
 
+//Might need to change this back
 import org.fusesource.jansi.Ansi.*;
 
 /**
