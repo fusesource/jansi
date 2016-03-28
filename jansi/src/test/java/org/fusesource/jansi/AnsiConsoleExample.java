@@ -25,6 +25,8 @@ import java.io.IOException;
  */
 public class AnsiConsoleExample {
 
+    private AnsiConsoleExample() {}
+
 	public static void main(String[] args) throws IOException {
         String file = "src/test/resources/jansi.ans";
         if( args.length>0  )

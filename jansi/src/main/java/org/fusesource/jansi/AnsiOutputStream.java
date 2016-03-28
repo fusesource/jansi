@@ -47,7 +47,7 @@ public class AnsiOutputStream extends FilterOutputStream {
 	}
 
 	private  final static int MAX_ESCAPE_SEQUENCE_LENGTH=100;
-	private byte buffer[] = new byte[MAX_ESCAPE_SEQUENCE_LENGTH];
+	private byte[] buffer = new byte[MAX_ESCAPE_SEQUENCE_LENGTH];
 	private int pos=0;
 	private int startOfValue;
 	private final ArrayList<Object> options = new ArrayList<Object>();
@@ -111,6 +111,8 @@ public class AnsiOutputStream extends FilterOutputStream {
 			} else {
 				reset( processEscapeCommand(options, data) );
 			}
+			break;
+		default:
 			break;
 
 		case LOOKING_FOR_INT_ARG_END:
