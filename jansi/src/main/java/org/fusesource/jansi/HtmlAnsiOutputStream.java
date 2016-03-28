@@ -22,20 +22,10 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.fusesource.jansi.AnsiOutputStream;
-
 /**
  * @author <a href="http://code.dblock.org">Daniel Doubrovkine</a>
  */
 public class HtmlAnsiOutputStream extends AnsiOutputStream {
-	
-	private boolean concealOn = false;
-
-	@Override
-	public void close() throws IOException {
-		closeAttributes();
-		super.close();
-	}
 
 	private static final String ANSI_COLOR_MAP[] = { "black", "red",
 			"green", "yellow", "blue", "magenta", "cyan", "white", };
@@ -44,12 +34,19 @@ public class HtmlAnsiOutputStream extends AnsiOutputStream {
 	private static final byte[] BYTES_AMP = "&amp;".getBytes();
 	private static final byte[] BYTES_LT = "&lt;".getBytes();
 	private static final byte[] BYTES_GT = "&gt;".getBytes();
-	
+
+	private List<String> closingAttributes = new ArrayList<String>();
+	private boolean concealOn = false;
+
 	public HtmlAnsiOutputStream(OutputStream os) {
 		super(os);
 	}
 
-	private List<String> closingAttributes = new ArrayList<String>();
+	@Override
+	public void close() throws IOException {
+		closeAttributes();
+		super.close();
+	}
 
 	private void write(String s) throws IOException {
 		super.out.write(s.getBytes());
@@ -112,7 +109,7 @@ public class HtmlAnsiOutputStream extends AnsiOutputStream {
 			break;
 		case ATTRIBUTE_NEGATIVE_ON:
 			break;
-		case ATTRIBUTE_NEGATIVE_Off:
+		case ATTRIBUTE_NEGATIVE_OFF:
 			break;
 		}
 	}
