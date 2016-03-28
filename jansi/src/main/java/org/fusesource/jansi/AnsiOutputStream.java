@@ -40,18 +40,41 @@ import java.util.ArrayList;
  */
 public class AnsiOutputStream extends FilterOutputStream {
 
-    public static final byte [] REST_CODE = resetCode();
+	public static final byte [] REST_CODE = resetCode();
 
-	public AnsiOutputStream(OutputStream os) {
-		super(os);
-	}
+	protected static final int ERASE_SCREEN_TO_END=0;
+	protected static final int ERASE_SCREEN_TO_BEGINING=1;
+	protected static final int ERASE_SCREEN=2;
+	protected static final int ERASE_LINE_TO_END=0;
+	protected static final int ERASE_LINE_TO_BEGINING=1;
+	protected static final int ERASE_LINE=2;
 
-	private  final static int MAX_ESCAPE_SEQUENCE_LENGTH=100;
-	private byte buffer[] = new byte[MAX_ESCAPE_SEQUENCE_LENGTH];
-	private int pos=0;
-	private int startOfValue;
-	private final ArrayList<Object> options = new ArrayList<Object>();
+	protected static final int ATTRIBUTE_INTENSITY_BOLD 	= 1; // 	Intensity: Bold
+	protected static final int ATTRIBUTE_INTENSITY_FAINT 	= 2; // 	Intensity; Faint 	not widely supported
+	protected static final int ATTRIBUTE_ITALIC 			= 3; // 	Italic; on 	not widely supported. Sometimes treated as inverse.
+	protected static final int ATTRIBUTE_UNDERLINE 			= 4; // 	Underline; Single
+	protected static final int ATTRIBUTE_BLINK_SLOW 		= 5; // 	Blink; Slow 	less than 150 per minute
+	protected static final int ATTRIBUTE_BLINK_FAST 		= 6; // 	Blink; Rapid 	MS-DOS ANSI.SYS; 150 per minute or more
+	protected static final int ATTRIBUTE_NEGATIVE_ON 		= 7; // 	Image; Negative 	inverse or reverse; swap foreground and background
+	protected static final int ATTRIBUTE_CONCEAL_ON 		= 8; // 	Conceal on
+	protected static final int ATTRIBUTE_UNDERLINE_DOUBLE 	= 21; // 	Underline; Double 	not widely supported
+	protected static final int ATTRIBUTE_INTENSITY_NORMAL 	= 22; // 	Intensity; Normal 	not bold and not faint
+	protected static final int ATTRIBUTE_UNDERLINE_OFF 		= 24; // 	Underline; None
+	protected static final int ATTRIBUTE_BLINK_OFF 			= 25; // 	Blink; off
+	protected static final int ATTRIBUTE_NEGATIVE_OFF = 27; // 	Image; Positive
+	protected static final int ATTRIBUTE_CONCEAL_OFF 		= 28; // 	Reveal 	conceal off
 
+	protected static final int BLACK 	= 0;
+	protected static final int RED 		= 1;
+	protected static final int GREEN 	= 2;
+	protected static final int YELLOW 	= 3;
+	protected static final int BLUE 	= 4;
+	protected static final int MAGENTA 	= 5;
+	protected static final int CYAN 	= 6;
+	protected static final int WHITE 	= 7;
+
+
+	private static final int MAX_ESCAPE_SEQUENCE_LENGTH=100;
 	private static final int LOOKING_FOR_FIRST_ESC_CHAR = 0;
 	private static final int LOOKING_FOR_SECOND_ESC_CHAR = 1;
 	private static final int LOOKING_FOR_NEXT_ARG = 2;
@@ -61,14 +84,22 @@ public class AnsiOutputStream extends FilterOutputStream {
 	private static final int LOOKING_FOR_OSC_COMMAND_END = 6;
 	private static final int LOOKING_FOR_OSC_PARAM = 7;
 	private static final int LOOKING_FOR_ST = 8;
-
-	int state = LOOKING_FOR_FIRST_ESC_CHAR;
-	
 	private static final int FIRST_ESC_CHAR = 27;
 	private static final int SECOND_ESC_CHAR = '[';
 	private static final int SECOND_OSC_CHAR = ']';
 	private static final int BEL = 7;
 	private static final int SECOND_ST_CHAR = '\\';
+
+	private final ArrayList<Object> options = new ArrayList<Object>();
+	int state = LOOKING_FOR_FIRST_ESC_CHAR;
+	private byte buffer[] = new byte[MAX_ESCAPE_SEQUENCE_LENGTH];
+	private int pos=0;
+	private int startOfValue;
+
+
+	public AnsiOutputStream(OutputStream os) {
+		super(os);
+	}
 
 	// TODO: implement to get perf boost: public void write(byte[] b, int off, int len)
 	
@@ -364,46 +395,14 @@ public class AnsiOutputStream extends FilterOutputStream {
 	protected void processScrollUp(int optionInt) throws IOException {
 	}
 
-	protected static final int ERASE_SCREEN_TO_END=0;
-	protected static final int ERASE_SCREEN_TO_BEGINING=1;
-	protected static final int ERASE_SCREEN=2;
-	
 	protected void processEraseScreen(int eraseOption) throws IOException {
 	}
 
-	protected static final int ERASE_LINE_TO_END=0;
-	protected static final int ERASE_LINE_TO_BEGINING=1;
-	protected static final int ERASE_LINE=2;
-	
 	protected void processEraseLine(int eraseOption) throws IOException {
 	}
 
-	protected static final int ATTRIBUTE_INTENSITY_BOLD 	= 1; // 	Intensity: Bold 	
-	protected static final int ATTRIBUTE_INTENSITY_FAINT 	= 2; // 	Intensity; Faint 	not widely supported
-	protected static final int ATTRIBUTE_ITALIC 			= 3; // 	Italic; on 	not widely supported. Sometimes treated as inverse.
-	protected static final int ATTRIBUTE_UNDERLINE 			= 4; // 	Underline; Single 	
-	protected static final int ATTRIBUTE_BLINK_SLOW 		= 5; // 	Blink; Slow 	less than 150 per minute
-	protected static final int ATTRIBUTE_BLINK_FAST 		= 6; // 	Blink; Rapid 	MS-DOS ANSI.SYS; 150 per minute or more
-	protected static final int ATTRIBUTE_NEGATIVE_ON 		= 7; // 	Image; Negative 	inverse or reverse; swap foreground and background
-	protected static final int ATTRIBUTE_CONCEAL_ON 		= 8; // 	Conceal on
-	protected static final int ATTRIBUTE_UNDERLINE_DOUBLE 	= 21; // 	Underline; Double 	not widely supported
-	protected static final int ATTRIBUTE_INTENSITY_NORMAL 	= 22; // 	Intensity; Normal 	not bold and not faint
-	protected static final int ATTRIBUTE_UNDERLINE_OFF 		= 24; // 	Underline; None 	
-	protected static final int ATTRIBUTE_BLINK_OFF 			= 25; // 	Blink; off 	
-	protected static final int ATTRIBUTE_NEGATIVE_Off 		= 27; // 	Image; Positive 	
-	protected static final int ATTRIBUTE_CONCEAL_OFF 		= 28; // 	Reveal 	conceal off
-
 	protected void processSetAttribute(int attribute) throws IOException {
 	}
-
-	protected static final int BLACK 	= 0;
-	protected static final int RED 		= 1;
-	protected static final int GREEN 	= 2;
-	protected static final int YELLOW 	= 3;
-	protected static final int BLUE 	= 4;
-	protected static final int MAGENTA 	= 5;
-	protected static final int CYAN 	= 6;
-	protected static final int WHITE 	= 7;
 
 	protected void processSetForegroundColor(int color) throws IOException {
 		processSetForegroundColor(color, false);

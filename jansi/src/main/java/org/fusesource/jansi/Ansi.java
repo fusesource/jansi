@@ -27,8 +27,43 @@ import java.util.concurrent.Callable;
  */
 public class Ansi {
 
-    private static final char FIRST_ESC_CHAR = 27;
+	public static final String DISABLE = Ansi.class.getName() + ".disable";
+
+	private static final char FIRST_ESC_CHAR = 27;
 	private static final char SECOND_ESC_CHAR = '[';
+	private static final InheritableThreadLocal<Boolean> holder = new InheritableThreadLocal<Boolean>()
+	{
+		@Override
+		protected Boolean initialValue() {
+			return isDetected();
+		}
+	};
+	private static Callable<Boolean> detector = new Callable<Boolean>() {
+		public Boolean call() throws Exception {
+			return !Boolean.getBoolean(DISABLE);
+		}
+	};
+
+	private final StringBuilder builder;
+	private final ArrayList<Integer> attributeOptions = new ArrayList<Integer>(5);
+
+	public Ansi() {
+		this(new StringBuilder());
+	}
+
+	public Ansi(Ansi parent) {
+		this(new StringBuilder(parent.builder));
+		attributeOptions.addAll(parent.attributeOptions);
+	}
+
+	public Ansi(int size) {
+		this(new StringBuilder(size));
+	}
+
+	public Ansi(StringBuilder builder) {
+		this.builder = builder;
+	}
+
 
 	public static enum Color {
 		BLACK(0, "BLACK"), 
@@ -137,14 +172,6 @@ public class Ansi {
 		}
 	};
 
-    public static final String DISABLE = Ansi.class.getName() + ".disable";
-
-    private static Callable<Boolean> detector = new Callable<Boolean>() {
-        public Boolean call() throws Exception {
-            return !Boolean.getBoolean(DISABLE);
-        }
-    };
-
     public static void setDetector(final Callable<Boolean> detector) {
         if (detector == null) throw new IllegalArgumentException();
         Ansi.detector = detector;
@@ -158,14 +185,6 @@ public class Ansi {
             return true;
         }
     }
-
-    private static final InheritableThreadLocal<Boolean> holder = new InheritableThreadLocal<Boolean>()
-    {
-        @Override
-        protected Boolean initialValue() {
-            return isDetected();
-        }
-    };
 
     public static void setEnabled(final boolean flag) {
         holder.set(flag);
@@ -313,26 +332,6 @@ public class Ansi {
             return this;
         }
     }
-
-	private final StringBuilder builder;
-	private final ArrayList<Integer> attributeOptions = new ArrayList<Integer>(5);
-	
-	public Ansi() {
-		this(new StringBuilder());
-	}
-
-	public Ansi(Ansi parent) {
-	    this(new StringBuilder(parent.builder));
-	    attributeOptions.addAll(parent.attributeOptions);
-	}
-
-    public Ansi(int size) {
-		this(new StringBuilder(size));
-	}
-
-    public Ansi(StringBuilder builder) {
-		this.builder = builder;
-	}
 
 	public static Ansi ansi(StringBuilder builder) {
 		return new Ansi(builder);
