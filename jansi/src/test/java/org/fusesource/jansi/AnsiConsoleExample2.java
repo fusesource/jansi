@@ -26,6 +26,8 @@ import static org.fusesource.jansi.Ansi.*;
  */
 public class AnsiConsoleExample2 {
 
+    private AnsiConsoleExample2() {}
+
 	public static void main(String[] args) throws IOException {
         String file = "src/test/resources/jansi.ans";
         if( args.length>0  )

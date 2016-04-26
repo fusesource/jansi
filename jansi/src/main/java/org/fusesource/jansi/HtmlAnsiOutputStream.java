@@ -37,7 +37,7 @@ public class HtmlAnsiOutputStream extends AnsiOutputStream {
 		super.close();
 	}
 
-	private static final String ANSI_COLOR_MAP[] = { "black", "red",
+	private static final String[] ANSI_COLOR_MAP = { "black", "red",
 			"green", "yellow", "blue", "magenta", "cyan", "white", };
 
 	private static final byte[] BYTES_QUOT = "&quot;".getBytes();
@@ -113,6 +113,8 @@ public class HtmlAnsiOutputStream extends AnsiOutputStream {
 		case ATTRIBUTE_NEGATIVE_ON:
 			break;
 		case ATTRIBUTE_NEGATIVE_Off:
+			break;
+		default:
 			break;
 		}
 	}

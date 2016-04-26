@@ -42,6 +42,8 @@ public class AnsiConsole {
 
     private static int installed;
 
+	private AnsiConsole() {}
+
 	public static OutputStream wrapOutputStream(final OutputStream stream) {
 		return wrapOutputStream(stream, STDOUT_FILENO);
 	}

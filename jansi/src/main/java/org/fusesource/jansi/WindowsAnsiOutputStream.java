@@ -64,7 +64,7 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
     private static final short BACKGROUND_CYAN    = (short) (BACKGROUND_BLUE|BACKGROUND_GREEN);
     private static final short BACKGROUND_WHITE   = (short) (BACKGROUND_RED|BACKGROUND_GREEN|BACKGROUND_BLUE);
     
-    private static final short ANSI_FOREGROUND_COLOR_MAP[] = {
+    private static final short[] ANSI_FOREGROUND_COLOR_MAP = {
     	FOREGROUND_BLACK,
     	FOREGROUND_RED,
     	FOREGROUND_GREEN,
@@ -75,7 +75,7 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
     	FOREGROUND_WHITE,
     };
         
-    private static final short ANSI_BACKGROUND_COLOR_MAP[] = {
+    private static final short[] ANSI_BACKGROUND_COLOR_MAP = {
     	BACKGROUND_BLACK,
     	BACKGROUND_RED,
     	BACKGROUND_GREEN,
@@ -163,6 +163,9 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
 				(info.size.x - info.cursorPosition.x);
 			FillConsoleOutputAttribute(console, originalColors, lengthToEnd, info.cursorPosition.copy(), written);
 			FillConsoleOutputCharacterW(console, ' ', lengthToEnd, info.cursorPosition.copy(), written);
+			break;
+		default:
+			break;
 		}		
 	}
 	
@@ -187,6 +190,9 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
 			int lengthToLastCol = info.size.x - info.cursorPosition.x;
 			FillConsoleOutputAttribute(console, originalColors, lengthToLastCol, info.cursorPosition.copy(), written);
 			FillConsoleOutputCharacterW(console, ' ', lengthToLastCol, info.cursorPosition.copy(), written);
+			break;
+		default:
+			break;
 		}
 	}
 	
@@ -294,6 +300,8 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
 			case ATTRIBUTE_NEGATIVE_Off:
 				negative = false;
 				applyAttribute();
+				break;
+			default:
 				break;
 		}
 	}
