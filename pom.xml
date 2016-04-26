@@ -67,7 +67,7 @@
       <archive>http://groups.google.com/group/${forge-project-id}-commits</archive>
       <post>${forge-project-id}-commits@googlegroups.com</post>
       <subscribe>${forge-project-id}-commits+subscribe@googlegroups.com</subscribe>
-      <unsubscribe>${forge-project-id}-commits+unsubscribe@googlegroups.com</unsubscribe>
+      <unsubscribe>${forge-project-id}-commisots+unsubscribe@googlegroups.com</unsubscribe>
     </mailingList>
   </mailingLists>
 
@@ -90,7 +90,7 @@
     <repository>
         <id>sonatype-nexus-staging</id>
         <name>Sonatype Staging Repository</name>
-        <url> https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+        <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
     </repository>
     <snapshotRepository>
         <id>sonatype-nexus-snapshots</id>
@@ -243,18 +243,20 @@
       <id>download</id>
       <repositories>
         <repository>
-          <id>jansi.release</id>
-          <url>http://jansi.fusesource.org/repo/release</url>
-          <snapshots><enabled>false</enabled></snapshots>
+	      <id>sonatype-public</id>
+          <url>https://oss.sonatype.org/content/groups/public</url>
+          <snapshots><enabled>true</enabled></snapshots>
           <releases><enabled>true</enabled></releases>
         </repository>
         <repository>
-          <id>jansi.snapshot</id>
-          <url>http://jansi.fusesource.org/repo/snapshot</url>
+	      <id>sonatype-staging</id>
+          <url>https://oss.sonatype.org/content/groups/staging</url>
           <snapshots><enabled>false</enabled></snapshots>
           <releases><enabled>true</enabled></releases>
         </repository>
       </repositories>
+
+
     </profile>
     
     <profile>
@@ -313,6 +315,8 @@
   
   <modules>
     <module>jansi</module>
+    <!--
     <module>jansi-website</module>
+    -->
   </modules>  
 </project>

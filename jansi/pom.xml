@@ -47,22 +47,20 @@
          platforms -->
     <dependency>
       <groupId>org.fusesource.jansi</groupId>
-      <artifactId>jansi-native</artifactId>
-      <classifier>windows32</classifier>
+      <artifactId>jansi-windows32</artifactId>
       <version>${jansi-native-version}</version>
     </dependency>
     <dependency>
       <groupId>org.fusesource.jansi</groupId>
-      <artifactId>jansi-native</artifactId>
-      <classifier>windows64</classifier>
+      <artifactId>jansi-windows64</artifactId>
       <version>${jansi-native-version}</version>
     </dependency>
     <dependency>
       <groupId>org.fusesource.jansi</groupId>
-      <artifactId>jansi-native</artifactId>
-      <classifier>osx</classifier>
+      <artifactId>jansi-osx</artifactId>
       <version>${jansi-native-version}</version>
     </dependency>
+    <!--
     <dependency>
       <groupId>org.fusesource.jansi</groupId>
       <artifactId>jansi-native</artifactId>
@@ -75,6 +73,7 @@
       <classifier>linux64</classifier>
       <version>${jansi-native-version}</version>
     </dependency>
+     -->
 
     <dependency>
       <groupId>junit</groupId>
