@@ -32,6 +32,9 @@ import static org.junit.Assert.*;
  */
 public class AnsiRendererTest
 {
+
+    public static final String FOO_BAR_BAZ = "foo bar baz";
+
     @Before
     public void setUp() {
         Ansi.setEnabled(true);
@@ -73,9 +76,9 @@ public class AnsiRendererTest
         String str = render("@|bold,red foo bar baz|@ ick @|bold,red foo bar baz|@");
         System.out.println(str);
         assertEquals(ansi()
-                .a(INTENSITY_BOLD).fg(RED).a("foo bar baz").reset()
+                .a(INTENSITY_BOLD).fg(RED).a(FOO_BAR_BAZ).reset()
                 .a(" ick ")
-                .a(INTENSITY_BOLD).fg(RED).a("foo bar baz").reset()
+                .a(INTENSITY_BOLD).fg(RED).a(FOO_BAR_BAZ).reset()
                 .toString(), str);
     }
     
