@@ -49,6 +49,7 @@ public class AnsiRendererTest
         String str = render("@|bold foo|@");
         System.out.println(str);
         assertEquals(ansi().a(INTENSITY_BOLD).a("foo").reset().toString(), str);
+        assertEquals(ansi().bold().a("foo").reset().toString(), str);
     }
 
     @Test
@@ -56,6 +57,7 @@ public class AnsiRendererTest
         String str = render("@|bold,red foo|@");
         System.out.println(str);
         assertEquals(Ansi.ansi().a(INTENSITY_BOLD).fg(RED).a("foo").reset().toString(), str);
+        assertEquals(Ansi.ansi().bold().fgRed().a("foo").reset().toString(), str);
     }
 
     @Test
@@ -63,6 +65,7 @@ public class AnsiRendererTest
         String str = render("@|bold,red foo bar baz|@");
         System.out.println(str);
         assertEquals(ansi().a(INTENSITY_BOLD).fg(RED).a("foo bar baz").reset().toString(), str);
+        assertEquals(ansi().bold().fgRed().a("foo bar baz").reset().toString(), str);
     }
 
     @Test
