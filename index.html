@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd"> 
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  Architecture
+-->
+<html lang="en">
+  <head>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+    <meta content="Eliminating boring console output." name="description"/>
+    <meta content="jansi,java,ansi,console,color" name="keywords"/>
+    <meta content="Jansi" name="author"/>
+    <link type="text/css" rel="stylesheet" href="styles/impact/css/pygmentize.css"/>
+    <link type="text/css" rel="stylesheet" href="styles/impact/css/site.css"/>
+    <title>Jansi</title>
+  </head>
+  <body>
+    <div id="navigation">
+      <div class="wrapper">
+<ul>
+<li><a href="index.html">Jansi 1.12</a></li>
+<li><a href="documentation/api/index.html">API Docs</a></li>
+<li><a href="download.html">Download</a></li>
+<li><a href="community/index.html">Support</a></li>
+</ul>        <div></div>
+      </div>
+    </div>
+    <div id="overview">
+      <div class="wrapper">
+        <div class="logo">
+          <img src="images/project-logo.png" alt="Jansi logo"/>
+        </div>
+        <div class="message">
+<p>Eliminating boring console output.</p>
+          <div></div>
+        </div>
+      </div>
+    </div>
+    <div id="content">
+      <div class="wrapper">
+<div class="left">
+  <h1>What is Jansi?</h1>
+</div>
+<div class="right">
+  <p>Jansi is a small ASl 2.0 licensed Java library that allows you to use ANSI escape sequences 
+  to format your console output which works even on windows.  </p>
+
+  <p>Using jansi is easy.  Before you start sending ANSI escape sequences to
+  <code>System.out</code> make sure you run:</p>
+
+  <div class="syntax"><pre name='code' class='brush: java; gutter: false;'><code>
+  AnsiConsole.systemInstall();
+  </code></pre></div>
+  <p>If you would rather not mess with the System.out settings, you can use the
+  <code>AnsiConsole.out</code> PrintStream instead.  For example:</p>
+
+  <div class="syntax"><pre name='code' class='brush: java; gutter: false;'><code>
+  AnsiConsole.out.println(&quot;Hello World&quot;);
+  </code></pre></div>
+</div>
+<div class="left">
+  <h1>Windows Examples</h1>
+</div>
+<div class="right">
+  <p>Most unix terminals support rendering ANSI escape sequences when Java
+  sends them via <code>System.out</code> but when this is done on Windows, they 
+  don't get interpreted and you get garbage on the console similar to:</p>
+
+  <p><img src="images/before-windows.png" alt="before"/></p>
+
+  <p>If the application uses the jansi libary, things start to look
+  much better:</p>
+
+  <p><img src="images/after-jansi-windows.png" alt="after"/></p>
+</div>
+
+        <div></div>
+      </div>
+    </div>
+  </body>
+</html>

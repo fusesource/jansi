@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd"> 
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  Architecture
+-->
+<html lang="en">
+  <head>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+    <meta content="Eliminating boring console output." name="description"/>
+    <meta content="jansi,java,ansi,console,color" name="keywords"/>
+    <meta content="Jansi" name="author"/>
+    <link type="text/css" rel="stylesheet" href="../styles/impact/css/pygmentize.css"/>
+    <link type="text/css" rel="stylesheet" href="../styles/impact/css/site.css"/>
+    <title>Building</title>
+  </head>
+  <body>
+    <div id="navigation">
+      <div class="wrapper">
+<ul>
+<li><a href="../index.html">Jansi 1.12</a></li>
+<li><a href="../documentation/api/index.html">API Docs</a></li>
+<li><a href="../download.html">Download</a></li>
+<li><a href="index.html">Support</a></li>
+</ul>        <div></div>
+      </div>
+    </div>
+    <div id="overview">
+      <div class="wrapper">
+        <div class="logo">
+          <img src="../images/project-logo.png" alt="Jansi logo"/>
+        </div>
+        <div class="message">
+<h1 id = "Jansi_Site">Jansi Site</h1>
+
+<p>How the website works</p>
+          <div></div>
+        </div>
+      </div>
+    </div>
+    <div id="content">
+      <div class="wrapper">
+<div class="left">
+  <h1>How it works</h1>
+</div>
+<div class="right">
+  <p>The <em>Jansi</em> documentation and site is created using Scalate
+  and is stored in git in the same <a href="source.html">source control system as the
+  code</a></p>
+
+  <p><strong>Note:</strong> For code highlighting you will need to
+  <a href="http://pygments.org/download/">install</a>
+  <a href="http://pygments.org">http://pygments.org/</a>.</p>
+</div>
+<div class="left">
+  <h1>Editing the source code</h1>
+</div>
+<div class="right">
+  <p>If you <a href="source.html">grab the source code</a> you will find the site
+  source in the <em>jansi-website</em> directory.  The website is
+  also built using Maven so, you would</p>
+
+  <pre><code>cd jansi-website
+  mvn install</code></pre>
+
+  <p>If you want to edit the files in your text editor and be able to
+  immediately see the site re-rendered in a browser then use</p>
+
+  <pre><code>mvn jetty:run</code></pre>
+
+  <p>You can now surf the site and see changes immediately.</p>
+
+  <p>If you are on OS X then we highly recommend
+  <a href="http://macromates.com/">TextMate</a> as a great editor which supports
+  Textile and Markdown</p>
+</div>
+<div class="left">
+  <h1>Deploying the site</h1>
+</div>
+<div class="right">
+  <p>The site is automatically deployed by the CI builds, so you can
+  simply wait for the changes to be automatically pushed to the project
+  site.</p>
+
+  <p>You can manually deploy the site using Maven:</p>
+
+  <pre><code>mvn deploy</code></pre>
+
+  <p>Since deployment to our webserver requires proper authorization,
+  you will need to add an entry to your ~/.m2/settings.xml file simlilar
+  to:</p>
+
+  <div class="syntax"><pre name='code' class='brush: xml; gutter: false;'><code>
+  &lt;server&gt;
+    &lt;id&gt;jansi-website&lt;/id&gt;
+    &lt;username&gt;xxxx&lt;/username&gt;
+    &lt;password&gt;xxxxx&lt;/password&gt;
+  &lt;/server&gt;
+  </code></pre></div>
+</div>
+
+        <div></div>
+      </div>
+    </div>
+  </body>
+</html>

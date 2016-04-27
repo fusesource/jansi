@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd"> 
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  Architecture
+-->
+<html lang="en">
+  <head>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+    <meta content="Eliminating boring console output." name="description"/>
+    <meta content="jansi,java,ansi,console,color" name="keywords"/>
+    <meta content="Jansi" name="author"/>
+    <link type="text/css" rel="stylesheet" href="../styles/impact/css/pygmentize.css"/>
+    <link type="text/css" rel="stylesheet" href="../styles/impact/css/site.css"/>
+    <title>Source</title>
+  </head>
+  <body>
+    <div id="navigation">
+      <div class="wrapper">
+<ul>
+<li><a href="../index.html">Jansi 1.12</a></li>
+<li><a href="../documentation/api/index.html">API Docs</a></li>
+<li><a href="../download.html">Download</a></li>
+<li><a href="index.html">Support</a></li>
+</ul>        <div></div>
+      </div>
+    </div>
+    <div id="overview">
+      <div class="wrapper">
+        <div class="logo">
+          <img src="../images/project-logo.png" alt="Jansi logo"/>
+        </div>
+        <div class="message">
+<h1 id = "Jansi">Jansi</h1>
+
+<p>Get the latest source code</p>
+          <div></div>
+        </div>
+      </div>
+    </div>
+    <div id="content">
+      <div class="wrapper">
+<div class="left">
+  <h1 id = "Source_Repository">Source Repository</h1>
+</div>
+<div class="right">
+  <p>Jansi stores its source code in a <a href="http://git-scm.com/">Git</a> repository hosted on <a href="http://github.com">github</a> at this location:</p>
+
+  <ul>
+  <li><a href="http://github.com/fusesource/jansi">http://github.com/fusesource/jansi</a></li>
+  </ul>
+
+  <p>If you are new to Git you might like to try the <a href="http://git.or.cz/course/svn.html">Git guide for subversion users</a> or have a look at the <a href="http://book.git-scm.com/">Git community book</a>.</p>
+</div>
+<div class="left">
+  <h1 id = "How_to_Checkout">How to Checkout</h1>
+</div>
+<div class="right">
+  <p>Read only access to the repository is available at the following URL:</p>
+
+  <ul>
+  <li><strong>git://github.com/fusesource/jansi.git</strong></li>
+  </ul>
+
+  <p>You must first install a <a href="http://git-scm.com/download">Git client</a>. Then you clone the repository using the following:</p>
+
+  <pre><code>git clone git://github.com/fusesource/jansi.git
+  cd jansi</code></pre>
+
+  <p>Now you probably want to try <a href="building.html">build the Jansi code</a></p>
+</div>
+<div class="left">
+  <h1 id = "Committer_access">Committer access</h1>
+</div>
+<div class="right">
+  <p>Project members can push to the repository using the following URL:</p>
+
+  <ul>
+  <li><strong>git@github.com:fusesources/jansi.git</strong></li>
+  </ul>
+
+  <p>You must first install a <a href="http://git-scm.com/download">Git client</a>. Then you clone the repository using the Git URL:</p>
+
+  <pre><code>git clone git@github.com:fusesources/jansi.git
+  cd jansi</code></pre>
+</div>
+<div class="left">
+  <h1 id = "Contributing_patches">Contributing patches</h1>
+</div>
+<div class="right">
+  <p>If you are not yet a committer but want to contribute some patch (we love <a href="contributing.html">contributions!</a>) here's how you can submit patches</p>
+<p>We gladly accept patches if you can find ways to improve, tune or fix
+Jansi in some way.</p>
+
+<p>Most IDEs can create nice patches now very easily. e.g. in Eclipse just
+right click on a file/directory and select <code>Team -&gt; Create Patch</code>. Then
+just save the patch as a file and then submit it. (You may have to click
+on <code>Team -&gt; Share...</code> first to enable the Subversion options).
+Incidentally if you are an Eclipse user you should install the
+<a href="http://subclipse.tigris.org/">subclipse</a> plugin.</p>
+
+<p>If you're a command line person try the following to create the patch</p>
+
+<pre><code>diff -u Main.java.orig Main.java &gt;&gt; patchfile.txt</code></pre>
+
+<p>or
+    svn diff Main.java >> patchfile.txt</p>
+
+<h3 id = "Submitting_patches">Submitting patches</h3>
+
+<p>The easiest way to submit a patch is to create a new issue at our <a href="https://github.com/fusesource/jansi/issues">Issue
+Tracker</a>, attach the patch, tick the Patch
+Attached button on the issue then fire off an email to the mailing
+lists.</p></div>
+<div class="left">
+  <h1 id = "Next_steps">Next steps</h1>
+</div>
+<div class="right">
+  <p>Once you have checked out the code try following </p>
+
+  <ul>
+  <li><a href="building.html">instructions to build Jansi</a></li>
+  <li>read the <a href="../documentation/index.html">documentation</a></li>
+  <li>browse the <a href="developers.html">developer links and maven reports</a></li>
+  </ul>
+</div>
+
+        <div></div>
+      </div>
+    </div>
+  </body>
+</html>

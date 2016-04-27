@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd"> 
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  Architecture
+-->
+<html lang="en">
+  <head>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+    <meta content="Eliminating boring console output." name="description"/>
+    <meta content="jansi,java,ansi,console,color" name="keywords"/>
+    <meta content="Jansi" name="author"/>
+    <link type="text/css" rel="stylesheet" href="../styles/impact/css/pygmentize.css"/>
+    <link type="text/css" rel="stylesheet" href="../styles/impact/css/site.css"/>
+    <title>Building</title>
+  </head>
+  <body>
+    <div id="navigation">
+      <div class="wrapper">
+<ul>
+<li><a href="../index.html">Jansi 1.12</a></li>
+<li><a href="../documentation/api/index.html">API Docs</a></li>
+<li><a href="../download.html">Download</a></li>
+<li><a href="index.html">Support</a></li>
+</ul>        <div></div>
+      </div>
+    </div>
+    <div id="overview">
+      <div class="wrapper">
+        <div class="logo">
+          <img src="../images/project-logo.png" alt="Jansi logo"/>
+        </div>
+        <div class="message">
+<h1 id = "How_to_Build_Jansi">How to Build Jansi</h1>
+
+<p>The way most developers get started contributing to a project.</p>
+          <div></div>
+        </div>
+      </div>
+    </div>
+    <div id="content">
+      <div class="wrapper">
+<h2 id = "Building_with_Maven">Building with Maven</h2>
+
+<p>Jansi uses <a href="http://maven.apache.org/">Maven</a> as its primary
+build tool for performing releases and uses the pom.xml to describe
+dependencies between modules.</p>
+
+<h3 id = "Prequisites">Prequisites</h3>
+
+<p><em>Required:</em></p>
+
+<ul>
+<li>Java 1.6</li>
+<li>Download and <a href="http://maven.apache.org/download.html">install Maven 3</a></li>
+<li>Get the latest <a href="source.html">source</a></li>
+</ul>
+
+<h3 id = "Maven_options">Maven options</h3>
+
+<p>To build Jansi maven has to be configured to use more memory</p>
+
+<pre><code>set MAVEN_OPTS=-Xmx512m -XX:MaxPermSize=128m</code></pre>
+
+<h3 id = "A_normal_build">A normal build</h3>
+
+<pre><code>mvn install</code></pre>
+
+<p>Once the build completes, you will find the jar of 
+Jansi located in the <code>target</code> directory.</p>
+
+<h3 id = "Doing_a_Quick_Build">Doing a Quick Build</h3>
+
+<p>The following avoids running all the unit test cases, we just skip the
+test running phase and not the building part</p>
+
+<pre><code>mvn -Dtest=false install</code></pre>
+
+<h3 id = "Using_an_IDE">Using an IDE</h3>
+
+<p>If you prefer to use an IDE then you can auto-generate the IDE's project
+files using maven plugins. e.g.</p>
+
+<pre><code>mvn eclipse:eclipse</code></pre>
+
+<p>or      </p>
+
+<pre><code>mvn idea:idea</code></pre>
+
+<h3 id = "Importing_into_Eclipse">Importing into Eclipse</h3>
+
+<p>If you have not already done so, you will need to make Eclipse aware of
+the Maven repository so that it can build everything. In the preferences,
+go to <code>Java -&gt; Build Path -&gt; Classpath</code> and define a new Classpath
+Variable named <code>M2_REPO</code> that points to your local Maven repository. i.e.
+<code>~/.m2/repository</code> on Unix and <code>c:\Documents and Settings\$username\.m2\repository</code> 
+on Windows).</p>
+
+<p>You can also get Maven to do this for you:</p>
+
+<pre><code>mvn eclipse:add-maven-repo -Declipse.workspace=/path/to/the/workspace/</code></pre>
+
+<h3 id = "See_Also">See Also</h3>
+
+<ul>
+<li><a href="source.html">Source</a></li>
+<li><a href="developers.html">Developer Links</a></li>
+</ul>
+        <div></div>
+      </div>
+    </div>
+  </body>
+</html>
