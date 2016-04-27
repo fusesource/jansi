@@ -67,7 +67,7 @@
     </dependency>
     <dependency>
       <groupId>org.fusesource.jansi</groupId>
-      <artifactId>jansi-linux32</artifactId>
+      <artifactId>jansi-linux64</artifactId>
       <version>${jansi-native-version}</version>
     </dependency>
      
