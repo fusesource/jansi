@@ -60,21 +60,17 @@
       <artifactId>jansi-osx</artifactId>
       <version>${jansi-native-version}</version>
     </dependency>
-    <!--
     <dependency>
       <groupId>org.fusesource.jansi</groupId>
-      <artifactId>jansi-native</artifactId>
-      <classifier>linux32</classifier>
+      <artifactId>jansi-linux32</artifactId>
       <version>${jansi-native-version}</version>
     </dependency>
     <dependency>
       <groupId>org.fusesource.jansi</groupId>
-      <artifactId>jansi-native</artifactId>
-      <classifier>linux64</classifier>
+      <artifactId>jansi-linux32</artifactId>
       <version>${jansi-native-version}</version>
     </dependency>
-     -->
-
+     
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
