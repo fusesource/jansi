@@ -639,6 +639,12 @@ public class Ansi {
 		return this;
 	}
 
+	public Ansi a(StringBuilder value) {
+		flushAttributes();
+		builder.append(value);
+		return this;
+	}
+
 	public Ansi a(StringBuffer value) {
 		flushAttributes();
 		builder.append(value);

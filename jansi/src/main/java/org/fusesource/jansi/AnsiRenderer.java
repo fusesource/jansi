@@ -61,7 +61,7 @@ public class AnsiRenderer
     private AnsiRenderer() {}
 
     static public String render(final String input) throws IllegalArgumentException {
-        StringBuffer buff = new StringBuffer();
+        StringBuilder builder = new StringBuilder();
 
         int i = 0;
         int j, k;
@@ -73,12 +73,12 @@ public class AnsiRenderer
                     return input;
                 }
                 else {
-                    buff.append(input.substring(i, input.length()));
-                    return buff.toString();
+                    builder.append(input.substring(i, input.length()));
+                    return builder.toString();
                 }
             }
             else {
-                buff.append(input.substring(i, j));
+                builder.append(input.substring(i, j));
                 k = input.indexOf(END_TOKEN, j);
 
                 if (k == -1) {
@@ -94,7 +94,7 @@ public class AnsiRenderer
                     }
                     String replacement = render(items[1], items[0].split(CODE_LIST_SEPARATOR));
 
-                    buff.append(replacement);
+                    builder.append(replacement);
 
                     i = k + END_TOKEN_LEN;
                 }
