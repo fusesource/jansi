@@ -316,6 +316,7 @@
   
   <modules>
     <module>jansi</module>
+    <module>example</module>
     <!--
     <module>jansi-website</module>
     -->
