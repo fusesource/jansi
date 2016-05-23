@@ -1,12 +1,12 @@
 # [![Jansi][logo]][Jansi]
-[logo]: http://jansi.fusesource.org/images/project-logo.png "Jansi"
+[logo]: http://fusesource.github.io/jansi/images/project-logo.png "Jansi"
 
 ## Description
 
 [Jansi][Jansi] is a small java library that allows you to use [ANSI escape
 codes][ansi] to format your console output which works even on windows.
 
-[Jansi]: http://jansi.fusesource.org/
+[Jansi]: http://fusesource.github.io/jansi/
 [ansi]: http://en.wikipedia.org/wiki/ANSI_escape_code "Wikipedia"
 
 ## Features
