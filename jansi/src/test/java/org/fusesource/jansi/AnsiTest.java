@@ -26,13 +26,11 @@ import static org.junit.Assert.assertEquals;
  *
  * @author <a href="mailto:jason@planet57.com">Jason Dillon</a>
  */
-public class AnsiTest
-{
+public class AnsiTest {
     @Test
     public void testSetEnabled() throws Exception {
         Ansi.setEnabled(false);
-        new Thread()
-        {
+        new Thread() {
             @Override
             public void run() {
                 assertEquals(false, Ansi.isEnabled());
@@ -40,8 +38,7 @@ public class AnsiTest
         }.run();
 
         Ansi.setEnabled(true);
-        new Thread()
-        {
+        new Thread() {
             @Override
             public void run() {
                 assertEquals(true, Ansi.isEnabled());

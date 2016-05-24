@@ -25,8 +25,7 @@ import static org.junit.Assert.assertEquals;
  *
  * @author <a href="mailto:jason@planet57.com">Jason Dillon</a>
  */
-public class AnsiStringTest
-{
+public class AnsiStringTest {
     @Test
     public void testNotEncoded() throws Exception {
         AnsiString as = new AnsiString("foo");

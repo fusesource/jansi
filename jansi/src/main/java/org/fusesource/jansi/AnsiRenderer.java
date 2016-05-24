@@ -44,8 +44,7 @@ import org.fusesource.jansi.Ansi.Color;
  * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  * @since 1.1
  */
-public class AnsiRenderer
-{
+public class AnsiRenderer {
     public static final String BEGIN_TOKEN = "@|";
 
     private static final int BEGIN_TOKEN_LEN = 2;
@@ -58,7 +57,8 @@ public class AnsiRenderer
 
     public static final String CODE_LIST_SEPARATOR = ",";
 
-    private AnsiRenderer() {}
+    private AnsiRenderer() {
+    }
 
     static public String render(final String input) throws IllegalArgumentException {
         StringBuffer buff = new StringBuffer();
@@ -71,20 +71,17 @@ public class AnsiRenderer
             if (j == -1) {
                 if (i == 0) {
                     return input;
-                }
-                else {
+                } else {
                     buff.append(input.substring(i, input.length()));
                     return buff.toString();
                 }
-            }
-            else {
+            } else {
                 buff.append(input.substring(i, j));
                 k = input.indexOf(END_TOKEN, j);
 
                 if (k == -1) {
                     return input;
-                }
-                else {
+                } else {
                     j += BEGIN_TOKEN_LEN;
                     String spec = input.substring(j, k);
 
@@ -110,12 +107,10 @@ public class AnsiRenderer
             if (code.isColor()) {
                 if (code.isBackground()) {
                     ansi = ansi.bg(code.getColor());
-                }
-                else {
+                } else {
                     ansi = ansi.fg(code.getColor());
                 }
-            }
-            else if (code.isAttribute()) {
+            } else if (code.isAttribute()) {
                 ansi = ansi.a(code.getAttribute());
             }
         }
@@ -127,12 +122,11 @@ public class AnsiRenderer
         return text != null && text.contains(BEGIN_TOKEN);
     }
 
-    public static enum Code
-    {
+    public static enum Code {
         //
         // TODO: Find a better way to keep Code in sync with Color/Attribute/Erase
         //
-        
+
         // Colors
         BLACK(Color.BLACK),
         RED(Color.RED),

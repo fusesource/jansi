@@ -28,8 +28,7 @@ import java.io.IOException;
  * @since 1.1
  */
 public class AnsiString
-    implements CharSequence
-{
+        implements CharSequence {
     private final CharSequence encoded;
 
     private final CharSequence plain;
@@ -50,8 +49,7 @@ public class AnsiString
             out.write(str.toString().getBytes());
             out.flush();
             out.close();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
 

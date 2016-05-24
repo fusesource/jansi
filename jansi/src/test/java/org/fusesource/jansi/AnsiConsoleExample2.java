@@ -18,35 +18,37 @@ package org.fusesource.jansi;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+
 import static org.fusesource.jansi.Ansi.*;
 
 /**
- * 
+ *
  * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  */
 public class AnsiConsoleExample2 {
 
-    private AnsiConsoleExample2() {}
+    private AnsiConsoleExample2() {
+    }
 
-	public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException {
         String file = "src/test/resources/jansi.ans";
-        if( args.length>0  )
-        	file = args[0];
+        if (args.length > 0)
+            file = args[0];
 
         // Allows us to disable ANSI processing. 
-        if( "true".equals(System.getProperty("jansi", "true")) ) {
-        	AnsiConsole.systemInstall();
+        if ("true".equals(System.getProperty("jansi", "true"))) {
+            AnsiConsole.systemInstall();
         }
-        
+
         System.out.print(ansi().reset().eraseScreen().cursor(1, 1));
         System.out.print("=======================================================================");
-		FileInputStream f = new FileInputStream(file);
+        FileInputStream f = new FileInputStream(file);
         int c;
-        while( (c=f.read())>=0 ) {
-        	System.out.write(c);
+        while ((c = f.read()) >= 0) {
+            System.out.write(c);
         }
         f.close();
         System.out.println("=======================================================================");
-	}
-	
+    }
+
 }

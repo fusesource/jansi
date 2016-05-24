@@ -29,8 +29,7 @@ import static org.junit.Assert.assertEquals;
  *
  * @author <a href="mailto:jason@planet57.com">Jason Dillon</a>
  */
-public class AnsiRenderWriterTest
-{
+public class AnsiRenderWriterTest {
     private ByteArrayOutputStream baos;
 
     private AnsiRenderWriter out;
