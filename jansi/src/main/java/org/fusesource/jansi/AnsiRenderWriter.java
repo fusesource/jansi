@@ -31,8 +31,7 @@ import static org.fusesource.jansi.AnsiRenderer.*;
  * @since 1.1
  */
 public class AnsiRenderWriter
-    extends PrintWriter
-{
+        extends PrintWriter {
 
     public AnsiRenderWriter(final OutputStream out) {
         super(out);
@@ -54,8 +53,7 @@ public class AnsiRenderWriter
     public void write(final String s) {
         if (test(s)) {
             super.write(render(s));
-        }
-        else {
+        } else {
             super.write(s);
         }
     }

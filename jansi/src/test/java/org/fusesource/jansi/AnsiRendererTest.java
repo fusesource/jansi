@@ -30,8 +30,7 @@ import static org.junit.Assert.*;
  *
  * @author <a href="mailto:jason@planet57.com">Jason Dillon</a>
  */
-public class AnsiRendererTest
-{
+public class AnsiRendererTest {
     @Before
     public void setUp() {
         Ansi.setEnabled(true);
@@ -78,7 +77,7 @@ public class AnsiRendererTest
                 .a(INTENSITY_BOLD).fg(RED).a("foo bar baz").reset()
                 .toString(), str);
     }
-    
+
     @Test
     public void testRender5() {
         // Check the ansi() render method.
@@ -86,7 +85,7 @@ public class AnsiRendererTest
         System.out.println(str);
         assertEquals(ansi().a(INTENSITY_BOLD).a("Hello").reset().toString(), str);
     }
-    
+
 
     @Test
     public void testRenderNothing() {
