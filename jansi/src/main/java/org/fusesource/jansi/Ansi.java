@@ -187,8 +187,36 @@ public class Ansi {
         }
     }
 
+    public static Ansi ansi(StringBuilder builder) {
+        if (isEnabled()) {
+            return new Ansi(builder);
+        } else {
+            return new NoAnsi(builder);
+        }
+    }
+
+    public static Ansi ansi(int size) {
+        if (isEnabled()) {
+            return new Ansi(size);
+        } else {
+            return new NoAnsi(size);
+        }
+    }
+
     private static class NoAnsi
             extends Ansi {
+        public NoAnsi() {
+            super();
+        }
+
+        public NoAnsi(int size) {
+            super(size);
+        }
+
+        public NoAnsi(StringBuilder builder) {
+            super(builder);
+        }
+
         @Override
         public Ansi fg(Color color) {
             return this;
@@ -334,14 +362,6 @@ public class Ansi {
 
     public Ansi(StringBuilder builder) {
         this.builder = builder;
-    }
-
-    public static Ansi ansi(StringBuilder builder) {
-        return new Ansi(builder);
-    }
-
-    public static Ansi ansi(int size) {
-        return new Ansi(size);
     }
 
     public Ansi fg(Color color) {
