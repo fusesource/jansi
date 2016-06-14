@@ -35,12 +35,33 @@ import java.io.PrintStream;
 public class AnsiConsole {
 
     public static final PrintStream system_out = System.out;
-    public static final PrintStream out = new PrintStream(wrapOutputStream(system_out));
+    public static final PrintStream out;
 
     public static final PrintStream system_err = System.err;
-    public static final PrintStream err = new PrintStream(wrapOutputStream(system_err, STDERR_FILENO));
+    public static final PrintStream err;
 
     private static int installed;
+
+    static
+    {
+        PrintStream jansiOut;
+        PrintStream jansiErr;
+
+        try
+        {
+            jansiOut = new PrintStream( wrapOutputStream( system_out ) );
+            jansiErr = new PrintStream( wrapOutputStream( system_err, STDERR_FILENO ) );
+        }
+        catch ( final UnsatisfiedLinkError e )
+        {
+            // Failure loading native library.
+            jansiOut = system_out;
+            jansiErr = system_err;
+        }
+
+        out = jansiOut;
+        err = jansiErr;
+    }
 
     private AnsiConsole() {
     }
