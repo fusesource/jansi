@@ -50,9 +50,9 @@ table.download tr td {
   table.download
     tr 
       td 
-        a(href="http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/#{project_id}/#{project_id}/#{version}/#{project_id}-#{version}.jar") #{project_id}-#{version}.jar
+        a(href="http://repo1.maven.org/maven2/org/fusesource/#{project_id}/#{project_id}/#{version}/#{project_id}-#{version}.jar") #{project_id}-#{version}.jar
       td
-        a(href="http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/#{project_id}/#{project_id}/#{version}/#{project_id}-#{version}.jar.asc") GPG Signature
+        a(href="http://repo1.maven.org/maven2/org/fusesource/#{project_id}/#{project_id}/#{version}/#{project_id}-#{version}.jar.asc") GPG Signature
     
     
 - if( !project_versions.drop(1).isEmpty )
@@ -63,21 +63,9 @@ table.download tr td {
     - for( version <- project_versions.drop(1) )
       tr 
         td 
-          a(href="http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/#{project_id}/#{project_id}/#{version}/#{project_id}-#{version}.jar") #{project_id}-#{version}.jar
+          a(href="http://repo1.maven.org/maven2/org/fusesource/#{project_id}/#{project_id}/#{version}/#{project_id}-#{version}.jar") #{project_id}-#{version}.jar
         td
-          a(href="http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/#{project_id}/#{project_id}/#{version}/#{project_id}-#{version}.jar.asc") GPG Signature
-
-:&markdown
-
-  ## Development Snapshot
-
-  Want to help stablize the latest and greatest nightly development
-  build?  **Warnning**: This build may be extremely bleeding edge!
-
-table.download
-  tr 
-    td 
-      a(href="http://repo.fusesource.com/nexus/service/local/artifact/maven/redirect?r=snapshots&g=org.fusesource.#{project_id}&a=#{project_id}&v=#{project_snapshot_version}&e=jar") #{project_id}-#{project_snapshot_version}.jar
+          a(href="http://repo1.maven.org/maven2/org/fusesource/#{project_id}/#{project_id}/#{version}/#{project_id}-#{version}.jar.asc") GPG Signature
   
 :&markdown
   The development build source code should be directly checked out from our [source code repository](community/source.html)
