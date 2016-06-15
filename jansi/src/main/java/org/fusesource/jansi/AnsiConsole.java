@@ -85,7 +85,7 @@ public class AnsiConsole {
         }
 
         String os = System.getProperty("os.name");
-        if (os.startsWith("Windows") && !isCygwin()) {
+        if (os.startsWith("Windows") && !isXterm()) {
 
             // On windows we know the console does not interpret ANSI codes..
             try {
@@ -107,7 +107,7 @@ public class AnsiConsole {
             // If we can detect that stdout is not a tty.. then setup
             // to strip the ANSI sequences..
             int rc = isatty(fileno);
-            if (!isCygwin() && !forceColored && rc == 0) {
+            if (!isXterm() && !forceColored && rc == 0) {
                 return new AnsiOutputStream(stream);
             }
 
@@ -129,9 +129,8 @@ public class AnsiConsole {
         };
     }
 
-    private static boolean isCygwin() {
-        String term = System.getenv("TERM");
-        return term != null && term.equals("xterm");
+    private static boolean isXterm() {
+        return "xterm".equals(System.getenv("TERM"));
     }
 
     /**
