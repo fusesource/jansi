@@ -17,12 +17,10 @@
 
 package org.fusesource.jansi;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
-import org.fusesource.jansi.AnsiOutputStream;
+import org.fusesource.jansi.*;
 
 /**
  * @author <a href="http://code.dblock.org">Daniel Doubrovkine</a>

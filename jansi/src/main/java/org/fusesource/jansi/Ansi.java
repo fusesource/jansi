@@ -16,8 +16,8 @@
  */
 package org.fusesource.jansi;
 
-import java.util.ArrayList;
-import java.util.concurrent.Callable;
+import java.util.*;
+import java.util.concurrent.*;
 
 /**
  * Provides a fluent API for generating ANSI escape sequences.

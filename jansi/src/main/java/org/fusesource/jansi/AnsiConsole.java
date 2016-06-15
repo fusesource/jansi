@@ -17,14 +17,9 @@
 
 package org.fusesource.jansi;
 
-import static org.fusesource.jansi.internal.CLibrary.STDERR_FILENO;
-import static org.fusesource.jansi.internal.CLibrary.STDOUT_FILENO;
-import static org.fusesource.jansi.internal.CLibrary.isatty;
+import static org.fusesource.jansi.internal.CLibrary.*;
 
-import java.io.FilterOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
+import java.io.*;
 
 /**
  * Provides consistent access to an ANSI aware console PrintStream.

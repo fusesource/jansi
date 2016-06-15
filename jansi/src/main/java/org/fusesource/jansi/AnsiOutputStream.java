@@ -17,11 +17,8 @@
 
 package org.fusesource.jansi;
 
-import java.io.FilterOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
+import java.io.*;
+import java.util.*;
 
 /**
  * A ANSI output stream extracts ANSI escape codes written to 
