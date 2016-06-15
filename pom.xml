@@ -26,7 +26,7 @@
   
   <groupId>org.fusesource.jansi</groupId>
   <artifactId>jansi-project</artifactId>
-  <version>1.13</version>
+  <version>1.14-SNAPSHOT</version>
   <packaging>pom</packaging>
   
   <name>${project.artifactId}</name>
@@ -84,7 +84,7 @@
     <!-- Work around for issue: http://jira.codehaus.org/browse/SCM-444 -->
     <developerConnection>scm:git:ssh://git@github.com:fusesources/jansi.git</developerConnection>
     <url>http://github.com/fusesource/{forge-project-id}.git</url>
-    <tag>jansi-project-1.13</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <distributionManagement>
