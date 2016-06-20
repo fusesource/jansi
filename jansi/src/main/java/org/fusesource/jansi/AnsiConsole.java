@@ -35,33 +35,12 @@ import java.io.PrintStream;
 public class AnsiConsole {
 
     public static final PrintStream system_out = System.out;
-    public static final PrintStream out;
+    public static final PrintStream out = new PrintStream( wrapOutputStream( system_out ) );
 
     public static final PrintStream system_err = System.err;
-    public static final PrintStream err;
+    public static final PrintStream err = new PrintStream( wrapOutputStream( system_err, STDERR_FILENO ) );
 
     private static int installed;
-
-    static
-    {
-        PrintStream jansiOut;
-        PrintStream jansiErr;
-
-        try
-        {
-            jansiOut = new PrintStream( wrapOutputStream( system_out ) );
-            jansiErr = new PrintStream( wrapOutputStream( system_err, STDERR_FILENO ) );
-        }
-        catch ( final UnsatisfiedLinkError e )
-        {
-            // Failure loading native library.
-            jansiOut = system_out;
-            jansiErr = system_err;
-        }
-
-        out = jansiOut;
-        err = jansiErr;
-    }
 
     private AnsiConsole() {
     }
@@ -106,14 +85,12 @@ public class AnsiConsole {
             boolean forceColored = Boolean.getBoolean("jansi.force");
             // If we can detect that stdout is not a tty.. then setup
             // to strip the ANSI sequences..
-            int rc = isatty(fileno);
-            if (!isXterm() && !forceColored && rc == 0) {
+            if (!isXterm() && !forceColored && isatty(fileno) == 0) {
                 return new AnsiOutputStream(stream);
             }
-
-            // These erros happen if the JNI lib is not available for your platform.
-        } catch (NoClassDefFoundError ignore) {
-        } catch (UnsatisfiedLinkError ignore) {
+        } catch (Throwable ignore) {
+            // These errors happen if the JNI lib is not available for your platform.
+            // But since we are on ANSI friendly platform, assume the user is on the console.
         }
 
         // By default we assume your Unix tty can handle ANSI codes.
