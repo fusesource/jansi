@@ -130,7 +130,8 @@ public class AnsiConsole {
     }
 
     private static boolean isXterm() {
-        return "xterm".equals(System.getenv("TERM"));
+        String term = System.getenv("TERM");
+        return term != null && term.startsWith("xterm");
     }
 
     /**
