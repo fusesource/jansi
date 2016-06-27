@@ -119,7 +119,7 @@ public class AnsiRenderer {
         }
     }
 
-    static private String render(final String text, final String... codes) {
+    static public String render(final String text, final String... codes) {
         Ansi ansi = Ansi.ansi();
         for (String name : codes) {
             Code code = Code.valueOf(name.toUpperCase(Locale.ENGLISH));
