@@ -38,7 +38,7 @@ public class AnsiConsole {
     public static final PrintStream out = new PrintStream( wrapOutputStream( system_out ) );
 
     public static final PrintStream system_err = System.err;
-    public static final PrintStream err = new PrintStream( wrapOutputStream( system_err, STDERR_FILENO ) );
+    public static final PrintStream err = new PrintStream( wrapErrorOutputStream( system_err ) );
 
     private static int installed;
 
@@ -46,7 +46,19 @@ public class AnsiConsole {
     }
 
     public static OutputStream wrapOutputStream(final OutputStream stream) {
-        return wrapOutputStream(stream, STDOUT_FILENO);
+        try {
+            return wrapOutputStream(stream, STDOUT_FILENO);
+        } catch (Throwable ignore) {
+            return wrapOutputStream(stream, 0);
+        }
+    }
+
+    public static OutputStream wrapErrorOutputStream(final OutputStream stream) {
+        try {
+            return wrapOutputStream(stream, STDERR_FILENO);
+        } catch (Throwable ignore) {
+            return wrapOutputStream(stream, 0);
+        }
     }
 
     public static OutputStream wrapOutputStream(final OutputStream stream, int fileno) {
