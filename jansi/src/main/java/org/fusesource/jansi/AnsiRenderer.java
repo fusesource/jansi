@@ -71,35 +71,32 @@ public class AnsiRenderer {
             if (j == -1) {
                 if (i == 0) {
                     return input;
-                } else {
-                    buff.append(input.substring(i, input.length()));
-                    return buff.toString();
                 }
-            } else {
-                buff.append(input.substring(i, j));
-                k = input.indexOf(END_TOKEN, j);
-
-                if (k == -1) {
-                    return input;
-                } else {
-                    j += BEGIN_TOKEN_LEN;
-                    String spec = input.substring(j, k);
-
-                    String[] items = spec.split(CODE_TEXT_SEPARATOR, 2);
-                    if (items.length == 1) {
-                        return input;
-                    }
-                    String replacement = render(items[1], items[0].split(CODE_LIST_SEPARATOR));
-
-                    buff.append(replacement);
-
-                    i = k + END_TOKEN_LEN;
-                }
+                buff.append(input.substring(i, input.length()));
+                return buff.toString();
             }
+            buff.append(input.substring(i, j));
+            k = input.indexOf(END_TOKEN, j);
+
+            if (k == -1) {
+                return input;
+            }
+            j += BEGIN_TOKEN_LEN;
+            String spec = input.substring(j, k);
+
+            String[] items = spec.split(CODE_TEXT_SEPARATOR, 2);
+            if (items.length == 1) {
+                return input;
+            }
+            String replacement = render(items[1], items[0].split(CODE_LIST_SEPARATOR));
+
+            buff.append(replacement);
+
+            i = k + END_TOKEN_LEN;
         }
     }
 
-    static private String render(final String text, final String... codes) {
+    static public String render(final String text, final String... codes) {
         Ansi ansi = Ansi.ansi();
         for (String name : codes) {
             Code code = Code.valueOf(name.toUpperCase(Locale.ENGLISH));
