@@ -16,6 +16,7 @@
 
 package org.fusesource.jansi;
 
+import java.io.IOException;
 import java.util.Locale;
 
 import org.fusesource.jansi.Ansi.Attribute;
@@ -61,7 +62,26 @@ public class AnsiRenderer {
     }
 
     static public String render(final String input) throws IllegalArgumentException {
-        StringBuffer buff = new StringBuffer();
+        try {
+            return render(input, new StringBuilder()).toString();
+        } catch (IOException e) {
+            // Cannot happen because StringBuilder does not throw IOException
+            throw new IllegalArgumentException(e);
+        }
+    }
+
+    /**
+     * Renders the given input to the target Appendable.
+     * 
+     * @param input
+     *            source to render
+     * @param target
+     *            render onto this target Appendable.
+     * @return the given Appendable
+     * @throws IOException
+     *             If an I/O error occurs
+     */
+    static public Appendable render(final String input, Appendable target) throws IOException {
 
         int i = 0;
         int j, k;
@@ -70,32 +90,32 @@ public class AnsiRenderer {
             j = input.indexOf(BEGIN_TOKEN, i);
             if (j == -1) {
                 if (i == 0) {
-                    return input;
-                } else {
-                    buff.append(input.substring(i, input.length()));
-                    return buff.toString();
+                    target.append(input);
+                    return target;
                 }
-            } else {
-                buff.append(input.substring(i, j));
-                k = input.indexOf(END_TOKEN, j);
-
-                if (k == -1) {
-                    return input;
-                } else {
-                    j += BEGIN_TOKEN_LEN;
-                    String spec = input.substring(j, k);
-
-                    String[] items = spec.split(CODE_TEXT_SEPARATOR, 2);
-                    if (items.length == 1) {
-                        return input;
-                    }
-                    String replacement = render(items[1], items[0].split(CODE_LIST_SEPARATOR));
-
-                    buff.append(replacement);
-
-                    i = k + END_TOKEN_LEN;
-                }
+                target.append(input.substring(i, input.length()));
+                return target;
             }
+            target.append(input.substring(i, j));
+            k = input.indexOf(END_TOKEN, j);
+
+            if (k == -1) {
+                target.append(input);
+                return target;
+            }
+            j += BEGIN_TOKEN_LEN;
+            String spec = input.substring(j, k);
+
+            String[] items = spec.split(CODE_TEXT_SEPARATOR, 2);
+            if (items.length == 1) {
+                target.append(input);
+                return target;
+            }
+            String replacement = render(items[1], items[0].split(CODE_LIST_SEPARATOR));
+
+            target.append(replacement);
+
+            i = k + END_TOKEN_LEN;
         }
     }
 
