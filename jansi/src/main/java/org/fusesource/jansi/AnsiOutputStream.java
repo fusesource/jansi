@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * A ANSI output stream extracts ANSI escape codes written to 
@@ -215,6 +216,21 @@ public class AnsiOutputStream extends FilterOutputStream {
     }
 
     /**
+     * Helper for processEscapeCommand() to iterate over integer options
+     * @param  optionsIterator  the underlying iterator
+     * @throws IOException      if no more non-null values left
+     */
+    private int getNextOptionInt(Iterator<Object> optionsIterator) throws IOException {
+        for (;;) {
+            if (!optionsIterator.hasNext())
+                throw new IllegalArgumentException();
+            Object arg = optionsIterator.next();
+            if (arg != null)
+                return ((Integer)arg).intValue();
+        }
+    }
+
+    /**
      *
      * @param options
      * @param command
@@ -269,7 +285,9 @@ public class AnsiOutputStream extends FilterOutputStream {
                     }
 
                     int count = 0;
-                    for (Object next : options) {
+                    Iterator<Object> optionsIterator = options.iterator();
+                    while (optionsIterator.hasNext()) {
+                        Object next = optionsIterator.next();
                         if (next != null) {
                             count++;
                             int value = ((Integer) next).intValue();
@@ -281,6 +299,38 @@ public class AnsiOutputStream extends FilterOutputStream {
                                 processSetForegroundColor(value - 90, true);
                             } else if (100 <= value && value <= 107) {
                                 processSetBackgroundColor(value - 100, true);
+                            } else if (value == 38 || value == 48) {
+                                // extended color like `esc[38;5;<index>m` or `esc[38;2;<r>;<g>;<b>m`
+                                int arg2or5 = getNextOptionInt(optionsIterator);
+                                if (arg2or5 == 2) {
+                                    // 24 bit color style like `esc[38;2;<r>;<g>;<b>m`
+                                    int r = getNextOptionInt(optionsIterator);
+                                    int g = getNextOptionInt(optionsIterator);
+                                    int b = getNextOptionInt(optionsIterator);
+                                    if (r >= 0 && r <= 255 && g >= 0 && g <= 255 && b >= 0 && b <= 255) {
+                                        if (value == 38)
+                                            processSetForegroundColorExt(r, g, b);
+                                        else
+                                            processSetBackgroundColorExt(r, g, b);
+                                    } else {
+                                        throw new IllegalArgumentException();
+                                    }
+                                }
+                                else if (arg2or5 == 5) {
+                                    // 256 color style like `esc[38;5;<index>m`
+                                    int paletteIndex = getNextOptionInt(optionsIterator);
+                                    if (paletteIndex >= 0 && paletteIndex <= 255) {
+                                        if (value == 38)
+                                            processSetForegroundColorExt(paletteIndex);
+                                        else
+                                            processSetBackgroundColorExt(paletteIndex);
+                                    } else {
+                                        throw new IllegalArgumentException();
+                                    }
+                                }
+                                else {
+                                    throw new IllegalArgumentException();
+                                }
                             } else {
                                 switch (value) {
                                     case 39:
@@ -417,11 +467,23 @@ public class AnsiOutputStream extends FilterOutputStream {
     protected void processSetForegroundColor(int color, boolean bright) throws IOException {
     }
 
+    protected void processSetForegroundColorExt(int paletteIndex) throws IOException {
+    }
+
+    protected void processSetForegroundColorExt(int r, int g, int b) throws IOException {
+    }
+
     protected void processSetBackgroundColor(int color) throws IOException {
         processSetBackgroundColor(color, false);
     }
 
     protected void processSetBackgroundColor(int color, boolean bright) throws IOException {
+    }
+
+    protected void processSetBackgroundColorExt(int paletteIndex) throws IOException {
+    }
+
+    protected void processSetBackgroundColorExt(int r, int g, int b) throws IOException {
     }
 
     protected void processDefaultTextColor() throws IOException {
