@@ -296,7 +296,7 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
                 negative = true;
                 applyAttribute();
                 break;
-            case ATTRIBUTE_NEGATIVE_Off:
+            case ATTRIBUTE_NEGATIVE_OFF:
                 negative = false;
                 applyAttribute();
                 break;

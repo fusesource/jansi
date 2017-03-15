@@ -110,7 +110,7 @@ public class HtmlAnsiOutputStream extends AnsiOutputStream {
                 break;
             case ATTRIBUTE_NEGATIVE_ON:
                 break;
-            case ATTRIBUTE_NEGATIVE_Off:
+            case ATTRIBUTE_NEGATIVE_OFF:
                 break;
             default:
                 break;
