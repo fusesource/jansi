@@ -15,8 +15,6 @@
  */
 package org.fusesource.jansi;
 
-import org.fusesource.jansi.AnsiOutputStream;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 

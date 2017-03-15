@@ -20,8 +20,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.fusesource.jansi.AnsiOutputStream;
-
 /**
  * @author <a href="http://code.dblock.org">Daniel Doubrovkine</a>
  */
@@ -47,7 +45,7 @@ public class HtmlAnsiOutputStream extends AnsiOutputStream {
         super(os);
     }
 
-    private List<String> closingAttributes = new ArrayList<String>();
+    private final List<String> closingAttributes = new ArrayList<String>();
 
     private void write(String s) throws IOException {
         super.out.write(s.getBytes());

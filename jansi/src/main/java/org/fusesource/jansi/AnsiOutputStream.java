@@ -46,7 +46,7 @@ public class AnsiOutputStream extends FilterOutputStream {
     }
 
     private final static int MAX_ESCAPE_SEQUENCE_LENGTH = 100;
-    private byte[] buffer = new byte[MAX_ESCAPE_SEQUENCE_LENGTH];
+    private final byte[] buffer = new byte[MAX_ESCAPE_SEQUENCE_LENGTH];
     private int pos = 0;
     private int startOfValue;
     private final ArrayList<Object> options = new ArrayList<Object>();
@@ -104,9 +104,9 @@ public class AnsiOutputStream extends FilterOutputStream {
                 } else if (';' == data) {
                     options.add(null);
                 } else if ('?' == data) {
-                    options.add(new Character('?'));
+                    options.add('?');
                 } else if ('=' == data) {
-                    options.add(new Character('='));
+                    options.add('=');
                 } else {
                     reset(processEscapeCommand(options, data));
                 }
@@ -224,7 +224,7 @@ public class AnsiOutputStream extends FilterOutputStream {
                 throw new IllegalArgumentException();
             Object arg = optionsIterator.next();
             if (arg != null)
-                return ((Integer)arg).intValue();
+                return (Integer) arg;
         }
     }
 
@@ -288,7 +288,7 @@ public class AnsiOutputStream extends FilterOutputStream {
                         Object next = optionsIterator.next();
                         if (next != null) {
                             count++;
-                            int value = ((Integer) next).intValue();
+                            int value = (Integer) next;
                             if (30 <= value && value <= 37) {
                                 processSetForegroundColor(value - 30);
                             } else if (40 <= value && value <= 47) {
@@ -552,7 +552,7 @@ public class AnsiOutputStream extends FilterOutputStream {
             throw new IllegalArgumentException();
         if (!value.getClass().equals(Integer.class))
             throw new IllegalArgumentException();
-        return ((Integer) value).intValue();
+        return (Integer) value;
     }
 
     private int optionInt(ArrayList<Object> options, int index, int defaultValue) {
@@ -561,7 +561,7 @@ public class AnsiOutputStream extends FilterOutputStream {
             if (value == null) {
                 return defaultValue;
             }
-            return ((Integer) value).intValue();
+            return (Integer) value;
         }
         return defaultValue;
     }

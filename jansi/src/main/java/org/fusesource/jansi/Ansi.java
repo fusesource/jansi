@@ -29,7 +29,7 @@ public class Ansi {
     private static final char FIRST_ESC_CHAR = 27;
     private static final char SECOND_ESC_CHAR = '[';
 
-    public static enum Color {
+    public enum Color {
         BLACK(0, "BLACK"),
         RED(1, "RED"),
         GREEN(2, "GREEN"),
@@ -74,9 +74,7 @@ public class Ansi {
         }
     }
 
-    ;
-
-    public static enum Attribute {
+    public enum Attribute {
         RESET(0, "RESET"),
         INTENSITY_BOLD(1, "INTENSITY_BOLD"),
         INTENSITY_FAINT(2, "INTENSITY_FAINT"),
@@ -115,9 +113,7 @@ public class Ansi {
 
     }
 
-    ;
-
-    public static enum Erase {
+    public enum Erase {
         FORWARD(0, "FORWARD"),
         BACKWARD(1, "BACKWARD"),
         ALL(2, "ALL");
@@ -139,8 +135,6 @@ public class Ansi {
             return value;
         }
     }
-
-    ;
 
     public static final String DISABLE = Ansi.class.getName() + ".disable";
 

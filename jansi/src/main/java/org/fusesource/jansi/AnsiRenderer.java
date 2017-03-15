@@ -45,22 +45,20 @@ import org.fusesource.jansi.Ansi.Color;
  * @since 1.1
  */
 public class AnsiRenderer {
+
     public static final String BEGIN_TOKEN = "@|";
 
-    private static final int BEGIN_TOKEN_LEN = 2;
-
     public static final String END_TOKEN = "|@";
-
-    private static final int END_TOKEN_LEN = 2;
 
     public static final String CODE_TEXT_SEPARATOR = " ";
 
     public static final String CODE_LIST_SEPARATOR = ",";
 
-    private AnsiRenderer() {
-    }
+    private static final int BEGIN_TOKEN_LEN = 2;
 
-    static public String render(final String input) throws IllegalArgumentException {
+    private static final int END_TOKEN_LEN = 2;
+
+    public static String render(final String input) throws IllegalArgumentException {
         try {
             return render(input, new StringBuilder()).toString();
         } catch (IOException e) {
@@ -80,7 +78,7 @@ public class AnsiRenderer {
      * @throws IOException
      *             If an I/O error occurs
      */
-    static public Appendable render(final String input, Appendable target) throws IOException {
+    public static Appendable render(final String input, Appendable target) throws IOException {
 
         int i = 0;
         int j, k;
@@ -118,7 +116,7 @@ public class AnsiRenderer {
         }
     }
 
-    static public String render(final String text, final String... codes) {
+    public static String render(final String text, final String... codes) {
         Ansi ansi = Ansi.ansi();
         for (String name : codes) {
             Code code = Code.valueOf(name.toUpperCase(Locale.ENGLISH));
@@ -141,7 +139,7 @@ public class AnsiRenderer {
         return text != null && text.contains(BEGIN_TOKEN);
     }
 
-    public static enum Code {
+    public enum Code {
         //
         // TODO: Find a better way to keep Code in sync with Color/Attribute/Erase
         //
@@ -202,13 +200,13 @@ public class AnsiRenderer {
         private final boolean background;
 
         @SuppressWarnings("unchecked")
-        private Code(final Enum n, boolean background) {
+        Code(final Enum n, boolean background) {
             this.n = n;
             this.background = background;
         }
 
         @SuppressWarnings("unchecked")
-        private Code(final Enum n) {
+        Code(final Enum n) {
             this(n, false);
         }
 
@@ -232,4 +230,8 @@ public class AnsiRenderer {
             return background;
         }
     }
+
+    private AnsiRenderer() {
+    }
+
 }
