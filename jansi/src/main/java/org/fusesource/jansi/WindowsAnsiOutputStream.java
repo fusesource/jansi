@@ -213,7 +213,7 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
     @Override
     protected void processCursorDown(int count) throws IOException {
         getConsoleInfo();
-        info.cursorPosition.y = (short) Math.min(info.size.y, info.cursorPosition.y + count);
+        info.cursorPosition.y = (short) Math.min(Math.max(0, info.size.y - 1), info.cursorPosition.y + count);
         applyCursorPosition();
     }
 
