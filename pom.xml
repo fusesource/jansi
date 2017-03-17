@@ -106,6 +106,12 @@
       <url>http://hiramchirino.com</url>
       <timezone>GMT-5</timezone>
     </developer>
+    <developer>
+      <id>gnodet</id>
+      <name>Guillaume Nodet</name>
+      <email>gnodet@gmail.com</email>
+      <timezone>GMT+1</timezone>
+    </developer>
   </developers>
   
   <build>
