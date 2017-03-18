@@ -44,7 +44,7 @@ How the website works
     also built using Maven so, you would
 
         cd ${project_id}-website
-        mvn install
+        mvn package
 
     If you want to edit the files in your text editor and be able to
     immediately see the site re-rendered in a browser then use
@@ -62,22 +62,11 @@ How the website works
 .right
   :markdown
   
-    The site is automatically deployed by the CI builds, so you can
-    simply wait for the changes to be automatically pushed to the project
-    site.
+#    The site is automatically deployed by the CI builds, so you can
+#    simply wait for the changes to be automatically pushed to the project
+#    site.
     
-    You can manually deploy the site using Maven:
+    The site is deployed through GitHub gh-pages branch: you can deploy the site using Maven:
     
-        mvn deploy
-
-    Since deployment to our webserver requires proper authorization,
-    you will need to add an entry to your ~/.m2/settings.xml file simlilar
-    to:
+        mvn install
     
-    {pygmentize:: xml}
-    <server>
-      <id>${project_id}-website</id>
-      <username>xxxx</username>
-      <password>xxxxx</password>
-    </server>
-    {pygmentize}

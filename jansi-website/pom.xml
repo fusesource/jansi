@@ -34,6 +34,13 @@
     <netbeans.hint.deploy.server>Tomcat60</netbeans.hint.deploy.server>
   </properties>
 
+  <distributionManagement>
+    <site>
+      <id>jansi-gh-pages</id>
+      <url>scm:git:https://github.com/fusesource/jansi.git</url>
+    </site>
+  </distributionManagement>
+
   <dependencies>
 
     <dependency>
@@ -142,8 +149,6 @@
         
         <configuration>
           <webappDirectory>${basedir}/src</webappDirectory>
-          <remoteServerId>website.fusesource.org</remoteServerId>
-          <remoteServerUrl>dav:http://fusesource.com/forge/dav/${forge-project-id}/versions/${project.version}/website/</remoteServerUrl>
         </configuration>
         
         <executions>
@@ -154,15 +159,26 @@
             </goals>
             <phase>package</phase>
           </execution>
-          <execution>
-            <id>deploy</id>
-            <goals>
-              <goal>deploy</goal>
-            </goals>
-            <phase>deploy</phase>
-          </execution> 
         </executions>
-        
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-scm-publish-plugin</artifactId>
+        <version>1.1</version>
+        <configuration>
+          <scmBranch>gh-pages</scmBranch>
+          <content>${project.build.directory}/sitegen</content>
+        </configuration>
+        <executions>
+          <execution>
+            <id>gh-pages</id>
+            <goals>
+              <goal>publish-scm</goal>
+            </goals>
+            <phase>install</phase>
+          </execution>
+        </executions>
       </plugin>
 
       <plugin>
@@ -187,7 +203,6 @@
             </systemProperties>
             <scanIntervalSeconds>0</scanIntervalSeconds>
           </configuration>
-        
       </plugin>
 
       <plugin>
