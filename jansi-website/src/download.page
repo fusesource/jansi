@@ -66,4 +66,5 @@ table.download tr td {
           a(href="http://repo1.maven.org/maven2/org/fusesource/#{project_id}/#{project_id}/#{version}/#{project_id}-#{version}.jar.asc") GPG Signature
   
 :&markdown
-  The development build source code should be directly checked out from our [source code repository](community/source.html)
+  The development build source code should be directly checked out from our [source code repository](community/source.html):
+  see [Developers links](community/developers.html) for more details.

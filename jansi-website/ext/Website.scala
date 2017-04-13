@@ -28,15 +28,16 @@ object Website {
   val project_name= "Jansi"
   val project_slogan= "Eliminating boring console output."
   val project_id= "jansi"
-  val project_jira_key= "JANSI"
   val project_issue_url= "https://github.com/fusesource/jansi/issues"
   val project_forums_url= "http://groups.google.com/group/jansi"
   val project_wiki_url= "https://github.com/fusesource/jansi/wiki"
   val project_logo= "/images/project-logo.png"
-  val project_version= "1.12"
-  val project_snapshot_version= "1.13-SNAPSHOT"
+  val project_version= "1.15"
+  val project_snapshot_version= "1.16-SNAPSHOT"
   val project_versions = List(
         project_version,
+        "1.14",
+        "1.13",
         "1.12",
         "1.11",
         "1.10",
@@ -55,6 +56,7 @@ object Website {
 
   // -------------------------------------------------------------------
   val github_page= "http://github.com/fusesource/jansi"
+  val github_page_native= "http://github.com/fusesource/jansi-native"
   val git_user_url= "git://github.com/fusesource/jansi.git"
   val git_commiter_url= "git@github.com:fusesources/jansi.git"
 
