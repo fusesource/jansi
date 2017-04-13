@@ -15,6 +15,8 @@
  */
 package org.fusesource.jansi;
 
+import org.fusesource.jansi.internal.Kernel32;
+
 import static org.fusesource.jansi.internal.CLibrary.STDERR_FILENO;
 import static org.fusesource.jansi.internal.CLibrary.STDOUT_FILENO;
 import static org.fusesource.jansi.internal.CLibrary.isatty;
@@ -23,6 +25,8 @@ import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 
 /**
  * Provides consistent access to an ANSI aware console PrintStream.
@@ -33,10 +37,30 @@ import java.io.PrintStream;
 public class AnsiConsole {
 
     public static final PrintStream system_out = System.out;
-    public static final PrintStream out = new PrintStream( wrapOutputStream( system_out ) );
+    public static final PrintStream out;
 
     public static final PrintStream system_err = System.err;
-    public static final PrintStream err = new PrintStream( wrapErrorOutputStream( system_err ) );
+    public static final PrintStream err;
+
+    static {
+        String charset = Charset.defaultCharset().name();
+        String os = System.getProperty("os.name");
+        if (os.startsWith("Windows") && !isXterm()) {
+            int codepage = Kernel32.GetConsoleOutputCP();
+            //http://docs.oracle.com/javase/6/docs/technotes/guides/intl/encoding.doc.html
+            if (Charset.isSupported("ms" + codepage)) {
+                charset = "ms" + codepage;
+            } else if (Charset.isSupported("cp" + codepage)) {
+                charset = "cp" + codepage;
+            }
+        }
+        try {
+            out = new PrintStream(wrapOutputStream(system_out), false, charset);
+            err = new PrintStream(wrapErrorOutputStream(system_err), false, charset);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     private static int installed;
 
