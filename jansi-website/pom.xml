@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.fusesource.jansi</groupId>
     <artifactId>jansi-project</artifactId>
-    <version>1.15</version>
+    <version>1.16-SNAPSHOT</version>
   </parent>
   
   <artifactId>jansi-website</artifactId>

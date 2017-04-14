@@ -62,10 +62,6 @@ How the website works
 .right
   :markdown
   
-#    The site is automatically deployed by the CI builds, so you can
-#    simply wait for the changes to be automatically pushed to the project
-#    site.
-    
     The site is deployed through GitHub gh-pages branch: you can deploy the site using Maven:
     
         mvn install
