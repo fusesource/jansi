@@ -51,6 +51,13 @@ public class AnsiRendererTest {
     }
 
     @Test
+    public void testRenderCodes() {
+        String str = renderCodes("bold red");
+        System.out.println(str);
+        assertEquals(ansi().bold().fg(Color.RED).toString(), str);
+    }
+
+    @Test
     public void testRender2() {
         String str = render("@|bold,red foo|@");
         System.out.println(str);

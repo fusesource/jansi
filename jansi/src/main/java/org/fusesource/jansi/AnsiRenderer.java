@@ -117,22 +117,47 @@ public class AnsiRenderer {
     }
 
     public static String render(final String text, final String... codes) {
-        Ansi ansi = Ansi.ansi();
-        for (String name : codes) {
-            Code code = Code.valueOf(name.toUpperCase(Locale.ENGLISH));
+        return render(Ansi.ansi(), codes)
+                .a(text).reset().toString();
+    }
 
-            if (code.isColor()) {
-                if (code.isBackground()) {
-                    ansi = ansi.bg(code.getColor());
-                } else {
-                    ansi = ansi.fg(code.getColor());
-                }
-            } else if (code.isAttribute()) {
-                ansi = ansi.a(code.getAttribute());
-            }
+    /**
+     * Renders {@link Code} names as an ANSI escape string.
+     * @param codes The code names to render
+     * @return an ANSI escape string.
+     */
+    public static String renderCodes(final String... codes) {
+        return render(Ansi.ansi(), codes).toString();
+    }
+
+    /**
+     * Renders {@link Code} names as an ANSI escape string.
+     * @param codes A space separated list of code names to render
+     * @return an ANSI escape string.
+     */
+    public static String renderCodes(final String codes) {
+        return renderCodes(codes.split("\\s"));
+    }
+
+    private static Ansi render(Ansi ansi, String... names) {
+        for (String name : names) {
+            render(ansi, name);
         }
+        return ansi;
+    }
 
-        return ansi.a(text).reset().toString();
+    private static Ansi render(Ansi ansi, String name) {
+        Code code = Code.valueOf(name.toUpperCase(Locale.ENGLISH));
+        if (code.isColor()) {
+            if (code.isBackground()) {
+                ansi.bg(code.getColor());
+            } else {
+                ansi.fg(code.getColor());
+            }
+        } else if (code.isAttribute()) {
+            ansi.a(code.getAttribute());
+        }
+        return ansi;
     }
 
     public static boolean test(final String text) {
