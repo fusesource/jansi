@@ -40,7 +40,7 @@ import org.fusesource.jansi.internal.Kernel32.CONSOLE_SCREEN_BUFFER_INFO;
 import org.fusesource.jansi.internal.Kernel32.COORD;
 
 /**
- * A Windows ANSI escape processor, uses JNA to access native platform
+ * A Windows ANSI escape processor, that uses JNA to access native platform
  * API's to change the console attributes.
  *
  * @since 1.0
