@@ -42,10 +42,20 @@ public class AnsiConsole {
     public static final PrintStream system_err = System.err;
     public static final PrintStream err;
 
+    private static final boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase().contains("win");
+
+    private static final boolean IS_CYGWIN = IS_WINDOWS
+            && System.getenv("PWD") != null
+            && System.getenv("PWD").startsWith("/")
+            && !"cygwin".equals(System.getenv("TERM"));
+
+    private static final boolean IS_MINGW = IS_WINDOWS
+            && System.getenv("MSYSTEM") != null
+            && System.getenv("MSYSTEM").startsWith("MINGW");
+
     static {
         String charset = Charset.defaultCharset().name();
-        String os = System.getProperty("os.name");
-        if (os.startsWith("Windows") && !isXterm()) {
+        if (IS_WINDOWS && !IS_CYGWIN && !IS_MINGW) {
             int codepage = Kernel32.GetConsoleOutputCP();
             //http://docs.oracle.com/javase/6/docs/technotes/guides/intl/encoding.doc.html
             if (Charset.isSupported("ms" + codepage)) {
@@ -71,7 +81,7 @@ public class AnsiConsole {
         try {
             return wrapOutputStream(stream, STDOUT_FILENO);
         } catch (Throwable ignore) {
-            return wrapOutputStream(stream, 0);
+            return wrapOutputStream(stream, 1);
         }
     }
 
@@ -79,7 +89,7 @@ public class AnsiConsole {
         try {
             return wrapOutputStream(stream, STDERR_FILENO);
         } catch (Throwable ignore) {
-            return wrapOutputStream(stream, 0);
+            return wrapOutputStream(stream, 2);
         }
     }
 
@@ -97,8 +107,7 @@ public class AnsiConsole {
             return new AnsiOutputStream(stream);
         }
 
-        String os = System.getProperty("os.name");
-        if (os.startsWith("Windows") && !isXterm()) {
+        if (IS_WINDOWS && !IS_CYGWIN && !IS_MINGW) {
 
             // On windows we know the console does not interpret ANSI codes..
             try {
@@ -119,7 +128,7 @@ public class AnsiConsole {
             boolean forceColored = Boolean.getBoolean("jansi.force");
             // If we can detect that stdout is not a tty.. then setup
             // to strip the ANSI sequences..
-            if (!isXterm() && !forceColored && isatty(fileno) == 0) {
+            if (!forceColored && isatty(fileno) == 0) {
                 return new AnsiOutputStream(stream);
             }
         } catch (Throwable ignore) {
@@ -138,11 +147,6 @@ public class AnsiConsole {
                 super.close();
             }
         };
-    }
-
-    private static boolean isXterm() {
-        String term = System.getenv("TERM");
-        return term != null && term.startsWith("xterm");
     }
 
     /**
