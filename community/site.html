@@ -30,10 +30,11 @@
     <div id="navigation">
       <div class="wrapper">
 <ul>
-<li><a href="../index.html">Jansi 1.12</a></li>
+<li><a href="../index.html">Jansi 1.15</a></li>
 <li><a href="../documentation/api/index.html">API Docs</a></li>
 <li><a href="../download.html">Download</a></li>
 <li><a href="index.html">Support</a></li>
+<li><a href="faq.html">FAQ</a></li>
 </ul>        <div></div>
       </div>
     </div>
@@ -73,7 +74,7 @@
   also built using Maven so, you would</p>
 
   <pre><code>cd jansi-website
-  mvn install</code></pre>
+  mvn package</code></pre>
 
   <p>If you want to edit the files in your text editor and be able to
   immediately see the site re-rendered in a browser then use</p>
@@ -90,25 +91,9 @@
   <h1>Deploying the site</h1>
 </div>
 <div class="right">
-  <p>The site is automatically deployed by the CI builds, so you can
-  simply wait for the changes to be automatically pushed to the project
-  site.</p>
+  <p>The site is deployed through GitHub gh-pages branch: you can deploy the site using Maven:</p>
 
-  <p>You can manually deploy the site using Maven:</p>
-
-  <pre><code>mvn deploy</code></pre>
-
-  <p>Since deployment to our webserver requires proper authorization,
-  you will need to add an entry to your ~/.m2/settings.xml file simlilar
-  to:</p>
-
-  <div class="syntax"><pre name='code' class='brush: xml; gutter: false;'><code>
-  &lt;server&gt;
-    &lt;id&gt;jansi-website&lt;/id&gt;
-    &lt;username&gt;xxxx&lt;/username&gt;
-    &lt;password&gt;xxxxx&lt;/password&gt;
-  &lt;/server&gt;
-  </code></pre></div>
+  <pre><code>mvn install</code></pre>
 </div>
 
         <div></div>
