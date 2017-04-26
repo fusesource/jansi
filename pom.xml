@@ -36,7 +36,7 @@
     <forge-project-id-uc>JANSI</forge-project-id-uc>
     
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <jansi-native-version>1.6</jansi-native-version>
+    <jansi-native-version>1.7-SNAPSHOT</jansi-native-version>
     <scalate-version>1.5.1</scalate-version>
     <scalamd-version>1.5</scalamd-version>    
     <slf4j-version>1.6.1</slf4j-version>
@@ -97,6 +97,17 @@
         <url>https://oss.sonatype.org/content/repositories/snapshots</url>
     </snapshotRepository>
   </distributionManagement>
+  
+  <repositories>
+	  <repository>
+          <id>sonatype-nexus-snapshots</id>
+          <name>Sonatype Snapshot Repository</name>
+          <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		  <snapshots>
+			  <enabled>true</enabled>
+		  </snapshots>
+	  </repository>
+  </repositories>
 
   <developers>
     <developer>
@@ -129,8 +140,8 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
             <configuration>
-                <source>1.5</source>
-                <target>1.5</target>
+                <source>1.6</source>
+                <target>1.6</target>
             </configuration>
         </plugin>
         <plugin>
