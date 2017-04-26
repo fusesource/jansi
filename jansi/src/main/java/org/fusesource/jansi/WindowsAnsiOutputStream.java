@@ -241,24 +241,28 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
     @Override
     protected void processSetForegroundColor(int color, boolean bright) throws IOException {
         info.attributes = (short) ((info.attributes & ~0x0007) | ANSI_FOREGROUND_COLOR_MAP[color]);
+        info.attributes = (short) ((info.attributes & ~FOREGROUND_INTENSITY) | (bright ? FOREGROUND_INTENSITY : 0));
         applyAttribute();
     }
 
     @Override
     protected void processSetBackgroundColor(int color, boolean bright) throws IOException {
         info.attributes = (short) ((info.attributes & ~0x0070) | ANSI_BACKGROUND_COLOR_MAP[color]);
+        info.attributes = (short) ((info.attributes & ~BACKGROUND_INTENSITY) | (bright ? BACKGROUND_INTENSITY : 0));
         applyAttribute();
     }
 
     @Override
     protected void processDefaultTextColor() throws IOException {
         info.attributes = (short) ((info.attributes & ~0x000F) | (originalColors & 0xF));
+        info.attributes = (short) (info.attributes & ~FOREGROUND_INTENSITY);
         applyAttribute();
     }
 
     @Override
     protected void processDefaultBackgroundColor() throws IOException {
         info.attributes = (short) ((info.attributes & ~0x00F0) | (originalColors & 0xF0));
+        info.attributes = (short) (info.attributes & ~BACKGROUND_INTENSITY);
         applyAttribute();
     }
 
