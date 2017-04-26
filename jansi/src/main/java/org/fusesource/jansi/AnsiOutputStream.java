@@ -39,7 +39,10 @@ import java.util.Iterator;
  */
 public class AnsiOutputStream extends FilterOutputStream {
 
-    public static final byte[] REST_CODE = resetCode();
+    public static final byte[] RESET_CODE = "\033[0m".getBytes();
+
+    @Deprecated
+    public static final byte[] REST_CODE = RESET_CODE;
 
     public AnsiOutputStream(OutputStream os) {
         super(os);
@@ -568,17 +571,9 @@ public class AnsiOutputStream extends FilterOutputStream {
 
     @Override
     public void close() throws IOException {
-        write(REST_CODE);
+        write(RESET_CODE);
         flush();
         super.close();
-    }
-
-    static private byte[] resetCode() {
-        try {
-            return new Ansi().reset().toString().getBytes("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
     }
 
 }
