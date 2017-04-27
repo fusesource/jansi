@@ -1,4 +1,16 @@
-# ![Jansi](http://jansi.fusesource.org/images/project-logo.png)
+# ![Jansi](http://fusesource.github.io/jansi/images/project-logo.png)
+
+## [Jansi 1.15][1_15], released 2017-03-17
+[1_15]: http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/jansi/jansi/1.15
+
+## [Jansi 1.14][1_14], released 2016-10-04
+[1_14]: http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/jansi/jansi/1.14
+
+## [Jansi 1.13][1_13], released 2016-06-15
+[1_13]: http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/jansi/jansi/1.13
+
+## [Jansi 1.12][1_12], released 2016-04-27
+[1_12]: http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/jansi/jansi/1.12
 
 ## [Jansi 1.11][1_11], released 2013-05-13
 [1_11]: http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/jansi/jansi/1.11
