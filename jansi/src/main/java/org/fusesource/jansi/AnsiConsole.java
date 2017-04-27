@@ -27,6 +27,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.util.Locale;
 
 /**
  * Provides consistent access to an ANSI aware console PrintStream.
@@ -42,7 +43,7 @@ public class AnsiConsole {
     public static final PrintStream system_err = System.err;
     public static final PrintStream err;
 
-    private static final boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase().contains("win");
+    private static final boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("win");
 
     private static final boolean IS_CYGWIN = IS_WINDOWS
             && System.getenv("PWD") != null
