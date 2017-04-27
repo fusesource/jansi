@@ -95,7 +95,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-clean-plugin</artifactId>
-        <version>2.3</version>
+        <version>3.0.0</version>
       </plugin>
       
       <!-- include all the dependencies into the jar so it can run standalone -->
@@ -114,7 +114,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.4.3</version>
+        <version>2.20</version>
         <configuration>
             <redirectTestOutputToFile>true</redirectTestOutputToFile>
             <forkMode>once</forkMode>

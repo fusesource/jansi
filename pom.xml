@@ -139,6 +139,7 @@
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.6.1</version>
             <configuration>
                 <source>1.6</source>
                 <target>1.6</target>
@@ -147,7 +148,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>2.7</version>
+          <version>2.10.4</version>
           <configuration>
             <doctitle>${project.name} API Reference (${project.version})</doctitle>
             <windowtitle>${project.name} API Reference (${project.version})</windowtitle>
@@ -160,6 +161,16 @@
             <excludePackageNames>*.internal</excludePackageNames>
           </configuration>
         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.20</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>3.0.2</version>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -167,7 +178,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
-        <version>3.3</version>
+        <version>3.6</version>
         <executions>
          <execution>
            <id>attach-descriptor</id>
@@ -245,7 +256,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>2.3</version>
+        <version>3.0.0</version>
         <executions>
           <execution>
             <id>unpack</id>
@@ -299,7 +310,6 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
-
             <executions>
               <execution>
                 <id>attach-javadocs</id>
