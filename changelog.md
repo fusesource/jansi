@@ -1,5 +1,18 @@
 # ![Jansi](http://fusesource.github.io/jansi/images/project-logo.png)
 
+## [Jansi 1.16][1_16], released 2017-05-xx
+[1_16]: http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/jansi/jansi/1.16
+
+* Upgraded to the latest jansi native release (1.7).
+* ANSI output stripping does not work if TERM is xterm, fixes [#83](https://github.com/fusesource/jansi/pull/83)
+* Provide FreeBSD native support by default, fixes [#56](https://github.com/fusesource/jansi/pull/56)
+* Make AnsiOutputStream#write synchronized to avoid possible problems
+* Harcode the reset code to avoid having the AnsiOutputStream depending on Ansi, fix typo
+* Avoid the charset lookup
+* Correct support for the bright colors on windows
+* Add a few methods to be able to render code names more easily, fixes [#14](https://github.com/fusesource/jansi/pull/14)
+* Fix encoding problem on AnsiConsole.out on windows, fixes [#79](https://github.com/fusesource/jansi/pull/79)
+
 ## [Jansi 1.15][1_15], released 2017-03-17
 [1_15]: http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/jansi/jansi/1.15
 
