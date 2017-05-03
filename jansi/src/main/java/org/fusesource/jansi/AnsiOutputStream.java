@@ -271,6 +271,12 @@ public class AnsiOutputStream extends FilterOutputStream {
                 case 'K':
                     processEraseLine(optionInt(options, 0, 0));
                     return true;
+                case 'L':
+                    processInsertLine(optionInt(options, 0, 1));
+                    return true;
+                case 'M':
+                    processDeleteLine(optionInt(options, 0, 1));
+                    return true;
                 case 'S':
                     processScrollUp(optionInt(options, 0, 1));
                     return true;
@@ -420,6 +426,20 @@ public class AnsiOutputStream extends FilterOutputStream {
      * @throws IOException
      */
     protected void processSaveCursorPosition() throws IOException {
+    }
+
+    /**
+     * Process <code>CSI s</code> ANSI code, corresponding to <code>IL – Insert Line</code>
+     * @throws IOException
+     */
+    protected void processInsertLine(int optionInt) throws IOException {
+    }
+
+    /**
+     * Process <code>CSI s</code> ANSI code, corresponding to <code>DL – Delete Line</code>
+     * @throws IOException
+     */
+    protected void processDeleteLine(int optionInt) throws IOException {
     }
 
     /**
