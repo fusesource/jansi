@@ -3,6 +3,8 @@
 ## [Jansi 1.16][1_16], released 2017-05-xx
 [1_16]: http://repo.fusesource.com/nexus/content/groups/public/org/fusesource/jansi/jansi/1.16
 
+* Support insert / delete lines ansi sequences
+* Fix inverted colors
 * Upgraded to the latest jansi native release (1.7).
 * ANSI output stripping does not work if TERM is xterm, fixes [#83](https://github.com/fusesource/jansi/pull/83)
 * Provide FreeBSD native support by default, fixes [#56](https://github.com/fusesource/jansi/pull/56)
