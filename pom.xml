@@ -25,7 +25,7 @@
   
   <groupId>org.fusesource.jansi</groupId>
   <artifactId>jansi-project</artifactId>
-  <version>1.16-SNAPSHOT</version>
+  <version>1.16</version>
   <packaging>pom</packaging>
   
   <name>${project.artifactId}</name>
@@ -82,7 +82,7 @@
     <connection>scm:git:https://github.com/fusesource/${forge-project-id}.git</connection>
     <developerConnection>scm:git:https://github.com/fusesource/${forge-project-id}.git</developerConnection>
     <url>https://github.com/fusesource/${forge-project-id}/tree/${project.scm.tag}</url>
-    <tag>master</tag>
+    <tag>jansi-project-1.16</tag>
   </scm>
 
   <distributionManagement>
