@@ -43,7 +43,7 @@ table.download tr td {
   
 - for( version <- project_versions.headOption )
   :&markdown
-    ### #{project_name} #{version} 
+    ### #{project_name} #{version} ([changelog](https://github.com/fusesource/jansi/blob/master/changelog.md))
     
   table.download
     tr 
