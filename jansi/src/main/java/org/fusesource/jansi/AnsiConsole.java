@@ -43,14 +43,14 @@ public class AnsiConsole {
     public static final PrintStream system_err = System.err;
     public static final PrintStream err;
 
-    private static final boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("win");
+    static final boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("win");
 
-    private static final boolean IS_CYGWIN = IS_WINDOWS
+    static final boolean IS_CYGWIN = IS_WINDOWS
             && System.getenv("PWD") != null
             && System.getenv("PWD").startsWith("/")
             && !"cygwin".equals(System.getenv("TERM"));
 
-    private static final boolean IS_MINGW = IS_WINDOWS
+    static final boolean IS_MINGW = IS_WINDOWS
             && System.getenv("MSYSTEM") != null
             && System.getenv("MSYSTEM").startsWith("MINGW");
 
