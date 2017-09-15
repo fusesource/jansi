@@ -28,6 +28,7 @@ import java.util.Properties;
 
 import org.fusesource.hawtjni.runtime.Library;
 import org.fusesource.jansi.internal.CLibrary;
+import static org.fusesource.jansi.internal.CLibrary.isatty;
 
 /**
  * Main class for the library, providing executable jar to diagnose Jansi setup. 
@@ -74,6 +75,15 @@ public class AnsiMain {
         if (AnsiConsole.IS_WINDOWS) {
             System.out.println("IS_CYGWIN= " + AnsiConsole.IS_CYGWIN);
             System.out.println("IS_MINGW= " + AnsiConsole.IS_MINGW);
+        }
+
+        System.out.println();
+
+        int isattyValueReturned = isatty(CLibrary.STDOUT_FILENO);
+        if( isattyValueReturned == 0 ) {
+            System.out.println("stdout is *NOT* a TTY, 'isatty' has a value of " + isattyValueReturned);
+        } else {
+            System.out.println("stdout *IS* a TTY, 'isatty' has a value of " + isattyValueReturned);
         }
 
         AnsiConsole.systemInstall();
