@@ -54,6 +54,9 @@ public class AnsiConsole {
             && System.getenv("MSYSTEM") != null
             && System.getenv("MSYSTEM").startsWith("MINGW");
 
+    private static JansiOutputType jansiOutputType;
+    static final JansiOutputType JANSI_STDOUT_TYPE;
+    static final JansiOutputType JANSI_STDERR_TYPE;
     static {
         String charset = Charset.defaultCharset().name();
         if (IS_WINDOWS && !IS_CYGWIN && !IS_MINGW) {
@@ -67,7 +70,9 @@ public class AnsiConsole {
         }
         try {
             out = new PrintStream(wrapOutputStream(system_out), false, charset);
+            JANSI_STDOUT_TYPE = jansiOutputType;
             err = new PrintStream(wrapErrorOutputStream(system_err), false, charset);
+            JANSI_STDERR_TYPE = jansiOutputType;
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
@@ -99,12 +104,14 @@ public class AnsiConsole {
         // If the jansi.passthrough property is set, then don't interpret
         // any of the ansi sequences.
         if (Boolean.getBoolean("jansi.passthrough")) {
+            jansiOutputType = JansiOutputType.PASSTHROUGH;
             return stream;
         }
 
         // If the jansi.strip property is set, then we just strip the
         // the ansi escapes.
         if (Boolean.getBoolean("jansi.strip")) {
+            jansiOutputType = JansiOutputType.STRIP_ANSI;
             return new AnsiOutputStream(stream);
         }
 
@@ -112,6 +119,7 @@ public class AnsiConsole {
 
             // On windows we know the console does not interpret ANSI codes..
             try {
+                jansiOutputType = JansiOutputType.WINDOWS;
                 return new WindowsAnsiOutputStream(stream);
             } catch (Throwable ignore) {
                 // this happens when JNA is not in the path.. or
@@ -119,6 +127,7 @@ public class AnsiConsole {
             }
 
             // Use the ANSIOutputStream to strip out the ANSI escape sequences.
+            jansiOutputType = JansiOutputType.STRIP_ANSI;
             return new AnsiOutputStream(stream);
         }
 
@@ -130,6 +139,7 @@ public class AnsiConsole {
             // If we can detect that stdout is not a tty.. then setup
             // to strip the ANSI sequences..
             if (!forceColored && isatty(fileno) == 0) {
+                jansiOutputType = JansiOutputType.STRIP_ANSI;
                 return new AnsiOutputStream(stream);
             }
         } catch (Throwable ignore) {
@@ -140,6 +150,7 @@ public class AnsiConsole {
         // By default we assume your Unix tty can handle ANSI codes.
         // Just wrap it up so that when we get closed, we reset the
         // attributes.
+        jansiOutputType = JansiOutputType.RESET_ANSI_AT_CLOSE;
         return new FilterOutputStream(stream) {
             @Override
             public void close() throws IOException {
@@ -198,4 +209,14 @@ public class AnsiConsole {
         }
     }
 
+    /**
+     * Type of output installed by AnsiConsole.
+     */
+    enum JansiOutputType {
+        PASSTHROUGH, // just pass through, ANSI escape codes are supposed to be supported by terminal
+        STRIP_ANSI, // strip ANSI escape codes (since not a terminal)
+        WINDOWS, // detect ANSI escape codes and transform Jansi-supported ones into a Windows API to get desired effect
+                 // (since ANSI escape codes are not natively supported by Windows terminals like cmd.exe or PowerShell)
+        RESET_ANSI_AT_CLOSE // like pass through but reset ANSI attributes when closing
+    };
 }
