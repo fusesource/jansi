@@ -83,6 +83,12 @@ public class AnsiMain {
         diagnoseTty(true);  // System.err
 
         AnsiConsole.systemInstall();
+
+        System.out.println();
+
+        System.out.println("Jansi System.out mode: " + AnsiConsole.JANSI_STDOUT_TYPE);
+        System.out.println("Jansi System.err mode: " + AnsiConsole.JANSI_STDERR_TYPE);
+
         try {
             if (args.length == 0) {
                 printJansiLogoDemo();
