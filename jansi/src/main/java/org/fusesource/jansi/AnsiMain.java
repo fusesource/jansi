@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.io.Reader;
 import java.util.Properties;
 
@@ -90,6 +91,11 @@ public class AnsiMain {
         System.out.println("Jansi System.err mode: " + AnsiConsole.JANSI_STDERR_TYPE);
 
         try {
+            System.out.println();
+
+            testAnsi(false);
+            testAnsi(true);
+
             if (args.length == 0) {
                 printJansiLogoDemo();
                 return;
@@ -138,6 +144,26 @@ public class AnsiMain {
 
         System.out.println("isatty(STD" + (stderr ? "ERR" : "OUT") + "_FILENO)= " + isatty + ", System."
             + (stderr ? "err" : "out") + " " + ((isatty == 0) ? "is *NOT*" : "is") + " a terminal");
+    }
+
+    private static void testAnsi(boolean stderr) {
+        @SuppressWarnings( "resource" )
+        PrintStream s = stderr ? System.err : System.out;
+        s.print("test on System." + (stderr ? "err" : "out") + ":");
+        for(Ansi.Color c: Ansi.Color.values()) {
+            s.print(" " + ansi().fg(c) + c + ansi().reset());
+        }
+        s.println();
+        s.print("            bright:");
+        for(Ansi.Color c: Ansi.Color.values()) {
+            s.print(" " + ansi().fgBright(c) + c + ansi().reset());
+        }
+        s.println();
+        s.print("              bold:");
+        for(Ansi.Color c: Ansi.Color.values()) {
+            s.print(" " + ansi().bold().fg(c) + c + ansi().reset());
+        }
+        s.println();
     }
 
     private static String getPomPropertiesVersion(String path) throws IOException {
