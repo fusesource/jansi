@@ -79,12 +79,8 @@ public class AnsiMain {
 
         System.out.println();
 
-        int isattyValueReturned = isatty(CLibrary.STDOUT_FILENO);
-        if( isattyValueReturned == 0 ) {
-            System.out.println("stdout is *NOT* a TTY, 'isatty' has a value of " + isattyValueReturned);
-        } else {
-            System.out.println("stdout *IS* a TTY, 'isatty' has a value of " + isattyValueReturned);
-        }
+        diagnoseTty(false); // System.out
+        diagnoseTty(true);  // System.err
 
         AnsiConsole.systemInstall();
         try {
@@ -128,6 +124,14 @@ public class AnsiMain {
     private static String getJansiVersion() {
         Package p = AnsiMain.class.getPackage();
         return ( p == null ) ? null : p.getImplementationVersion();
+    }
+
+    private static void diagnoseTty(boolean stderr) {
+        int fd = stderr ? CLibrary.STDERR_FILENO : CLibrary.STDOUT_FILENO;
+        int isatty = isatty(fd);
+
+        System.out.println("isatty(STD" + (stderr ? "ERR" : "OUT") + "_FILENO)= " + isatty + ", System."
+            + (stderr ? "err" : "out") + " " + ((isatty == 0) ? "is *NOT*" : "is") + " a terminal");
     }
 
     private static String getPomPropertiesVersion(String path) throws IOException {
