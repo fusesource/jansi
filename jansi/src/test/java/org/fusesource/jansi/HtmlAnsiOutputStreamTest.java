@@ -76,6 +76,12 @@ public class HtmlAnsiOutputStreamTest {
                 colorize("[1m\u3053\u3093\u306b\u3061\u306f"));
     }
 
+    @Test
+    public void testResetCharacterSet() throws IOException {
+        assertEquals(colorize("(\033(0)"), "()");
+        assertEquals(colorize("(\033)0)"), "()");
+    }
+
     private String colorize(String text) throws IOException {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         HtmlAnsiOutputStream hos = new HtmlAnsiOutputStream(os);
