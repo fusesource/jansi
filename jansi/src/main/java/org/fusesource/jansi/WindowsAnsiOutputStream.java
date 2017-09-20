@@ -38,7 +38,6 @@ import static org.fusesource.jansi.internal.Kernel32.SetConsoleTitle;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.fusesource.jansi.internal.Kernel32;
 import org.fusesource.jansi.internal.WindowsSupport;
 import org.fusesource.jansi.internal.Kernel32.CONSOLE_SCREEN_BUFFER_INFO;
 import org.fusesource.jansi.internal.Kernel32.COORD;
