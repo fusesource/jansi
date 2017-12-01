@@ -15,8 +15,6 @@
  */
 package org.fusesource.jansi;
 
-import org.fusesource.jansi.internal.Kernel32;
-
 import static org.fusesource.jansi.internal.CLibrary.STDERR_FILENO;
 import static org.fusesource.jansi.internal.CLibrary.STDOUT_FILENO;
 import static org.fusesource.jansi.internal.CLibrary.isatty;
@@ -25,8 +23,6 @@ import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 import java.util.Locale;
 
 /**
@@ -34,6 +30,7 @@ import java.util.Locale;
  *
  * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  * @since 1.0
+ * @see #wrapPrintStream(PrintStream, int)
  */
 public class AnsiConsole {
 
@@ -58,24 +55,10 @@ public class AnsiConsole {
     static final JansiOutputType JANSI_STDOUT_TYPE;
     static final JansiOutputType JANSI_STDERR_TYPE;
     static {
-        String charset = Charset.defaultCharset().name();
-        if (IS_WINDOWS && !IS_CYGWIN && !IS_MINGW) {
-            int codepage = Kernel32.GetConsoleOutputCP();
-            //http://docs.oracle.com/javase/6/docs/technotes/guides/intl/encoding.doc.html
-            if (Charset.isSupported("ms" + codepage)) {
-                charset = "ms" + codepage;
-            } else if (Charset.isSupported("cp" + codepage)) {
-                charset = "cp" + codepage;
-            }
-        }
-        try {
-            out = new PrintStream(wrapOutputStream(system_out), false, charset);
-            JANSI_STDOUT_TYPE = jansiOutputType;
-            err = new PrintStream(wrapErrorOutputStream(system_err), false, charset);
-            JANSI_STDERR_TYPE = jansiOutputType;
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+        out = wrapSystemOut(system_out);
+        JANSI_STDOUT_TYPE = jansiOutputType;
+        err = wrapSystemErr(system_err);
+        JANSI_STDERR_TYPE = jansiOutputType;
     }
 
     private static int installed;
@@ -83,6 +66,7 @@ public class AnsiConsole {
     private AnsiConsole() {
     }
 
+    @Deprecated
     public static OutputStream wrapOutputStream(final OutputStream stream) {
         try {
             return wrapOutputStream(stream, STDOUT_FILENO);
@@ -91,6 +75,15 @@ public class AnsiConsole {
         }
     }
 
+    public static PrintStream wrapSystemOut(final PrintStream ps) {
+        try {
+            return wrapPrintStream(ps, STDOUT_FILENO);
+        } catch (Throwable ignore) {
+            return wrapPrintStream(ps, 1);
+        }
+    }
+
+    @Deprecated
     public static OutputStream wrapErrorOutputStream(final OutputStream stream) {
         try {
             return wrapOutputStream(stream, STDERR_FILENO);
@@ -99,6 +92,15 @@ public class AnsiConsole {
         }
     }
 
+    public static PrintStream wrapSystemErr(final PrintStream ps) {
+        try {
+            return wrapPrintStream(ps, STDERR_FILENO);
+        } catch (Throwable ignore) {
+            return wrapPrintStream(ps, 2);
+        }
+    }
+
+    @Deprecated
     public static OutputStream wrapOutputStream(final OutputStream stream, int fileno) {
 
         // If the jansi.passthrough property is set, then don't interpret
@@ -162,12 +164,90 @@ public class AnsiConsole {
     }
 
     /**
+     * Wrap PrintStream applying rules in following order:<ul>
+     * <li>if <code>jansi.passthrough</code> is <code>true</code>, don't wrap but just passthrough (console is
+     * expected to natively support ANSI escape codes),</li>
+     * <li>if <code>jansi.strip</code> is <code>true</code>, just strip ANSI escape codes inconditionally,</li>
+     * <li>if OS is Windows and terminal is not Cygwin or Mingw, wrap as WindowsAnsiPrintStream to process ANSI escape codes,</li>
+     * <li>if file descriptor is a terminal (see <code>isatty(int)</code>) or <code>jansi.force</code> is <code>true</code>,
+     * just passthrough,</li>
+     * <li>else strip ANSI escape codes (not a terminal).</li>
+     * </ul>
+     * 
+     * @param ps original PrintStream to wrap
+     * @param fileno file descriptor
+     * @return wrapped PrintStream depending on OS and system properties
+     */
+    public static PrintStream wrapPrintStream(final PrintStream ps, int fileno) {
+
+        // If the jansi.passthrough property is set, then don't interpret
+        // any of the ansi sequences.
+        if (Boolean.getBoolean("jansi.passthrough")) {
+            jansiOutputType = JansiOutputType.PASSTHROUGH;
+            return ps;
+        }
+
+        // If the jansi.strip property is set, then we just strip the
+        // the ansi escapes.
+        if (Boolean.getBoolean("jansi.strip")) {
+            jansiOutputType = JansiOutputType.STRIP_ANSI;
+            return new AnsiPrintStream(ps);
+        }
+
+        if (IS_WINDOWS && !IS_CYGWIN && !IS_MINGW) {
+
+            // On windows we know the console does not interpret ANSI codes..
+            try {
+                jansiOutputType = JansiOutputType.WINDOWS;
+                return new WindowsAnsiPrintStream(ps);
+            } catch (Throwable ignore) {
+                // this happens when JNA is not in the path.. or
+                // this happens when the stdout is being redirected to a file.
+            }
+
+            // Use the AnsiPrintStream to strip out the ANSI escape sequences.
+            jansiOutputType = JansiOutputType.STRIP_ANSI;
+            return new AnsiPrintStream(ps);
+        }
+
+        // We must be on some Unix variant, including Cygwin or MSYS(2) on Windows...
+        try {
+            // If the jansi.force property is set, then we force to output
+            // the ansi escapes for piping it into ansi color aware commands (e.g. less -r)
+            boolean forceColored = Boolean.getBoolean("jansi.force");
+            // If we can detect that stdout is not a tty.. then setup
+            // to strip the ANSI sequences..
+            if (!forceColored && isatty(fileno) == 0) {
+                jansiOutputType = JansiOutputType.STRIP_ANSI;
+                return new AnsiPrintStream(ps);
+            }
+        } catch (Throwable ignore) {
+            // These errors happen if the JNI lib is not available for your platform.
+            // But since we are on ANSI friendly platform, assume the user is on the console.
+        }
+
+        // By default we assume your Unix tty can handle ANSI codes.
+        // Just wrap it up so that when we get closed, we reset the
+        // attributes.
+        jansiOutputType = JansiOutputType.RESET_ANSI_AT_CLOSE;
+        return new FilterPrintStream(ps) {
+            @Override
+            public void close() {
+                ps.print(AnsiPrintStream.RESET_CODE);
+                ps.flush();
+                super.close();
+            }
+        };
+    }
+
+    /**
      * If the standard out natively supports ANSI escape codes, then this just
      * returns System.out, otherwise it will provide an ANSI aware PrintStream
      * which strips out the ANSI escape sequences or which implement the escape
      * sequences.
      *
      * @return a PrintStream which is ANSI aware.
+     * @see #wrapPrintStream(PrintStream, int)
      */
     public static PrintStream out() {
         return out;
@@ -180,6 +260,7 @@ public class AnsiConsole {
      * sequences.
      *
      * @return a PrintStream which is ANSI aware.
+     * @see #wrapPrintStream(PrintStream, int)
      */
     public static PrintStream err() {
         return err;
