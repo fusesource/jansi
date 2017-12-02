@@ -15,9 +15,9 @@
  */
 package org.fusesource.jansi;
 
-import java.io.FilterOutputStream;
+import java.io.FilterOutputStream; // expected diff with AnsiPrintStream.java
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.OutputStream; // expected diff with AnsiPrintStream.java
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -37,16 +37,17 @@ import java.util.Iterator;
  * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  * @author Joris Kuipers
  * @since 1.0
+ * @see AnsiPrintStream
  */
-public class AnsiOutputStream extends FilterOutputStream {
+public class AnsiOutputStream extends FilterOutputStream { // expected diff with AnsiPrintStream.java
 
-    public static final byte[] RESET_CODE = "\033[0m".getBytes();
+    public static final byte[] RESET_CODE = "\033[0m".getBytes(); // expected diff with AnsiPrintStream.java
 
     @Deprecated
-    public static final byte[] REST_CODE = RESET_CODE;
+    public static final byte[] REST_CODE = RESET_CODE; // expected diff with AnsiPrintStream.java
 
-    public AnsiOutputStream(OutputStream os) {
-        super(os);
+    public AnsiOutputStream(OutputStream os) { // expected diff with AnsiPrintStream.java
+        super(os); // expected diff with AnsiPrintStream.java
     }
 
     private final static int MAX_ESCAPE_SEQUENCE_LENGTH = 100;
@@ -77,16 +78,16 @@ public class AnsiOutputStream extends FilterOutputStream {
     private static final int SECOND_CHARSET1_CHAR = ')';
 
     @Override
-    public synchronized void write(int data) throws IOException {
+    public synchronized void write(int data) throws IOException { // expected diff with AnsiPrintStream.java
         switch (state) {
             case LOOKING_FOR_FIRST_ESC_CHAR:
                 if (data == FIRST_ESC_CHAR) {
                     buffer[pos++] = (byte) data;
                     state = LOOKING_FOR_SECOND_ESC_CHAR;
-                } else {
-                    out.write(data);
+                } else { // expected diff with AnsiPrintStream.java
+                    out.write(data); // expected diff with AnsiPrintStream.java
                 }
-                break;
+                break; // expected diff with AnsiPrintStream.java
 
             case LOOKING_FOR_SECOND_ESC_CHAR:
                 buffer[pos++] = (byte) data;
@@ -220,9 +221,9 @@ public class AnsiOutputStream extends FilterOutputStream {
      * @param skipBuffer if current buffer should be skipped or written to out
      * @throws IOException
      */
-    private void reset(boolean skipBuffer) throws IOException {
+    private void reset(boolean skipBuffer) throws IOException { // expected diff with AnsiPrintStream.java
         if (!skipBuffer) {
-            out.write(buffer, 0, pos);
+            out.write(buffer, 0, pos); // expected diff with AnsiPrintStream.java
         }
         pos = 0;
         startOfValue = 0;
@@ -251,7 +252,7 @@ public class AnsiOutputStream extends FilterOutputStream {
      * @param command
      * @return true if the escape command was processed.
      */
-    private boolean processEscapeCommand(ArrayList<Object> options, int command) throws IOException {
+    private boolean processEscapeCommand(ArrayList<Object> options, int command) throws IOException { // expected diff with AnsiPrintStream.java
         try {
             switch (command) {
                 case 'A':
@@ -401,7 +402,7 @@ public class AnsiOutputStream extends FilterOutputStream {
      * @param options
      * @return true if the operating system command was processed.
      */
-    private boolean processOperatingSystemCommand(ArrayList<Object> options) throws IOException {
+    private boolean processOperatingSystemCommand(ArrayList<Object> options) throws IOException { // expected diff with AnsiPrintStream.java
         int command = optionInt(options, 0);
         String label = (String) options.get(1);
         // for command > 2 label could be composed (i.e. contain ';'), but we'll leave
@@ -670,7 +671,7 @@ public class AnsiOutputStream extends FilterOutputStream {
     protected void processCursorDownLine(int count) throws IOException {
         // Poor mans impl..
         for (int i = 0; i < count; i++) {
-            out.write('\n');
+            out.write('\n'); // expected diff with AnsiPrintStream.java
         }
     }
 
@@ -690,7 +691,7 @@ public class AnsiOutputStream extends FilterOutputStream {
     protected void processCursorRight(int count) throws IOException {
         // Poor mans impl..
         for (int i = 0; i < count; i++) {
-            out.write(' ');
+            out.write(' '); // expected diff with AnsiPrintStream.java
         }
     }
 
@@ -785,8 +786,8 @@ public class AnsiOutputStream extends FilterOutputStream {
     }
 
     @Override
-    public void close() throws IOException {
-        write(RESET_CODE);
+    public void close() throws IOException { // expected diff with AnsiPrintStream.java
+        write(RESET_CODE); // expected diff with AnsiPrintStream.java
         flush();
         super.close();
     }

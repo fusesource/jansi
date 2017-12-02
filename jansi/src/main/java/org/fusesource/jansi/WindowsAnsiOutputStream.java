@@ -36,7 +36,7 @@ import static org.fusesource.jansi.internal.Kernel32.SetConsoleTextAttribute;
 import static org.fusesource.jansi.internal.Kernel32.SetConsoleTitle;
 
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.OutputStream; // expected diff with WindowsAnsiPrintStream.java
 
 import org.fusesource.jansi.internal.WindowsSupport;
 import org.fusesource.jansi.internal.Kernel32.CONSOLE_SCREEN_BUFFER_INFO;
@@ -49,8 +49,9 @@ import org.fusesource.jansi.internal.Kernel32.COORD;
  * @since 1.0
  * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  * @author Joris Kuipers
+ * @see WindowsAnsiPrintStream
  */
-public final class WindowsAnsiOutputStream extends AnsiOutputStream {
+public final class WindowsAnsiOutputStream extends AnsiOutputStream { // expected diff with WindowsAnsiPrintStream.java
 
     private static final long console = GetStdHandle(STD_OUTPUT_HANDLE);
 
@@ -95,14 +96,14 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
     private short savedX = -1;
     private short savedY = -1;
 
-    public WindowsAnsiOutputStream(OutputStream os) throws IOException {
-        super(os);
+    public WindowsAnsiOutputStream(OutputStream os) throws IOException { // expected diff with WindowsAnsiPrintStream.java
+        super(os); // expected diff with WindowsAnsiPrintStream.java
         getConsoleInfo();
         originalColors = info.attributes;
     }
 
     private void getConsoleInfo() throws IOException {
-        out.flush();
+        out.flush(); // expected diff with WindowsAnsiPrintStream.java
         if (GetConsoleScreenBufferInfo(console, info) == 0) {
             throw new IOException("Could not get the screen info: " + WindowsSupport.getLastErrorMessage());
         }
@@ -112,7 +113,7 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
     }
 
     private void applyAttribute() throws IOException {
-        out.flush();
+        out.flush(); // expected diff with WindowsAnsiPrintStream.java
         short attributes = info.attributes;
         if (negative) {
             attributes = invertAttributeColors(attributes);
@@ -327,7 +328,7 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream {
     protected void processRestoreCursorPosition() throws IOException {
         // restore only if there was a save operation first
         if (savedX != -1 && savedY != -1) {
-            out.flush();
+            out.flush(); // expected diff with WindowsAnsiPrintStream.java
             info.cursorPosition.x = savedX;
             info.cursorPosition.y = savedY;
             applyCursorPosition();

@@ -177,6 +177,7 @@ public class AnsiConsole {
      * @param ps original PrintStream to wrap
      * @param fileno file descriptor
      * @return wrapped PrintStream depending on OS and system properties
+     * @since 1.17
      */
     public static PrintStream wrapPrintStream(final PrintStream ps, int fileno) {
 
