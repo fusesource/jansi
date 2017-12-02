@@ -25,10 +25,10 @@ import java.util.Iterator;
  * A ANSI print stream extracts ANSI escape codes written to 
  * a print stream and calls corresponding <code>process*</code> methods.
  *
- * For more information about ANSI escape codes, see:
- * http://en.wikipedia.org/wiki/ANSI_escape_code
+ * <p>For more information about ANSI escape codes, see
+ * <a href="http://en.wikipedia.org/wiki/ANSI_escape_code">Wikipedia article</a>
  *
- * This class just filters out the escape codes so that they are not
+ * <p>This class just filters out the escape codes so that they are not
  * sent out to the underlying OutputStream: <code>process*</code> methods
  * are empty. Subclasses should actually perform the ANSI escape behaviors
  * by implementing active code in <code>process*</code> methods.
@@ -441,15 +441,17 @@ public class AnsiPrintStream extends FilterPrintStream { // expected diff with A
     }
 
     /**
-     * Process <code>CSI s</code> ANSI code, corresponding to <code>IL – Insert Line</code>
+     * Process <code>CSI L</code> ANSI code, corresponding to <code>IL – Insert Line</code>
      * @throws IOException
+     * @since 1.16
      */
     protected void processInsertLine(int optionInt) throws IOException {
     }
 
     /**
-     * Process <code>CSI s</code> ANSI code, corresponding to <code>DL – Delete Line</code>
+     * Process <code>CSI M</code> ANSI code, corresponding to <code>DL – Delete Line</code>
      * @throws IOException
+     * @since 1.16
      */
     protected void processDeleteLine(int optionInt) throws IOException {
     }
