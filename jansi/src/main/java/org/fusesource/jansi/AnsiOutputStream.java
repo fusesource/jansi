@@ -753,7 +753,7 @@ public class AnsiOutputStream extends FilterOutputStream { // expected diff with
      * @param options
      * @return true if the charcter set select command was processed.
      */
-    private boolean processCharsetSelect(ArrayList<Object> options) throws IOException {
+    private boolean processCharsetSelect(ArrayList<Object> options) {
         int set = optionInt(options, 0);
         char seq = ((Character) options.get(1)).charValue();
         processCharsetSelect(set, seq);
