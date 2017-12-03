@@ -230,7 +230,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jxr-plugin</artifactId>
-        <version>3.0.0</version>
+        <version>2.5</version>
         <configuration>
           <linkJavadoc>true</linkJavadoc>
           <docTitle>${project.name} Source Xref (${project.version})</docTitle>
