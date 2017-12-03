@@ -33,5 +33,6 @@ Ready to start hacking on ${project_name}?
 # API Reference
 
 * [`jansi` API](../documentation/api/index.html)
+* [`jansi-native` API](../documentation/native-api/index.html)
 
 Looking for the website documentation of a different ${project_name} [version](${website_base_url}/versions/index.html)?

@@ -225,6 +225,22 @@
                   <classifier>javadoc</classifier>
                   <outputDirectory>${basedir}/target/sitegen/documentation/api</outputDirectory>
                 </artifactItem>
+                <artifactItem>
+                  <groupId>org.fusesource.jansi</groupId>
+                  <artifactId>jansi-native</artifactId>
+                  <version>${jansi-native-version}</version>
+                  <classifier>javadoc</classifier>
+                  <outputDirectory>${basedir}/target/sitegen/documentation/native-api</outputDirectory>
+                  <excludes>*.css</excludes>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>org.fusesource.jansi</groupId>
+                  <artifactId>jansi</artifactId>
+                  <version>${project.version}</version>
+                  <classifier>javadoc</classifier>
+                  <outputDirectory>${basedir}/target/sitegen/documentation/native-api</outputDirectory>
+                  <includes>*.css</includes>
+                </artifactItem>
               </artifactItems>
             </configuration>
           </execution>
