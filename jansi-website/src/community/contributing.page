@@ -61,9 +61,6 @@ ensure that the problem stays fixed in future releases.
 
 ## Working on the code and creating patches
 
-We gladly accept patches if you can find ways to improve, tune or fix
-${project_name} in some way.
-
 ${include("/community/_creating_patches.ssp.md")}
 
 ## Becoming a committer
