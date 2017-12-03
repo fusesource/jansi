@@ -32,7 +32,6 @@ Get the latest source code
     #{project_name} stores its source code in a [Git](http://git-scm.com/) repository hosted on [github](http://github.com) at this location:
 
     * [#{github_page}](#{github_page})
-
     * [#{github_page_native}](#{github_page_native})
 
     If you are new to Git you might like to try the [Git guide for subversion users](http://git.or.cz/course/svn.html) or have a look at the [Git community book](http://book.git-scm.com/).
