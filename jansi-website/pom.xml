@@ -231,9 +231,9 @@
                   <version>${jansi-native-version}</version>
                   <classifier>javadoc</classifier>
                   <outputDirectory>${basedir}/target/sitegen/documentation/native-api</outputDirectory>
-                  <excludes>*.css</excludes>
+                  <excludes>*.css</excludes><!-- TODO remove when upgrading jansi-native-version to 1.8, which has fixed javadoc -->
                 </artifactItem>
-                <artifactItem>
+                <artifactItem><!-- TODO remove when upgrading jansi-native-version to 1.8 -->
                   <groupId>org.fusesource.jansi</groupId>
                   <artifactId>jansi</artifactId>
                   <version>${project.version}</version>

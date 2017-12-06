@@ -47,11 +47,10 @@ public class AnsiMain {
         System.out.println("library.jansi.version= " + System.getProperty("library.jansi.version", ""));
         Library lib = new Library("jansi", CLibrary.class);
         lib.load();
-        /* TODO enable when upgrading hawtjni-runtime to 1.16 with https://github.com/fusesource/hawtjni/pull/36
         System.out.println("path: " + lib.getNativeLibraryPath());
         if (lib.getNativeLibrarySourceUrl() != null) {
-            System.out.println("source: " + lib.getNativeLibrarySourceUrl());
-        }*/
+            System.out.println("auto-extracted from: " + lib.getNativeLibrarySourceUrl());
+        }
 
         System.out.println();
 
