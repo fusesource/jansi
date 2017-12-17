@@ -91,10 +91,10 @@ public class AnsiPrintStream extends FilterPrintStream { // expected diff with A
                 } else if (data == SECOND_OSC_CHAR) {
                     state = LOOKING_FOR_OSC_COMMAND;
                 } else if (data == SECOND_CHARSET0_CHAR) {
-                    options.add(new Integer('0'));
+                    options.add(Integer.valueOf(0));
                     state = LOOKING_FOR_CHARSET;
                 } else if (data == SECOND_CHARSET1_CHAR) {
-                    options.add(new Integer('1'));
+                    options.add(Integer.valueOf(1));
                     state = LOOKING_FOR_CHARSET;
                 } else {
                     reset(false);
@@ -200,7 +200,7 @@ public class AnsiPrintStream extends FilterPrintStream { // expected diff with A
                 break;
 
             case LOOKING_FOR_CHARSET:
-                options.add(new Character((char) data));
+                options.add(Character.valueOf((char) data));
                 reset(processCharsetSelect(options));
                 break;
         }
