@@ -50,6 +50,7 @@ import org.fusesource.jansi.internal.Kernel32.COORD;
  * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  * @author Joris Kuipers
  * @see WindowsAnsiPrintStream
+ * @deprecated use {@link WindowsAnsiPrintStream}, which does not suffer from encoding issues
  */
 public final class WindowsAnsiOutputStream extends AnsiOutputStream { // expected diff with WindowsAnsiPrintStream.java
 
