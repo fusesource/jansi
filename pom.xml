@@ -36,7 +36,7 @@
     <forge-project-id-uc>JANSI</forge-project-id-uc>
     
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <jansi-native-version>1.8-SNAPSHOT</jansi-native-version>
+    <jansi-native-version>1.8</jansi-native-version>
     <scalate-version>1.5.1</scalate-version>
     <scalamd-version>1.5</scalamd-version>    
     <slf4j-version>1.6.1</slf4j-version>
