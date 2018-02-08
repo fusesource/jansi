@@ -32,10 +32,11 @@ object Website {
   val project_forums_url= "http://groups.google.com/group/jansi"
   val project_wiki_url= "https://github.com/fusesource/jansi/wiki"
   val project_logo= "/images/project-logo.png"
-  val project_version= "1.16"
-  val project_snapshot_version= "1.17-SNAPSHOT"
+  val project_version= "1.17"
+  val project_snapshot_version= "1.18-SNAPSHOT"
   val project_versions = List(
         project_version,
+        "1.16",
         "1.15",
         "1.14",
         "1.13",
