@@ -781,7 +781,7 @@ public class AnsiPrintStream extends FilterPrintStream { // expected diff with A
 
     @Override
     public void close() { // expected diff with AnsiOutputStream.java
-        ps.print(RESET_CODE); // expected diff with AnsiOutputStream.java
+        print(RESET_CODE); // expected diff with AnsiOutputStream.java
         flush();
         super.close();
     }
