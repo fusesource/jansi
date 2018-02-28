@@ -1,8 +1,45 @@
 # ![Jansi](http://fusesource.github.io/jansi/images/project-logo.png)
 
+## [Jansi 1.17][1_17], released 2018-02-02
+[1_17]: https://repo.maven.apache.org/maven2/org/fusesource/jansi/jansi/1.17
+
+* [`74c300d`](https://github.com/fusesource/jansi/commit/74c300d4d14d18d33876f4daca937adec91f5e13) Upgrade to hawtjni 1.16
+* [`3f47f7e`](https://github.com/fusesource/jansi/commit/3f47f7e36d49c4a42d51d04a682382f8450fefdc) Upgrade to jansi-native 1.8
+* [`402e4ae`](https://github.com/fusesource/jansi/commit/402e4aee0701ea4e640886b6a2cf887b33f5478d) Switch to jansi-native 1.8-SNAPSHOT
+* [`2964a2f`](https://github.com/fusesource/jansi/commit/2964a2fbb50525cf8571a5a04e8363c8f131015d) deprecated WindowsAnsiOutputStream: use WindowsAnsiPrintStream
+* [`8447fda`](https://github.com/fusesource/jansi/commit/8447fdafb0426a02cc1f9117ff34d7f80bd81ab1) optimization: use valueOf instead of constructor
+* [`6251669`](https://github.com/fusesource/jansi/commit/62516698e86e0c6d55f3f9174c93f4943f1aed2f) added info on native library location and auto-extract
+* [`007b935`](https://github.com/fusesource/jansi/commit/007b93526da79a6601107e1f6270d8e2cbb0c3a4) fixed typos
+* [`346b788`](https://github.com/fusesource/jansi/commit/346b788d7f6d57f29319161157ceb481d72cfe70) added jansi-native API docs
+* [`259700a`](https://github.com/fusesource/jansi/commit/259700a4daf9859a42bedf76c4df1159955c8a5f) 3.0.0 is not released yet...
+* [`47e2e99`](https://github.com/fusesource/jansi/commit/47e2e99bd9afa0d88936b1c9f255dbf4fcc1db4e) removed duplicate line (already in include)
+* [`16d9210`](https://github.com/fusesource/jansi/commit/16d921095bdc2e93b05bf0db8beea69cacb4b18b) improved/fixed javadoc
+* [`4b24c09`](https://github.com/fusesource/jansi/commit/4b24c0928d8c233cd7dc7c7077ad4d4ddb82cb2e) Filter out escape sequence 'character set' select
+* [`5f8eb45`](https://github.com/fusesource/jansi/commit/5f8eb45b376c77b6f72b65b1afe485c322f49198) Correct support for the bright colors on windows - regression fix
+* [`5ac2049`](https://github.com/fusesource/jansi/commit/5ac2049c23e4d091bf48a531b450adfdb2d4ef7d) [#95](http://github.com/fusesource/jansi/issues/95) add comments on expected diffs between Print and Output Streams
+* [`40631bd`](https://github.com/fusesource/jansi/commit/40631bdf503473054eefd27b3c2301bfcbe9643d) Merge pull request [#95](http://github.com/fusesource/jansi/issues/95) from hboutemy/printstream
+* [`3b2eab6`](https://github.com/fusesource/jansi/commit/3b2eab623277d4e6f2dc3b9e355ed6bb9dbbf84f) Merge pull request [#99](http://github.com/fusesource/jansi/issues/99) from jycchoi/master
+* [`f7a84bf`](https://github.com/fusesource/jansi/commit/f7a84bf2e1dff352c83089282ff1b1aedc20f901) Merge pull request [#84](http://github.com/fusesource/jansi/issues/84) from hboutemy/website-1.16
+* [`5294c87`](https://github.com/fusesource/jansi/commit/5294c8728929f8c97c373141227242df8bfe7e1b) Correct support for the bright colors on windows - regression fix
+* [`d340856`](https://github.com/fusesource/jansi/commit/d340856e78925269ecc76cd16c29850fa9ca01e0) add AnsiPrintStream and FilterPrintStream to avoid encoding issues
+* [`769ebe0`](https://github.com/fusesource/jansi/commit/769ebe03655169b2eb380600912a55ac88b13efb) Merge pull request [#86](http://github.com/fusesource/jansi/issues/86) from hboutemy/javadoc
+* [`3ce6987`](https://github.com/fusesource/jansi/commit/3ce698726b353dd06acaa76777c6c2451415b850) Merge pull request [#92](http://github.com/fusesource/jansi/issues/92) from pmhahn/parse-sgr0
+* [`29dff3c`](https://github.com/fusesource/jansi/commit/29dff3cb48615c3d480cd400774d69ce724a9b84) Merge pull request [#88](http://github.com/fusesource/jansi/issues/88) from hboutemy/executable
+* [`b11eb3e`](https://github.com/fusesource/jansi/commit/b11eb3e421bff15e22cbc650256ed8f707b57fd9) added basic color rendering tests
+* [`cf69386`](https://github.com/fusesource/jansi/commit/cf69386f4010a05b5b122195957dd7f09b0d92ad) added explicit result of AnsiConsole system install on stdout&stderr
+* [`0484150`](https://github.com/fusesource/jansi/commit/0484150d01bc05e4f832fe6ee094fa7f46205338) diagnose isatty for both stdout and stderr
+* [`e35a57f`](https://github.com/fusesource/jansi/commit/e35a57f5fb17dbe3ac33040e436c12c96c613f81) 'isatty' check added to test
+* [`ef2d858`](https://github.com/fusesource/jansi/commit/ef2d858448215ef8639663c186653c501ddfb932) Filter out escape sequence 'character set' select
+* [`257b1de`](https://github.com/fusesource/jansi/commit/257b1de6336d3a6848e6739e958ee1d7bd77a712) added main class to jansi.jar to help diagnose issues or configs
+* [`f33497c`](https://github.com/fusesource/jansi/commit/f33497c0117b556e39fe806581e717292e6862ef) improved/fixed javadoc
+* [`b5a840e`](https://github.com/fusesource/jansi/commit/b5a840ecc600ed1cb6c3a9434e31b2d64c7d63cc) link to central for releases download
+* [`d3d8488`](https://github.com/fusesource/jansi/commit/d3d848848db654d756ade20bb0391422f31e9a05) prepared website publication for 1.16, with link to changelog
+
 ## [Jansi 1.16][1_16], released 2017-05-04
 [1_16]: https://repo.maven.apache.org/maven2/org/fusesource/jansi/jansi/1.16
 
+* [`65c537c`](https://github.com/fusesource/jansi/commit/65c537c00f57565b2794d57472ec24e36ac2420a) Upgrade to released versions of hawtjni and jansi-native
+* [`7746c55`](https://github.com/fusesource/jansi/commit/7746c55160eb1d5fa1e820c838e6d540380e8c66) Update changelog.md
 * [`90fb161`](https://github.com/fusesource/jansi/commit/90fb1619323ae32f9ff5b982fdcbb8939d1970b2) Update changelog
 * [`18368e3`](https://github.com/fusesource/jansi/commit/18368e3adfe77574e7201693df7c557f6a6ec717) Support insert / delete lines ansi sequences
 * [`52fba5a`](https://github.com/fusesource/jansi/commit/52fba5a1d826893cee4c06c2d957e608a0dae70b) Fix inverted colors
