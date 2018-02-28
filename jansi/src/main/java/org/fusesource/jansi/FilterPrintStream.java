@@ -45,7 +45,7 @@ public class FilterPrintStream extends PrintStream
 
     /**
      * Filter the content
-     * @param data
+     * @param data character to filter
      * @return <code>true</code> if the data is not filtered then has to be printed to delegate PrintStream
      */
     protected boolean filter(int data)

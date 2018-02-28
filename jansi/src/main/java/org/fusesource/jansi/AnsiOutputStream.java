@@ -77,6 +77,9 @@ public class AnsiOutputStream extends FilterOutputStream { // expected diff with
     private static final int SECOND_CHARSET0_CHAR = '(';
     private static final int SECOND_CHARSET1_CHAR = ')';
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public synchronized void write(int data) throws IOException { // expected diff with AnsiPrintStream.java
         switch (state) {
@@ -431,21 +434,22 @@ public class AnsiOutputStream extends FilterOutputStream { // expected diff with
 
     /**
      * Process <code>CSI u</code> ANSI code, corresponding to <code>RCP – Restore Cursor Position</code>
-     * @throws IOException
+     * @throws IOException IOException
      */
     protected void processRestoreCursorPosition() throws IOException {
     }
 
     /**
      * Process <code>CSI s</code> ANSI code, corresponding to <code>SCP – Save Cursor Position</code>
-     * @throws IOException
+     * @throws IOException IOException
      */
     protected void processSaveCursorPosition() throws IOException {
     }
 
     /**
      * Process <code>CSI L</code> ANSI code, corresponding to <code>IL – Insert Line</code>
-     * @throws IOException
+     * @param optionInt option
+     * @throws IOException IOException
      * @since 1.16
      */
     protected void processInsertLine(int optionInt) throws IOException {
@@ -453,7 +457,8 @@ public class AnsiOutputStream extends FilterOutputStream { // expected diff with
 
     /**
      * Process <code>CSI M</code> ANSI code, corresponding to <code>DL – Delete Line</code>
-     * @throws IOException
+     * @param optionInt option
+     * @throws IOException IOException
      * @since 1.16
      */
     protected void processDeleteLine(int optionInt) throws IOException {
@@ -461,14 +466,16 @@ public class AnsiOutputStream extends FilterOutputStream { // expected diff with
 
     /**
      * Process <code>CSI n T</code> ANSI code, corresponding to <code>SD – Scroll Down</code>
-     * @throws IOException
+     * @param optionInt option
+     * @throws IOException IOException
      */
     protected void processScrollDown(int optionInt) throws IOException {
     }
 
     /**
      * Process <code>CSI n U</code> ANSI code, corresponding to <code>SU – Scroll Up</code>
-     * @throws IOException
+     * @param optionInt option
+     * @throws IOException IOException
      */
     protected void processScrollUp(int optionInt) throws IOException {
     }
@@ -479,7 +486,8 @@ public class AnsiOutputStream extends FilterOutputStream { // expected diff with
 
     /**
      * Process <code>CSI n J</code> ANSI code, corresponding to <code>ED – Erase in Display</code>
-     * @throws IOException
+     * @param eraseOption eraseOption
+     * @throws IOException IOException
      */
     protected void processEraseScreen(int eraseOption) throws IOException {
     }
@@ -490,7 +498,8 @@ public class AnsiOutputStream extends FilterOutputStream { // expected diff with
 
     /**
      * Process <code>CSI n K</code> ANSI code, corresponding to <code>ED – Erase in Line</code>
-     * @throws IOException
+     * @param eraseOption eraseOption
+     * @throws IOException IOException
      */
     protected void processEraseLine(int eraseOption) throws IOException {
     }
@@ -516,8 +525,8 @@ public class AnsiOutputStream extends FilterOutputStream { // expected diff with
      * process <code>SGR</code> other than <code>0</code> (reset), <code>30-39</code> (foreground),
      * <code>40-49</code> (background), <code>90-97</code> (foreground high intensity) or
      * <code>100-107</code> (background high intensity)
-     * @param attribute
-     * @throws IOException
+     * @param attribute attribute
+     * @throws IOException IOException
      * @see #processAttributeRest()
      * @see #processSetForegroundColor(int)
      * @see #processSetForegroundColor(int, boolean)
@@ -541,7 +550,7 @@ public class AnsiOutputStream extends FilterOutputStream { // expected diff with
     /**
      * process <code>SGR 30-37</code> corresponding to <code>Set text color (foreground)</code>.
      * @param color the text color
-     * @throws IOException
+     * @throws IOException IOException
      */
     protected void processSetForegroundColor(int color) throws IOException {
         processSetForegroundColor(color, false);
@@ -552,7 +561,7 @@ public class AnsiOutputStream extends FilterOutputStream { // expected diff with
      * <code>Set text color (foreground)</code> either in normal mode or high intensity.
      * @param color the text color
      * @param bright is high intensity?
-     * @throws IOException
+     * @throws IOException IOException
      */
     protected void processSetForegroundColor(int color, boolean bright) throws IOException {
     }
@@ -561,7 +570,7 @@ public class AnsiOutputStream extends FilterOutputStream { // expected diff with
      * process <code>SGR 38</code> corresponding to <code>extended set text color (foreground)</code>
      * with a palette of 255 colors.
      * @param paletteIndex the text color in the palette
-     * @throws IOException
+     * @throws IOException IOException
      */
     protected void processSetForegroundColorExt(int paletteIndex) throws IOException {
     }
@@ -572,7 +581,7 @@ public class AnsiOutputStream extends FilterOutputStream { // expected diff with
      * @param r red
      * @param g green
      * @param b blue
-     * @throws IOException
+     * @throws IOException IOException
      */
     protected void processSetForegroundColorExt(int r, int g, int b) throws IOException {
     }
@@ -580,7 +589,7 @@ public class AnsiOutputStream extends FilterOutputStream { // expected diff with
     /**
      * process <code>SGR 40-47</code> corresponding to <code>Set background color</code>.
      * @param color the background color
-     * @throws IOException
+     * @throws IOException IOException
      */
     protected void processSetBackgroundColor(int color) throws IOException {
         processSetBackgroundColor(color, false);
@@ -591,7 +600,7 @@ public class AnsiOutputStream extends FilterOutputStream { // expected diff with
      * <code>Set background color</code> either in normal mode or high intensity.
      * @param color the background color
      * @param bright is high intensity?
-     * @throws IOException
+     * @throws IOException IOException
      */
     protected void processSetBackgroundColor(int color, boolean bright) throws IOException {
     }
@@ -600,7 +609,7 @@ public class AnsiOutputStream extends FilterOutputStream { // expected diff with
      * process <code>SGR 48</code> corresponding to <code>extended set background color</code>
      * with a palette of 255 colors.
      * @param paletteIndex the background color in the palette
-     * @throws IOException
+     * @throws IOException IOException
      */
     protected void processSetBackgroundColorExt(int paletteIndex) throws IOException {
     }
@@ -611,28 +620,28 @@ public class AnsiOutputStream extends FilterOutputStream { // expected diff with
      * @param r red
      * @param g green
      * @param b blue
-     * @throws IOException
+     * @throws IOException IOException
      */
     protected void processSetBackgroundColorExt(int r, int g, int b) throws IOException {
     }
 
     /**
      * process <code>SGR 39</code> corresponding to <code>Default text color (foreground)</code>
-     * @throws IOException
+     * @throws IOException IOException
      */
     protected void processDefaultTextColor() throws IOException {
     }
 
     /**
      * process <code>SGR 49</code> corresponding to <code>Default background color</code>
-     * @throws IOException
+     * @throws IOException IOException
      */
     protected void processDefaultBackgroundColor() throws IOException {
     }
 
     /**
      * process <code>SGR 0</code> corresponding to <code>Reset / Normal</code>
-     * @throws IOException
+     * @throws IOException IOException
      */
     protected void processAttributeRest() throws IOException {
     }
@@ -640,9 +649,9 @@ public class AnsiOutputStream extends FilterOutputStream { // expected diff with
     /**
      * process <code>CSI n ; m H</code> corresponding to <code>CUP – Cursor Position</code> or
      * <code>CSI n ; m f</code> corresponding to <code>HVP – Horizontal and Vertical Position</code>
-     * @param row
-     * @param col
-     * @throws IOException
+     * @param row row
+     * @param col column
+     * @throws IOException IOException
      */
     protected void processCursorTo(int row, int col) throws IOException {
     }
@@ -650,7 +659,7 @@ public class AnsiOutputStream extends FilterOutputStream { // expected diff with
     /**
      * process <code>CSI n G</code> corresponding to <code>CHA – Cursor Horizontal Absolute</code>
      * @param x the column
-     * @throws IOException
+     * @throws IOException IOException
      */
     protected void processCursorToColumn(int x) throws IOException {
     }
@@ -658,7 +667,7 @@ public class AnsiOutputStream extends FilterOutputStream { // expected diff with
     /**
      * process <code>CSI n F</code> corresponding to <code>CPL – Cursor Previous Line</code>
      * @param count line count
-     * @throws IOException
+     * @throws IOException IOException
      */
     protected void processCursorUpLine(int count) throws IOException {
     }
@@ -666,7 +675,7 @@ public class AnsiOutputStream extends FilterOutputStream { // expected diff with
     /**
      * process <code>CSI n E</code> corresponding to <code>CNL – Cursor Next Line</code>
      * @param count line count
-     * @throws IOException
+     * @throws IOException IOException
      */
     protected void processCursorDownLine(int count) throws IOException {
         // Poor mans impl..
@@ -677,16 +686,16 @@ public class AnsiOutputStream extends FilterOutputStream { // expected diff with
 
     /**
      * process <code>CSI n D</code> corresponding to <code>CUB – Cursor Back</code>
-     * @param count
-     * @throws IOException
+     * @param count numer of characters to move left
+     * @throws IOException IOException
      */
     protected void processCursorLeft(int count) throws IOException {
     }
 
     /**
      * process <code>CSI n C</code> corresponding to <code>CUF – Cursor Forward</code>
-     * @param count
-     * @throws IOException
+     * @param count number of characters to move on
+     * @throws IOException IOException
      */
     protected void processCursorRight(int count) throws IOException {
         // Poor mans impl..
@@ -697,16 +706,16 @@ public class AnsiOutputStream extends FilterOutputStream { // expected diff with
 
     /**
      * process <code>CSI n B</code> corresponding to <code>CUD – Cursor Down</code>
-     * @param count
-     * @throws IOException
+     * @param count numer of line
+     * @throws IOException IOException
      */
     protected void processCursorDown(int count) throws IOException {
     }
 
     /**
      * process <code>CSI n A</code> corresponding to <code>CUU – Cursor Up</code>
-     * @param count
-     * @throws IOException
+     * @param count number of lines
+     * @throws IOException IOException
      */
     protected void processCursorUp(int count) throws IOException {
     }
@@ -716,8 +725,7 @@ public class AnsiOutputStream extends FilterOutputStream { // expected diff with
 
     /**
      * process <code>OSC 0;text BEL</code> corresponding to <code>Change Window and Icon label</code>
-     * @param label
-     * @throws IOException
+     * @param label window label
      */
     protected void processChangeIconNameAndWindowTitle(String label) {
         processChangeIconName(label);
@@ -726,31 +734,29 @@ public class AnsiOutputStream extends FilterOutputStream { // expected diff with
 
     /**
      * process <code>OSC 1;text BEL</code> corresponding to <code>Change Icon label</code>
-     * @param label
-     * @throws IOException
+     * @param label icon label name
      */
     protected void processChangeIconName(String label) {
     }
 
     /**
      * process <code>OSC 2;text BEL</code> corresponding to <code>Change Window title</code>
-     * @param label
-     * @throws IOException
+     * @param label window label
      */
     protected void processChangeWindowTitle(String label) {
     }
 
     /**
      * Process unknown <code>OSC</code> command.
-     * @param command
-     * @param param
+     * @param command command
+     * @param param command param
      */
     protected void processUnknownOperatingSystemCommand(int command, String param) {
     }
 
     /**
      * Process character set sequence.
-     * @param options
+     * @param options set of options
      * @return true if the charcter set select command was processed.
      */
     private boolean processCharsetSelect(ArrayList<Object> options) {
