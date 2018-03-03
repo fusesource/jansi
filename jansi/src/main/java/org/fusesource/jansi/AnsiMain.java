@@ -183,6 +183,10 @@ public class AnsiMain {
             s.print(" " + ansi().bold().fg(c) + c + ansi().reset());
         }
         s.println();
+
+        s.println();
+        s.println(ansi().fg(Ansi.Color.GREEN) + "More info: http://fusesource.github.io/jansi/" + ansi().reset());
+        s.println();
     }
 
     private static String getPomPropertiesVersion(String path) throws IOException {
