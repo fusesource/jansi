@@ -63,7 +63,7 @@ public class AnsiPrintStream extends FilterPrintStream { // expected diff with A
     private static final int LOOKING_FOR_ST = 8;
     private static final int LOOKING_FOR_CHARSET = 9;
 
-    int state = LOOKING_FOR_FIRST_ESC_CHAR;
+    volatile int state = LOOKING_FOR_FIRST_ESC_CHAR;
 
     private static final int FIRST_ESC_CHAR = 27;
     private static final int SECOND_ESC_CHAR = '[';
