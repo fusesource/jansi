@@ -236,7 +236,7 @@ public class Ansi {
         }
 
         @Override
-        public Ansi cursor(int x, int y) {
+        public Ansi cursor(int row, int column) {
             return this;
         }
 
@@ -494,8 +494,17 @@ public class Ansi {
         return this;
     }
 
-    public Ansi cursor(final int x, final int y) {
-        return appendEscapeSequence('H', x, y);
+    /**
+     * Moves the cursor to row n, column m.
+     * The values are 1-based, and default to 1 (top left corner) if omitted.
+     * A sequence such as CSI ;5H is a synonym for CSI 1;5H as well as CSI 17;H is the same as CSI 17H and CSI 17;1H
+     *
+     * @param row row (1-based) from top
+     * @param column column (1 based) from left
+     * @return Ansi
+     */
+    public Ansi cursor(final int row, final int column) {
+        return appendEscapeSequence('H', row, column);
     }
 
     public Ansi cursorToColumn(final int x) {
