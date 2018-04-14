@@ -674,7 +674,7 @@ public class AnsiPrintStream extends FilterPrintStream { // expected diff with A
     protected void processCursorDownLine(int count) throws IOException {
         // Poor mans impl..
         for (int i = 0; i < count; i++) {
-            print('\n'); // expected diff with AnsiOutputStream.java
+            ps.write('\n'); // expected diff with AnsiOutputStream.java
         }
     }
 
@@ -694,7 +694,7 @@ public class AnsiPrintStream extends FilterPrintStream { // expected diff with A
     protected void processCursorRight(int count) throws IOException {
         // Poor mans impl..
         for (int i = 0; i < count; i++) {
-            print(' '); // expected diff with AnsiOutputStream.java
+            ps.write(' '); // expected diff with AnsiOutputStream.java
         }
     }
 
