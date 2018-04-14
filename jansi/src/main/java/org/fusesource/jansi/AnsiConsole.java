@@ -48,10 +48,10 @@ public class AnsiConsole {
             && System.getenv("PWD").startsWith("/")
             && !"cygwin".equals(System.getenv("TERM"));
 
-    static final boolean IS_MINGW_BASH = IS_WINDOWS
+    static final boolean IS_MINGW_XTERM = IS_WINDOWS
             && System.getenv("MSYSTEM") != null
             && System.getenv("MSYSTEM").startsWith("MINGW")
-            && System.getenv("BASH") != null;
+            && "xterm".equals(System.getenv("TERM"));
 
     private static JansiOutputType jansiOutputType;
     static final JansiOutputType JANSI_STDOUT_TYPE;
@@ -119,7 +119,7 @@ public class AnsiConsole {
             return new AnsiOutputStream(stream);
         }
 
-        if (IS_WINDOWS && !IS_CYGWIN && !IS_MINGW_BASH) {
+        if (IS_WINDOWS && !IS_CYGWIN && !IS_MINGW_XTERM) {
 
             // On windows we know the console does not interpret ANSI codes..
             try {
@@ -197,7 +197,7 @@ public class AnsiConsole {
             return new AnsiPrintStream(ps);
         }
 
-        if (IS_WINDOWS && !IS_CYGWIN && !IS_MINGW_BASH) {
+        if (IS_WINDOWS && !IS_CYGWIN && !IS_MINGW_XTERM) {
 
             // On windows we know the console does not interpret ANSI codes..
             try {
