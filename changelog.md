@@ -1,11 +1,23 @@
 # ![Jansi](http://fusesource.github.io/jansi/images/project-logo.png)
 
+<!-- git log --pretty=format:'* [`%h`](https://github.com/fusesource/jansi/commit/%H) %s' -->
+
+## [Jansi 1.17.1][1_17_1], 
+[1_17_1]: https://repo.maven.apache.org/maven2/org/fusesource/jansi/jansi/1.17.1
+
+* [`73c621f`](https://github.com/fusesource/jansi/commit/73c621ff7f2d0fd8c7e5c23a814359c34fdab012) on MSYSTEM=MINGW, only BASH is natively ANSI aware, not Git CMD #119
+* [`48b0be5`](https://github.com/fusesource/jansi/commit/48b0be5eaa8a0b2cb8d27173d902d1da5f3ba9d6) improved diagnostic output
+* [`68c5810`](https://github.com/fusesource/jansi/commit/68c5810336c606e938c0b70409276c3f53e3b568) Javadoc quick fix for warnings and errors
+* [`e45e466`](https://github.com/fusesource/jansi/commit/e45e4665538ba9234f5ee5d7b06d78d6a03deda3) Synchronization to protect against problems while analyzing Ansi codes resulting from multithreading
+* [`0645365`](https://github.com/fusesource/jansi/commit/06453651594188403f28614097c8598c3bf387e6) update changelog.md for 1.17 release
+* [`cd34211`](https://github.com/fusesource/jansi/commit/cd342119ced2e348245d6cb59990401f382ffbe6) Pass RESET_CODE via filter while closing PrintStream
+* [`14b601c`](https://github.com/fusesource/jansi/commit/14b601ccaa4a24a5554407a8bc7faf45b43b622f) prepare Jansi 1.17 site
+
 ## [Jansi 1.17][1_17], released 2018-02-02
 [1_17]: https://repo.maven.apache.org/maven2/org/fusesource/jansi/jansi/1.17
 
 * [`74c300d`](https://github.com/fusesource/jansi/commit/74c300d4d14d18d33876f4daca937adec91f5e13) Upgrade to hawtjni 1.16
 * [`3f47f7e`](https://github.com/fusesource/jansi/commit/3f47f7e36d49c4a42d51d04a682382f8450fefdc) Upgrade to jansi-native 1.8
-* [`402e4ae`](https://github.com/fusesource/jansi/commit/402e4aee0701ea4e640886b6a2cf887b33f5478d) Switch to jansi-native 1.8-SNAPSHOT
 * [`2964a2f`](https://github.com/fusesource/jansi/commit/2964a2fbb50525cf8571a5a04e8363c8f131015d) deprecated WindowsAnsiOutputStream: use WindowsAnsiPrintStream
 * [`8447fda`](https://github.com/fusesource/jansi/commit/8447fdafb0426a02cc1f9117ff34d7f80bd81ab1) optimization: use valueOf instead of constructor
 * [`6251669`](https://github.com/fusesource/jansi/commit/62516698e86e0c6d55f3f9174c93f4943f1aed2f) added info on native library location and auto-extract
