@@ -47,10 +47,9 @@ public class AnsiMain {
         System.out.println("library.jansi.version= " + System.getProperty("library.jansi.version", ""));
         Library lib = new Library("jansi", CLibrary.class);
         lib.load();
-        /* TODO enable when upgrading hawtjni-runtime to 1.16 with https://github.com/fusesource/hawtjni/pull/36
-        System.out.println("path: " + lib.getNativeLibraryPath());
+        /*System.out.println("Jansi native library loaded from " + lib.getNativeLibraryPath());
         if (lib.getNativeLibrarySourceUrl() != null) {
-            System.out.println("source: " + lib.getNativeLibrarySourceUrl());
+            System.out.println("   which was auto-extracted from " + lib.getNativeLibrarySourceUrl());
         }*/
 
         System.out.println();
@@ -72,10 +71,10 @@ public class AnsiMain {
 
         System.out.println();
 
-        System.out.println("IS_WINDOWS= " + AnsiConsole.IS_WINDOWS);
+        System.out.println("IS_WINDOWS: " + AnsiConsole.IS_WINDOWS);
         if (AnsiConsole.IS_WINDOWS) {
-            System.out.println("IS_CYGWIN= " + AnsiConsole.IS_CYGWIN);
-            System.out.println("IS_MINGW= " + AnsiConsole.IS_MINGW);
+            System.out.println("IS_CYGWIN: " + AnsiConsole.IS_CYGWIN);
+            System.out.println("IS_MINGW: " + AnsiConsole.IS_MINGW);
         }
 
         System.out.println();
@@ -87,8 +86,14 @@ public class AnsiMain {
 
         System.out.println();
 
-        System.out.println("Jansi System.out mode: " + AnsiConsole.JANSI_STDOUT_TYPE);
-        System.out.println("Jansi System.err mode: " + AnsiConsole.JANSI_STDERR_TYPE);
+        System.out.println("Resulting Jansi modes for stout/stderr streams:");
+        System.out.println("  - System.out: " + AnsiConsole.JANSI_STDOUT_TYPE);
+        System.out.println("  - System.err: " + AnsiConsole.JANSI_STDERR_TYPE);
+        System.out.println("modes description:");
+        int n = 1;
+        for(AnsiConsole.JansiOutputType type: AnsiConsole.JansiOutputType.values()) {
+            System.out.println(n++ + ". " + type + ": " + type.getDescription());
+        }
 
         try {
             System.out.println();
@@ -142,7 +147,7 @@ public class AnsiMain {
         int fd = stderr ? CLibrary.STDERR_FILENO : CLibrary.STDOUT_FILENO;
         int isatty = isatty(fd);
 
-        System.out.println("isatty(STD" + (stderr ? "ERR" : "OUT") + "_FILENO)= " + isatty + ", System."
+        System.out.println("isatty(STD" + (stderr ? "ERR" : "OUT") + "_FILENO): " + isatty + ", System."
             + (stderr ? "err" : "out") + " " + ((isatty == 0) ? "is *NOT*" : "is") + " a terminal");
     }
 
