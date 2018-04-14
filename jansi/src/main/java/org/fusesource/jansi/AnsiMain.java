@@ -74,7 +74,7 @@ public class AnsiMain {
         System.out.println("IS_WINDOWS: " + AnsiConsole.IS_WINDOWS);
         if (AnsiConsole.IS_WINDOWS) {
             System.out.println("IS_CYGWIN: " + AnsiConsole.IS_CYGWIN);
-            System.out.println("IS_MINGW: " + AnsiConsole.IS_MINGW);
+            System.out.println("IS_MINGW_BASH: " + AnsiConsole.IS_MINGW_BASH);
         }
 
         System.out.println();

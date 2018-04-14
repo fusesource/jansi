@@ -30,7 +30,7 @@ import java.util.Locale;
  *
  * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  * @since 1.0
- * @see #wrapPrintStream(PrintStream, int)
+ * @see #wrapPrintStream(PrintStream, int) wrapPrintStream(PrintStream, int) for more details on ANSI mode selection
  * @see #systemInstall()
  */
 public class AnsiConsole {
@@ -48,9 +48,10 @@ public class AnsiConsole {
             && System.getenv("PWD").startsWith("/")
             && !"cygwin".equals(System.getenv("TERM"));
 
-    static final boolean IS_MINGW = IS_WINDOWS
+    static final boolean IS_MINGW_BASH = IS_WINDOWS
             && System.getenv("MSYSTEM") != null
-            && System.getenv("MSYSTEM").startsWith("MINGW");
+            && System.getenv("MSYSTEM").startsWith("MINGW")
+            && System.getenv("BASH") != null;
 
     private static JansiOutputType jansiOutputType;
     static final JansiOutputType JANSI_STDOUT_TYPE;
@@ -118,7 +119,7 @@ public class AnsiConsole {
             return new AnsiOutputStream(stream);
         }
 
-        if (IS_WINDOWS && !IS_CYGWIN && !IS_MINGW) {
+        if (IS_WINDOWS && !IS_CYGWIN && !IS_MINGW_BASH) {
 
             // On windows we know the console does not interpret ANSI codes..
             try {
@@ -196,7 +197,7 @@ public class AnsiConsole {
             return new AnsiPrintStream(ps);
         }
 
-        if (IS_WINDOWS && !IS_CYGWIN && !IS_MINGW) {
+        if (IS_WINDOWS && !IS_CYGWIN && !IS_MINGW_BASH) {
 
             // On windows we know the console does not interpret ANSI codes..
             try {
@@ -271,6 +272,7 @@ public class AnsiConsole {
     /**
      * Install <code>AnsiConsole.out</code> to <code>System.out</code> and
      * <code>AnsiConsole.err</code> to <code>System.err</code>.
+     * @see #systemUninstall()
      */
     synchronized static public void systemInstall() {
         installed++;
@@ -282,7 +284,7 @@ public class AnsiConsole {
 
     /**
      * undo a previous {@link #systemInstall()}.  If {@link #systemInstall()} was called
-     * multiple times, it {@link #systemUninstall()} must call the same number of times before
+     * multiple times, {@link #systemUninstall()} must be called the same number of times before
      * it is actually uninstalled.
      */
     synchronized public static void systemUninstall() {
