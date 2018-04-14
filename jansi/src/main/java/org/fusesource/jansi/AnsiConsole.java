@@ -31,6 +31,7 @@ import java.util.Locale;
  * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  * @since 1.0
  * @see #wrapPrintStream(PrintStream, int)
+ * @see #systemInstall()
  */
 public class AnsiConsole {
 
@@ -268,7 +269,8 @@ public class AnsiConsole {
     }
 
     /**
-     * Install Console.out to System.out.
+     * Install <code>AnsiConsole.out</code> to <code>System.out</code> and
+     * <code>AnsiConsole.err</code> to <code>System.err</code>.
      */
     synchronized static public void systemInstall() {
         installed++;
@@ -295,10 +297,20 @@ public class AnsiConsole {
      * Type of output installed by AnsiConsole.
      */
     enum JansiOutputType {
-        PASSTHROUGH, // just pass through, ANSI escape codes are supposed to be supported by terminal
-        STRIP_ANSI, // strip ANSI escape codes (since not a terminal)
-        WINDOWS, // detect ANSI escape codes and transform Jansi-supported ones into a Windows API to get desired effect
-                 // (since ANSI escape codes are not natively supported by Windows terminals like cmd.exe or PowerShell)
-        RESET_ANSI_AT_CLOSE // like pass through but reset ANSI attributes when closing
+        PASSTHROUGH("just pass through, ANSI escape codes are supposed to be supported by terminal"),
+        RESET_ANSI_AT_CLOSE("like pass through but reset ANSI attributes when closing the stream"),
+        STRIP_ANSI("strip ANSI escape codes, for example when output is not a terminal"),
+        WINDOWS("detect ANSI escape codes and transform Jansi-supported ones into a Windows API to get desired effect" +
+                " (since ANSI escape codes are not natively supported by Windows terminals like cmd.exe or PowerShell)");
+
+        private final String description;
+
+        private JansiOutputType(String description) {
+            this.description = description;
+        }
+
+        String getDescription() {
+            return description;
+        }
     };
 }
