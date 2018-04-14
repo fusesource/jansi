@@ -32,7 +32,18 @@ import org.fusesource.jansi.internal.CLibrary;
 import static org.fusesource.jansi.internal.CLibrary.isatty;
 
 /**
- * Main class for the library, providing executable jar to diagnose Jansi setup. 
+ * Main class for the library, providing executable jar to diagnose Jansi setup.
+ * <p>If no system property is set and output is sent to a terminal (no redirect to a file):
+ * <ul>
+ * <li>any terminal on any Unix should get <code>RESET_ANSI_AT_CLOSE</code> mode,</li>
+ * <li>on Windows, Git-bash or Cygwin terminals should get <code>RESET_ANSI_AT_CLOSE</code> mode also, since they
+ * support natively ANSI escape sequences like any Unix terminal,</li>
+ * <li>on Windows, cmd.exe, PowerShell or Git-cmd terminals should get <code>WINDOWS</code> mode.</li>
+ * </ul>
+ * The results will vary if you play with <code>jansi.passthrough</code>, <code>jansi.strip</code> or
+ * <code>jansi.force</code> system property, or if you redirect output to a file.
+ * <p>If you have a specific situation that is not covered, please report precise conditions to reproduce
+ * the issue and ideas on how to detect precisely the affected situation.
  */
 public class AnsiMain {
     public static void main(String... args) throws IOException {
