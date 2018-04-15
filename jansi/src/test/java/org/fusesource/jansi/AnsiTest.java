@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2018 the original author(s).
+ * Copyright (C) 2009-2017 the original author(s).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package org.fusesource.jansi;
 import org.fusesource.jansi.Ansi.Color;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Tests for the {@link Ansi} class.
@@ -27,38 +27,26 @@ import static org.junit.Assert.*;
  */
 public class AnsiTest {
     @Test
-    public void testSetEnabled() throws InterruptedException {
-
+    public void testSetEnabled() throws Exception {
         Ansi.setEnabled(false);
-        Thread threadDisabled = new Thread() {
+        new Thread() {
             @Override
             public void run() {
-                System.out.println(Ansi.ansi().fgRed().a("ANSI disabled").reset());
-                assertFalse( Ansi.isEnabled() );
+                assertEquals(false, Ansi.isEnabled());
             }
-        };
+        }.run();
 
         Ansi.setEnabled(true);
-        Thread threadEnabled =new Thread() {
+        new Thread() {
             @Override
             public void run() {
-                System.out.println(Ansi.ansi().fgBlue().a("ANSI enabled").reset());
-                assertTrue( Ansi.isEnabled() );
+                assertEquals(true, Ansi.isEnabled());
             }
-        };
-
-        Ansi.setEnabled(false);
-        System.out.println(Ansi.ansi().fgBlue().a("Ansi test thread start").reset());
-
-        threadDisabled.start();
-        threadEnabled.start();
-
-        threadEnabled.join();
-        threadDisabled.join();
+        }.run();
     }
 
     @Test
-    public void testClone() {
+    public void testClone() throws CloneNotSupportedException {
         Ansi ansi = Ansi.ansi().a("Some text").bg(Color.BLACK).fg(Color.WHITE);
         Ansi clone = new Ansi(ansi);
 
