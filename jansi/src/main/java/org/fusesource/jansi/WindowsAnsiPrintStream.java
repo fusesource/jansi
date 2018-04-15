@@ -44,7 +44,8 @@ import org.fusesource.jansi.internal.Kernel32.COORD;
 
 /**
  * A Windows ANSI escape processor, that uses JNA to access native platform
- * API's to change the console attributes.
+ * API's to change the console attributes (see 
+ * <a href="http://fusesource.github.io/jansi/documentation/native-api/index.html?org/fusesource/jansi/internal/Kernel32.html">Jansi native Kernel32</a>).
  *
  * @since 1.7
  * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
