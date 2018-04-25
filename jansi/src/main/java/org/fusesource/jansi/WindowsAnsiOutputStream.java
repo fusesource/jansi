@@ -29,6 +29,7 @@ import static org.fusesource.jansi.internal.Kernel32.FillConsoleOutputCharacterW
 import static org.fusesource.jansi.internal.Kernel32.GetConsoleScreenBufferInfo;
 import static org.fusesource.jansi.internal.Kernel32.GetStdHandle;
 import static org.fusesource.jansi.internal.Kernel32.SMALL_RECT;
+import static org.fusesource.jansi.internal.Kernel32.STD_ERROR_HANDLE;
 import static org.fusesource.jansi.internal.Kernel32.STD_OUTPUT_HANDLE;
 import static org.fusesource.jansi.internal.Kernel32.ScrollConsoleScreenBuffer;
 import static org.fusesource.jansi.internal.Kernel32.SetConsoleCursorPosition;
@@ -54,7 +55,9 @@ import org.fusesource.jansi.internal.Kernel32.COORD;
  */
 public final class WindowsAnsiOutputStream extends AnsiOutputStream { // expected diff with WindowsAnsiPrintStream.java
 
-    private static final long console = GetStdHandle(STD_OUTPUT_HANDLE);
+    private static final long stdout_handle = GetStdHandle(STD_OUTPUT_HANDLE);
+    private static final long stderr_handle = GetStdHandle(STD_ERROR_HANDLE);
+    private final long console;
 
     private static final short FOREGROUND_BLACK = 0;
     private static final short FOREGROUND_YELLOW = (short) (FOREGROUND_RED | FOREGROUND_GREEN);
@@ -97,10 +100,15 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream { // expecte
     private short savedX = -1;
     private short savedY = -1;
 
-    public WindowsAnsiOutputStream(OutputStream os) throws IOException { // expected diff with WindowsAnsiPrintStream.java
+    public WindowsAnsiOutputStream(OutputStream os, boolean stdout) throws IOException { // expected diff with WindowsAnsiPrintStream.java
         super(os); // expected diff with WindowsAnsiPrintStream.java
+        this.console = stdout ? stdout_handle : stderr_handle;
         getConsoleInfo();
         originalColors = info.attributes;
+    }
+
+    public WindowsAnsiOutputStream(OutputStream os) throws IOException { // expected diff with WindowsAnsiPrintStream.java
+        this(os, true); // expected diff with WindowsAnsiPrintStream.java
     }
 
     private void getConsoleInfo() throws IOException {
