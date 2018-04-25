@@ -126,7 +126,7 @@ public class AnsiConsole {
             // On windows we know the console does not interpret ANSI codes..
             try {
                 jansiOutputType = JansiOutputType.WINDOWS;
-                return new WindowsAnsiOutputStream(stream);
+                return new WindowsAnsiOutputStream(stream, fileno == STDOUT_FILENO);
             } catch (Throwable ignore) {
                 // this happens when JNA is not in the path.. or
                 // this happens when the stdout is being redirected to a file.
@@ -204,7 +204,7 @@ public class AnsiConsole {
             // On windows we know the console does not interpret ANSI codes..
             try {
                 jansiOutputType = JansiOutputType.WINDOWS;
-                return new WindowsAnsiPrintStream(ps);
+                return new WindowsAnsiPrintStream(ps, fileno == STDOUT_FILENO);
             } catch (Throwable ignore) {
                 // this happens when JNA is not in the path.. or
                 // this happens when the stdout is being redirected to a file.
