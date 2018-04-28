@@ -19,7 +19,8 @@ import java.util.ArrayList;
 import java.util.concurrent.Callable;
 
 /**
- * Provides a fluent API for generating ANSI escape sequences.
+ * Provides a fluent API for generating
+ * <a href="https://en.wikipedia.org/wiki/ANSI_escape_code#CSI_sequences">ANSI escape sequences</a>.
  *
  * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  * @since 1.0
@@ -29,6 +30,9 @@ public class Ansi {
     private static final char FIRST_ESC_CHAR = 27;
     private static final char SECOND_ESC_CHAR = '[';
 
+    /**
+     * <a href="https://en.wikipedia.org/wiki/ANSI_escape_code#Colors">ANSI 8 colors</a> for fluent API
+     */
     public enum Color {
         BLACK(0, "BLACK"),
         RED(1, "RED"),
@@ -74,6 +78,11 @@ public class Ansi {
         }
     }
 
+    /**
+     * Display attributes, also know as
+     * <a href="https://en.wikipedia.org/wiki/ANSI_escape_code#SGR_(Select_Graphic_Rendition)_parameters">SGR
+     * (Select Graphic Rendition) parameters</a>.
+     */
     public enum Attribute {
         RESET(0, "RESET"),
         INTENSITY_BOLD(1, "INTENSITY_BOLD"),
@@ -113,6 +122,12 @@ public class Ansi {
 
     }
 
+    /**
+     * ED (Erase in Display) / EL (Erase in Line) parameter (see
+     * <a href="https://en.wikipedia.org/wiki/ANSI_escape_code#CSI_sequences">CSI sequence J and K</a>)
+     * @see Ansi#eraseScreen(Erase)
+     * @see Ansi#eraseLine(Erase)
+     */
     public enum Erase {
         FORWARD(0, "FORWARD"),
         BACKWARD(1, "BACKWARD"),

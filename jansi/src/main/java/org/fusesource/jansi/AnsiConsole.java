@@ -28,7 +28,8 @@ import java.util.Locale;
 /**
  * Provides consistent access to an ANSI aware console PrintStream or an ANSI codes stripping PrintStream
  * if not on a terminal (see 
- * <a href="http://fusesource.github.io/jansi/documentation/native-api/index.html?org/fusesource/jansi/internal/CLibrary.html">Jansi native isatty(int)</a>).
+ * <a href="http://fusesource.github.io/jansi/documentation/native-api/index.html?org/fusesource/jansi/internal/CLibrary.html">Jansi native
+ * CLibrary isatty(int)</a>).
  *
  * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  * @since 1.0
