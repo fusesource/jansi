@@ -24,6 +24,7 @@ import java.io.PrintStream;
  * 
  * @author Hervé Boutemy
  * @since 1.17
+ * @see #filter(int)
  */
 public class FilterPrintStream extends PrintStream
 {
