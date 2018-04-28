@@ -40,10 +40,13 @@ import static org.fusesource.jansi.internal.CLibrary.isatty;
  * support natively ANSI escape sequences like any Unix terminal,</li>
  * <li>on Windows, cmd.exe, PowerShell or Git-cmd terminals should get <code>WINDOWS</code> mode.</li>
  * </ul>
- * The results will vary if you play with <code>jansi.passthrough</code>, <code>jansi.strip</code> or
+ * If stdout is redirected to a file (<code>&gt; out.txt</code>), System.out should switch to <code>STRIP_ANSI</code>.
+ * Same for stderr redirection (<code>2&gt; err.txt</code>) which should affect System.err mode.
+ * <p>The results will vary if you play with <code>jansi.passthrough</code>, <code>jansi.strip</code> or
  * <code>jansi.force</code> system property, or if you redirect output to a file.
  * <p>If you have a specific situation that is not covered, please report precise conditions to reproduce
  * the issue and ideas on how to detect precisely the affected situation.
+ * @see AnsiConsole
  */
 public class AnsiMain {
     public static void main(String... args) throws IOException {
