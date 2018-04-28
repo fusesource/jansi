@@ -219,19 +219,16 @@ public class AnsiRenderer {
         BOLD(Attribute.INTENSITY_BOLD),
         FAINT(Attribute.INTENSITY_FAINT),;
 
-        @SuppressWarnings("unchecked")
-        private final Enum n;
+        private final Enum<?> n;
 
         private final boolean background;
 
-        @SuppressWarnings("unchecked")
-        Code(final Enum n, boolean background) {
+        Code(final Enum<?> n, boolean background) {
             this.n = n;
             this.background = background;
         }
 
-        @SuppressWarnings("unchecked")
-        Code(final Enum n) {
+        Code(final Enum<?> n) {
             this(n, false);
         }
 
