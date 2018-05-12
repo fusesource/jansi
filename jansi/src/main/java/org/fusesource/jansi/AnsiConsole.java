@@ -30,11 +30,13 @@ import java.util.Locale;
  * if not on a terminal (see 
  * <a href="http://fusesource.github.io/jansi/documentation/native-api/index.html?org/fusesource/jansi/internal/CLibrary.html">Jansi native
  * CLibrary isatty(int)</a>).
+ * <p>The native library used is named <code>jansi</code> and is loaded using <a href="http://fusesource.github.io/hawtjni/">HawtJNI</a> Runtime
+ * <a href="http://fusesource.github.io/hawtjni/documentation/api/index.html?org/fusesource/hawtjni/runtime/Library.html"><code>Library</code></a>
  *
  * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  * @since 1.0
  * @see #systemInstall()
- * @see #wrapPrintStream(PrintStream, int) wrapPrintStream(PrintStream, int) for more details on ANSI mode selection
+ * @see #wrapPrintStream(PrintStream, int) wrapPrintStream(PrintStream, int) for more details on ANSI mode selection 
  */
 public class AnsiConsole {
 
