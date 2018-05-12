@@ -47,6 +47,8 @@ import org.fusesource.jansi.internal.Kernel32.COORD;
  * A Windows ANSI escape processor, that uses JNA to access native platform
  * API's to change the console attributes (see 
  * <a href="http://fusesource.github.io/jansi/documentation/native-api/index.html?org/fusesource/jansi/internal/Kernel32.html">Jansi native Kernel32</a>).
+ * <p>The native library used is named <code>jansi</code> and is loaded using <a href="http://fusesource.github.io/hawtjni/">HawtJNI</a> Runtime
+ * <a href="http://fusesource.github.io/hawtjni/documentation/api/index.html?org/fusesource/hawtjni/runtime/Library.html"><code>Library</code></a>
  *
  * @since 1.7
  * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
