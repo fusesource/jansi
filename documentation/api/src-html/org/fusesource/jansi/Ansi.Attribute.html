@@ -244,7 +244,7 @@
 <span class="sourceLineNo">236</span>        }<a name="line.236"></a>
 <span class="sourceLineNo">237</span><a name="line.237"></a>
 <span class="sourceLineNo">238</span>        @Override<a name="line.238"></a>
-<span class="sourceLineNo">239</span>        public Ansi cursor(int x, int y) {<a name="line.239"></a>
+<span class="sourceLineNo">239</span>        public Ansi cursor(int row, int column) {<a name="line.239"></a>
 <span class="sourceLineNo">240</span>            return this;<a name="line.240"></a>
 <span class="sourceLineNo">241</span>        }<a name="line.241"></a>
 <span class="sourceLineNo">242</span><a name="line.242"></a>
@@ -502,276 +502,285 @@
 <span class="sourceLineNo">494</span>        return this;<a name="line.494"></a>
 <span class="sourceLineNo">495</span>    }<a name="line.495"></a>
 <span class="sourceLineNo">496</span><a name="line.496"></a>
-<span class="sourceLineNo">497</span>    public Ansi cursor(final int x, final int y) {<a name="line.497"></a>
-<span class="sourceLineNo">498</span>        return appendEscapeSequence('H', x, y);<a name="line.498"></a>
-<span class="sourceLineNo">499</span>    }<a name="line.499"></a>
-<span class="sourceLineNo">500</span><a name="line.500"></a>
-<span class="sourceLineNo">501</span>    public Ansi cursorToColumn(final int x) {<a name="line.501"></a>
-<span class="sourceLineNo">502</span>        return appendEscapeSequence('G', x);<a name="line.502"></a>
-<span class="sourceLineNo">503</span>    }<a name="line.503"></a>
-<span class="sourceLineNo">504</span><a name="line.504"></a>
-<span class="sourceLineNo">505</span>    public Ansi cursorUp(final int y) {<a name="line.505"></a>
-<span class="sourceLineNo">506</span>        return appendEscapeSequence('A', y);<a name="line.506"></a>
-<span class="sourceLineNo">507</span>    }<a name="line.507"></a>
-<span class="sourceLineNo">508</span><a name="line.508"></a>
-<span class="sourceLineNo">509</span>    public Ansi cursorDown(final int y) {<a name="line.509"></a>
-<span class="sourceLineNo">510</span>        return appendEscapeSequence('B', y);<a name="line.510"></a>
-<span class="sourceLineNo">511</span>    }<a name="line.511"></a>
-<span class="sourceLineNo">512</span><a name="line.512"></a>
-<span class="sourceLineNo">513</span>    public Ansi cursorRight(final int x) {<a name="line.513"></a>
-<span class="sourceLineNo">514</span>        return appendEscapeSequence('C', x);<a name="line.514"></a>
-<span class="sourceLineNo">515</span>    }<a name="line.515"></a>
-<span class="sourceLineNo">516</span><a name="line.516"></a>
-<span class="sourceLineNo">517</span>    public Ansi cursorLeft(final int x) {<a name="line.517"></a>
-<span class="sourceLineNo">518</span>        return appendEscapeSequence('D', x);<a name="line.518"></a>
-<span class="sourceLineNo">519</span>    }<a name="line.519"></a>
-<span class="sourceLineNo">520</span><a name="line.520"></a>
-<span class="sourceLineNo">521</span>    public Ansi cursorDownLine() {<a name="line.521"></a>
-<span class="sourceLineNo">522</span>        return appendEscapeSequence('E');<a name="line.522"></a>
-<span class="sourceLineNo">523</span>    }<a name="line.523"></a>
-<span class="sourceLineNo">524</span><a name="line.524"></a>
-<span class="sourceLineNo">525</span>    public Ansi cursorDownLine(final int n) {<a name="line.525"></a>
-<span class="sourceLineNo">526</span>        return appendEscapeSequence('E', n);<a name="line.526"></a>
-<span class="sourceLineNo">527</span>    }<a name="line.527"></a>
-<span class="sourceLineNo">528</span><a name="line.528"></a>
-<span class="sourceLineNo">529</span>    public Ansi cursorUpLine() {<a name="line.529"></a>
-<span class="sourceLineNo">530</span>        return appendEscapeSequence('F');<a name="line.530"></a>
-<span class="sourceLineNo">531</span>    }<a name="line.531"></a>
-<span class="sourceLineNo">532</span><a name="line.532"></a>
-<span class="sourceLineNo">533</span>    public Ansi cursorUpLine(final int n) {<a name="line.533"></a>
-<span class="sourceLineNo">534</span>        return appendEscapeSequence('F', n);<a name="line.534"></a>
-<span class="sourceLineNo">535</span>    }<a name="line.535"></a>
-<span class="sourceLineNo">536</span><a name="line.536"></a>
-<span class="sourceLineNo">537</span>    public Ansi eraseScreen() {<a name="line.537"></a>
-<span class="sourceLineNo">538</span>        return appendEscapeSequence('J', Erase.ALL.value());<a name="line.538"></a>
-<span class="sourceLineNo">539</span>    }<a name="line.539"></a>
-<span class="sourceLineNo">540</span><a name="line.540"></a>
-<span class="sourceLineNo">541</span>    public Ansi eraseScreen(final Erase kind) {<a name="line.541"></a>
-<span class="sourceLineNo">542</span>        return appendEscapeSequence('J', kind.value());<a name="line.542"></a>
-<span class="sourceLineNo">543</span>    }<a name="line.543"></a>
-<span class="sourceLineNo">544</span><a name="line.544"></a>
-<span class="sourceLineNo">545</span>    public Ansi eraseLine() {<a name="line.545"></a>
-<span class="sourceLineNo">546</span>        return appendEscapeSequence('K');<a name="line.546"></a>
-<span class="sourceLineNo">547</span>    }<a name="line.547"></a>
-<span class="sourceLineNo">548</span><a name="line.548"></a>
-<span class="sourceLineNo">549</span>    public Ansi eraseLine(final Erase kind) {<a name="line.549"></a>
-<span class="sourceLineNo">550</span>        return appendEscapeSequence('K', kind.value());<a name="line.550"></a>
-<span class="sourceLineNo">551</span>    }<a name="line.551"></a>
-<span class="sourceLineNo">552</span><a name="line.552"></a>
-<span class="sourceLineNo">553</span>    public Ansi scrollUp(final int rows) {<a name="line.553"></a>
-<span class="sourceLineNo">554</span>        return appendEscapeSequence('S', rows);<a name="line.554"></a>
-<span class="sourceLineNo">555</span>    }<a name="line.555"></a>
-<span class="sourceLineNo">556</span><a name="line.556"></a>
-<span class="sourceLineNo">557</span>    public Ansi scrollDown(final int rows) {<a name="line.557"></a>
-<span class="sourceLineNo">558</span>        return appendEscapeSequence('T', rows);<a name="line.558"></a>
-<span class="sourceLineNo">559</span>    }<a name="line.559"></a>
-<span class="sourceLineNo">560</span><a name="line.560"></a>
-<span class="sourceLineNo">561</span>    public Ansi saveCursorPosition() {<a name="line.561"></a>
-<span class="sourceLineNo">562</span>        return appendEscapeSequence('s');<a name="line.562"></a>
-<span class="sourceLineNo">563</span>    }<a name="line.563"></a>
-<span class="sourceLineNo">564</span><a name="line.564"></a>
-<span class="sourceLineNo">565</span>    @Deprecated<a name="line.565"></a>
-<span class="sourceLineNo">566</span>    public Ansi restorCursorPosition() {<a name="line.566"></a>
-<span class="sourceLineNo">567</span>        return appendEscapeSequence('u');<a name="line.567"></a>
+<span class="sourceLineNo">497</span>    /**<a name="line.497"></a>
+<span class="sourceLineNo">498</span>     * Moves the cursor to row n, column m.<a name="line.498"></a>
+<span class="sourceLineNo">499</span>     * The values are 1-based, and default to 1 (top left corner) if omitted.<a name="line.499"></a>
+<span class="sourceLineNo">500</span>     * A sequence such as CSI ;5H is a synonym for CSI 1;5H as well as CSI 17;H is the same as CSI 17H and CSI 17;1H<a name="line.500"></a>
+<span class="sourceLineNo">501</span>     *<a name="line.501"></a>
+<span class="sourceLineNo">502</span>     * @param row row (1-based) from top<a name="line.502"></a>
+<span class="sourceLineNo">503</span>     * @param column column (1 based) from left<a name="line.503"></a>
+<span class="sourceLineNo">504</span>     * @return Ansi<a name="line.504"></a>
+<span class="sourceLineNo">505</span>     */<a name="line.505"></a>
+<span class="sourceLineNo">506</span>    public Ansi cursor(final int row, final int column) {<a name="line.506"></a>
+<span class="sourceLineNo">507</span>        return appendEscapeSequence('H', row, column);<a name="line.507"></a>
+<span class="sourceLineNo">508</span>    }<a name="line.508"></a>
+<span class="sourceLineNo">509</span><a name="line.509"></a>
+<span class="sourceLineNo">510</span>    public Ansi cursorToColumn(final int x) {<a name="line.510"></a>
+<span class="sourceLineNo">511</span>        return appendEscapeSequence('G', x);<a name="line.511"></a>
+<span class="sourceLineNo">512</span>    }<a name="line.512"></a>
+<span class="sourceLineNo">513</span><a name="line.513"></a>
+<span class="sourceLineNo">514</span>    public Ansi cursorUp(final int y) {<a name="line.514"></a>
+<span class="sourceLineNo">515</span>        return appendEscapeSequence('A', y);<a name="line.515"></a>
+<span class="sourceLineNo">516</span>    }<a name="line.516"></a>
+<span class="sourceLineNo">517</span><a name="line.517"></a>
+<span class="sourceLineNo">518</span>    public Ansi cursorDown(final int y) {<a name="line.518"></a>
+<span class="sourceLineNo">519</span>        return appendEscapeSequence('B', y);<a name="line.519"></a>
+<span class="sourceLineNo">520</span>    }<a name="line.520"></a>
+<span class="sourceLineNo">521</span><a name="line.521"></a>
+<span class="sourceLineNo">522</span>    public Ansi cursorRight(final int x) {<a name="line.522"></a>
+<span class="sourceLineNo">523</span>        return appendEscapeSequence('C', x);<a name="line.523"></a>
+<span class="sourceLineNo">524</span>    }<a name="line.524"></a>
+<span class="sourceLineNo">525</span><a name="line.525"></a>
+<span class="sourceLineNo">526</span>    public Ansi cursorLeft(final int x) {<a name="line.526"></a>
+<span class="sourceLineNo">527</span>        return appendEscapeSequence('D', x);<a name="line.527"></a>
+<span class="sourceLineNo">528</span>    }<a name="line.528"></a>
+<span class="sourceLineNo">529</span><a name="line.529"></a>
+<span class="sourceLineNo">530</span>    public Ansi cursorDownLine() {<a name="line.530"></a>
+<span class="sourceLineNo">531</span>        return appendEscapeSequence('E');<a name="line.531"></a>
+<span class="sourceLineNo">532</span>    }<a name="line.532"></a>
+<span class="sourceLineNo">533</span><a name="line.533"></a>
+<span class="sourceLineNo">534</span>    public Ansi cursorDownLine(final int n) {<a name="line.534"></a>
+<span class="sourceLineNo">535</span>        return appendEscapeSequence('E', n);<a name="line.535"></a>
+<span class="sourceLineNo">536</span>    }<a name="line.536"></a>
+<span class="sourceLineNo">537</span><a name="line.537"></a>
+<span class="sourceLineNo">538</span>    public Ansi cursorUpLine() {<a name="line.538"></a>
+<span class="sourceLineNo">539</span>        return appendEscapeSequence('F');<a name="line.539"></a>
+<span class="sourceLineNo">540</span>    }<a name="line.540"></a>
+<span class="sourceLineNo">541</span><a name="line.541"></a>
+<span class="sourceLineNo">542</span>    public Ansi cursorUpLine(final int n) {<a name="line.542"></a>
+<span class="sourceLineNo">543</span>        return appendEscapeSequence('F', n);<a name="line.543"></a>
+<span class="sourceLineNo">544</span>    }<a name="line.544"></a>
+<span class="sourceLineNo">545</span><a name="line.545"></a>
+<span class="sourceLineNo">546</span>    public Ansi eraseScreen() {<a name="line.546"></a>
+<span class="sourceLineNo">547</span>        return appendEscapeSequence('J', Erase.ALL.value());<a name="line.547"></a>
+<span class="sourceLineNo">548</span>    }<a name="line.548"></a>
+<span class="sourceLineNo">549</span><a name="line.549"></a>
+<span class="sourceLineNo">550</span>    public Ansi eraseScreen(final Erase kind) {<a name="line.550"></a>
+<span class="sourceLineNo">551</span>        return appendEscapeSequence('J', kind.value());<a name="line.551"></a>
+<span class="sourceLineNo">552</span>    }<a name="line.552"></a>
+<span class="sourceLineNo">553</span><a name="line.553"></a>
+<span class="sourceLineNo">554</span>    public Ansi eraseLine() {<a name="line.554"></a>
+<span class="sourceLineNo">555</span>        return appendEscapeSequence('K');<a name="line.555"></a>
+<span class="sourceLineNo">556</span>    }<a name="line.556"></a>
+<span class="sourceLineNo">557</span><a name="line.557"></a>
+<span class="sourceLineNo">558</span>    public Ansi eraseLine(final Erase kind) {<a name="line.558"></a>
+<span class="sourceLineNo">559</span>        return appendEscapeSequence('K', kind.value());<a name="line.559"></a>
+<span class="sourceLineNo">560</span>    }<a name="line.560"></a>
+<span class="sourceLineNo">561</span><a name="line.561"></a>
+<span class="sourceLineNo">562</span>    public Ansi scrollUp(final int rows) {<a name="line.562"></a>
+<span class="sourceLineNo">563</span>        return appendEscapeSequence('S', rows);<a name="line.563"></a>
+<span class="sourceLineNo">564</span>    }<a name="line.564"></a>
+<span class="sourceLineNo">565</span><a name="line.565"></a>
+<span class="sourceLineNo">566</span>    public Ansi scrollDown(final int rows) {<a name="line.566"></a>
+<span class="sourceLineNo">567</span>        return appendEscapeSequence('T', rows);<a name="line.567"></a>
 <span class="sourceLineNo">568</span>    }<a name="line.568"></a>
 <span class="sourceLineNo">569</span><a name="line.569"></a>
-<span class="sourceLineNo">570</span>    public Ansi restoreCursorPosition() {<a name="line.570"></a>
-<span class="sourceLineNo">571</span>        return appendEscapeSequence('u');<a name="line.571"></a>
+<span class="sourceLineNo">570</span>    public Ansi saveCursorPosition() {<a name="line.570"></a>
+<span class="sourceLineNo">571</span>        return appendEscapeSequence('s');<a name="line.571"></a>
 <span class="sourceLineNo">572</span>    }<a name="line.572"></a>
 <span class="sourceLineNo">573</span><a name="line.573"></a>
-<span class="sourceLineNo">574</span>    public Ansi reset() {<a name="line.574"></a>
-<span class="sourceLineNo">575</span>        return a(Attribute.RESET);<a name="line.575"></a>
-<span class="sourceLineNo">576</span>    }<a name="line.576"></a>
-<span class="sourceLineNo">577</span><a name="line.577"></a>
-<span class="sourceLineNo">578</span>    public Ansi bold() {<a name="line.578"></a>
-<span class="sourceLineNo">579</span>        return a(Attribute.INTENSITY_BOLD);<a name="line.579"></a>
-<span class="sourceLineNo">580</span>    }<a name="line.580"></a>
-<span class="sourceLineNo">581</span><a name="line.581"></a>
-<span class="sourceLineNo">582</span>    public Ansi boldOff() {<a name="line.582"></a>
-<span class="sourceLineNo">583</span>        return a(Attribute.INTENSITY_BOLD_OFF);<a name="line.583"></a>
-<span class="sourceLineNo">584</span>    }<a name="line.584"></a>
-<span class="sourceLineNo">585</span><a name="line.585"></a>
-<span class="sourceLineNo">586</span>    public Ansi a(String value) {<a name="line.586"></a>
-<span class="sourceLineNo">587</span>        flushAttributes();<a name="line.587"></a>
-<span class="sourceLineNo">588</span>        builder.append(value);<a name="line.588"></a>
-<span class="sourceLineNo">589</span>        return this;<a name="line.589"></a>
-<span class="sourceLineNo">590</span>    }<a name="line.590"></a>
-<span class="sourceLineNo">591</span><a name="line.591"></a>
-<span class="sourceLineNo">592</span>    public Ansi a(boolean value) {<a name="line.592"></a>
-<span class="sourceLineNo">593</span>        flushAttributes();<a name="line.593"></a>
-<span class="sourceLineNo">594</span>        builder.append(value);<a name="line.594"></a>
-<span class="sourceLineNo">595</span>        return this;<a name="line.595"></a>
-<span class="sourceLineNo">596</span>    }<a name="line.596"></a>
-<span class="sourceLineNo">597</span><a name="line.597"></a>
-<span class="sourceLineNo">598</span>    public Ansi a(char value) {<a name="line.598"></a>
-<span class="sourceLineNo">599</span>        flushAttributes();<a name="line.599"></a>
-<span class="sourceLineNo">600</span>        builder.append(value);<a name="line.600"></a>
-<span class="sourceLineNo">601</span>        return this;<a name="line.601"></a>
-<span class="sourceLineNo">602</span>    }<a name="line.602"></a>
-<span class="sourceLineNo">603</span><a name="line.603"></a>
-<span class="sourceLineNo">604</span>    public Ansi a(char[] value, int offset, int len) {<a name="line.604"></a>
-<span class="sourceLineNo">605</span>        flushAttributes();<a name="line.605"></a>
-<span class="sourceLineNo">606</span>        builder.append(value, offset, len);<a name="line.606"></a>
-<span class="sourceLineNo">607</span>        return this;<a name="line.607"></a>
-<span class="sourceLineNo">608</span>    }<a name="line.608"></a>
-<span class="sourceLineNo">609</span><a name="line.609"></a>
-<span class="sourceLineNo">610</span>    public Ansi a(char[] value) {<a name="line.610"></a>
-<span class="sourceLineNo">611</span>        flushAttributes();<a name="line.611"></a>
-<span class="sourceLineNo">612</span>        builder.append(value);<a name="line.612"></a>
-<span class="sourceLineNo">613</span>        return this;<a name="line.613"></a>
-<span class="sourceLineNo">614</span>    }<a name="line.614"></a>
-<span class="sourceLineNo">615</span><a name="line.615"></a>
-<span class="sourceLineNo">616</span>    public Ansi a(CharSequence value, int start, int end) {<a name="line.616"></a>
-<span class="sourceLineNo">617</span>        flushAttributes();<a name="line.617"></a>
-<span class="sourceLineNo">618</span>        builder.append(value, start, end);<a name="line.618"></a>
-<span class="sourceLineNo">619</span>        return this;<a name="line.619"></a>
-<span class="sourceLineNo">620</span>    }<a name="line.620"></a>
-<span class="sourceLineNo">621</span><a name="line.621"></a>
-<span class="sourceLineNo">622</span>    public Ansi a(CharSequence value) {<a name="line.622"></a>
-<span class="sourceLineNo">623</span>        flushAttributes();<a name="line.623"></a>
-<span class="sourceLineNo">624</span>        builder.append(value);<a name="line.624"></a>
-<span class="sourceLineNo">625</span>        return this;<a name="line.625"></a>
-<span class="sourceLineNo">626</span>    }<a name="line.626"></a>
-<span class="sourceLineNo">627</span><a name="line.627"></a>
-<span class="sourceLineNo">628</span>    public Ansi a(double value) {<a name="line.628"></a>
-<span class="sourceLineNo">629</span>        flushAttributes();<a name="line.629"></a>
-<span class="sourceLineNo">630</span>        builder.append(value);<a name="line.630"></a>
-<span class="sourceLineNo">631</span>        return this;<a name="line.631"></a>
-<span class="sourceLineNo">632</span>    }<a name="line.632"></a>
-<span class="sourceLineNo">633</span><a name="line.633"></a>
-<span class="sourceLineNo">634</span>    public Ansi a(float value) {<a name="line.634"></a>
-<span class="sourceLineNo">635</span>        flushAttributes();<a name="line.635"></a>
-<span class="sourceLineNo">636</span>        builder.append(value);<a name="line.636"></a>
-<span class="sourceLineNo">637</span>        return this;<a name="line.637"></a>
-<span class="sourceLineNo">638</span>    }<a name="line.638"></a>
-<span class="sourceLineNo">639</span><a name="line.639"></a>
-<span class="sourceLineNo">640</span>    public Ansi a(int value) {<a name="line.640"></a>
-<span class="sourceLineNo">641</span>        flushAttributes();<a name="line.641"></a>
-<span class="sourceLineNo">642</span>        builder.append(value);<a name="line.642"></a>
-<span class="sourceLineNo">643</span>        return this;<a name="line.643"></a>
-<span class="sourceLineNo">644</span>    }<a name="line.644"></a>
-<span class="sourceLineNo">645</span><a name="line.645"></a>
-<span class="sourceLineNo">646</span>    public Ansi a(long value) {<a name="line.646"></a>
-<span class="sourceLineNo">647</span>        flushAttributes();<a name="line.647"></a>
-<span class="sourceLineNo">648</span>        builder.append(value);<a name="line.648"></a>
-<span class="sourceLineNo">649</span>        return this;<a name="line.649"></a>
-<span class="sourceLineNo">650</span>    }<a name="line.650"></a>
-<span class="sourceLineNo">651</span><a name="line.651"></a>
-<span class="sourceLineNo">652</span>    public Ansi a(Object value) {<a name="line.652"></a>
-<span class="sourceLineNo">653</span>        flushAttributes();<a name="line.653"></a>
-<span class="sourceLineNo">654</span>        builder.append(value);<a name="line.654"></a>
-<span class="sourceLineNo">655</span>        return this;<a name="line.655"></a>
-<span class="sourceLineNo">656</span>    }<a name="line.656"></a>
-<span class="sourceLineNo">657</span><a name="line.657"></a>
-<span class="sourceLineNo">658</span>    public Ansi a(StringBuffer value) {<a name="line.658"></a>
-<span class="sourceLineNo">659</span>        flushAttributes();<a name="line.659"></a>
-<span class="sourceLineNo">660</span>        builder.append(value);<a name="line.660"></a>
-<span class="sourceLineNo">661</span>        return this;<a name="line.661"></a>
-<span class="sourceLineNo">662</span>    }<a name="line.662"></a>
-<span class="sourceLineNo">663</span><a name="line.663"></a>
-<span class="sourceLineNo">664</span>    public Ansi newline() {<a name="line.664"></a>
-<span class="sourceLineNo">665</span>        flushAttributes();<a name="line.665"></a>
-<span class="sourceLineNo">666</span>        builder.append(System.getProperty("line.separator"));<a name="line.666"></a>
-<span class="sourceLineNo">667</span>        return this;<a name="line.667"></a>
-<span class="sourceLineNo">668</span>    }<a name="line.668"></a>
-<span class="sourceLineNo">669</span><a name="line.669"></a>
-<span class="sourceLineNo">670</span>    public Ansi format(String pattern, Object... args) {<a name="line.670"></a>
-<span class="sourceLineNo">671</span>        flushAttributes();<a name="line.671"></a>
-<span class="sourceLineNo">672</span>        builder.append(String.format(pattern, args));<a name="line.672"></a>
-<span class="sourceLineNo">673</span>        return this;<a name="line.673"></a>
-<span class="sourceLineNo">674</span>    }<a name="line.674"></a>
-<span class="sourceLineNo">675</span><a name="line.675"></a>
-<span class="sourceLineNo">676</span>    /**<a name="line.676"></a>
-<span class="sourceLineNo">677</span>     * Uses the {@link AnsiRenderer}<a name="line.677"></a>
-<span class="sourceLineNo">678</span>     * to generate the ANSI escape sequences for the supplied text.<a name="line.678"></a>
-<span class="sourceLineNo">679</span>     *<a name="line.679"></a>
-<span class="sourceLineNo">680</span>     * @param text text<a name="line.680"></a>
-<span class="sourceLineNo">681</span>     * @return this<a name="line.681"></a>
-<span class="sourceLineNo">682</span>     *<a name="line.682"></a>
-<span class="sourceLineNo">683</span>     * @since 1.1<a name="line.683"></a>
-<span class="sourceLineNo">684</span>     */<a name="line.684"></a>
-<span class="sourceLineNo">685</span>    public Ansi render(final String text) {<a name="line.685"></a>
-<span class="sourceLineNo">686</span>        a(AnsiRenderer.render(text));<a name="line.686"></a>
-<span class="sourceLineNo">687</span>        return this;<a name="line.687"></a>
-<span class="sourceLineNo">688</span>    }<a name="line.688"></a>
-<span class="sourceLineNo">689</span><a name="line.689"></a>
-<span class="sourceLineNo">690</span>    /**<a name="line.690"></a>
-<span class="sourceLineNo">691</span>     * String formats and renders the supplied arguments.  Uses the {@link AnsiRenderer}<a name="line.691"></a>
-<span class="sourceLineNo">692</span>     * to generate the ANSI escape sequences.<a name="line.692"></a>
-<span class="sourceLineNo">693</span>     *<a name="line.693"></a>
-<span class="sourceLineNo">694</span>     * @param text format<a name="line.694"></a>
-<span class="sourceLineNo">695</span>     * @param args arguments<a name="line.695"></a>
-<span class="sourceLineNo">696</span>     * @return this<a name="line.696"></a>
-<span class="sourceLineNo">697</span>     *<a name="line.697"></a>
-<span class="sourceLineNo">698</span>     * @since 1.1<a name="line.698"></a>
-<span class="sourceLineNo">699</span>     */<a name="line.699"></a>
-<span class="sourceLineNo">700</span>    public Ansi render(final String text, Object... args) {<a name="line.700"></a>
-<span class="sourceLineNo">701</span>        a(String.format(AnsiRenderer.render(text), args));<a name="line.701"></a>
-<span class="sourceLineNo">702</span>        return this;<a name="line.702"></a>
-<span class="sourceLineNo">703</span>    }<a name="line.703"></a>
-<span class="sourceLineNo">704</span><a name="line.704"></a>
-<span class="sourceLineNo">705</span>    @Override<a name="line.705"></a>
-<span class="sourceLineNo">706</span>    public String toString() {<a name="line.706"></a>
-<span class="sourceLineNo">707</span>        flushAttributes();<a name="line.707"></a>
-<span class="sourceLineNo">708</span>        return builder.toString();<a name="line.708"></a>
-<span class="sourceLineNo">709</span>    }<a name="line.709"></a>
-<span class="sourceLineNo">710</span><a name="line.710"></a>
-<span class="sourceLineNo">711</span>    ///////////////////////////////////////////////////////////////////<a name="line.711"></a>
-<span class="sourceLineNo">712</span>    // Private Helper Methods<a name="line.712"></a>
-<span class="sourceLineNo">713</span>    ///////////////////////////////////////////////////////////////////<a name="line.713"></a>
-<span class="sourceLineNo">714</span><a name="line.714"></a>
-<span class="sourceLineNo">715</span>    private Ansi appendEscapeSequence(char command) {<a name="line.715"></a>
+<span class="sourceLineNo">574</span>    @Deprecated<a name="line.574"></a>
+<span class="sourceLineNo">575</span>    public Ansi restorCursorPosition() {<a name="line.575"></a>
+<span class="sourceLineNo">576</span>        return appendEscapeSequence('u');<a name="line.576"></a>
+<span class="sourceLineNo">577</span>    }<a name="line.577"></a>
+<span class="sourceLineNo">578</span><a name="line.578"></a>
+<span class="sourceLineNo">579</span>    public Ansi restoreCursorPosition() {<a name="line.579"></a>
+<span class="sourceLineNo">580</span>        return appendEscapeSequence('u');<a name="line.580"></a>
+<span class="sourceLineNo">581</span>    }<a name="line.581"></a>
+<span class="sourceLineNo">582</span><a name="line.582"></a>
+<span class="sourceLineNo">583</span>    public Ansi reset() {<a name="line.583"></a>
+<span class="sourceLineNo">584</span>        return a(Attribute.RESET);<a name="line.584"></a>
+<span class="sourceLineNo">585</span>    }<a name="line.585"></a>
+<span class="sourceLineNo">586</span><a name="line.586"></a>
+<span class="sourceLineNo">587</span>    public Ansi bold() {<a name="line.587"></a>
+<span class="sourceLineNo">588</span>        return a(Attribute.INTENSITY_BOLD);<a name="line.588"></a>
+<span class="sourceLineNo">589</span>    }<a name="line.589"></a>
+<span class="sourceLineNo">590</span><a name="line.590"></a>
+<span class="sourceLineNo">591</span>    public Ansi boldOff() {<a name="line.591"></a>
+<span class="sourceLineNo">592</span>        return a(Attribute.INTENSITY_BOLD_OFF);<a name="line.592"></a>
+<span class="sourceLineNo">593</span>    }<a name="line.593"></a>
+<span class="sourceLineNo">594</span><a name="line.594"></a>
+<span class="sourceLineNo">595</span>    public Ansi a(String value) {<a name="line.595"></a>
+<span class="sourceLineNo">596</span>        flushAttributes();<a name="line.596"></a>
+<span class="sourceLineNo">597</span>        builder.append(value);<a name="line.597"></a>
+<span class="sourceLineNo">598</span>        return this;<a name="line.598"></a>
+<span class="sourceLineNo">599</span>    }<a name="line.599"></a>
+<span class="sourceLineNo">600</span><a name="line.600"></a>
+<span class="sourceLineNo">601</span>    public Ansi a(boolean value) {<a name="line.601"></a>
+<span class="sourceLineNo">602</span>        flushAttributes();<a name="line.602"></a>
+<span class="sourceLineNo">603</span>        builder.append(value);<a name="line.603"></a>
+<span class="sourceLineNo">604</span>        return this;<a name="line.604"></a>
+<span class="sourceLineNo">605</span>    }<a name="line.605"></a>
+<span class="sourceLineNo">606</span><a name="line.606"></a>
+<span class="sourceLineNo">607</span>    public Ansi a(char value) {<a name="line.607"></a>
+<span class="sourceLineNo">608</span>        flushAttributes();<a name="line.608"></a>
+<span class="sourceLineNo">609</span>        builder.append(value);<a name="line.609"></a>
+<span class="sourceLineNo">610</span>        return this;<a name="line.610"></a>
+<span class="sourceLineNo">611</span>    }<a name="line.611"></a>
+<span class="sourceLineNo">612</span><a name="line.612"></a>
+<span class="sourceLineNo">613</span>    public Ansi a(char[] value, int offset, int len) {<a name="line.613"></a>
+<span class="sourceLineNo">614</span>        flushAttributes();<a name="line.614"></a>
+<span class="sourceLineNo">615</span>        builder.append(value, offset, len);<a name="line.615"></a>
+<span class="sourceLineNo">616</span>        return this;<a name="line.616"></a>
+<span class="sourceLineNo">617</span>    }<a name="line.617"></a>
+<span class="sourceLineNo">618</span><a name="line.618"></a>
+<span class="sourceLineNo">619</span>    public Ansi a(char[] value) {<a name="line.619"></a>
+<span class="sourceLineNo">620</span>        flushAttributes();<a name="line.620"></a>
+<span class="sourceLineNo">621</span>        builder.append(value);<a name="line.621"></a>
+<span class="sourceLineNo">622</span>        return this;<a name="line.622"></a>
+<span class="sourceLineNo">623</span>    }<a name="line.623"></a>
+<span class="sourceLineNo">624</span><a name="line.624"></a>
+<span class="sourceLineNo">625</span>    public Ansi a(CharSequence value, int start, int end) {<a name="line.625"></a>
+<span class="sourceLineNo">626</span>        flushAttributes();<a name="line.626"></a>
+<span class="sourceLineNo">627</span>        builder.append(value, start, end);<a name="line.627"></a>
+<span class="sourceLineNo">628</span>        return this;<a name="line.628"></a>
+<span class="sourceLineNo">629</span>    }<a name="line.629"></a>
+<span class="sourceLineNo">630</span><a name="line.630"></a>
+<span class="sourceLineNo">631</span>    public Ansi a(CharSequence value) {<a name="line.631"></a>
+<span class="sourceLineNo">632</span>        flushAttributes();<a name="line.632"></a>
+<span class="sourceLineNo">633</span>        builder.append(value);<a name="line.633"></a>
+<span class="sourceLineNo">634</span>        return this;<a name="line.634"></a>
+<span class="sourceLineNo">635</span>    }<a name="line.635"></a>
+<span class="sourceLineNo">636</span><a name="line.636"></a>
+<span class="sourceLineNo">637</span>    public Ansi a(double value) {<a name="line.637"></a>
+<span class="sourceLineNo">638</span>        flushAttributes();<a name="line.638"></a>
+<span class="sourceLineNo">639</span>        builder.append(value);<a name="line.639"></a>
+<span class="sourceLineNo">640</span>        return this;<a name="line.640"></a>
+<span class="sourceLineNo">641</span>    }<a name="line.641"></a>
+<span class="sourceLineNo">642</span><a name="line.642"></a>
+<span class="sourceLineNo">643</span>    public Ansi a(float value) {<a name="line.643"></a>
+<span class="sourceLineNo">644</span>        flushAttributes();<a name="line.644"></a>
+<span class="sourceLineNo">645</span>        builder.append(value);<a name="line.645"></a>
+<span class="sourceLineNo">646</span>        return this;<a name="line.646"></a>
+<span class="sourceLineNo">647</span>    }<a name="line.647"></a>
+<span class="sourceLineNo">648</span><a name="line.648"></a>
+<span class="sourceLineNo">649</span>    public Ansi a(int value) {<a name="line.649"></a>
+<span class="sourceLineNo">650</span>        flushAttributes();<a name="line.650"></a>
+<span class="sourceLineNo">651</span>        builder.append(value);<a name="line.651"></a>
+<span class="sourceLineNo">652</span>        return this;<a name="line.652"></a>
+<span class="sourceLineNo">653</span>    }<a name="line.653"></a>
+<span class="sourceLineNo">654</span><a name="line.654"></a>
+<span class="sourceLineNo">655</span>    public Ansi a(long value) {<a name="line.655"></a>
+<span class="sourceLineNo">656</span>        flushAttributes();<a name="line.656"></a>
+<span class="sourceLineNo">657</span>        builder.append(value);<a name="line.657"></a>
+<span class="sourceLineNo">658</span>        return this;<a name="line.658"></a>
+<span class="sourceLineNo">659</span>    }<a name="line.659"></a>
+<span class="sourceLineNo">660</span><a name="line.660"></a>
+<span class="sourceLineNo">661</span>    public Ansi a(Object value) {<a name="line.661"></a>
+<span class="sourceLineNo">662</span>        flushAttributes();<a name="line.662"></a>
+<span class="sourceLineNo">663</span>        builder.append(value);<a name="line.663"></a>
+<span class="sourceLineNo">664</span>        return this;<a name="line.664"></a>
+<span class="sourceLineNo">665</span>    }<a name="line.665"></a>
+<span class="sourceLineNo">666</span><a name="line.666"></a>
+<span class="sourceLineNo">667</span>    public Ansi a(StringBuffer value) {<a name="line.667"></a>
+<span class="sourceLineNo">668</span>        flushAttributes();<a name="line.668"></a>
+<span class="sourceLineNo">669</span>        builder.append(value);<a name="line.669"></a>
+<span class="sourceLineNo">670</span>        return this;<a name="line.670"></a>
+<span class="sourceLineNo">671</span>    }<a name="line.671"></a>
+<span class="sourceLineNo">672</span><a name="line.672"></a>
+<span class="sourceLineNo">673</span>    public Ansi newline() {<a name="line.673"></a>
+<span class="sourceLineNo">674</span>        flushAttributes();<a name="line.674"></a>
+<span class="sourceLineNo">675</span>        builder.append(System.getProperty("line.separator"));<a name="line.675"></a>
+<span class="sourceLineNo">676</span>        return this;<a name="line.676"></a>
+<span class="sourceLineNo">677</span>    }<a name="line.677"></a>
+<span class="sourceLineNo">678</span><a name="line.678"></a>
+<span class="sourceLineNo">679</span>    public Ansi format(String pattern, Object... args) {<a name="line.679"></a>
+<span class="sourceLineNo">680</span>        flushAttributes();<a name="line.680"></a>
+<span class="sourceLineNo">681</span>        builder.append(String.format(pattern, args));<a name="line.681"></a>
+<span class="sourceLineNo">682</span>        return this;<a name="line.682"></a>
+<span class="sourceLineNo">683</span>    }<a name="line.683"></a>
+<span class="sourceLineNo">684</span><a name="line.684"></a>
+<span class="sourceLineNo">685</span>    /**<a name="line.685"></a>
+<span class="sourceLineNo">686</span>     * Uses the {@link AnsiRenderer}<a name="line.686"></a>
+<span class="sourceLineNo">687</span>     * to generate the ANSI escape sequences for the supplied text.<a name="line.687"></a>
+<span class="sourceLineNo">688</span>     *<a name="line.688"></a>
+<span class="sourceLineNo">689</span>     * @param text text<a name="line.689"></a>
+<span class="sourceLineNo">690</span>     * @return this<a name="line.690"></a>
+<span class="sourceLineNo">691</span>     *<a name="line.691"></a>
+<span class="sourceLineNo">692</span>     * @since 1.1<a name="line.692"></a>
+<span class="sourceLineNo">693</span>     */<a name="line.693"></a>
+<span class="sourceLineNo">694</span>    public Ansi render(final String text) {<a name="line.694"></a>
+<span class="sourceLineNo">695</span>        a(AnsiRenderer.render(text));<a name="line.695"></a>
+<span class="sourceLineNo">696</span>        return this;<a name="line.696"></a>
+<span class="sourceLineNo">697</span>    }<a name="line.697"></a>
+<span class="sourceLineNo">698</span><a name="line.698"></a>
+<span class="sourceLineNo">699</span>    /**<a name="line.699"></a>
+<span class="sourceLineNo">700</span>     * String formats and renders the supplied arguments.  Uses the {@link AnsiRenderer}<a name="line.700"></a>
+<span class="sourceLineNo">701</span>     * to generate the ANSI escape sequences.<a name="line.701"></a>
+<span class="sourceLineNo">702</span>     *<a name="line.702"></a>
+<span class="sourceLineNo">703</span>     * @param text format<a name="line.703"></a>
+<span class="sourceLineNo">704</span>     * @param args arguments<a name="line.704"></a>
+<span class="sourceLineNo">705</span>     * @return this<a name="line.705"></a>
+<span class="sourceLineNo">706</span>     *<a name="line.706"></a>
+<span class="sourceLineNo">707</span>     * @since 1.1<a name="line.707"></a>
+<span class="sourceLineNo">708</span>     */<a name="line.708"></a>
+<span class="sourceLineNo">709</span>    public Ansi render(final String text, Object... args) {<a name="line.709"></a>
+<span class="sourceLineNo">710</span>        a(String.format(AnsiRenderer.render(text), args));<a name="line.710"></a>
+<span class="sourceLineNo">711</span>        return this;<a name="line.711"></a>
+<span class="sourceLineNo">712</span>    }<a name="line.712"></a>
+<span class="sourceLineNo">713</span><a name="line.713"></a>
+<span class="sourceLineNo">714</span>    @Override<a name="line.714"></a>
+<span class="sourceLineNo">715</span>    public String toString() {<a name="line.715"></a>
 <span class="sourceLineNo">716</span>        flushAttributes();<a name="line.716"></a>
-<span class="sourceLineNo">717</span>        builder.append(FIRST_ESC_CHAR);<a name="line.717"></a>
-<span class="sourceLineNo">718</span>        builder.append(SECOND_ESC_CHAR);<a name="line.718"></a>
-<span class="sourceLineNo">719</span>        builder.append(command);<a name="line.719"></a>
-<span class="sourceLineNo">720</span>        return this;<a name="line.720"></a>
-<span class="sourceLineNo">721</span>    }<a name="line.721"></a>
-<span class="sourceLineNo">722</span><a name="line.722"></a>
-<span class="sourceLineNo">723</span>    private Ansi appendEscapeSequence(char command, int option) {<a name="line.723"></a>
-<span class="sourceLineNo">724</span>        flushAttributes();<a name="line.724"></a>
-<span class="sourceLineNo">725</span>        builder.append(FIRST_ESC_CHAR);<a name="line.725"></a>
-<span class="sourceLineNo">726</span>        builder.append(SECOND_ESC_CHAR);<a name="line.726"></a>
-<span class="sourceLineNo">727</span>        builder.append(option);<a name="line.727"></a>
+<span class="sourceLineNo">717</span>        return builder.toString();<a name="line.717"></a>
+<span class="sourceLineNo">718</span>    }<a name="line.718"></a>
+<span class="sourceLineNo">719</span><a name="line.719"></a>
+<span class="sourceLineNo">720</span>    ///////////////////////////////////////////////////////////////////<a name="line.720"></a>
+<span class="sourceLineNo">721</span>    // Private Helper Methods<a name="line.721"></a>
+<span class="sourceLineNo">722</span>    ///////////////////////////////////////////////////////////////////<a name="line.722"></a>
+<span class="sourceLineNo">723</span><a name="line.723"></a>
+<span class="sourceLineNo">724</span>    private Ansi appendEscapeSequence(char command) {<a name="line.724"></a>
+<span class="sourceLineNo">725</span>        flushAttributes();<a name="line.725"></a>
+<span class="sourceLineNo">726</span>        builder.append(FIRST_ESC_CHAR);<a name="line.726"></a>
+<span class="sourceLineNo">727</span>        builder.append(SECOND_ESC_CHAR);<a name="line.727"></a>
 <span class="sourceLineNo">728</span>        builder.append(command);<a name="line.728"></a>
 <span class="sourceLineNo">729</span>        return this;<a name="line.729"></a>
 <span class="sourceLineNo">730</span>    }<a name="line.730"></a>
 <span class="sourceLineNo">731</span><a name="line.731"></a>
-<span class="sourceLineNo">732</span>    private Ansi appendEscapeSequence(char command, Object... options) {<a name="line.732"></a>
+<span class="sourceLineNo">732</span>    private Ansi appendEscapeSequence(char command, int option) {<a name="line.732"></a>
 <span class="sourceLineNo">733</span>        flushAttributes();<a name="line.733"></a>
-<span class="sourceLineNo">734</span>        return _appendEscapeSequence(command, options);<a name="line.734"></a>
-<span class="sourceLineNo">735</span>    }<a name="line.735"></a>
-<span class="sourceLineNo">736</span><a name="line.736"></a>
-<span class="sourceLineNo">737</span>    private void flushAttributes() {<a name="line.737"></a>
-<span class="sourceLineNo">738</span>        if (attributeOptions.isEmpty())<a name="line.738"></a>
-<span class="sourceLineNo">739</span>            return;<a name="line.739"></a>
-<span class="sourceLineNo">740</span>        if (attributeOptions.size() == 1 &amp;&amp; attributeOptions.get(0) == 0) {<a name="line.740"></a>
-<span class="sourceLineNo">741</span>            builder.append(FIRST_ESC_CHAR);<a name="line.741"></a>
-<span class="sourceLineNo">742</span>            builder.append(SECOND_ESC_CHAR);<a name="line.742"></a>
-<span class="sourceLineNo">743</span>            builder.append('m');<a name="line.743"></a>
-<span class="sourceLineNo">744</span>        } else {<a name="line.744"></a>
-<span class="sourceLineNo">745</span>            _appendEscapeSequence('m', attributeOptions.toArray());<a name="line.745"></a>
-<span class="sourceLineNo">746</span>        }<a name="line.746"></a>
-<span class="sourceLineNo">747</span>        attributeOptions.clear();<a name="line.747"></a>
-<span class="sourceLineNo">748</span>    }<a name="line.748"></a>
-<span class="sourceLineNo">749</span><a name="line.749"></a>
-<span class="sourceLineNo">750</span>    private Ansi _appendEscapeSequence(char command, Object... options) {<a name="line.750"></a>
-<span class="sourceLineNo">751</span>        builder.append(FIRST_ESC_CHAR);<a name="line.751"></a>
-<span class="sourceLineNo">752</span>        builder.append(SECOND_ESC_CHAR);<a name="line.752"></a>
-<span class="sourceLineNo">753</span>        int size = options.length;<a name="line.753"></a>
-<span class="sourceLineNo">754</span>        for (int i = 0; i &lt; size; i++) {<a name="line.754"></a>
-<span class="sourceLineNo">755</span>            if (i != 0) {<a name="line.755"></a>
-<span class="sourceLineNo">756</span>                builder.append(';');<a name="line.756"></a>
-<span class="sourceLineNo">757</span>            }<a name="line.757"></a>
-<span class="sourceLineNo">758</span>            if (options[i] != null) {<a name="line.758"></a>
-<span class="sourceLineNo">759</span>                builder.append(options[i]);<a name="line.759"></a>
-<span class="sourceLineNo">760</span>            }<a name="line.760"></a>
-<span class="sourceLineNo">761</span>        }<a name="line.761"></a>
-<span class="sourceLineNo">762</span>        builder.append(command);<a name="line.762"></a>
-<span class="sourceLineNo">763</span>        return this;<a name="line.763"></a>
-<span class="sourceLineNo">764</span>    }<a name="line.764"></a>
-<span class="sourceLineNo">765</span><a name="line.765"></a>
-<span class="sourceLineNo">766</span>}<a name="line.766"></a>
+<span class="sourceLineNo">734</span>        builder.append(FIRST_ESC_CHAR);<a name="line.734"></a>
+<span class="sourceLineNo">735</span>        builder.append(SECOND_ESC_CHAR);<a name="line.735"></a>
+<span class="sourceLineNo">736</span>        builder.append(option);<a name="line.736"></a>
+<span class="sourceLineNo">737</span>        builder.append(command);<a name="line.737"></a>
+<span class="sourceLineNo">738</span>        return this;<a name="line.738"></a>
+<span class="sourceLineNo">739</span>    }<a name="line.739"></a>
+<span class="sourceLineNo">740</span><a name="line.740"></a>
+<span class="sourceLineNo">741</span>    private Ansi appendEscapeSequence(char command, Object... options) {<a name="line.741"></a>
+<span class="sourceLineNo">742</span>        flushAttributes();<a name="line.742"></a>
+<span class="sourceLineNo">743</span>        return _appendEscapeSequence(command, options);<a name="line.743"></a>
+<span class="sourceLineNo">744</span>    }<a name="line.744"></a>
+<span class="sourceLineNo">745</span><a name="line.745"></a>
+<span class="sourceLineNo">746</span>    private void flushAttributes() {<a name="line.746"></a>
+<span class="sourceLineNo">747</span>        if (attributeOptions.isEmpty())<a name="line.747"></a>
+<span class="sourceLineNo">748</span>            return;<a name="line.748"></a>
+<span class="sourceLineNo">749</span>        if (attributeOptions.size() == 1 &amp;&amp; attributeOptions.get(0) == 0) {<a name="line.749"></a>
+<span class="sourceLineNo">750</span>            builder.append(FIRST_ESC_CHAR);<a name="line.750"></a>
+<span class="sourceLineNo">751</span>            builder.append(SECOND_ESC_CHAR);<a name="line.751"></a>
+<span class="sourceLineNo">752</span>            builder.append('m');<a name="line.752"></a>
+<span class="sourceLineNo">753</span>        } else {<a name="line.753"></a>
+<span class="sourceLineNo">754</span>            _appendEscapeSequence('m', attributeOptions.toArray());<a name="line.754"></a>
+<span class="sourceLineNo">755</span>        }<a name="line.755"></a>
+<span class="sourceLineNo">756</span>        attributeOptions.clear();<a name="line.756"></a>
+<span class="sourceLineNo">757</span>    }<a name="line.757"></a>
+<span class="sourceLineNo">758</span><a name="line.758"></a>
+<span class="sourceLineNo">759</span>    private Ansi _appendEscapeSequence(char command, Object... options) {<a name="line.759"></a>
+<span class="sourceLineNo">760</span>        builder.append(FIRST_ESC_CHAR);<a name="line.760"></a>
+<span class="sourceLineNo">761</span>        builder.append(SECOND_ESC_CHAR);<a name="line.761"></a>
+<span class="sourceLineNo">762</span>        int size = options.length;<a name="line.762"></a>
+<span class="sourceLineNo">763</span>        for (int i = 0; i &lt; size; i++) {<a name="line.763"></a>
+<span class="sourceLineNo">764</span>            if (i != 0) {<a name="line.764"></a>
+<span class="sourceLineNo">765</span>                builder.append(';');<a name="line.765"></a>
+<span class="sourceLineNo">766</span>            }<a name="line.766"></a>
+<span class="sourceLineNo">767</span>            if (options[i] != null) {<a name="line.767"></a>
+<span class="sourceLineNo">768</span>                builder.append(options[i]);<a name="line.768"></a>
+<span class="sourceLineNo">769</span>            }<a name="line.769"></a>
+<span class="sourceLineNo">770</span>        }<a name="line.770"></a>
+<span class="sourceLineNo">771</span>        builder.append(command);<a name="line.771"></a>
+<span class="sourceLineNo">772</span>        return this;<a name="line.772"></a>
+<span class="sourceLineNo">773</span>    }<a name="line.773"></a>
+<span class="sourceLineNo">774</span><a name="line.774"></a>
+<span class="sourceLineNo">775</span>}<a name="line.775"></a>
 
 
 
