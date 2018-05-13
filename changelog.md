@@ -2,9 +2,18 @@
 
 <!-- git log --pretty=format:'* [`%h`](https://github.com/fusesource/jansi/commit/%H) %s' -->
 
-## [Jansi 1.17.1][1_17_1], 
+## [Jansi 1.17.1][1_17_1], released 2018-04-16
 [1_17_1]: https://repo.maven.apache.org/maven2/org/fusesource/jansi/jansi/1.17.1
 
+* [`2a505ba`](https://github.com/fusesource/jansi/commit/2a505ba1494f0768311ecc80aef963e7076daaf5) improved javadoc to link to Jansi native
+* [`1e0f706`](https://github.com/fusesource/jansi/commit/1e0f7068465dddf4c18fa282923b06df52d705d7) Revert "Fix Thread test to run test in additional threads"
+* [`8918099`](https://github.com/fusesource/jansi/commit/89180993494a176ea8c7dfbb1250f81d693637cb) Fix Thread test to run test in additional threads
+* [`8329e31`](https://github.com/fusesource/jansi/commit/8329e31c722e726f59a73654b8425b8ef5015760) Update documentation about cursor move
+* [`27c99e1`](https://github.com/fusesource/jansi/commit/27c99e10add97ae49e464cc8279eead19e76df9d) fixed invalid buffer size when copying to PrintStream
+* [`0728c6d`](https://github.com/fusesource/jansi/commit/0728c6dbc9b3124bd6a9c63b6b642346a6339e79) fixed incorrect implementation in case of ansi.strip
+* [`2142202`](https://github.com/fusesource/jansi/commit/21422020a424d229db83f4d32fa77c55dc51a352) added explanations on results expected for specific situations
+* [`1a77e3c`](https://github.com/fusesource/jansi/commit/1a77e3cb816ff366e6ec811c3fb27a36a5a72916) #119 detect Git bash with TERM=xterm since BASH is not visible
+* [`abe94bf`](https://github.com/fusesource/jansi/commit/abe94bf243ddb3a43fe173c8e08d105451b03efc) #114 prepare 1.17.1 release
 * [`73c621f`](https://github.com/fusesource/jansi/commit/73c621ff7f2d0fd8c7e5c23a814359c34fdab012) on MSYSTEM=MINGW, only BASH is natively ANSI aware, not Git CMD #119
 * [`48b0be5`](https://github.com/fusesource/jansi/commit/48b0be5eaa8a0b2cb8d27173d902d1da5f3ba9d6) improved diagnostic output
 * [`68c5810`](https://github.com/fusesource/jansi/commit/68c5810336c606e938c0b70409276c3f53e3b568) Javadoc quick fix for warnings and errors
