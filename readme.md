@@ -6,6 +6,8 @@
 [Jansi][Jansi] is a small java library that allows you to use [ANSI escape
 codes][ansi] to format your console output which works even on windows.
 
+[![Maven Central](https://img.shields.io/maven-central/v/org.fusesource.jansi/jansi.svg?label=Maven%20Central)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.fusesource.jansi%22%20a%3A%jansi%22)
+
 [Jansi]: http://fusesource.github.io/jansi/
 [ansi]: http://en.wikipedia.org/wiki/ANSI_escape_code "Wikipedia"
 
