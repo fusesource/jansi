@@ -1,0 +1,16 @@
+language: java
+sudo: false
+
+matrix:
+  - jdk: openjdk7
+  - jdk: openjdk8
+  - jdk: openjdk10
+  - jdk: openjdk11
+  - jdk: openjdk-ea
+  allow_failures:
+  - jdk: openjdk-ea
+
+cache:
+  directories:
+    - '$HOME/.m2/repository'
+    - '$HOME/.sonar/cache'

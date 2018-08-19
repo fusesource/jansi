@@ -241,6 +241,28 @@
   </reporting>
 
   <profiles>
+    <profile>
+      <id>java12</id>
+      <activation>
+        <jdk>12</jdk>
+      </activation>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-compiler-plugin</artifactId>
+              <version>3.8.0</version>
+              <configuration>
+                <source>7</source><!-- parent pom 1.11 forces version instead of using maven.compiler.source property -->
+                <target>7</target><!-- parent pom 1.11 forces version instead of using maven.compiler.target property -->
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+
+    </profile>
    
     <!-- enables extra repositories which may have some goodies that have not reached central yet -->
     <profile>
