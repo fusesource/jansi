@@ -29,6 +29,8 @@ import java.util.Properties;
 
 import org.fusesource.hawtjni.runtime.Library;
 import org.fusesource.jansi.internal.CLibrary;
+import org.fusesource.jansi.internal.WindowsSupport;
+
 import static org.fusesource.jansi.internal.CLibrary.isatty;
 
 /**
@@ -161,8 +163,25 @@ public class AnsiMain {
         int fd = stderr ? CLibrary.STDERR_FILENO : CLibrary.STDOUT_FILENO;
         int isatty = isatty(fd);
 
-        System.out.println("isatty(STD" + (stderr ? "ERR" : "OUT") + "_FILENO): " + isatty + ", System."
+        System.out.print("isatty(STD" + (stderr ? "ERR" : "OUT") + "_FILENO): " + isatty + ", System."
             + (stderr ? "err" : "out") + " " + ((isatty == 0) ? "is *NOT*" : "is") + " a terminal");
+
+        if (isatty != 0) {
+            // display size of terminal
+            if (AnsiConsole.IS_WINDOWS) {
+                System.out.println( " (" + WindowsSupport.getWindowsTerminalWidth() + " cols X "
+                    + WindowsSupport.getWindowsTerminalHeight() + " rows)" );
+                // sadly, returned values are wrong under Cygwin or Mingw
+                // and ioctl not available under Windows
+            } else {
+                CLibrary.WinSize ws = new CLibrary.WinSize();
+                CLibrary.ioctl(fd, CLibrary.TIOCGWINSZ, ws);
+    
+                System.out.println(" (" + ws.ws_col + " cols X " + ws.ws_row + " rows)");
+            }
+        } else {
+            System.out.println();
+        }
     }
 
     private static void testAnsi(boolean stderr) {
