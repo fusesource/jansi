@@ -39,7 +39,6 @@ import static org.fusesource.jansi.internal.Kernel32.SetConsoleTitle;
 import java.io.IOException;
 import java.io.OutputStream; // expected diff with WindowsAnsiPrintStream.java
 
-import org.fusesource.jansi.internal.WindowsSupport;
 import org.fusesource.jansi.internal.Kernel32.CONSOLE_SCREEN_BUFFER_INFO;
 import org.fusesource.jansi.internal.Kernel32.COORD;
 
