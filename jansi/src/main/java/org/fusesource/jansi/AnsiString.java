@@ -15,7 +15,7 @@
  */
 package org.fusesource.jansi;
 
-import java.io.ByteArrayOutputStream;
+import java.io.CharArrayWriter;
 import java.io.IOException;
 
 /**
@@ -39,18 +39,18 @@ public class AnsiString
     private CharSequence chew(final CharSequence str) {
         assert str != null;
 
-        ByteArrayOutputStream buff = new ByteArrayOutputStream();
-        AnsiOutputStream out = new AnsiOutputStream(buff);
+        CharArrayWriter buff = new CharArrayWriter(str.length());
+        AnsiFilterWriter out = new AnsiFilterWriter(buff);
 
         try {
-            out.write(str.toString().getBytes());
+            out.write(str.toString());
             out.flush();
             out.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        return new String(buff.toByteArray());
+        return buff.toString();
     }
 
     public CharSequence getEncoded() {

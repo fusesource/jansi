@@ -19,11 +19,22 @@ import static org.fusesource.jansi.internal.CLibrary.STDERR_FILENO;
 import static org.fusesource.jansi.internal.CLibrary.STDOUT_FILENO;
 import static org.fusesource.jansi.internal.CLibrary.isatty;
 
-import java.io.FilterOutputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
+import java.io.FilterWriter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
+import java.io.Writer;
+import java.lang.reflect.Field;
+import java.nio.charset.Charset;
 import java.util.Locale;
+
+import org.fusesource.jansi.impl.TerminalType;
+import org.fusesource.jansi.impl.WriterOrDirectOutputStream;
+import org.fusesource.jansi.impl.WriterOrDirectOutputStream.WriterWrapper;
+import org.fusesource.jansi.impl.WriterPrintStream;
 
 /**
  * Provides consistent access to an ANSI aware console PrintStream or an ANSI codes stripping PrintStream
@@ -73,29 +84,11 @@ public class AnsiConsole {
     private AnsiConsole() {
     }
 
-    @Deprecated
-    public static OutputStream wrapOutputStream(final OutputStream stream) {
-        try {
-            return wrapOutputStream(stream, STDOUT_FILENO);
-        } catch (Throwable ignore) {
-            return wrapOutputStream(stream, 1);
-        }
-    }
-
     public static PrintStream wrapSystemOut(final PrintStream ps) {
         try {
             return wrapPrintStream(ps, STDOUT_FILENO);
         } catch (Throwable ignore) {
             return wrapPrintStream(ps, 1);
-        }
-    }
-
-    @Deprecated
-    public static OutputStream wrapErrorOutputStream(final OutputStream stream) {
-        try {
-            return wrapOutputStream(stream, STDERR_FILENO);
-        } catch (Throwable ignore) {
-            return wrapOutputStream(stream, 2);
         }
     }
 
@@ -107,21 +100,24 @@ public class AnsiConsole {
         }
     }
 
-    @Deprecated
-    public static OutputStream wrapOutputStream(final OutputStream stream, int fileno) {
+    public static Writer wrapWriter(
+            final Writer writer, int fileno,
+            boolean wrapWithBuffer) {
 
         // If the jansi.passthrough property is set, then don't interpret
         // any of the ansi sequences.
         if (Boolean.getBoolean("jansi.passthrough")) {
             jansiOutputType = JansiOutputType.PASSTHROUGH;
-            return stream;
+            return writer;
         }
+
+        Writer buffWriter = (wrapWithBuffer)? new BufferedWriter(writer) : writer;
 
         // If the jansi.strip property is set, then we just strip the
         // the ansi escapes.
         if (Boolean.getBoolean("jansi.strip")) {
             jansiOutputType = JansiOutputType.STRIP_ANSI;
-            return new AnsiOutputStream(stream);
+            return new AnsiFilterWriter(buffWriter, TerminalType.DEFAULT);
         }
 
         if (!IS_WINDOWS || IS_CYGWIN || IS_MINGW_XTERM) {
@@ -134,7 +130,7 @@ public class AnsiConsole {
                 // to strip the ANSI sequences..
                 if (!forceColored && isatty(fileno) == 0) {
                     jansiOutputType = JansiOutputType.STRIP_ANSI;
-                    return new AnsiOutputStream(stream);
+                    return new AnsiFilterWriter(buffWriter, TerminalType.DEFAULT);
                 }
             } catch (Throwable ignore) {
                 // These errors happen if the JNI lib is not available for your platform.
@@ -146,7 +142,8 @@ public class AnsiConsole {
             // On windows we know the console does not interpret ANSI codes..
             try {
                 jansiOutputType = JansiOutputType.WINDOWS;
-                return new WindowsAnsiOutputStream(stream, fileno == STDOUT_FILENO);
+                return new AnsiFilterWriter(buffWriter,
+                        TerminalType.windows(fileno == STDOUT_FILENO));
             } catch (Throwable ignore) {
                 // this happens when JNA is not in the path.. or
                 // this happens when the stdout is being redirected to a file.
@@ -154,22 +151,33 @@ public class AnsiConsole {
 
             // Use the ANSIOutputStream to strip out the ANSI escape sequences.
             jansiOutputType = JansiOutputType.STRIP_ANSI;
-            return new AnsiOutputStream(stream);
+            return new AnsiFilterWriter(writer, TerminalType.DEFAULT);
         }
-
 
         // By default we assume your Unix tty can handle ANSI codes.
         // Just wrap it up so that when we get closed, we reset the
         // attributes.
         jansiOutputType = JansiOutputType.RESET_ANSI_AT_CLOSE;
-        return new FilterOutputStream(stream) {
+        return new FilterWriter(writer) {
             @Override
             public void close() throws IOException {
-                write(AnsiOutputStream.RESET_CODE);
+                write(AnsiFilterWriter.RESET_CODE);
                 flush();
                 super.close();
             }
         };
+    }
+
+    /**
+     * helper method for <code>wrapPrintStream(.., true, true)</code>
+     * @param ps
+     * @param fileno
+     * @return
+     */
+    public static PrintStream wrapPrintStream(
+            PrintStream ps, int fileno) {
+        boolean autoFlush = true; // better to try to extract private field "ps.autoFlush" ..
+        return wrapPrintStream(ps, fileno, true, autoFlush);
     }
 
     /**
@@ -188,67 +196,84 @@ public class AnsiConsole {
      * @return wrapped PrintStream depending on OS and system properties
      * @since 1.17
      */
-    public static PrintStream wrapPrintStream(final PrintStream ps, int fileno) {
+    public static PrintStream wrapPrintStream(
+            final PrintStream ps, final int fileno,
+            boolean useBuffer,
+            boolean autoFlush
+            ) {
+        OutputStream underlyingOutput = ps;
+        // unwrap PrintSteam->OutputStream
+        // better to try to extract protected field "ps.out"
+        // to avoid useless redundant synchronized{ synchronized { .. }}
+        // not mandatory, since PrintStream extends OutputStream
 
-        // If the jansi.passthrough property is set, then don't interpret
-        // any of the ansi sequences.
-        if (Boolean.getBoolean("jansi.passthrough")) {
-            jansiOutputType = JansiOutputType.PASSTHROUGH;
-            return ps;
+        if (useBuffer) {
+            underlyingOutput = new BufferedOutputStream(underlyingOutput);
         }
 
-        // If the jansi.strip property is set, then we just strip the
-        // the ansi escapes.
-        if (Boolean.getBoolean("jansi.strip")) {
-            jansiOutputType = JansiOutputType.STRIP_ANSI;
-            return new AnsiPrintStream(ps);
-        }
+        Charset charset = tryGetCharsetOf(ps);
+        WriterOrDirectOutputStream outputOrJansiWriter = WriterOrDirectOutputStream.createAndWrap(
+                underlyingOutput, charset,
+                new WriterWrapper() {
+                    @Override
+                    public Writer wrap(Writer writerToFilter) {
+                        // wrap writer to handle filtering out ansi escape chars,
+                        // and replace by terminal processor commands
+                        return wrapWriter(writerToFilter, fileno, false);
+                    }
+                });
 
-        if (!IS_WINDOWS || IS_CYGWIN || IS_MINGW_XTERM) {
-            // We must be on some Unix variant, including Cygwin or MSYS(2) on Windows...
-            try {
-                // If the jansi.force property is set, then we force to output
-                // the ansi escapes for piping it into ansi color aware commands (e.g. less -r)
-                boolean forceColored = Boolean.getBoolean("jansi.force");
-                // If we can detect that stdout is not a tty.. then setup
-                // to strip the ANSI sequences..
-                if (!forceColored && isatty(fileno) == 0) {
-                    jansiOutputType = JansiOutputType.STRIP_ANSI;
-                    return new AnsiPrintStream(ps);
-                }
-            } catch (Throwable ignore) {
-                // These errors happen if the JNI lib is not available for your platform.
-                // But since we are on ANSI friendly platform, assume the user is on the console.
+        // re-wrap as PrintSteam
+        return new WriterPrintStream(outputOrJansiWriter, autoFlush);
+    }
+
+    private static Charset tryGetCharsetOf(PrintStream src) {
+        // retreive the Charset encoding of the underlying PrintStream..
+        try {
+            Field charOutField = PrintStream.class.getDeclaredField("charOut");
+            boolean prevIsAccessible = charOutField.isAccessible();
+            if (!prevIsAccessible) {
+                charOutField.setAccessible(true);
             }
-        }
-
-        if (IS_WINDOWS) {
-            // On windows we know the console does not interpret ANSI codes..
-            try {
-                jansiOutputType = JansiOutputType.WINDOWS;
-                return new WindowsAnsiPrintStream(ps, fileno == STDOUT_FILENO);
-            } catch (Throwable ignore) {
-                // this happens when JNA is not in the path.. or
-                // this happens when the stdout is being redirected to a file.
+            OutputStreamWriter charOut = (OutputStreamWriter) charOutField.get(src);
+            if (!prevIsAccessible) {
+                charOutField.setAccessible(false);
             }
-
-            // Use the AnsiPrintStream to strip out the ANSI escape sequences.
-            jansiOutputType = JansiOutputType.STRIP_ANSI;
-            return new AnsiPrintStream(ps);
+            String encoding = charOut.getEncoding();
+            return Charset.forName(encoding);
+        } catch(Exception ex) {
+            // ignore, use default
+            return Charset.defaultCharset();
         }
+    }
 
-        // By default we assume your Unix tty can handle ANSI codes.
-        // Just wrap it up so that when we get closed, we reset the
-        // attributes.
-        jansiOutputType = JansiOutputType.RESET_ANSI_AT_CLOSE;
-        return new FilterPrintStream(ps) {
-            @Override
-            public void close() {
-                ps.print(AnsiPrintStream.RESET_CODE);
-                ps.flush();
-                super.close();
-            }
-        };
+    /** helper method for <code>wrapStreamToPrintStreamNoTerminal(..)</code> */
+    public static PrintStream wrapStreamToPrintStreamNoTerminal(
+            OutputStream output) {
+        return wrapStreamToPrintStreamNoTerminal(output, Charset.defaultCharset(), true);
+    }
+
+    /**
+     * helper wrap for building a JAnsi filter PrintStream
+     * fitlering out ansi escape codes to an OutputSteam, without
+     * actually performing terminal operations.
+     * @param output
+     * @param charset
+     * @param autoFlush
+     * @return
+     */
+    public static PrintStream wrapStreamToPrintStreamNoTerminal(
+            OutputStream output, Charset charset,
+            boolean autoFlush) {
+        WriterOrDirectOutputStream outputOrJansiWriter =
+                WriterOrDirectOutputStream.createAndWrap(output, charset,
+                        new WriterWrapper() {
+                    @Override
+                    public Writer wrap(Writer writerToFilter) {
+                        return new AnsiFilterWriter(writerToFilter, TerminalType.DEFAULT);
+                    }
+                });
+        return new WriterPrintStream(outputOrJansiWriter, autoFlush);
     }
 
     /**

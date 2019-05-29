@@ -352,6 +352,7 @@ public class Ansi {
         }
     }
 
+    private static final String lineSeparator = System.getProperty("line.separator");
     private final StringBuilder builder;
     private final ArrayList<Integer> attributeOptions = new ArrayList<Integer>(5);
 
@@ -687,7 +688,7 @@ public class Ansi {
 
     public Ansi newline() {
         flushAttributes();
-        builder.append(System.getProperty("line.separator"));
+        builder.append(lineSeparator);
         return this;
     }
 

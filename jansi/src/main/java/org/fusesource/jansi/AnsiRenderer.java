@@ -60,7 +60,7 @@ public class AnsiRenderer {
 
     public static String render(final String input) throws IllegalArgumentException {
         try {
-            return render(input, new StringBuilder()).toString();
+            return render(input, new StringBuilder(input.length())).toString();
         } catch (IOException e) {
             // Cannot happen because StringBuilder does not throw IOException
             throw new IllegalArgumentException(e);
@@ -117,7 +117,7 @@ public class AnsiRenderer {
     }
 
     public static String render(final String text, final String... codes) {
-        return render(Ansi.ansi(), codes)
+        return render(Ansi.ansi(text.length()), codes)
                 .a(text).reset().toString();
     }
 

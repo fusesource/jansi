@@ -15,12 +15,11 @@
  */
 package org.fusesource.jansi;
 
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
+
+import org.fusesource.jansi.impl.WindowsSupport;
+import org.junit.Test;
 
 public class WindowsSupportTest {
 
@@ -28,6 +27,8 @@ public class WindowsSupportTest {
     public void testErrorMessage() {
         assumeTrue(AnsiConsole.IS_WINDOWS);
         String msg = WindowsSupport.getErrorMessage(500);
-        assertEquals(msg, "User profile cannot be loaded.");
+        assertTrue(msg.equals("User profile cannot be loaded.") // en-US
+                || msg.equals("Impossible de charger le profil d’utilisateur.") // fr
+                );
     }
 }

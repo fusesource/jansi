@@ -18,6 +18,7 @@ package org.fusesource.jansi;
 import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayOutputStream;
+import java.io.CharArrayWriter;
 import java.io.IOException;
 
 import org.junit.Test;
@@ -83,10 +84,10 @@ public class HtmlAnsiOutputStreamTest {
     }
 
     private String colorize(String text) throws IOException {
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        HtmlAnsiOutputStream hos = new HtmlAnsiOutputStream(os);
-        hos.write(text.getBytes("UTF-8"));
+        CharArrayWriter os = new CharArrayWriter();
+        HtmlAnsiOutputWriter hos = new HtmlAnsiOutputWriter(os);
+        hos.write(text);
         hos.close();
-        return new String(os.toByteArray(), "UTF-8");
+        return os.toString();
     }
 }
