@@ -117,6 +117,7 @@ public class AnsiMain {
 
             if (args.length == 0) {
                 printJansiLogoDemo();
+                printJansiCursorMoveDemo();
                 return;
             }
 
@@ -211,6 +212,34 @@ public class AnsiMain {
             }
         } finally {
             closeQuietly(in);
+        }
+    }
+
+    private static void printJansiCursorMoveDemo() throws IOException {
+        System.out.println("Cursor demo");
+        System.out.print(" ...");
+        long sleepMilis = 100;
+        for(int i = 0; i < 5; i++) {
+            System.out.print(Ansi.ansi().cursorLeft(4).a("/"));
+            sleep(sleepMilis);
+            System.out.print(Ansi.ansi().cursorLeft(4).a("-"));
+            sleep(sleepMilis);
+            System.out.print(Ansi.ansi().cursorLeft(4).a("\\"));
+            sleep(sleepMilis);
+            System.out.print(Ansi.ansi().cursorLeft(4).a("|"));
+            sleep(sleepMilis);
+            System.out.print(Ansi.ansi().cursorLeft(4).a("/"));
+            sleep(sleepMilis);
+            System.out.print(Ansi.ansi().cursorLeft(4).a("-"));
+            sleep(sleepMilis);
+        }
+        System.out.println(".. done Cursor demo");
+    }
+
+    private static void sleep(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch(InterruptedException ex) {
         }
     }
 
