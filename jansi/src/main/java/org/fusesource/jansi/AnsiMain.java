@@ -87,8 +87,8 @@ public class AnsiMain {
 
         System.out.println("IS_WINDOWS: " + AnsiConsole.IS_WINDOWS);
         if (AnsiConsole.IS_WINDOWS) {
-            System.out.println("IS_CYGWIN: " + AnsiConsole.IS_CYGWIN);
             System.out.println("IS_MINGW_XTERM: " + AnsiConsole.IS_MINGW_XTERM);
+            System.out.println("IS_CON_EMU_ANSI: " + AnsiConsole.IS_CON_EMU_ANSI);
         }
 
         System.out.println();

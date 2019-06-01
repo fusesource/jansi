@@ -48,10 +48,15 @@ public class AnsiConsole {
 
     static final boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("win");
 
-    static final boolean IS_CYGWIN = IS_WINDOWS
-            && System.getenv("PWD") != null
-            && System.getenv("PWD").startsWith("/")
-            && !"cygwin".equals(System.getenv("TERM"));
+    /**
+     * true if console emulator supports ANSI, according to environement variable "ConEmuANSI"
+     * This env is standard in cmder (https://cmder.net/), conemu (https://conemu.github.io), ..
+     *
+     * Notice that being inside Cygwin (bash.exe) has nothing to do with the console terminal.
+     * You can open a plain old Windows terminal (cmd.exe), then start cygwin bash.
+     */
+    static final boolean IS_CON_EMU_ANSI =
+            "ON".equals(System.getenv("ConEmuANSI"));
 
     static final boolean IS_MINGW_XTERM = IS_WINDOWS
             && System.getenv("MSYSTEM") != null
@@ -124,9 +129,10 @@ public class AnsiConsole {
             return new AnsiOutputStream(stream);
         }
 
-        if (IS_WINDOWS && !IS_CYGWIN && !IS_MINGW_XTERM) {
-
-            // On windows we know the console does not interpret ANSI codes..
+        if (IS_WINDOWS && !IS_CON_EMU_ANSI && !IS_MINGW_XTERM) {
+            // On windows, when using default terminal (cmd.exe or power shell)
+            // but not special console emulator (cmder or conemu),
+            // we know the console does not interpret ANSI codes..
             try {
                 jansiOutputType = JansiOutputType.WINDOWS;
                 return new WindowsAnsiOutputStream(stream, fileno == STDOUT_FILENO);
@@ -202,9 +208,10 @@ public class AnsiConsole {
             return new AnsiPrintStream(ps);
         }
 
-        if (IS_WINDOWS && !IS_CYGWIN && !IS_MINGW_XTERM) {
-
-            // On windows we know the console does not interpret ANSI codes..
+        if (IS_WINDOWS && !IS_CON_EMU_ANSI && !IS_MINGW_XTERM) {
+            // On windows, when using default terminal (cmd.exe or power shell)
+            // but not special console emulator (cmder or conemu),
+            // we know the console does not interpret ANSI codes..
             try {
                 jansiOutputType = JansiOutputType.WINDOWS;
                 return new WindowsAnsiPrintStream(ps, fileno == STDOUT_FILENO);
