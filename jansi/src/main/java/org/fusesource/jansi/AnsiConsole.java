@@ -25,6 +25,8 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Locale;
 
+import org.fusesource.jansi.impl.TerminalType;
+
 /**
  * Provides consistent access to an ANSI aware console PrintStream or an ANSI codes stripping PrintStream
  * if not on a terminal (see 
@@ -129,7 +131,7 @@ public class AnsiConsole {
             // On windows we know the console does not interpret ANSI codes..
             try {
                 jansiOutputType = JansiOutputType.WINDOWS;
-                return new WindowsAnsiOutputStream(stream, fileno == STDOUT_FILENO);
+                return new AnsiOutputStream(stream, TerminalType.windows(fileno == STDOUT_FILENO));
             } catch (Throwable ignore) {
                 // this happens when JNA is not in the path.. or
                 // this happens when the stdout is being redirected to a file.
@@ -207,7 +209,7 @@ public class AnsiConsole {
             // On windows we know the console does not interpret ANSI codes..
             try {
                 jansiOutputType = JansiOutputType.WINDOWS;
-                return new WindowsAnsiPrintStream(ps, fileno == STDOUT_FILENO);
+                return new AnsiPrintStream(ps, TerminalType.windows(fileno == STDOUT_FILENO));
             } catch (Throwable ignore) {
                 // this happens when JNA is not in the path.. or
                 // this happens when the stdout is being redirected to a file.

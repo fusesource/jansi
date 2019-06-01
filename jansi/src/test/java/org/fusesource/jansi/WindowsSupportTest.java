@@ -22,6 +22,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assume.assumeTrue;
 
+import org.fusesource.jansi.impl.WindowsSupport;
+
 public class WindowsSupportTest {
 
     @Test

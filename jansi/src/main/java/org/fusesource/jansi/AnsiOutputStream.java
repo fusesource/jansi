@@ -18,9 +18,13 @@ package org.fusesource.jansi;
 import java.io.FilterOutputStream; // expected diff with AnsiPrintStream.java
 import java.io.IOException;
 import java.io.OutputStream; // expected diff with AnsiPrintStream.java
+import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import org.fusesource.jansi.impl.TerminalCommandProcessor;
+import org.fusesource.jansi.impl.TerminalType;
 
 /**
  * A ANSI output stream extracts ANSI escape codes written to 
@@ -46,8 +50,30 @@ public class AnsiOutputStream extends FilterOutputStream { // expected diff with
     @Deprecated
     public static final byte[] REST_CODE = RESET_CODE; // expected diff with AnsiPrintStream.java
 
-    public AnsiOutputStream(OutputStream os) { // expected diff with AnsiPrintStream.java
+    /** processor to delegate commands */
+    protected TerminalCommandProcessor terminalCommandProcessor;
+
+    public AnsiOutputStream(OutputStream os) {
+        super(os);
+        OutputStreamWriter outWriter = new OutputStreamWriter(out);
+        this.terminalCommandProcessor = new TerminalCommandProcessor(outWriter);
+    }
+
+    public AnsiOutputStream(OutputStream os, TerminalType terminalType) { // expected diff with AnsiPrintStream.java
         super(os); // expected diff with AnsiPrintStream.java
+        if (terminalType == null) {
+            throw new IllegalArgumentException();
+        }
+        OutputStreamWriter outWriter = new OutputStreamWriter(out);
+        try {
+            // may throws IOException ? move code from constructor to an init method
+            this.terminalCommandProcessor = terminalType.create(outWriter);
+        } catch(IOException ex) {
+            throw new RuntimeException("Failed", ex);
+        }
+        if (terminalCommandProcessor == null) {
+            throw new IllegalStateException("null terminalCommandProcessor");
+        }
     }
 
     private final static int MAX_ESCAPE_SEQUENCE_LENGTH = 100;
@@ -259,47 +285,47 @@ public class AnsiOutputStream extends FilterOutputStream { // expected diff with
         try {
             switch (command) {
                 case 'A':
-                    processCursorUp(optionInt(options, 0, 1));
+                    terminalCommandProcessor.processCursorUp(optionInt(options, 0, 1));
                     return true;
                 case 'B':
-                    processCursorDown(optionInt(options, 0, 1));
+                    terminalCommandProcessor.processCursorDown(optionInt(options, 0, 1));
                     return true;
                 case 'C':
-                    processCursorRight(optionInt(options, 0, 1));
+                    terminalCommandProcessor.processCursorRight(optionInt(options, 0, 1));
                     return true;
                 case 'D':
-                    processCursorLeft(optionInt(options, 0, 1));
+                    terminalCommandProcessor.processCursorLeft(optionInt(options, 0, 1));
                     return true;
                 case 'E':
-                    processCursorDownLine(optionInt(options, 0, 1));
+                    terminalCommandProcessor.processCursorDownLine(optionInt(options, 0, 1));
                     return true;
                 case 'F':
-                    processCursorUpLine(optionInt(options, 0, 1));
+                    terminalCommandProcessor.processCursorUpLine(optionInt(options, 0, 1));
                     return true;
                 case 'G':
-                    processCursorToColumn(optionInt(options, 0));
+                    terminalCommandProcessor.processCursorToColumn(optionInt(options, 0));
                     return true;
                 case 'H':
                 case 'f':
-                    processCursorTo(optionInt(options, 0, 1), optionInt(options, 1, 1));
+                    terminalCommandProcessor.processCursorTo(optionInt(options, 0, 1), optionInt(options, 1, 1));
                     return true;
                 case 'J':
-                    processEraseScreen(optionInt(options, 0, 0));
+                    terminalCommandProcessor.processEraseScreen(optionInt(options, 0, 0));
                     return true;
                 case 'K':
-                    processEraseLine(optionInt(options, 0, 0));
+                    terminalCommandProcessor.processEraseLine(optionInt(options, 0, 0));
                     return true;
                 case 'L':
-                    processInsertLine(optionInt(options, 0, 1));
+                    terminalCommandProcessor.processInsertLine(optionInt(options, 0, 1));
                     return true;
                 case 'M':
-                    processDeleteLine(optionInt(options, 0, 1));
+                    terminalCommandProcessor.processDeleteLine(optionInt(options, 0, 1));
                     return true;
                 case 'S':
-                    processScrollUp(optionInt(options, 0, 1));
+                    terminalCommandProcessor.processScrollUp(optionInt(options, 0, 1));
                     return true;
                 case 'T':
-                    processScrollDown(optionInt(options, 0, 1));
+                    terminalCommandProcessor.processScrollDown(optionInt(options, 0, 1));
                     return true;
                 case 'm':
                     // Validate all options are ints...
@@ -317,13 +343,13 @@ public class AnsiOutputStream extends FilterOutputStream { // expected diff with
                             count++;
                             int value = (Integer) next;
                             if (30 <= value && value <= 37) {
-                                processSetForegroundColor(value - 30);
+                                terminalCommandProcessor.processSetForegroundColor(value - 30);
                             } else if (40 <= value && value <= 47) {
-                                processSetBackgroundColor(value - 40);
+                                terminalCommandProcessor.processSetBackgroundColor(value - 40);
                             } else if (90 <= value && value <= 97) {
-                                processSetForegroundColor(value - 90, true);
+                                terminalCommandProcessor.processSetForegroundColor(value - 90, true);
                             } else if (100 <= value && value <= 107) {
-                                processSetBackgroundColor(value - 100, true);
+                                terminalCommandProcessor.processSetBackgroundColor(value - 100, true);
                             } else if (value == 38 || value == 48) {
                                 // extended color like `esc[38;5;<index>m` or `esc[38;2;<r>;<g>;<b>m`
                                 int arg2or5 = getNextOptionInt(optionsIterator);
@@ -334,9 +360,9 @@ public class AnsiOutputStream extends FilterOutputStream { // expected diff with
                                     int b = getNextOptionInt(optionsIterator);
                                     if (r >= 0 && r <= 255 && g >= 0 && g <= 255 && b >= 0 && b <= 255) {
                                         if (value == 38)
-                                            processSetForegroundColorExt(r, g, b);
+                                            terminalCommandProcessor.processSetForegroundColorExt(r, g, b);
                                         else
-                                            processSetBackgroundColorExt(r, g, b);
+                                            terminalCommandProcessor.processSetBackgroundColorExt(r, g, b);
                                     } else {
                                         throw new IllegalArgumentException();
                                     }
@@ -346,9 +372,9 @@ public class AnsiOutputStream extends FilterOutputStream { // expected diff with
                                     int paletteIndex = getNextOptionInt(optionsIterator);
                                     if (paletteIndex >= 0 && paletteIndex <= 255) {
                                         if (value == 38)
-                                            processSetForegroundColorExt(paletteIndex);
+                                            terminalCommandProcessor.processSetForegroundColorExt(paletteIndex);
                                         else
-                                            processSetBackgroundColorExt(paletteIndex);
+                                            terminalCommandProcessor.processSetBackgroundColorExt(paletteIndex);
                                     } else {
                                         throw new IllegalArgumentException();
                                     }
@@ -359,38 +385,38 @@ public class AnsiOutputStream extends FilterOutputStream { // expected diff with
                             } else {
                                 switch (value) {
                                     case 39:
-                                        processDefaultTextColor();
+                                        terminalCommandProcessor.processDefaultTextColor();
                                         break;
                                     case 49:
-                                        processDefaultBackgroundColor();
+                                        terminalCommandProcessor.processDefaultBackgroundColor();
                                         break;
                                     case 0:
-                                        processAttributeRest();
+                                        terminalCommandProcessor.processAttributeRest();
                                         break;
                                     default:
-                                        processSetAttribute(value);
+                                        terminalCommandProcessor.processSetAttribute(value);
                                 }
                             }
                         }
                     }
                     if (count == 0) {
-                        processAttributeRest();
+                        terminalCommandProcessor.processAttributeRest();
                     }
                     return true;
                 case 's':
-                    processSaveCursorPosition();
+                    terminalCommandProcessor.processSaveCursorPosition();
                     return true;
                 case 'u':
-                    processRestoreCursorPosition();
+                    terminalCommandProcessor.processRestoreCursorPosition();
                     return true;
 
                 default:
                     if ('a' <= command && 'z' <= command) {
-                        processUnknownExtension(options, command);
+                        terminalCommandProcessor.processUnknownExtension(options, command);
                         return true;
                     }
                     if ('A' <= command && 'Z' <= command) {
-                        processUnknownExtension(options, command);
+                        terminalCommandProcessor.processUnknownExtension(options, command);
                         return true;
                     }
                     return false;
@@ -413,345 +439,23 @@ public class AnsiOutputStream extends FilterOutputStream { // expected diff with
         try {
             switch (command) {
                 case 0:
-                    processChangeIconNameAndWindowTitle(label);
+                    terminalCommandProcessor.processChangeIconNameAndWindowTitle(label);
                     return true;
                 case 1:
-                    processChangeIconName(label);
+                    terminalCommandProcessor.processChangeIconName(label);
                     return true;
                 case 2:
-                    processChangeWindowTitle(label);
+                    terminalCommandProcessor.processChangeWindowTitle(label);
                     return true;
 
                 default:
                     // not exactly unknown, but not supported through dedicated process methods:
-                    processUnknownOperatingSystemCommand(command, label);
+                    terminalCommandProcessor.processUnknownOperatingSystemCommand(command, label);
                     return true;
             }
         } catch (IllegalArgumentException ignore) {
         }
         return false;
-    }
-
-    /**
-     * Process <code>CSI u</code> ANSI code, corresponding to <code>RCP – Restore Cursor Position</code>
-     * @throws IOException IOException
-     */
-    protected void processRestoreCursorPosition() throws IOException {
-    }
-
-    /**
-     * Process <code>CSI s</code> ANSI code, corresponding to <code>SCP – Save Cursor Position</code>
-     * @throws IOException IOException
-     */
-    protected void processSaveCursorPosition() throws IOException {
-    }
-
-    /**
-     * Process <code>CSI L</code> ANSI code, corresponding to <code>IL – Insert Line</code>
-     * @param optionInt option
-     * @throws IOException IOException
-     * @since 1.16
-     */
-    protected void processInsertLine(int optionInt) throws IOException {
-    }
-
-    /**
-     * Process <code>CSI M</code> ANSI code, corresponding to <code>DL – Delete Line</code>
-     * @param optionInt option
-     * @throws IOException IOException
-     * @since 1.16
-     */
-    protected void processDeleteLine(int optionInt) throws IOException {
-    }
-
-    /**
-     * Process <code>CSI n T</code> ANSI code, corresponding to <code>SD – Scroll Down</code>
-     * @param optionInt option
-     * @throws IOException IOException
-     */
-    protected void processScrollDown(int optionInt) throws IOException {
-    }
-
-    /**
-     * Process <code>CSI n U</code> ANSI code, corresponding to <code>SU – Scroll Up</code>
-     * @param optionInt option
-     * @throws IOException IOException
-     */
-    protected void processScrollUp(int optionInt) throws IOException {
-    }
-
-    protected static final int ERASE_SCREEN_TO_END = 0;
-    protected static final int ERASE_SCREEN_TO_BEGINING = 1;
-    protected static final int ERASE_SCREEN = 2;
-
-    /**
-     * Process <code>CSI n J</code> ANSI code, corresponding to <code>ED – Erase in Display</code>
-     * @param eraseOption eraseOption
-     * @throws IOException IOException
-     */
-    protected void processEraseScreen(int eraseOption) throws IOException {
-    }
-
-    protected static final int ERASE_LINE_TO_END = 0;
-    protected static final int ERASE_LINE_TO_BEGINING = 1;
-    protected static final int ERASE_LINE = 2;
-
-    /**
-     * Process <code>CSI n K</code> ANSI code, corresponding to <code>ED – Erase in Line</code>
-     * @param eraseOption eraseOption
-     * @throws IOException IOException
-     */
-    protected void processEraseLine(int eraseOption) throws IOException {
-    }
-
-    protected static final int ATTRIBUTE_INTENSITY_BOLD = 1; // 	Intensity: Bold
-    protected static final int ATTRIBUTE_INTENSITY_FAINT = 2; // 	Intensity; Faint 	not widely supported
-    protected static final int ATTRIBUTE_ITALIC = 3; // 	Italic; on 	not widely supported. Sometimes treated as inverse.
-    protected static final int ATTRIBUTE_UNDERLINE = 4; // 	Underline; Single
-    protected static final int ATTRIBUTE_BLINK_SLOW = 5; // 	Blink; Slow 	less than 150 per minute
-    protected static final int ATTRIBUTE_BLINK_FAST = 6; // 	Blink; Rapid 	MS-DOS ANSI.SYS; 150 per minute or more
-    protected static final int ATTRIBUTE_NEGATIVE_ON = 7; // 	Image; Negative 	inverse or reverse; swap foreground and background
-    protected static final int ATTRIBUTE_CONCEAL_ON = 8; // 	Conceal on
-    protected static final int ATTRIBUTE_UNDERLINE_DOUBLE = 21; // 	Underline; Double 	not widely supported
-    protected static final int ATTRIBUTE_INTENSITY_NORMAL = 22; // 	Intensity; Normal 	not bold and not faint
-    protected static final int ATTRIBUTE_UNDERLINE_OFF = 24; // 	Underline; None
-    protected static final int ATTRIBUTE_BLINK_OFF = 25; // 	Blink; off
-    @Deprecated
-    protected static final int ATTRIBUTE_NEGATIVE_Off = 27; // 	Image; Positive
-    protected static final int ATTRIBUTE_NEGATIVE_OFF = 27; // 	Image; Positive
-    protected static final int ATTRIBUTE_CONCEAL_OFF = 28; // 	Reveal 	conceal off
-
-    /**
-     * process <code>SGR</code> other than <code>0</code> (reset), <code>30-39</code> (foreground),
-     * <code>40-49</code> (background), <code>90-97</code> (foreground high intensity) or
-     * <code>100-107</code> (background high intensity)
-     * @param attribute attribute
-     * @throws IOException IOException
-     * @see #processAttributeRest()
-     * @see #processSetForegroundColor(int)
-     * @see #processSetForegroundColor(int, boolean)
-     * @see #processSetForegroundColorExt(int)
-     * @see #processSetForegroundColorExt(int, int, int)
-     * @see #processDefaultTextColor()
-     * @see #processDefaultBackgroundColor()
-     */
-    protected void processSetAttribute(int attribute) throws IOException {
-    }
-
-    protected static final int BLACK = 0;
-    protected static final int RED = 1;
-    protected static final int GREEN = 2;
-    protected static final int YELLOW = 3;
-    protected static final int BLUE = 4;
-    protected static final int MAGENTA = 5;
-    protected static final int CYAN = 6;
-    protected static final int WHITE = 7;
-
-    /**
-     * process <code>SGR 30-37</code> corresponding to <code>Set text color (foreground)</code>.
-     * @param color the text color
-     * @throws IOException IOException
-     */
-    protected void processSetForegroundColor(int color) throws IOException {
-        processSetForegroundColor(color, false);
-    }
-
-    /**
-     * process <code>SGR 30-37</code> or <code>SGR 90-97</code> corresponding to
-     * <code>Set text color (foreground)</code> either in normal mode or high intensity.
-     * @param color the text color
-     * @param bright is high intensity?
-     * @throws IOException IOException
-     */
-    protected void processSetForegroundColor(int color, boolean bright) throws IOException {
-    }
-
-    /**
-     * process <code>SGR 38</code> corresponding to <code>extended set text color (foreground)</code>
-     * with a palette of 255 colors.
-     * @param paletteIndex the text color in the palette
-     * @throws IOException IOException
-     */
-    protected void processSetForegroundColorExt(int paletteIndex) throws IOException {
-    }
-
-    /**
-     * process <code>SGR 38</code> corresponding to <code>extended set text color (foreground)</code>
-     * with a 24 bits RGB definition of the color.
-     * @param r red
-     * @param g green
-     * @param b blue
-     * @throws IOException IOException
-     */
-    protected void processSetForegroundColorExt(int r, int g, int b) throws IOException {
-    }
-
-    /**
-     * process <code>SGR 40-47</code> corresponding to <code>Set background color</code>.
-     * @param color the background color
-     * @throws IOException IOException
-     */
-    protected void processSetBackgroundColor(int color) throws IOException {
-        processSetBackgroundColor(color, false);
-    }
-
-    /**
-     * process <code>SGR 40-47</code> or <code>SGR 100-107</code> corresponding to
-     * <code>Set background color</code> either in normal mode or high intensity.
-     * @param color the background color
-     * @param bright is high intensity?
-     * @throws IOException IOException
-     */
-    protected void processSetBackgroundColor(int color, boolean bright) throws IOException {
-    }
-
-    /**
-     * process <code>SGR 48</code> corresponding to <code>extended set background color</code>
-     * with a palette of 255 colors.
-     * @param paletteIndex the background color in the palette
-     * @throws IOException IOException
-     */
-    protected void processSetBackgroundColorExt(int paletteIndex) throws IOException {
-    }
-
-    /**
-     * process <code>SGR 48</code> corresponding to <code>extended set background color</code>
-     * with a 24 bits RGB definition of the color.
-     * @param r red
-     * @param g green
-     * @param b blue
-     * @throws IOException IOException
-     */
-    protected void processSetBackgroundColorExt(int r, int g, int b) throws IOException {
-    }
-
-    /**
-     * process <code>SGR 39</code> corresponding to <code>Default text color (foreground)</code>
-     * @throws IOException IOException
-     */
-    protected void processDefaultTextColor() throws IOException {
-    }
-
-    /**
-     * process <code>SGR 49</code> corresponding to <code>Default background color</code>
-     * @throws IOException IOException
-     */
-    protected void processDefaultBackgroundColor() throws IOException {
-    }
-
-    /**
-     * process <code>SGR 0</code> corresponding to <code>Reset / Normal</code>
-     * @throws IOException IOException
-     */
-    protected void processAttributeRest() throws IOException {
-    }
-
-    /**
-     * process <code>CSI n ; m H</code> corresponding to <code>CUP – Cursor Position</code> or
-     * <code>CSI n ; m f</code> corresponding to <code>HVP – Horizontal and Vertical Position</code>
-     * @param row row
-     * @param col column
-     * @throws IOException IOException
-     */
-    protected void processCursorTo(int row, int col) throws IOException {
-    }
-
-    /**
-     * process <code>CSI n G</code> corresponding to <code>CHA – Cursor Horizontal Absolute</code>
-     * @param x the column
-     * @throws IOException IOException
-     */
-    protected void processCursorToColumn(int x) throws IOException {
-    }
-
-    /**
-     * process <code>CSI n F</code> corresponding to <code>CPL – Cursor Previous Line</code>
-     * @param count line count
-     * @throws IOException IOException
-     */
-    protected void processCursorUpLine(int count) throws IOException {
-    }
-
-    /**
-     * process <code>CSI n E</code> corresponding to <code>CNL – Cursor Next Line</code>
-     * @param count line count
-     * @throws IOException IOException
-     */
-    protected void processCursorDownLine(int count) throws IOException {
-        // Poor mans impl..
-        for (int i = 0; i < count; i++) {
-            out.write('\n'); // expected diff with AnsiPrintStream.java
-        }
-    }
-
-    /**
-     * process <code>CSI n D</code> corresponding to <code>CUB – Cursor Back</code>
-     * @param count numer of characters to move left
-     * @throws IOException IOException
-     */
-    protected void processCursorLeft(int count) throws IOException {
-    }
-
-    /**
-     * process <code>CSI n C</code> corresponding to <code>CUF – Cursor Forward</code>
-     * @param count number of characters to move on
-     * @throws IOException IOException
-     */
-    protected void processCursorRight(int count) throws IOException {
-        // Poor mans impl..
-        for (int i = 0; i < count; i++) {
-            out.write(' '); // expected diff with AnsiPrintStream.java
-        }
-    }
-
-    /**
-     * process <code>CSI n B</code> corresponding to <code>CUD – Cursor Down</code>
-     * @param count numer of line
-     * @throws IOException IOException
-     */
-    protected void processCursorDown(int count) throws IOException {
-    }
-
-    /**
-     * process <code>CSI n A</code> corresponding to <code>CUU – Cursor Up</code>
-     * @param count number of lines
-     * @throws IOException IOException
-     */
-    protected void processCursorUp(int count) throws IOException {
-    }
-
-    protected void processUnknownExtension(ArrayList<Object> options, int command) {
-    }
-
-    /**
-     * process <code>OSC 0;text BEL</code> corresponding to <code>Change Window and Icon label</code>
-     * @param label window label
-     */
-    protected void processChangeIconNameAndWindowTitle(String label) {
-        processChangeIconName(label);
-        processChangeWindowTitle(label);
-    }
-
-    /**
-     * process <code>OSC 1;text BEL</code> corresponding to <code>Change Icon label</code>
-     * @param label icon label name
-     */
-    protected void processChangeIconName(String label) {
-    }
-
-    /**
-     * process <code>OSC 2;text BEL</code> corresponding to <code>Change Window title</code>
-     * @param label window label
-     */
-    protected void processChangeWindowTitle(String label) {
-    }
-
-    /**
-     * Process unknown <code>OSC</code> command.
-     * @param command command
-     * @param param command param
-     */
-    protected void processUnknownOperatingSystemCommand(int command, String param) {
     }
 
     /**
@@ -762,11 +466,8 @@ public class AnsiOutputStream extends FilterOutputStream { // expected diff with
     private boolean processCharsetSelect(ArrayList<Object> options) {
         int set = optionInt(options, 0);
         char seq = ((Character) options.get(1)).charValue();
-        processCharsetSelect(set, seq);
+        terminalCommandProcessor.processCharsetSelect(set, seq);
         return true;
-    }
-
-    protected void processCharsetSelect(int set, char seq) {
     }
 
     private int optionInt(ArrayList<Object> options, int index) {

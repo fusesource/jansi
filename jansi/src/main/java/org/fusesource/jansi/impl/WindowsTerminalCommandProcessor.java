@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fusesource.jansi;
+package org.fusesource.jansi.impl;
 
 import static org.fusesource.jansi.internal.Kernel32.BACKGROUND_BLUE;
 import static org.fusesource.jansi.internal.Kernel32.BACKGROUND_GREEN;
 import static org.fusesource.jansi.internal.Kernel32.BACKGROUND_INTENSITY;
 import static org.fusesource.jansi.internal.Kernel32.BACKGROUND_RED;
-import static org.fusesource.jansi.internal.Kernel32.CHAR_INFO;
 import static org.fusesource.jansi.internal.Kernel32.FOREGROUND_BLUE;
 import static org.fusesource.jansi.internal.Kernel32.FOREGROUND_GREEN;
 import static org.fusesource.jansi.internal.Kernel32.FOREGROUND_INTENSITY;
@@ -28,7 +27,6 @@ import static org.fusesource.jansi.internal.Kernel32.FillConsoleOutputAttribute;
 import static org.fusesource.jansi.internal.Kernel32.FillConsoleOutputCharacterW;
 import static org.fusesource.jansi.internal.Kernel32.GetConsoleScreenBufferInfo;
 import static org.fusesource.jansi.internal.Kernel32.GetStdHandle;
-import static org.fusesource.jansi.internal.Kernel32.SMALL_RECT;
 import static org.fusesource.jansi.internal.Kernel32.STD_ERROR_HANDLE;
 import static org.fusesource.jansi.internal.Kernel32.STD_OUTPUT_HANDLE;
 import static org.fusesource.jansi.internal.Kernel32.ScrollConsoleScreenBuffer;
@@ -37,22 +35,26 @@ import static org.fusesource.jansi.internal.Kernel32.SetConsoleTextAttribute;
 import static org.fusesource.jansi.internal.Kernel32.SetConsoleTitle;
 
 import java.io.IOException;
-import java.io.OutputStream; // expected diff with WindowsAnsiPrintStream.java
+import java.io.Writer;
 
+import org.fusesource.jansi.internal.Kernel32.CHAR_INFO;
 import org.fusesource.jansi.internal.Kernel32.CONSOLE_SCREEN_BUFFER_INFO;
 import org.fusesource.jansi.internal.Kernel32.COORD;
+import org.fusesource.jansi.internal.Kernel32.SMALL_RECT;
 
 /**
  * A Windows ANSI escape processor, that uses JNA to access native platform
  * API's to change the console attributes.
  *
+ * Note: this code was previously copy&paste twice, in WindowsAnsiPrintStream and in WindowsAnsiOutputStream
+ * Now these 2 parent classes AnsiPrintStream and AnsiOutputStream use delegation 
+ * instead of inheritance to call this TerminalCommandProcessor implementation.
+ * 
  * @since 1.0
  * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  * @author Joris Kuipers
- * @see WindowsAnsiPrintStream
- * @deprecated use {@link WindowsAnsiPrintStream}, which does not suffer from encoding issues
  */
-public final class WindowsAnsiOutputStream extends AnsiOutputStream { // expected diff with WindowsAnsiPrintStream.java
+public final class WindowsTerminalCommandProcessor extends TerminalCommandProcessor {
 
     private static final long stdout_handle = GetStdHandle(STD_OUTPUT_HANDLE);
     private static final long stderr_handle = GetStdHandle(STD_ERROR_HANDLE);
@@ -99,19 +101,19 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream { // expecte
     private short savedX = -1;
     private short savedY = -1;
 
-    public WindowsAnsiOutputStream(OutputStream os, boolean stdout) throws IOException { // expected diff with WindowsAnsiPrintStream.java
-        super(os); // expected diff with WindowsAnsiPrintStream.java
+    public WindowsTerminalCommandProcessor(Writer out, boolean stdout) throws IOException {
+        super(out);
         this.console = stdout ? stdout_handle : stderr_handle;
         getConsoleInfo();
         originalColors = info.attributes;
     }
 
-    public WindowsAnsiOutputStream(OutputStream os) throws IOException { // expected diff with WindowsAnsiPrintStream.java
-        this(os, true); // expected diff with WindowsAnsiPrintStream.java
+    public WindowsTerminalCommandProcessor(Writer out) throws IOException {
+        this(out, true);
     }
 
     private void getConsoleInfo() throws IOException {
-        out.flush(); // expected diff with WindowsAnsiPrintStream.java
+        out.flush();
         if (GetConsoleScreenBufferInfo(console, info) == 0) {
             throw new IOException("Could not get the screen info: " + WindowsSupport.getLastErrorMessage());
         }
@@ -121,7 +123,7 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream { // expecte
     }
 
     private void applyAttribute() throws IOException {
-        out.flush(); // expected diff with WindowsAnsiPrintStream.java
+        out.flush();
         short attributes = info.attributes;
         if (negative) {
             attributes = invertAttributeColors(attributes);
@@ -148,7 +150,7 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream { // expecte
     }
 
     @Override
-    protected void processEraseScreen(int eraseOption) throws IOException {
+    public void processEraseScreen(int eraseOption) throws IOException {
         getConsoleInfo();
         int[] written = new int[1];
         switch (eraseOption) {
@@ -181,7 +183,7 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream { // expecte
     }
 
     @Override
-    protected void processEraseLine(int eraseOption) throws IOException {
+    public void processEraseLine(int eraseOption) throws IOException {
         getConsoleInfo();
         int[] written = new int[1];
         switch (eraseOption) {
@@ -208,35 +210,35 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream { // expecte
     }
 
     @Override
-    protected void processCursorLeft(int count) throws IOException {
+    public void processCursorLeft(int count) throws IOException {
         getConsoleInfo();
         info.cursorPosition.x = (short) Math.max(0, info.cursorPosition.x - count);
         applyCursorPosition();
     }
 
     @Override
-    protected void processCursorRight(int count) throws IOException {
+    public void processCursorRight(int count) throws IOException {
         getConsoleInfo();
         info.cursorPosition.x = (short) Math.min(info.window.width(), info.cursorPosition.x + count);
         applyCursorPosition();
     }
 
     @Override
-    protected void processCursorDown(int count) throws IOException {
+    public void processCursorDown(int count) throws IOException {
         getConsoleInfo();
         info.cursorPosition.y = (short) Math.min(Math.max(0, info.size.y - 1), info.cursorPosition.y + count);
         applyCursorPosition();
     }
 
     @Override
-    protected void processCursorUp(int count) throws IOException {
+    public void processCursorUp(int count) throws IOException {
         getConsoleInfo();
         info.cursorPosition.y = (short) Math.max(info.window.top, info.cursorPosition.y - count);
         applyCursorPosition();
     }
 
     @Override
-    protected void processCursorTo(int row, int col) throws IOException {
+    public void processCursorTo(int row, int col) throws IOException {
         getConsoleInfo();
         info.cursorPosition.y = (short) Math.max(info.window.top, Math.min(info.size.y, info.window.top + row - 1));
         info.cursorPosition.x = (short) Math.max(0, Math.min(info.window.width(), col - 1));
@@ -244,14 +246,14 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream { // expecte
     }
 
     @Override
-    protected void processCursorToColumn(int x) throws IOException {
+    public void processCursorToColumn(int x) throws IOException {
         getConsoleInfo();
         info.cursorPosition.x = (short) Math.max(0, Math.min(info.window.width(), x - 1));
         applyCursorPosition();
     }
 
     @Override
-    protected void processSetForegroundColor(int color, boolean bright) throws IOException {
+    public void processSetForegroundColor(int color, boolean bright) throws IOException {
         info.attributes = (short) ((info.attributes & ~0x0007) | ANSI_FOREGROUND_COLOR_MAP[color]);
         if (bright) {
             info.attributes |= FOREGROUND_INTENSITY;
@@ -260,7 +262,7 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream { // expecte
     }
 
     @Override
-    protected void processSetBackgroundColor(int color, boolean bright) throws IOException {
+    public void processSetBackgroundColor(int color, boolean bright) throws IOException {
         info.attributes = (short) ((info.attributes & ~0x0070) | ANSI_BACKGROUND_COLOR_MAP[color]);
         if (bright) {
             info.attributes |= BACKGROUND_INTENSITY;
@@ -269,28 +271,28 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream { // expecte
     }
 
     @Override
-    protected void processDefaultTextColor() throws IOException {
+    public void processDefaultTextColor() throws IOException {
         info.attributes = (short) ((info.attributes & ~0x000F) | (originalColors & 0xF));
         info.attributes = (short) (info.attributes & ~FOREGROUND_INTENSITY);
         applyAttribute();
     }
 
     @Override
-    protected void processDefaultBackgroundColor() throws IOException {
+    public void processDefaultBackgroundColor() throws IOException {
         info.attributes = (short) ((info.attributes & ~0x00F0) | (originalColors & 0xF0));
         info.attributes = (short) (info.attributes & ~BACKGROUND_INTENSITY);
         applyAttribute();
     }
 
     @Override
-    protected void processAttributeRest() throws IOException {
+    public void processAttributeRest() throws IOException {
         info.attributes = (short) ((info.attributes & ~0x00FF) | originalColors);
         this.negative = false;
         applyAttribute();
     }
 
     @Override
-    protected void processSetAttribute(int attribute) throws IOException {
+    public void processSetAttribute(int attribute) throws IOException {
         switch (attribute) {
             case ATTRIBUTE_INTENSITY_BOLD:
                 info.attributes = (short) (info.attributes | FOREGROUND_INTENSITY);
@@ -326,17 +328,17 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream { // expecte
     }
 
     @Override
-    protected void processSaveCursorPosition() throws IOException {
+    public void processSaveCursorPosition() throws IOException {
         getConsoleInfo();
         savedX = info.cursorPosition.x;
         savedY = info.cursorPosition.y;
     }
 
     @Override
-    protected void processRestoreCursorPosition() throws IOException {
+    public void processRestoreCursorPosition() throws IOException {
         // restore only if there was a save operation first
         if (savedX != -1 && savedY != -1) {
-            out.flush(); // expected diff with WindowsAnsiPrintStream.java
+            out.flush();
             info.cursorPosition.x = savedX;
             info.cursorPosition.y = savedY;
             applyCursorPosition();
@@ -344,7 +346,7 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream { // expecte
     }
 
     @Override
-    protected void processInsertLine(int optionInt) throws IOException {
+    public void processInsertLine(int optionInt) throws IOException {
         getConsoleInfo();
         SMALL_RECT scroll = info.window.copy();
         scroll.top = info.cursorPosition.y;
@@ -360,7 +362,7 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream { // expecte
     }
 
     @Override
-    protected void processDeleteLine(int optionInt) throws IOException {
+    public void processDeleteLine(int optionInt) throws IOException {
         getConsoleInfo();
         SMALL_RECT scroll = info.window.copy();
         scroll.top = info.cursorPosition.y;
@@ -376,7 +378,7 @@ public final class WindowsAnsiOutputStream extends AnsiOutputStream { // expecte
     }
 
     @Override
-    protected void processChangeWindowTitle(String label) {
+    public void processChangeWindowTitle(String label) {
         SetConsoleTitle(label);
     }
 }
