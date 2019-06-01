@@ -17,7 +17,6 @@ package org.fusesource.jansi;
 
 import java.io.IOException;
 import java.io.PrintStream; // expected diff with AnsiOutputStream.java
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 /**
@@ -49,7 +48,7 @@ public class AnsiPrintStream extends FilterPrintStream { // expected diff with A
     }
 
     private final static int MAX_ESCAPE_SEQUENCE_LENGTH = 100;
-    private final byte[] buffer = new byte[MAX_ESCAPE_SEQUENCE_LENGTH];
+    private final char[] buffer = new char[MAX_ESCAPE_SEQUENCE_LENGTH];
     private int pos = 0;
     private int startOfValue;
     private final ArrayList<Object> options = new ArrayList<Object>();
@@ -76,18 +75,18 @@ public class AnsiPrintStream extends FilterPrintStream { // expected diff with A
     private static final int SECOND_CHARSET1_CHAR = ')';
 
     @Override
-    protected synchronized boolean filter(int data) { // expected diff with AnsiOutputStream.java
+    protected boolean filter(char data) throws IOException { // expected diff with AnsiOutputStream.java
         switch (state) {
             case LOOKING_FOR_FIRST_ESC_CHAR:
                 if (data == FIRST_ESC_CHAR) {
-                    buffer[pos++] = (byte) data;
+                    buffer[pos++] = data;
                     state = LOOKING_FOR_SECOND_ESC_CHAR;
                     return false; // expected diff with AnsiOutputStream.java
                 }
                 return true; // expected diff with AnsiOutputStream.java
 
             case LOOKING_FOR_SECOND_ESC_CHAR:
-                buffer[pos++] = (byte) data;
+                buffer[pos++] = data;
                 if (data == SECOND_ESC_CHAR) {
                     state = LOOKING_FOR_NEXT_ARG;
                 } else if (data == SECOND_OSC_CHAR) {
@@ -104,7 +103,7 @@ public class AnsiPrintStream extends FilterPrintStream { // expected diff with A
                 break;
 
             case LOOKING_FOR_NEXT_ARG:
-                buffer[pos++] = (byte) data;
+                buffer[pos++] = data;
                 if ('"' == data) {
                     startOfValue = pos - 1;
                     state = LOOKING_FOR_STR_ARG_END;
@@ -125,9 +124,9 @@ public class AnsiPrintStream extends FilterPrintStream { // expected diff with A
                 break;
 
             case LOOKING_FOR_INT_ARG_END:
-                buffer[pos++] = (byte) data;
+                buffer[pos++] = data;
                 if (!('0' <= data && data <= '9')) {
-                    String strValue = new String(buffer, startOfValue, (pos - 1) - startOfValue, Charset.defaultCharset());
+                    String strValue = new String(buffer, startOfValue, (pos - 1) - startOfValue);
                     Integer value = Integer.valueOf(strValue);
                     options.add(value);
                     if (data == ';') {
@@ -139,9 +138,9 @@ public class AnsiPrintStream extends FilterPrintStream { // expected diff with A
                 break;
 
             case LOOKING_FOR_STR_ARG_END:
-                buffer[pos++] = (byte) data;
+                buffer[pos++] = data;
                 if ('"' != data) {
-                    String value = new String(buffer, startOfValue, (pos - 1) - startOfValue, Charset.defaultCharset());
+                    String value = new String(buffer, startOfValue, (pos - 1) - startOfValue);
                     options.add(value);
                     if (data == ';') {
                         state = LOOKING_FOR_NEXT_ARG;
@@ -152,7 +151,7 @@ public class AnsiPrintStream extends FilterPrintStream { // expected diff with A
                 break;
 
             case LOOKING_FOR_OSC_COMMAND:
-                buffer[pos++] = (byte) data;
+                buffer[pos++] = data;
                 if ('0' <= data && data <= '9') {
                     startOfValue = pos - 1;
                     state = LOOKING_FOR_OSC_COMMAND_END;
@@ -162,9 +161,9 @@ public class AnsiPrintStream extends FilterPrintStream { // expected diff with A
                 break;
 
             case LOOKING_FOR_OSC_COMMAND_END:
-                buffer[pos++] = (byte) data;
+                buffer[pos++] = data;
                 if (';' == data) {
-                    String strValue = new String(buffer, startOfValue, (pos - 1) - startOfValue, Charset.defaultCharset());
+                    String strValue = new String(buffer, startOfValue, (pos - 1) - startOfValue);
                     Integer value = Integer.valueOf(strValue);
                     options.add(value);
                     startOfValue = pos;
@@ -178,9 +177,9 @@ public class AnsiPrintStream extends FilterPrintStream { // expected diff with A
                 break;
 
             case LOOKING_FOR_OSC_PARAM:
-                buffer[pos++] = (byte) data;
+                buffer[pos++] = data;
                 if (BEL == data) {
-                    String value = new String(buffer, startOfValue, (pos - 1) - startOfValue, Charset.defaultCharset());
+                    String value = new String(buffer, startOfValue, (pos - 1) - startOfValue);
                     options.add(value);
                     reset(ap.processOperatingSystemCommand(options));
                 } else if (FIRST_ESC_CHAR == data) {
@@ -191,9 +190,9 @@ public class AnsiPrintStream extends FilterPrintStream { // expected diff with A
                 break;
 
             case LOOKING_FOR_ST:
-                buffer[pos++] = (byte) data;
+                buffer[pos++] = data;
                 if (SECOND_ST_CHAR == data) {
-                    String value = new String(buffer, startOfValue, (pos - 2) - startOfValue, Charset.defaultCharset());
+                    String value = new String(buffer, startOfValue, (pos - 2) - startOfValue);
                     options.add(value);
                     reset(ap.processOperatingSystemCommand(options));
                 } else {
@@ -214,7 +213,9 @@ public class AnsiPrintStream extends FilterPrintStream { // expected diff with A
         return false; // expected diff with AnsiOutputStream.java
     }
 
-   private boolean processEscapeCommand(ArrayList<Object> options, int command) { // expected diff with AnsiOutputStream.java
+   private boolean processEscapeCommand(ArrayList<Object> options, int command) throws IOException { // expected diff with AnsiOutputStream.java
+       bufferedOut.flushBuffer();
+
        try { // expected diff with AnsiOutputStream.java
            return ap.processEscapeCommand(options, command); // expected diff with AnsiOutputStream.java
        } catch (IOException ioe) { // expected diff with AnsiOutputStream.java
@@ -227,9 +228,9 @@ public class AnsiPrintStream extends FilterPrintStream { // expected diff with A
      * Resets all state to continue with regular parsing
      * @param skipBuffer if current buffer should be skipped or written to out
      */
-    private void reset(boolean skipBuffer) { // expected diff with AnsiOutputStream.java
+    private void reset(boolean skipBuffer) throws IOException { // expected diff with AnsiOutputStream.java
         if (!skipBuffer) {
-            ps.write(buffer, 0, pos); // expected diff with AnsiOutputStream.java
+            bufferedOut.write(buffer, 0, pos); // expected diff with AnsiOutputStream.java
         }
         pos = 0;
         startOfValue = 0;

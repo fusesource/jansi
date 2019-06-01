@@ -21,6 +21,8 @@ import java.io.OutputStream; // expected diff with AnsiPrintStream.java
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 
+import org.fusesource.jansi.impl.FlushBufferedOutputStream;
+
 /**
  * A ANSI print stream extracts ANSI escape codes written to 
  * an output stream and calls corresponding <code>AnsiProcessor.process*</code> methods.
@@ -40,11 +42,16 @@ public class AnsiOutputStream extends FilterOutputStream { // expected diff with
     
     public static final byte[] RESET_CODE = "\033[0m".getBytes(); // expected diff with AnsiPrintStream.java
 
+    private static final int BUFFER_LENGTH = 300;
+
     @Deprecated
     public static final byte[] REST_CODE = RESET_CODE; // expected diff with AnsiPrintStream.java
 
+    protected FlushBufferedOutputStream bufferedOut; // override super.out for type safety
+
     public AnsiOutputStream(OutputStream os, AnsiProcessor ap) { // expected diff with AnsiPrintStream.java
-        super(os); // expected diff with AnsiPrintStream.java
+        super(new FlushBufferedOutputStream(os, BUFFER_LENGTH)); // expected diff with AnsiPrintStream.java
+        this.bufferedOut = (FlushBufferedOutputStream) super.out;
         this.ap = ap;
     }
 
@@ -79,18 +86,46 @@ public class AnsiOutputStream extends FilterOutputStream { // expected diff with
     private static final int SECOND_CHARSET0_CHAR = '(';
     private static final int SECOND_CHARSET1_CHAR = ')';
 
+    @Override
+    public void flush() throws IOException {
+        bufferedOut.flushBuffer();
+        super.flush();
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public synchronized void write(int data) throws IOException { // expected diff with AnsiPrintStream.java
+    public void write(int data) throws IOException { // expected diff with AnsiPrintStream.java
+        doWrite(data);
+        bufferedOut.flushBuffer();
+    }
+
+    @Override
+    public void write(byte[] b) throws IOException {
+        write(b, 0, b.length);
+        bufferedOut.flushBuffer();
+    }
+
+    @Override
+    public void write(byte[] b, int off, int len) throws IOException {
+        if ((off | len | (b.length - (len + off)) | (off + len)) < 0)
+            throw new IndexOutOfBoundsException();
+
+        for (int i = 0 ; i < len ; i++) {
+            doWrite(b[off + i]);
+        }
+        bufferedOut.flushBuffer();
+    }
+
+    protected void doWrite(int data) throws IOException { // expected diff with AnsiPrintStream.java
         switch (state) {
             case LOOKING_FOR_FIRST_ESC_CHAR:
                 if (data == FIRST_ESC_CHAR) {
                     buffer[pos++] = (byte) data;
                     state = LOOKING_FOR_SECOND_ESC_CHAR;
                 } else { // expected diff with AnsiPrintStream.java
-                    out.write(data); // expected diff with AnsiPrintStream.java
+                    bufferedOut.write(data); // expected diff with AnsiPrintStream.java
                 }
                 break; // expected diff with AnsiPrintStream.java
 

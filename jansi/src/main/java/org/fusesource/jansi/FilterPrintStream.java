@@ -19,6 +19,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+import org.fusesource.jansi.impl.FlushBufferedWriter;
+import org.fusesource.jansi.impl.PrintStreamWriter;
+
 /**
  * A PrintStream filtering to another PrintStream, without making any assumption about encoding.
  * 
@@ -32,11 +35,14 @@ public class FilterPrintStream extends PrintStream
 
     private static final int TMP_STR_TO_CHAR_BUFFER_LENGTH = 400;
 
-    protected final PrintStream ps;
+    private static final int BUFFER_LENGTH = 300;
 
     private final char[] strToCharBuffer = new char[TMP_STR_TO_CHAR_BUFFER_LENGTH];
 
-    public FilterPrintStream(PrintStream ps)
+    protected final FlushBufferedWriter bufferedOut;
+    protected final PrintStream underlyingPrintStreamForError;
+
+    public FilterPrintStream(final PrintStream ps)
     {
         super( new OutputStream() {
 
@@ -46,7 +52,9 @@ public class FilterPrintStream extends PrintStream
             }
             
         });
-        this.ps = ps;
+        PrintStreamWriter psOut = new PrintStreamWriter(ps);
+        this.bufferedOut = new FlushBufferedWriter(psOut, BUFFER_LENGTH);
+        this.underlyingPrintStreamForError = ps;
     }
 
     /**
@@ -54,7 +62,7 @@ public class FilterPrintStream extends PrintStream
      * @param data character to filter
      * @return <code>true</code> if the data is not filtered then has to be printed to delegate PrintStream
      */
-    protected boolean filter(int data)
+    protected boolean filter(char data) throws IOException
     {
         return true;
     }
@@ -62,50 +70,81 @@ public class FilterPrintStream extends PrintStream
     @Override
     public void write(int data)
     {
-        if (filter(data))
-        {
-            ps.write(data);
+        // TODO this method override OutputStream, so receive byte
+        // => should not try to intepret as char !!
+        // otherwise get encoding errors..
+        try {
+            if (filter((char) data))  // HACK should not cast byte -> char !!
+            {
+                bufferedOut.write(data);
+                bufferedOut.flushBuffer();
+            }
+        } catch (IOException e) {
+            setError();
         }
     }
 
     @Override
     public void write(byte[] buf, int off, int len)
     {
-        for (int i = 0; i < len; i++)
-        {
-            write(buf[off + i]);
+        // TODO this method override OutputStream, so receive byte
+        // => should not try to intepret as char !!
+        // otherwise get encoding errors..
+        try {
+            final int max = off + len;
+            for (int i = off; i < max; i++)
+            {
+                byte data = buf[i];
+                if (filter((char) data)) { // HACK should not cast byte -> char !!
+                    bufferedOut.write(data);
+                }
+            }
+            bufferedOut.flushBuffer();
+        } catch (IOException e) {
+            setError();
         }
     }
 
     @Override
     public boolean checkError()
     {
-        return super.checkError() || ps.checkError();
+        return super.checkError() || underlyingPrintStreamForError.checkError();
     }
 
     @Override
     public void close()
     {
-        super.close();
-        ps.close();
+        try {
+            bufferedOut.close();
+        } catch (IOException e) {
+            setError();
+        }
     }
 
     @Override
     public void flush()
     {
-        super.flush();
-        ps.flush();
+        try {
+            bufferedOut.flush();
+        } catch (IOException e) {
+            setError();
+        }
     }
 
     private void write(char buf[], int len) {
-        for (char c : buf)
-        {
-            if (len-- <= 0) {
-                return;
+	try {
+            for (char c : buf)
+            {
+                if (len-- <= 0) {
+                    break;
+                }
+                if (filter(c)) {
+                    bufferedOut.write(c);
+                }
             }
-            if (filter(c)) {
-                ps.print(c);
-            }
+            bufferedOut.flushBuffer();
+        } catch (IOException e) {
+            setError();
         }
     }
 
@@ -130,11 +169,14 @@ public class FilterPrintStream extends PrintStream
     @Override
     public void print(char c) {
         // optim for: write(String.valueOf(c));
-        if (filter(c))
-        {
-            ps.print(c);
+        try {
+            if (filter(c)) {
+                bufferedOut.write(c);
+            }
+            bufferedOut.flushBuffer();
+        } catch (IOException e) {
+            setError();
         }
-
     }
 
     @Override
@@ -168,6 +210,7 @@ public class FilterPrintStream extends PrintStream
             s = "null";
         }
         write(s);
+        flush();
     }
 
     @Override
