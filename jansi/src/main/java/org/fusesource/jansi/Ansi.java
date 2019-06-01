@@ -356,7 +356,7 @@ public class Ansi {
     private final ArrayList<Integer> attributeOptions = new ArrayList<Integer>(5);
 
     public Ansi() {
-        this(new StringBuilder());
+        this(new StringBuilder(80));
     }
 
     public Ansi(Ansi parent) {

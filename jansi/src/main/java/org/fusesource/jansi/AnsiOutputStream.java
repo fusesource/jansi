@@ -134,7 +134,7 @@ public class AnsiOutputStream extends FilterOutputStream { // expected diff with
                 buffer[pos++] = (byte) data;
                 if (!('0' <= data && data <= '9')) {
                     String strValue = new String(buffer, startOfValue, (pos - 1) - startOfValue, Charset.defaultCharset());
-                    Integer value = new Integer(strValue);
+                    Integer value = Integer.valueOf(strValue);
                     options.add(value);
                     if (data == ';') {
                         state = LOOKING_FOR_NEXT_ARG;
@@ -171,7 +171,7 @@ public class AnsiOutputStream extends FilterOutputStream { // expected diff with
                 buffer[pos++] = (byte) data;
                 if (';' == data) {
                     String strValue = new String(buffer, startOfValue, (pos - 1) - startOfValue, Charset.defaultCharset());
-                    Integer value = new Integer(strValue);
+                    Integer value = Integer.valueOf(strValue);
                     options.add(value);
                     startOfValue = pos;
                     state = LOOKING_FOR_OSC_PARAM;

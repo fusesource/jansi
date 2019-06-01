@@ -29,7 +29,12 @@ import java.io.PrintStream;
 public class FilterPrintStream extends PrintStream
 {
     private static final String NEWLINE = System.getProperty("line.separator");
+
+    private static final int TMP_STR_TO_CHAR_BUFFER_LENGTH = 400;
+
     protected final PrintStream ps;
+
+    private final char[] strToCharBuffer = new char[TMP_STR_TO_CHAR_BUFFER_LENGTH];
 
     public FilterPrintStream(PrintStream ps)
     {
@@ -103,7 +108,7 @@ public class FilterPrintStream extends PrintStream
     }
 
     private void write(String s) {
-        char[] buf = new char[s.length()];
+        char[] buf = (s.length() < strToCharBuffer.length)? strToCharBuffer : new char[s.length()];
         s.getChars(0, s.length(), buf, 0);
         write(buf);
     }
@@ -121,7 +126,12 @@ public class FilterPrintStream extends PrintStream
 
     @Override
     public void print(char c) {
-        write(String.valueOf(c));
+        // optim for: write(String.valueOf(c));
+        if (filter(c))
+        {
+            ps.print(c);
+        }
+
     }
 
     @Override

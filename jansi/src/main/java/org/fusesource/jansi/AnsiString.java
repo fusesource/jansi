@@ -39,7 +39,7 @@ public class AnsiString
     private CharSequence chew(final CharSequence str) {
         assert str != null;
 
-        ByteArrayOutputStream buff = new ByteArrayOutputStream();
+        ByteArrayOutputStream buff = new ByteArrayOutputStream(str.length());
         AnsiOutputStream out = new AnsiOutputStream(buff);
 
         try {
