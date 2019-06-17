@@ -46,12 +46,12 @@
          platforms -->
     <dependency>
       <groupId>org.fusesource.jansi</groupId>
-      <artifactId>jansi-windows32</artifactId>
+      <artifactId>jansi-windows32-i386</artifactId>
       <version>${jansi-native-version}</version>
     </dependency>
     <dependency>
       <groupId>org.fusesource.jansi</groupId>
-      <artifactId>jansi-windows64</artifactId>
+      <artifactId>jansi-windows64-amd64</artifactId>
       <version>${jansi-native-version}</version>
     </dependency>
     <dependency>
@@ -61,22 +61,42 @@
     </dependency>
     <dependency>
       <groupId>org.fusesource.jansi</groupId>
-      <artifactId>jansi-linux32</artifactId>
+      <artifactId>jansi-linux32-i386</artifactId>
       <version>${jansi-native-version}</version>
     </dependency>
     <dependency>
       <groupId>org.fusesource.jansi</groupId>
-      <artifactId>jansi-linux64</artifactId>
+      <artifactId>jansi-linux32-arm</artifactId>
       <version>${jansi-native-version}</version>
     </dependency>
     <dependency>
       <groupId>org.fusesource.jansi</groupId>
-      <artifactId>jansi-freebsd32</artifactId>
+      <artifactId>jansi-linux64-amd64</artifactId>
       <version>${jansi-native-version}</version>
     </dependency>
     <dependency>
       <groupId>org.fusesource.jansi</groupId>
-      <artifactId>jansi-freebsd64</artifactId>
+      <artifactId>jansi-linux64-aarch64</artifactId>
+      <version>${jansi-native-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.fusesource.jansi</groupId>
+      <artifactId>jansi-linux64-ppc64le</artifactId>
+      <version>${jansi-native-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.fusesource.jansi</groupId>
+      <artifactId>jansi-linux64-s390x</artifactId>
+      <version>${jansi-native-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.fusesource.jansi</groupId>
+      <artifactId>jansi-freebsd32-i386</artifactId>
+      <version>${jansi-native-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.fusesource.jansi</groupId>
+      <artifactId>jansi-freebsd64-amd64</artifactId>
       <version>${jansi-native-version}</version>
     </dependency>
 
