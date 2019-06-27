@@ -3,7 +3,7 @@
     <parent>
         <artifactId>jansi-project</artifactId>
         <groupId>org.fusesource.jansi</groupId>
-        <version>1.18</version>
+        <version>1.19-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
