@@ -5,27 +5,27 @@
 ## [Jansi 1.18][1_18], released 2019-04-02
 [1_18]: https://repo.maven.apache.org/maven2/org/fusesource/jansi/jansi/1.18
 
-* [`d52d37d`](https://github.com/fusesource/hawtjni/commit/d52d37df44a7262240cd1e3d471025ca255ce7f9) Switch to hawtjni 1.17
-* [`bbd72d6`](https://github.com/fusesource/hawtjni/commit/bbd72d6e26f4e70a20a5736a496f9cb9d354ca3f) Fix error messages, #134
-* [`3101eeb`](https://github.com/fusesource/hawtjni/commit/3101eeb7208d190f171a6fbded45bd984f0606dd) Provide an alternative way to get jansi version
-* [`5a5e8cb`](https://github.com/fusesource/hawtjni/commit/5a5e8cbfae657900bd7d1caa55e2978086394e5d) #130 added Automatic-Module-Name to manifest for Java 9 auto-module
-* [`1c4b015`](https://github.com/fusesource/hawtjni/commit/1c4b015d16432295e786dc4f806cdd077c85043e) Merge branch 'master' of https://github.com/fusesource/jansi.git
-* [`70ff98d`](https://github.com/fusesource/hawtjni/commit/70ff98d5cbd5fb005d8a44ed31050388b256f9c6) switch to 1.18-SNAPSHOT # Conflicts: #     example/pom.xml #       jansi/pom.xml # pom.xml
-* [`d5f60ed`](https://github.com/fusesource/hawtjni/commit/d5f60edf0f8c15c0c888e2aa5980c023ef1c8c9e) updated changelog for 1.17.1 release
-* [`44b1ebf`](https://github.com/fusesource/hawtjni/commit/44b1ebf7c877f6b14aaa31f55b8e4ee47350d991) added Maven central icon
-* [`b1ef765`](https://github.com/fusesource/hawtjni/commit/b1ef7659b711e5c94272b3802d9e0ed6feebda62) #98 added link to HawtJNI Runtime Library class documentation
-* [`0507042`](https://github.com/fusesource/hawtjni/commit/0507042f44562316339b27fe997ad6456e674cf4) fixed compiler warning
-* [`7ae726d`](https://github.com/fusesource/hawtjni/commit/7ae726d549de8d78cf425b1a3d2c022eb1b1cd75) improved javadoc
-* [`272f395`](https://github.com/fusesource/hawtjni/commit/272f395e5eb7a38f075ec0a125d75f8c19795ca4) added details on redirection to a file
-* [`e2ac629`](https://github.com/fusesource/hawtjni/commit/e2ac629b77614be325c6603ce804578ddb11749c) #124 detect console handle from stderr separately from stdout
-* [`3a9c8fb`](https://github.com/fusesource/hawtjni/commit/3a9c8fbeae40b18268af3d4d87fb81084233ff9f) switch to 1.18-SNAPSHOT
-* [`bca4c36`](https://github.com/fusesource/hawtjni/commit/bca4c365eaa8492297e9d0fc02c6abc1fdd5d4b1) updated changelog for 1.17.1 release
-* [`b602f13`](https://github.com/fusesource/hawtjni/commit/b602f1301073cc22e60348d89807f37313bd5454) added Maven central icon
-* [`a463253`](https://github.com/fusesource/hawtjni/commit/a46325307f51194ca7dd007d2042dc38bc61af0d) #98 added link to HawtJNI Runtime Library class documentation
-* [`6af32f4`](https://github.com/fusesource/hawtjni/commit/6af32f434126611cbe8f362bca2488e4f5e72859) fixed compiler warning
-* [`49e8293`](https://github.com/fusesource/hawtjni/commit/49e829380f599f79b8c82b3c8ea7aae56918ba02) improved javadoc
-* [`3302b8f`](https://github.com/fusesource/hawtjni/commit/3302b8f4d9276d0f1c1f3698bc5f6440d5dab5a8) added details on redirection to a file
-* [`9338527`](https://github.com/fusesource/hawtjni/commit/93385273035124d3541e90e3a15568371aa2f474) #124 detect console handle from stderr separately from stdout
+* [`d52d37d`](https://github.com/fusesource/jansi/commit/d52d37df44a7262240cd1e3d471025ca255ce7f9) Switch to hawtjni 1.17
+* [`bbd72d6`](https://github.com/fusesource/jansi/commit/bbd72d6e26f4e70a20a5736a496f9cb9d354ca3f) Fix error messages, #134
+* [`3101eeb`](https://github.com/fusesource/jansi/commit/3101eeb7208d190f171a6fbded45bd984f0606dd) Provide an alternative way to get jansi version
+* [`5a5e8cb`](https://github.com/fusesource/jansi/commit/5a5e8cbfae657900bd7d1caa55e2978086394e5d) #130 added Automatic-Module-Name to manifest for Java 9 auto-module
+* [`1c4b015`](https://github.com/fusesource/jansi/commit/1c4b015d16432295e786dc4f806cdd077c85043e) Merge branch 'master' of https://github.com/fusesource/jansi.git
+* [`70ff98d`](https://github.com/fusesource/jansi/commit/70ff98d5cbd5fb005d8a44ed31050388b256f9c6) switch to 1.18-SNAPSHOT # Conflicts: #     example/pom.xml #       jansi/pom.xml # pom.xml
+* [`d5f60ed`](https://github.com/fusesource/jansi/commit/d5f60edf0f8c15c0c888e2aa5980c023ef1c8c9e) updated changelog for 1.17.1 release
+* [`44b1ebf`](https://github.com/fusesource/jansi/commit/44b1ebf7c877f6b14aaa31f55b8e4ee47350d991) added Maven central icon
+* [`b1ef765`](https://github.com/fusesource/jansi/commit/b1ef7659b711e5c94272b3802d9e0ed6feebda62) #98 added link to HawtJNI Runtime Library class documentation
+* [`0507042`](https://github.com/fusesource/jansi/commit/0507042f44562316339b27fe997ad6456e674cf4) fixed compiler warning
+* [`7ae726d`](https://github.com/fusesource/jansi/commit/7ae726d549de8d78cf425b1a3d2c022eb1b1cd75) improved javadoc
+* [`272f395`](https://github.com/fusesource/jansi/commit/272f395e5eb7a38f075ec0a125d75f8c19795ca4) added details on redirection to a file
+* [`e2ac629`](https://github.com/fusesource/jansi/commit/e2ac629b77614be325c6603ce804578ddb11749c) #124 detect console handle from stderr separately from stdout
+* [`3a9c8fb`](https://github.com/fusesource/jansi/commit/3a9c8fbeae40b18268af3d4d87fb81084233ff9f) switch to 1.18-SNAPSHOT
+* [`bca4c36`](https://github.com/fusesource/jansi/commit/bca4c365eaa8492297e9d0fc02c6abc1fdd5d4b1) updated changelog for 1.17.1 release
+* [`b602f13`](https://github.com/fusesource/jansi/commit/b602f1301073cc22e60348d89807f37313bd5454) added Maven central icon
+* [`a463253`](https://github.com/fusesource/jansi/commit/a46325307f51194ca7dd007d2042dc38bc61af0d) #98 added link to HawtJNI Runtime Library class documentation
+* [`6af32f4`](https://github.com/fusesource/jansi/commit/6af32f434126611cbe8f362bca2488e4f5e72859) fixed compiler warning
+* [`49e8293`](https://github.com/fusesource/jansi/commit/49e829380f599f79b8c82b3c8ea7aae56918ba02) improved javadoc
+* [`3302b8f`](https://github.com/fusesource/jansi/commit/3302b8f4d9276d0f1c1f3698bc5f6440d5dab5a8) added details on redirection to a file
+* [`9338527`](https://github.com/fusesource/jansi/commit/93385273035124d3541e90e3a15568371aa2f474) #124 detect console handle from stderr separately from stdout
 
 ## [Jansi 1.17.1][1_17_1], released 2018-04-16
 [1_17_1]: https://repo.maven.apache.org/maven2/org/fusesource/jansi/jansi/1.17.1
