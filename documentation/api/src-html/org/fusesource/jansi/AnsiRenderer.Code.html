@@ -227,47 +227,44 @@
 <span class="sourceLineNo">219</span>        BOLD(Attribute.INTENSITY_BOLD),<a name="line.219"></a>
 <span class="sourceLineNo">220</span>        FAINT(Attribute.INTENSITY_FAINT),;<a name="line.220"></a>
 <span class="sourceLineNo">221</span><a name="line.221"></a>
-<span class="sourceLineNo">222</span>        @SuppressWarnings("unchecked")<a name="line.222"></a>
-<span class="sourceLineNo">223</span>        private final Enum n;<a name="line.223"></a>
-<span class="sourceLineNo">224</span><a name="line.224"></a>
-<span class="sourceLineNo">225</span>        private final boolean background;<a name="line.225"></a>
-<span class="sourceLineNo">226</span><a name="line.226"></a>
-<span class="sourceLineNo">227</span>        @SuppressWarnings("unchecked")<a name="line.227"></a>
-<span class="sourceLineNo">228</span>        Code(final Enum n, boolean background) {<a name="line.228"></a>
-<span class="sourceLineNo">229</span>            this.n = n;<a name="line.229"></a>
-<span class="sourceLineNo">230</span>            this.background = background;<a name="line.230"></a>
-<span class="sourceLineNo">231</span>        }<a name="line.231"></a>
-<span class="sourceLineNo">232</span><a name="line.232"></a>
-<span class="sourceLineNo">233</span>        @SuppressWarnings("unchecked")<a name="line.233"></a>
-<span class="sourceLineNo">234</span>        Code(final Enum n) {<a name="line.234"></a>
-<span class="sourceLineNo">235</span>            this(n, false);<a name="line.235"></a>
-<span class="sourceLineNo">236</span>        }<a name="line.236"></a>
-<span class="sourceLineNo">237</span><a name="line.237"></a>
-<span class="sourceLineNo">238</span>        public boolean isColor() {<a name="line.238"></a>
-<span class="sourceLineNo">239</span>            return n instanceof Ansi.Color;<a name="line.239"></a>
-<span class="sourceLineNo">240</span>        }<a name="line.240"></a>
-<span class="sourceLineNo">241</span><a name="line.241"></a>
-<span class="sourceLineNo">242</span>        public Ansi.Color getColor() {<a name="line.242"></a>
-<span class="sourceLineNo">243</span>            return (Ansi.Color) n;<a name="line.243"></a>
-<span class="sourceLineNo">244</span>        }<a name="line.244"></a>
-<span class="sourceLineNo">245</span><a name="line.245"></a>
-<span class="sourceLineNo">246</span>        public boolean isAttribute() {<a name="line.246"></a>
-<span class="sourceLineNo">247</span>            return n instanceof Attribute;<a name="line.247"></a>
-<span class="sourceLineNo">248</span>        }<a name="line.248"></a>
-<span class="sourceLineNo">249</span><a name="line.249"></a>
-<span class="sourceLineNo">250</span>        public Attribute getAttribute() {<a name="line.250"></a>
-<span class="sourceLineNo">251</span>            return (Attribute) n;<a name="line.251"></a>
-<span class="sourceLineNo">252</span>        }<a name="line.252"></a>
-<span class="sourceLineNo">253</span><a name="line.253"></a>
-<span class="sourceLineNo">254</span>        public boolean isBackground() {<a name="line.254"></a>
-<span class="sourceLineNo">255</span>            return background;<a name="line.255"></a>
-<span class="sourceLineNo">256</span>        }<a name="line.256"></a>
+<span class="sourceLineNo">222</span>        private final Enum&lt;?&gt; n;<a name="line.222"></a>
+<span class="sourceLineNo">223</span><a name="line.223"></a>
+<span class="sourceLineNo">224</span>        private final boolean background;<a name="line.224"></a>
+<span class="sourceLineNo">225</span><a name="line.225"></a>
+<span class="sourceLineNo">226</span>        Code(final Enum&lt;?&gt; n, boolean background) {<a name="line.226"></a>
+<span class="sourceLineNo">227</span>            this.n = n;<a name="line.227"></a>
+<span class="sourceLineNo">228</span>            this.background = background;<a name="line.228"></a>
+<span class="sourceLineNo">229</span>        }<a name="line.229"></a>
+<span class="sourceLineNo">230</span><a name="line.230"></a>
+<span class="sourceLineNo">231</span>        Code(final Enum&lt;?&gt; n) {<a name="line.231"></a>
+<span class="sourceLineNo">232</span>            this(n, false);<a name="line.232"></a>
+<span class="sourceLineNo">233</span>        }<a name="line.233"></a>
+<span class="sourceLineNo">234</span><a name="line.234"></a>
+<span class="sourceLineNo">235</span>        public boolean isColor() {<a name="line.235"></a>
+<span class="sourceLineNo">236</span>            return n instanceof Ansi.Color;<a name="line.236"></a>
+<span class="sourceLineNo">237</span>        }<a name="line.237"></a>
+<span class="sourceLineNo">238</span><a name="line.238"></a>
+<span class="sourceLineNo">239</span>        public Ansi.Color getColor() {<a name="line.239"></a>
+<span class="sourceLineNo">240</span>            return (Ansi.Color) n;<a name="line.240"></a>
+<span class="sourceLineNo">241</span>        }<a name="line.241"></a>
+<span class="sourceLineNo">242</span><a name="line.242"></a>
+<span class="sourceLineNo">243</span>        public boolean isAttribute() {<a name="line.243"></a>
+<span class="sourceLineNo">244</span>            return n instanceof Attribute;<a name="line.244"></a>
+<span class="sourceLineNo">245</span>        }<a name="line.245"></a>
+<span class="sourceLineNo">246</span><a name="line.246"></a>
+<span class="sourceLineNo">247</span>        public Attribute getAttribute() {<a name="line.247"></a>
+<span class="sourceLineNo">248</span>            return (Attribute) n;<a name="line.248"></a>
+<span class="sourceLineNo">249</span>        }<a name="line.249"></a>
+<span class="sourceLineNo">250</span><a name="line.250"></a>
+<span class="sourceLineNo">251</span>        public boolean isBackground() {<a name="line.251"></a>
+<span class="sourceLineNo">252</span>            return background;<a name="line.252"></a>
+<span class="sourceLineNo">253</span>        }<a name="line.253"></a>
+<span class="sourceLineNo">254</span>    }<a name="line.254"></a>
+<span class="sourceLineNo">255</span><a name="line.255"></a>
+<span class="sourceLineNo">256</span>    private AnsiRenderer() {<a name="line.256"></a>
 <span class="sourceLineNo">257</span>    }<a name="line.257"></a>
 <span class="sourceLineNo">258</span><a name="line.258"></a>
-<span class="sourceLineNo">259</span>    private AnsiRenderer() {<a name="line.259"></a>
-<span class="sourceLineNo">260</span>    }<a name="line.260"></a>
-<span class="sourceLineNo">261</span><a name="line.261"></a>
-<span class="sourceLineNo">262</span>}<a name="line.262"></a>
+<span class="sourceLineNo">259</span>}<a name="line.259"></a>
 
 
 
