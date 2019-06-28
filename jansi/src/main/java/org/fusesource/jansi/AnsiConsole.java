@@ -48,6 +48,12 @@ public class AnsiConsole {
 
     static final boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("win");
 
+    /**
+     * <a href="https://conemu.github.io">ConEmu</a> ANSI X3.64 support enabled,
+     * used by <a href="https://cmder.net/">cmder</a>
+     */
+    static final boolean IS_CON_EMU_ANSI = "ON".equals(System.getenv("ConEmuANSI"));
+
     static final boolean IS_CYGWIN = IS_WINDOWS
             && System.getenv("PWD") != null
             && System.getenv("PWD").startsWith("/")
@@ -124,9 +130,10 @@ public class AnsiConsole {
             return new AnsiOutputStream(stream);
         }
 
-        if (IS_WINDOWS && !IS_CYGWIN && !IS_MINGW_XTERM) {
+        if (IS_WINDOWS && !(IS_CON_EMU_ANSI || IS_CYGWIN || IS_MINGW_XTERM)) {
 
-            // On windows we know the console does not interpret ANSI codes..
+            // On Windows, when no ANSI-capable terminal is used, we know the console does not natively interpret ANSI
+            // codes but we can use jansi-native Kernel32 API for console
             try {
                 jansiOutputType = JansiOutputType.WINDOWS;
                 return new WindowsAnsiOutputStream(stream, fileno == STDOUT_FILENO);
@@ -140,7 +147,7 @@ public class AnsiConsole {
             return new AnsiOutputStream(stream);
         }
 
-        // We must be on some Unix variant, including Cygwin or MSYS(2) on Windows...
+        // We must be on some Unix variant or ANSI-enabled ConEmu, Cygwin or MSYS(2) on Windows...
         try {
             // If the jansi.force property is set, then we force to output
             // the ansi escapes for piping it into ansi color aware commands (e.g. less -r)
@@ -202,9 +209,10 @@ public class AnsiConsole {
             return new AnsiPrintStream(ps);
         }
 
-        if (IS_WINDOWS && !IS_CYGWIN && !IS_MINGW_XTERM) {
+        if (IS_WINDOWS && !(IS_CON_EMU_ANSI || IS_CYGWIN || IS_MINGW_XTERM)) {
 
-            // On windows we know the console does not interpret ANSI codes..
+            // On Windows, when no ANSI-capable terminal is used, we know the console does not natively interpret ANSI
+            // codes but we can use jansi-native Kernel32 API for console
             try {
                 jansiOutputType = JansiOutputType.WINDOWS;
                 return new WindowsAnsiPrintStream(ps, fileno == STDOUT_FILENO);
@@ -218,7 +226,7 @@ public class AnsiConsole {
             return new AnsiPrintStream(ps);
         }
 
-        // We must be on some Unix variant, including Cygwin or MSYS(2) on Windows...
+        // We must be on some Unix variant or ANSI-enabled ConEmu, Cygwin or MSYS(2) on Windows...
         try {
             // If the jansi.force property is set, then we force to output
             // the ansi escapes for piping it into ansi color aware commands (e.g. less -r)
