@@ -136,7 +136,7 @@ public class AnsiConsole {
             // codes but we can use jansi-native Kernel32 API for console
             try {
                 jansiOutputType = JansiOutputType.WINDOWS;
-                return new WindowsAnsiOutputStream(stream, fileno == STDOUT_FILENO);
+                return new AnsiOutputStream(stream, new WindowsAnsiProcessor(stream, fileno == STDOUT_FILENO));
             } catch (Throwable ignore) {
                 // this happens when JNA is not in the path.. or
                 // this happens when the stdout is being redirected to a file.
@@ -215,7 +215,7 @@ public class AnsiConsole {
             // codes but we can use jansi-native Kernel32 API for console
             try {
                 jansiOutputType = JansiOutputType.WINDOWS;
-                return new WindowsAnsiPrintStream(ps, fileno == STDOUT_FILENO);
+                return new AnsiPrintStream(ps, new WindowsAnsiProcessor(ps, fileno == STDOUT_FILENO));
             } catch (Throwable ignore) {
                 // this happens when JNA is not in the path.. or
                 // this happens when the stdout is being redirected to a file.

@@ -25,8 +25,6 @@ import java.util.List;
  */
 public class HtmlAnsiOutputStream extends AnsiOutputStream {
 
-    private boolean concealOn = false;
-
     @Override
     public void close() throws IOException {
         closeAttributes();
@@ -42,7 +40,8 @@ public class HtmlAnsiOutputStream extends AnsiOutputStream {
     private static final byte[] BYTES_GT = "&gt;".getBytes();
 
     public HtmlAnsiOutputStream(OutputStream os) {
-        super(os);
+        super(os, new Processor(os));
+        ((Processor) ap).haos = this;
     }
 
     private final List<String> closingAttributes = new ArrayList<String>();
@@ -87,50 +86,61 @@ public class HtmlAnsiOutputStream extends AnsiOutputStream {
         closeAttributes();
     }
 
-    @Override
-    protected void processSetAttribute(int attribute) throws IOException {
-        switch (attribute) {
-            case ATTRIBUTE_CONCEAL_ON:
-                write("\u001B[8m");
-                concealOn = true;
-                break;
-            case ATTRIBUTE_INTENSITY_BOLD:
-                writeAttribute("b");
-                break;
-            case ATTRIBUTE_INTENSITY_NORMAL:
-                closeAttributes();
-                break;
-            case ATTRIBUTE_UNDERLINE:
-                writeAttribute("u");
-                break;
-            case ATTRIBUTE_UNDERLINE_OFF:
-                closeAttributes();
-                break;
-            case ATTRIBUTE_NEGATIVE_ON:
-                break;
-            case ATTRIBUTE_NEGATIVE_OFF:
-                break;
-            default:
-                break;
+    private static class Processor extends AnsiProcessor {
+        private boolean concealOn = false;
+
+        HtmlAnsiOutputStream haos;
+
+        Processor(OutputStream os) {
+            super(os);
         }
-    }
 
-    @Override
-    protected void processAttributeRest() throws IOException {
-        if (concealOn) {
-            write("\u001B[0m");
-            concealOn = false;
+        @Override
+        protected void processSetAttribute(int attribute) throws IOException {
+            switch (attribute) {
+                case ATTRIBUTE_CONCEAL_ON:
+                    haos.write("\u001B[8m");
+                    concealOn = true;
+                    break;
+                case ATTRIBUTE_INTENSITY_BOLD:
+                    haos.writeAttribute("b");
+                    break;
+                case ATTRIBUTE_INTENSITY_NORMAL:
+                    haos.closeAttributes();
+                    break;
+                case ATTRIBUTE_UNDERLINE:
+                    haos.writeAttribute("u");
+                    break;
+                case ATTRIBUTE_UNDERLINE_OFF:
+                    haos.closeAttributes();
+                    break;
+                case ATTRIBUTE_NEGATIVE_ON:
+                    break;
+                case ATTRIBUTE_NEGATIVE_OFF:
+                    break;
+                default:
+                    break;
+            }
         }
-        closeAttributes();
-    }
 
-    @Override
-    protected void processSetForegroundColor(int color, boolean bright) throws IOException {
-        writeAttribute("span style=\"color: " + ANSI_COLOR_MAP[color] + ";\"");
-    }
+        @Override
+        protected void processAttributeRest() throws IOException {
+            if (concealOn) {
+                haos.write("\u001B[0m");
+                concealOn = false;
+            }
+            haos.closeAttributes();
+        }
 
-    @Override
-    protected void processSetBackgroundColor(int color, boolean bright) throws IOException {
-        writeAttribute("span style=\"background-color: " + ANSI_COLOR_MAP[color] + ";\"");
+        @Override
+        protected void processSetForegroundColor(int color, boolean bright) throws IOException {
+            haos.writeAttribute("span style=\"color: " + ANSI_COLOR_MAP[color] + ";\"");
+        }
+
+        @Override
+        protected void processSetBackgroundColor(int color, boolean bright) throws IOException {
+            haos.writeAttribute("span style=\"background-color: " + ANSI_COLOR_MAP[color] + ";\"");
+        }
+
     }
 }
