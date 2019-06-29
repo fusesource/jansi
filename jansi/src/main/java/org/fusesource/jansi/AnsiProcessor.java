@@ -18,6 +18,7 @@ package org.fusesource.jansi;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * ANSI processor providing <code>process*</code> corresponding to ANSI escape codes. 
@@ -34,6 +35,238 @@ public class AnsiProcessor {
 
     public AnsiProcessor(OutputStream os) {
         this.os = os;
+    }
+
+    /**
+     * Helper for processEscapeCommand() to iterate over integer options
+     * @param  optionsIterator  the underlying iterator
+     * @throws IOException      if no more non-null values left
+     */
+    private int getNextOptionInt(Iterator<Object> optionsIterator) throws IOException {
+        for (;;) {
+            if (!optionsIterator.hasNext())
+                throw new IllegalArgumentException();
+            Object arg = optionsIterator.next();
+            if (arg != null)
+                return (Integer) arg;
+        }
+    }
+
+    /**
+     *
+     * @param options
+     * @param command
+     * @return true if the escape command was processed.
+     */
+    protected boolean processEscapeCommand(ArrayList<Object> options, int command) throws IOException { // expected diff with AnsiOutputStream.java
+        try {
+            switch (command) {
+                case 'A':
+                    processCursorUp(optionInt(options, 0, 1));
+                    return true;
+                case 'B':
+                    processCursorDown(optionInt(options, 0, 1));
+                    return true;
+                case 'C':
+                    processCursorRight(optionInt(options, 0, 1));
+                    return true;
+                case 'D':
+                    processCursorLeft(optionInt(options, 0, 1));
+                    return true;
+                case 'E':
+                    processCursorDownLine(optionInt(options, 0, 1));
+                    return true;
+                case 'F':
+                    processCursorUpLine(optionInt(options, 0, 1));
+                    return true;
+                case 'G':
+                    processCursorToColumn(optionInt(options, 0));
+                    return true;
+                case 'H':
+                case 'f':
+                    processCursorTo(optionInt(options, 0, 1), optionInt(options, 1, 1));
+                    return true;
+                case 'J':
+                    processEraseScreen(optionInt(options, 0, 0));
+                    return true;
+                case 'K':
+                    processEraseLine(optionInt(options, 0, 0));
+                    return true;
+                case 'L':
+                    processInsertLine(optionInt(options, 0, 1));
+                    return true;
+                case 'M':
+                    processDeleteLine(optionInt(options, 0, 1));
+                    return true;
+                case 'S':
+                    processScrollUp(optionInt(options, 0, 1));
+                    return true;
+                case 'T':
+                    processScrollDown(optionInt(options, 0, 1));
+                    return true;
+                case 'm':
+                    // Validate all options are ints...
+                    for (Object next : options) {
+                        if (next != null && next.getClass() != Integer.class) {
+                            throw new IllegalArgumentException();
+                        }
+                    }
+
+                    int count = 0;
+                    Iterator<Object> optionsIterator = options.iterator();
+                    while (optionsIterator.hasNext()) {
+                        Object next = optionsIterator.next();
+                        if (next != null) {
+                            count++;
+                            int value = (Integer) next;
+                            if (30 <= value && value <= 37) {
+                                processSetForegroundColor(value - 30);
+                            } else if (40 <= value && value <= 47) {
+                                processSetBackgroundColor(value - 40);
+                            } else if (90 <= value && value <= 97) {
+                                processSetForegroundColor(value - 90, true);
+                            } else if (100 <= value && value <= 107) {
+                                processSetBackgroundColor(value - 100, true);
+                            } else if (value == 38 || value == 48) {
+                                // extended color like `esc[38;5;<index>m` or `esc[38;2;<r>;<g>;<b>m`
+                                int arg2or5 = getNextOptionInt(optionsIterator);
+                                if (arg2or5 == 2) {
+                                    // 24 bit color style like `esc[38;2;<r>;<g>;<b>m`
+                                    int r = getNextOptionInt(optionsIterator);
+                                    int g = getNextOptionInt(optionsIterator);
+                                    int b = getNextOptionInt(optionsIterator);
+                                    if (r >= 0 && r <= 255 && g >= 0 && g <= 255 && b >= 0 && b <= 255) {
+                                        if (value == 38)
+                                            processSetForegroundColorExt(r, g, b);
+                                        else
+                                            processSetBackgroundColorExt(r, g, b);
+                                    } else {
+                                        throw new IllegalArgumentException();
+                                    }
+                                }
+                                else if (arg2or5 == 5) {
+                                    // 256 color style like `esc[38;5;<index>m`
+                                    int paletteIndex = getNextOptionInt(optionsIterator);
+                                    if (paletteIndex >= 0 && paletteIndex <= 255) {
+                                        if (value == 38)
+                                            processSetForegroundColorExt(paletteIndex);
+                                        else
+                                            processSetBackgroundColorExt(paletteIndex);
+                                    } else {
+                                        throw new IllegalArgumentException();
+                                    }
+                                }
+                                else {
+                                    throw new IllegalArgumentException();
+                                }
+                            } else {
+                                switch (value) {
+                                    case 39:
+                                        processDefaultTextColor();
+                                        break;
+                                    case 49:
+                                        processDefaultBackgroundColor();
+                                        break;
+                                    case 0:
+                                        processAttributeRest();
+                                        break;
+                                    default:
+                                        processSetAttribute(value);
+                                }
+                            }
+                        }
+                    }
+                    if (count == 0) {
+                        processAttributeRest();
+                    }
+                    return true;
+                case 's':
+                    processSaveCursorPosition();
+                    return true;
+                case 'u':
+                    processRestoreCursorPosition();
+                    return true;
+
+                default:
+                    if ('a' <= command && 'z' <= command) {
+                        processUnknownExtension(options, command);
+                        return true;
+                    }
+                    if ('A' <= command && 'Z' <= command) {
+                        processUnknownExtension(options, command);
+                        return true;
+                    }
+                    return false;
+            }
+        } catch (IllegalArgumentException ignore) {
+        }
+        return false;
+    }
+
+    /**
+     *
+     * @param options
+     * @return true if the operating system command was processed.
+     */
+    protected boolean processOperatingSystemCommand(ArrayList<Object> options) { // expected diff with AnsiOutputStream.java
+        int command = optionInt(options, 0);
+        String label = (String) options.get(1);
+        // for command > 2 label could be composed (i.e. contain ';'), but we'll leave
+        // it to processUnknownOperatingSystemCommand implementations to handle that
+        try {
+            switch (command) {
+                case 0:
+                    processChangeIconNameAndWindowTitle(label);
+                    return true;
+                case 1:
+                    processChangeIconName(label);
+                    return true;
+                case 2:
+                    processChangeWindowTitle(label);
+                    return true;
+
+                default:
+                    // not exactly unknown, but not supported through dedicated process methods:
+                    processUnknownOperatingSystemCommand(command, label);
+                    return true;
+            }
+        } catch (IllegalArgumentException ignore) {
+        }
+        return false;
+    }
+
+    /**
+     * Process character set sequence.
+     * @param options options
+     * @return true if the charcter set select command was processed.
+     */
+    protected boolean processCharsetSelect(ArrayList<Object> options) {
+        int set = optionInt(options, 0);
+        char seq = ((Character) options.get(1)).charValue();
+        processCharsetSelect(set, seq);
+        return true;
+    }
+
+    private int optionInt(ArrayList<Object> options, int index) {
+        if (options.size() <= index)
+            throw new IllegalArgumentException();
+        Object value = options.get(index);
+        if (value == null)
+            throw new IllegalArgumentException();
+        if (!value.getClass().equals(Integer.class))
+            throw new IllegalArgumentException();
+        return (Integer) value;
+    }
+
+    private int optionInt(ArrayList<Object> options, int index, int defaultValue) {
+        if (options.size() > index) {
+            Object value = options.get(index);
+            if (value == null) {
+                return defaultValue;
+            }
+            return (Integer) value;
+        }
+        return defaultValue;
     }
 
     /**
