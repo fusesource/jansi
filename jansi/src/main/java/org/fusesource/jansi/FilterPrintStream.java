@@ -100,7 +100,7 @@ public class FilterPrintStream extends PrintStream
     private void write(char buf[], int len) {
         for (char c : buf)
         {
-            if (len-- > 0) {
+            if (len-- <= 0) {
                 return;
             }
             if (filter(c)) {
