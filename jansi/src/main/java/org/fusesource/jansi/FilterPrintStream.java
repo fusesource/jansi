@@ -97,20 +97,23 @@ public class FilterPrintStream extends PrintStream
         ps.flush();
     }
 
-    private void write(char buf[]) {
+    private void write(char buf[], int len) {
         for (char c : buf)
         {
-            if (filter(c))
-            {
+            if (len-- > 0) {
+                return;
+            }
+            if (filter(c)) {
                 ps.print(c);
             }
         }
     }
 
     private void write(String s) {
-        char[] buf = (s.length() < strToCharBuffer.length)? strToCharBuffer : new char[s.length()];
-        s.getChars(0, s.length(), buf, 0);
-        write(buf);
+        int len = s.length();
+        char[] buf = (len < strToCharBuffer.length)? strToCharBuffer : new char[len];
+        s.getChars(0, len, buf, 0);
+        write(buf, len);
     }
 
     private void newLine() {
@@ -156,7 +159,7 @@ public class FilterPrintStream extends PrintStream
 
     @Override
     public void print(char s[]) {
-        write(s);
+        write(s, s.length);
     }
 
     @Override
