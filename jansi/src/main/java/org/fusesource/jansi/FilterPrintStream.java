@@ -22,6 +22,7 @@ import java.io.PrintStream;
 /**
  * A PrintStream filtering to another PrintStream, without making any assumption about encoding.
  * 
+ * This class is threadsafe (all public methods are synchronized)
  * @author Hervé Boutemy
  * @since 1.17
  * @see #filter(int)
@@ -59,9 +60,7 @@ public class FilterPrintStream extends PrintStream
         return true;
     }
 
-    @Override
-    public void write(int data)
-    {
+    protected void doWrite(int data) {
         if (filter(data))
         {
             ps.write(data);
@@ -69,32 +68,47 @@ public class FilterPrintStream extends PrintStream
     }
 
     @Override
+    public void write(int data)
+    {
+        synchronized (this) {
+            doWrite(data);
+        }
+    }
+
+    @Override
     public void write(byte[] buf, int off, int len)
     {
-        for (int i = 0; i < len; i++)
-        {
-            write(buf[off + i]);
+        synchronized (this) {
+            for (int i = off, max=off + len; i < max; i++) {
+                doWrite(buf[i]);
+            }
         }
     }
 
     @Override
     public boolean checkError()
     {
-        return super.checkError() || ps.checkError();
+        synchronized (this) {
+            return super.checkError() || ps.checkError();
+        }
     }
 
     @Override
     public void close()
     {
-        super.close();
-        ps.close();
+        synchronized (this) {
+            super.close();
+            ps.close();
+        }
     }
 
     @Override
     public void flush()
     {
-        super.flush();
-        ps.flush();
+        synchronized (this) {
+            super.flush();
+            ps.flush();
+        }
     }
 
     private void write(char buf[], int len) {
@@ -124,42 +138,57 @@ public class FilterPrintStream extends PrintStream
 
     @Override
     public void print(boolean b) {
-        write(b ? "true" : "false");
+        synchronized (this) {
+            write(b ? "true" : "false");
+        }
     }
 
     @Override
     public void print(char c) {
-        // optim for: write(String.valueOf(c));
-        if (filter(c))
-        {
-            ps.print(c);
+        synchronized (this) {
+            // was char->String->char !
+            // write(String.valueOf(c));
+            doWrite(c);
         }
-
     }
 
     @Override
     public void print(int i) {
-        write(String.valueOf(i));
+        String text = String.valueOf(i);
+        synchronized (this) {
+            write(text);
+        }
     }
 
     @Override
     public void print(long l) {
-        write(String.valueOf(l));
+        String text = String.valueOf(l);
+        synchronized (this) {
+            write(text);
+        }
     }
 
     @Override
     public void print(float f) {
-        write(String.valueOf(f));
+        String text = String.valueOf(f);
+        synchronized (this) {
+            write(text);
+        }
     }
 
     @Override
     public void print(double d) {
-        write(String.valueOf(d));
+        String text = String.valueOf(d);
+        synchronized (this) {
+            write(text);
+        }
     }
 
     @Override
     public void print(char s[]) {
-        write(s, s.length);
+        synchronized (this) {
+            write(s);
+        }
     }
 
     @Override
@@ -167,12 +196,17 @@ public class FilterPrintStream extends PrintStream
         if (s == null) {
             s = "null";
         }
-        write(s);
+        synchronized (this) {
+            write(s);
+        }
     }
 
     @Override
     public void print(Object obj) {
-        write(String.valueOf(obj));
+        String text = String.valueOf(obj);
+        synchronized (this) {
+            write(text);
+        }
     }
 
 
@@ -180,7 +214,9 @@ public class FilterPrintStream extends PrintStream
 
     @Override
     public void println() {
-        newLine();
+        synchronized (this) {
+            newLine();
+        }
     }
 
     @Override
@@ -255,4 +291,14 @@ public class FilterPrintStream extends PrintStream
             newLine();
         }
     }
+
+    @Override
+    public PrintStream append(CharSequence csq, int start, int end) {
+        String text = (csq != null)? csq.subSequence(start, end).toString() : "null";
+        synchronized (this) {
+            write(text);
+        }
+        return this;
+    }
+
 }

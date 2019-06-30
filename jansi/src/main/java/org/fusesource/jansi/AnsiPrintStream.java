@@ -76,7 +76,7 @@ public class AnsiPrintStream extends FilterPrintStream { // expected diff with A
     private static final int SECOND_CHARSET1_CHAR = ')';
 
     @Override
-    protected synchronized boolean filter(int data) { // expected diff with AnsiOutputStream.java
+    protected boolean filter(int data) { // expected diff with AnsiOutputStream.java
         switch (state) {
             case LOOKING_FOR_FIRST_ESC_CHAR:
                 if (data == FIRST_ESC_CHAR) {
