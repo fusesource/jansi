@@ -19,7 +19,6 @@ import static org.fusesource.jansi.internal.Kernel32.BACKGROUND_BLUE;
 import static org.fusesource.jansi.internal.Kernel32.BACKGROUND_GREEN;
 import static org.fusesource.jansi.internal.Kernel32.BACKGROUND_INTENSITY;
 import static org.fusesource.jansi.internal.Kernel32.BACKGROUND_RED;
-import static org.fusesource.jansi.internal.Kernel32.CHAR_INFO;
 import static org.fusesource.jansi.internal.Kernel32.FOREGROUND_BLUE;
 import static org.fusesource.jansi.internal.Kernel32.FOREGROUND_GREEN;
 import static org.fusesource.jansi.internal.Kernel32.FOREGROUND_INTENSITY;
@@ -28,19 +27,23 @@ import static org.fusesource.jansi.internal.Kernel32.FillConsoleOutputAttribute;
 import static org.fusesource.jansi.internal.Kernel32.FillConsoleOutputCharacterW;
 import static org.fusesource.jansi.internal.Kernel32.GetConsoleScreenBufferInfo;
 import static org.fusesource.jansi.internal.Kernel32.GetStdHandle;
-import static org.fusesource.jansi.internal.Kernel32.SMALL_RECT;
-import static org.fusesource.jansi.internal.Kernel32.STD_OUTPUT_HANDLE;
 import static org.fusesource.jansi.internal.Kernel32.STD_ERROR_HANDLE;
+import static org.fusesource.jansi.internal.Kernel32.STD_OUTPUT_HANDLE;
 import static org.fusesource.jansi.internal.Kernel32.ScrollConsoleScreenBuffer;
 import static org.fusesource.jansi.internal.Kernel32.SetConsoleCursorPosition;
 import static org.fusesource.jansi.internal.Kernel32.SetConsoleTextAttribute;
 import static org.fusesource.jansi.internal.Kernel32.SetConsoleTitle;
 
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
+import java.io.Writer;
+import java.nio.charset.Charset;
 
+import org.fusesource.jansi.internal.Kernel32.CHAR_INFO;
 import org.fusesource.jansi.internal.Kernel32.CONSOLE_SCREEN_BUFFER_INFO;
 import org.fusesource.jansi.internal.Kernel32.COORD;
+import org.fusesource.jansi.internal.Kernel32.SMALL_RECT;
 
 /**
  * A Windows ANSI escape processor, that uses JNA to access native platform
@@ -100,15 +103,20 @@ public final class WindowsAnsiProcessor extends AnsiProcessor {
     private short savedX = -1;
     private short savedY = -1;
 
-    public WindowsAnsiProcessor(OutputStream ps, boolean stdout) throws IOException {
-        super(ps);
+    public WindowsAnsiProcessor(Writer out, boolean stdout) throws IOException {
+        super(out);
         this.console = stdout ? stdout_handle : stderr_handle;
         getConsoleInfo();
         originalColors = info.attributes;
     }
 
-    public WindowsAnsiProcessor(OutputStream ps) throws IOException {
-        this(ps, true);
+    @Deprecated
+    public WindowsAnsiProcessor(PrintStream out, boolean stdout) throws IOException {
+	this(new OutputStreamWriter(out, Charset.defaultCharset()), stdout);
+    }
+
+    public WindowsAnsiProcessor(Writer out) throws IOException {
+        this(out, true);
     }
 
     private void getConsoleInfo() throws IOException {

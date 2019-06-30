@@ -16,16 +16,15 @@
 package org.fusesource.jansi;
 
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author <a href="http://code.dblock.org">Daniel Doubrovkine</a>
  */
-public class HtmlAnsiOutputStream extends AnsiOutputStream {
+public class HtmlAnsiFilterWriter extends AnsiFilterWriter {
 
-    @Override
     public void close() throws IOException {
         closeAttributes();
         super.close();
@@ -34,64 +33,92 @@ public class HtmlAnsiOutputStream extends AnsiOutputStream {
     private static final String[] ANSI_COLOR_MAP = {"black", "red",
             "green", "yellow", "blue", "magenta", "cyan", "white",};
 
-    private static final byte[] BYTES_QUOT = "&quot;".getBytes();
-    private static final byte[] BYTES_AMP = "&amp;".getBytes();
-    private static final byte[] BYTES_LT = "&lt;".getBytes();
-    private static final byte[] BYTES_GT = "&gt;".getBytes();
+    private static final char[] BYTES_QUOT = "&quot;".toCharArray();
+    private static final char[] BYTES_AMP = "&amp;".toCharArray();
+    private static final char[] BYTES_LT = "&lt;".toCharArray();
+    private static final char[] BYTES_GT = "&gt;".toCharArray();
 
-    public HtmlAnsiOutputStream(OutputStream os) {
-        super(os, new Processor(os));
+    public HtmlAnsiFilterWriter(Writer out) {
+        super(out, new Processor(out));
         ((Processor) ap).haos = this;
     }
 
     private final List<String> closingAttributes = new ArrayList<String>();
 
-    private void write(String s) throws IOException {
-        super.out.write(s.getBytes());
+    public void writeLine(char[] buf, int offset, int len) throws IOException {
+        write(buf, offset, len);
+        closeAttributes();
     }
 
+    // override java.io.Writer methods to filter and html-escape chars one by one
+    // ------------------------------------------------------------------------
+
+    @Override
+    public void write(int data) throws IOException {
+        if (filterChar((char) data)) {
+            writeEscapeChar((char) data);
+        }
+    }
+
+    @Override
+    public void write(char[] cbuf, int off, int len) throws IOException {
+        final int max = off + len;
+        for (int i = off; i < max; i++) {
+            char ch = cbuf[i];
+            if (filterChar(ch)) {
+                writeEscapeChar(ch);
+            }
+        }
+    }
+
+    // Internal
+    // ------------------------------------------------------------------------
+
     private void writeAttribute(String s) throws IOException {
-        write("<" + s + ">");
+        doWriteHtml("<" + s + ">");
         closingAttributes.add(0, s.split(" ", 2)[0]);
     }
 
     private void closeAttributes() throws IOException {
         for (String attr : closingAttributes) {
-            write("</" + attr + ">");
+            doWriteHtml("</" + attr + ">");
         }
         closingAttributes.clear();
     }
 
-    public void write(int data) throws IOException {
-        switch (data) {
-            case 34: // "
-                out.write(BYTES_QUOT);
-                break;
-            case 38: // &
-                out.write(BYTES_AMP);
-                break;
-            case 60: // <
-                out.write(BYTES_LT);
-                break;
-            case 62: // >
-                out.write(BYTES_GT);
-                break;
-            default:
-                super.write(data);
-        }
+    protected void doWriteHtml(String htmlText) throws IOException {
+        super.out.write(htmlText);
     }
 
-    public void writeLine(byte[] buf, int offset, int len) throws IOException {
-        write(buf, offset, len);
-        closeAttributes();
+    protected void doWriteHtml(char[] htmlText) throws IOException {
+        super.out.write(htmlText);
+    }
+
+    private void writeEscapeChar(int data) throws IOException {
+        switch (data) {
+            case 34: // "
+                doWriteHtml(BYTES_QUOT);
+                break;
+            case 38: // &
+                doWriteHtml(BYTES_AMP);
+                break;
+            case 60: // <
+                doWriteHtml(BYTES_LT);
+                break;
+            case 62: // >
+                doWriteHtml(BYTES_GT);
+                break;
+            default:
+                super.out.write(data);
+        }
     }
 
     private static class Processor extends AnsiProcessor {
         private boolean concealOn = false;
 
-        HtmlAnsiOutputStream haos;
+        HtmlAnsiFilterWriter haos;
 
-        Processor(OutputStream os) {
+        Processor(Writer os) {
             super(os);
         }
 

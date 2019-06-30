@@ -17,7 +17,7 @@ package org.fusesource.jansi;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.ByteArrayOutputStream;
+import java.io.CharArrayWriter;
 import java.io.IOException;
 
 import org.junit.Test;
@@ -25,7 +25,7 @@ import org.junit.Test;
 /**
  * @author <a href="http://code.dblock.org">Daniel Doubrovkine</a>
  */
-public class HtmlAnsiOutputStreamTest {
+public class HtmlAnsiFilterWriterTest {
 
     @Test
     public void testNoMarkup() throws IOException {
@@ -83,10 +83,10 @@ public class HtmlAnsiOutputStreamTest {
     }
 
     private String colorize(String text) throws IOException {
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        HtmlAnsiOutputStream hos = new HtmlAnsiOutputStream(os);
-        hos.write(text.getBytes("UTF-8"));
+        CharArrayWriter buff = new CharArrayWriter();
+        HtmlAnsiFilterWriter hos = new HtmlAnsiFilterWriter(buff);
+        hos.write(text);
         hos.close();
-        return new String(os.toByteArray(), "UTF-8");
+        return buff.toString();
     }
 }

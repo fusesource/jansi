@@ -19,10 +19,11 @@ import static org.fusesource.jansi.internal.CLibrary.STDERR_FILENO;
 import static org.fusesource.jansi.internal.CLibrary.STDOUT_FILENO;
 import static org.fusesource.jansi.internal.CLibrary.isatty;
 
-import java.io.FilterOutputStream;
+import java.io.FilterWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.Writer;
 import java.util.Locale;
 
 /**
@@ -79,29 +80,11 @@ public class AnsiConsole {
     private AnsiConsole() {
     }
 
-    @Deprecated
-    public static OutputStream wrapOutputStream(final OutputStream stream) {
-        try {
-            return wrapOutputStream(stream, STDOUT_FILENO);
-        } catch (Throwable ignore) {
-            return wrapOutputStream(stream, 1);
-        }
-    }
-
     public static PrintStream wrapSystemOut(final PrintStream ps) {
         try {
             return wrapPrintStream(ps, STDOUT_FILENO);
         } catch (Throwable ignore) {
             return wrapPrintStream(ps, 1);
-        }
-    }
-
-    @Deprecated
-    public static OutputStream wrapErrorOutputStream(final OutputStream stream) {
-        try {
-            return wrapOutputStream(stream, STDERR_FILENO);
-        } catch (Throwable ignore) {
-            return wrapOutputStream(stream, 2);
         }
     }
 
@@ -113,21 +96,20 @@ public class AnsiConsole {
         }
     }
 
-    @Deprecated
-    public static OutputStream wrapOutputStream(final OutputStream stream, int fileno) {
+    public static Writer wrapWriter(final Writer writer, int fileno) {
 
         // If the jansi.passthrough property is set, then don't interpret
         // any of the ansi sequences.
         if (Boolean.getBoolean("jansi.passthrough")) {
             jansiOutputType = JansiOutputType.PASSTHROUGH;
-            return stream;
+            return writer;
         }
 
         // If the jansi.strip property is set, then we just strip the
         // the ansi escapes.
         if (Boolean.getBoolean("jansi.strip")) {
             jansiOutputType = JansiOutputType.STRIP_ANSI;
-            return new AnsiOutputStream(stream);
+            return new AnsiFilterWriter(writer);
         }
 
         if (IS_WINDOWS && !(IS_CON_EMU_ANSI || IS_CYGWIN || IS_MINGW_XTERM)) {
@@ -136,7 +118,7 @@ public class AnsiConsole {
             // codes but we can use jansi-native Kernel32 API for console
             try {
                 jansiOutputType = JansiOutputType.WINDOWS;
-                return new AnsiOutputStream(stream, new WindowsAnsiProcessor(stream, fileno == STDOUT_FILENO));
+                return new AnsiFilterWriter(writer, new WindowsAnsiProcessor(writer, fileno == STDOUT_FILENO));
             } catch (Throwable ignore) {
                 // this happens when JNA is not in the path.. or
                 // this happens when the stdout is being redirected to a file.
@@ -144,7 +126,7 @@ public class AnsiConsole {
 
             // Use the ANSIOutputStream to strip out the ANSI escape sequences.
             jansiOutputType = JansiOutputType.STRIP_ANSI;
-            return new AnsiOutputStream(stream);
+            return new AnsiFilterWriter(writer);
         }
 
         // We must be on some Unix variant or ANSI-enabled ConEmu, Cygwin or MSYS(2) on Windows...
@@ -156,7 +138,7 @@ public class AnsiConsole {
             // to strip the ANSI sequences..
             if (!forceColored && isatty(fileno) == 0) {
                 jansiOutputType = JansiOutputType.STRIP_ANSI;
-                return new AnsiOutputStream(stream);
+                return new AnsiFilterWriter(writer);
             }
         } catch (Throwable ignore) {
             // These errors happen if the JNI lib is not available for your platform.
@@ -167,10 +149,10 @@ public class AnsiConsole {
         // Just wrap it up so that when we get closed, we reset the
         // attributes.
         jansiOutputType = JansiOutputType.RESET_ANSI_AT_CLOSE;
-        return new FilterOutputStream(stream) {
+        return new FilterWriter(writer) {
             @Override
             public void close() throws IOException {
-                write(AnsiOutputStream.RESET_CODE);
+                write(AnsiFilterWriter.RESET_CODE);
                 flush();
                 super.close();
             }

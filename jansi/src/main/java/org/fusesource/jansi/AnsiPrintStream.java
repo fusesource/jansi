@@ -30,8 +30,8 @@ import java.util.ArrayList;
  * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  * @author Joris Kuipers
  * @since 1.7
+ * @see AnsiFilterWriter
  * @see AnsiProcessor
- * @see AnsiOutputStream
  */
 public class AnsiPrintStream extends FilterPrintStream { // expected diff with AnsiOutputStream.java
 

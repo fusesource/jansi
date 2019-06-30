@@ -16,7 +16,10 @@
 package org.fusesource.jansi;
 
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
+import java.io.Writer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -31,10 +34,15 @@ import java.util.Iterator;
  * @since 1.19
  */
 public class AnsiProcessor {
-    protected final OutputStream os;
+    protected final Writer os;
 
-    public AnsiProcessor(OutputStream os) {
+    public AnsiProcessor(Writer os) {
         this.os = os;
+    }
+
+    @Deprecated
+    public AnsiProcessor(PrintStream os) {
+        this.os = new OutputStreamWriter(os, Charset.defaultCharset());
     }
 
     /**
