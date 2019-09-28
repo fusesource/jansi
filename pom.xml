@@ -298,6 +298,7 @@
   <modules>
     <module>jansi</module>
     <module>example</module>
+    <module>benchmark-test</module>
     <!--
     <module>jansi-website</module>
     -->
