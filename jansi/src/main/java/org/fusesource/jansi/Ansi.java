@@ -415,7 +415,7 @@ public class Ansi {
     }
 
     public Ansi bgCyan() {
-        return this.fg(Color.CYAN);
+        return this.bg(Color.CYAN);
     }
 
     public Ansi bgDefault() {
@@ -481,7 +481,7 @@ public class Ansi {
     }
 
     public Ansi bgBrightCyan() {
-        return this.fgBright(Color.CYAN);
+        return this.bgBright(Color.CYAN);
     }
 
     public Ansi bgBrightDefault() {
@@ -493,7 +493,7 @@ public class Ansi {
     }
 
     public Ansi bgBrightMagenta() {
-        return this.bg(Color.MAGENTA);
+        return this.bgBright(Color.MAGENTA);
     }
 
     public Ansi bgBrightRed() {
