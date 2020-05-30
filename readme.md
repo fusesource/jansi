@@ -4,7 +4,7 @@
 ## Description
 
 [Jansi][Jansi] is a small java library that allows you to use [ANSI escape
-codes][ansi] to format your console output which works even on windows.
+codes][ansi] to format your console output which works even on Windows.
 
 [![Maven Central](https://img.shields.io/maven-central/v/org.fusesource.jansi/example.svg?label=Maven%20Central)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.fusesource.jansi%22%20a%3A%22jansi%22)
 
@@ -14,7 +14,7 @@ codes][ansi] to format your console output which works even on windows.
 ## Features
 
 * Implements ANSI escape colorization/handling that is missing on the Windows
-  platform.
+  platform, using integrated [Jansi-native](https://github.com/fusesource/jansi-native) library.
 * Strips ANSI escape codes if process output is is being redirected and not
   attached to a terminal.
 * Easy to use Ansi escape sequence builder API.
