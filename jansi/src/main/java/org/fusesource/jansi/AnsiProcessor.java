@@ -242,7 +242,7 @@ public class AnsiProcessor {
      */
     protected boolean processCharsetSelect(ArrayList<Object> options) {
         int set = optionInt(options, 0);
-        char seq = ((Character) options.get(1)).charValue();
+        char seq = (Character) options.get(1);
         processCharsetSelect(set, seq);
         return true;
     }

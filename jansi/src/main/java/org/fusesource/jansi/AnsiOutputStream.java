@@ -101,10 +101,10 @@ public class AnsiOutputStream extends FilterOutputStream { // expected diff with
                 } else if (data == SECOND_OSC_CHAR) {
                     state = LOOKING_FOR_OSC_COMMAND;
                 } else if (data == SECOND_CHARSET0_CHAR) {
-                    options.add(Integer.valueOf(0));
+                    options.add(0);
                     state = LOOKING_FOR_CHARSET;
                 } else if (data == SECOND_CHARSET1_CHAR) {
-                    options.add(Integer.valueOf(1));
+                    options.add(1);
                     state = LOOKING_FOR_CHARSET;
                 } else {
                     reset(false);
@@ -210,7 +210,7 @@ public class AnsiOutputStream extends FilterOutputStream { // expected diff with
                 break;
 
             case LOOKING_FOR_CHARSET:
-                options.add(Character.valueOf((char) data));
+                options.add((char) data);
                 reset(ap.processCharsetSelect(options));
                 break;
         }

@@ -202,7 +202,7 @@ public class AnsiPrintStream extends FilterPrintStream { // expected diff with A
                 break;
 
             case LOOKING_FOR_CHARSET:
-                options.add(Character.valueOf((char) data));
+                options.add((char) data);
                 reset(ap.processCharsetSelect(options));
                 break;
         }
