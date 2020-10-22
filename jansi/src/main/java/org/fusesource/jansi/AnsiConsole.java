@@ -15,15 +15,19 @@
  */
 package org.fusesource.jansi;
 
-import static org.fusesource.jansi.internal.CLibrary.STDERR_FILENO;
-import static org.fusesource.jansi.internal.CLibrary.STDOUT_FILENO;
-import static org.fusesource.jansi.internal.CLibrary.isatty;
-
+import java.io.BufferedOutputStream;
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
+import java.lang.reflect.Field;
+import java.nio.charset.Charset;
 import java.util.Locale;
+
+import static org.fusesource.jansi.internal.CLibrary.STDERR_FILENO;
+import static org.fusesource.jansi.internal.CLibrary.STDOUT_FILENO;
+import static org.fusesource.jansi.internal.CLibrary.isatty;
 
 /**
  * Provides consistent access to an ANSI aware console PrintStream or an ANSI codes stripping PrintStream
@@ -194,7 +198,16 @@ public class AnsiConsole {
      * @since 1.17
      */
     public static PrintStream wrapPrintStream(final PrintStream ps, int fileno) {
+        PrintStream result = doWrapPrintStream(ps, fileno);
+        if (result != ps) {
+            if (!Boolean.getBoolean("jansi.no-optimize")) {
+                result = optimize(ps, result);
+            }
+        }
+        return result;
+    }
 
+    private static PrintStream doWrapPrintStream(final PrintStream ps, int fileno) {
         // If the jansi.passthrough property is set, then don't interpret
         // any of the ansi sequences.
         if (Boolean.getBoolean("jansi.passthrough")) {
@@ -254,6 +267,49 @@ public class AnsiConsole {
                 super.close();
             }
         };
+    }
+
+    /**
+     * Optimize the wrapped print stream for improved performances.
+     *
+     * Instead of trying to filter on the PrintStream level, which is slow
+     * because of the need for synchronization, we extract the underlying
+     * OutputStream, wrap it for ansi sequences processing, and recreate
+     * a buffering PrintStream above. The benefit is that the ansi sequences
+     * will be processed in batches without having to deal with encoding issues.
+     */
+    private static PrintStream optimize(PrintStream original, PrintStream wrapped) {
+        try {
+            OutputStream out = original;
+            while (out instanceof FilterOutputStream) {
+                out = field(FilterOutputStream.class, out, "out");
+            }
+            if (wrapped instanceof AnsiPrintStream) {
+                AnsiProcessor ap = field(AnsiPrintStream.class, wrapped, "ap");
+                out = new AnsiNoSyncOutputStream(new BufferedNoSyncOutputStream(out), ap);
+            }
+            // grab charset
+            OutputStreamWriter charOut = field(PrintStream.class, original, "charOut");
+            Object se = field(OutputStreamWriter.class, charOut, "se");
+            Charset cs = field(se.getClass(), se, "cs");
+            // create print stream
+            wrapped = new PrintStream(new BufferedOutputStream(out), true, cs.name()) {
+                @Override
+                public void close() {
+                    write(AnsiNoSyncOutputStream.RESET_CODE, 0, AnsiNoSyncOutputStream.RESET_CODE.length);
+                    super.close();
+                }
+            };
+        } catch (Exception e) {
+            // ignore
+        }
+        return wrapped;
+    }
+
+    private static <T, O> T field(Class<O> oClass, Object obj, String name) throws Exception {
+        Field f = oClass.getDeclaredField(name);
+        f.setAccessible(true);
+        return (T) f.get(obj);
     }
 
     /**
