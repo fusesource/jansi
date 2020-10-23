@@ -158,7 +158,7 @@ public final class WindowsAnsiProcessor extends AnsiProcessor {
                 topLeft.x = 0;
                 topLeft.y = info.window.top;
                 int screenLength = info.window.height() * info.size.x;
-                FillConsoleOutputAttribute(console, originalColors, screenLength, topLeft, written);
+                FillConsoleOutputAttribute(console, info.attributes, screenLength, topLeft, written);
                 FillConsoleOutputCharacterW(console, ' ', screenLength, topLeft, written);
                 break;
             case ERASE_SCREEN_TO_BEGINING:
@@ -167,13 +167,13 @@ public final class WindowsAnsiProcessor extends AnsiProcessor {
                 topLeft2.y = info.window.top;
                 int lengthToCursor = (info.cursorPosition.y - info.window.top) * info.size.x
                         + info.cursorPosition.x;
-                FillConsoleOutputAttribute(console, originalColors, lengthToCursor, topLeft2, written);
+                FillConsoleOutputAttribute(console, info.attributes, lengthToCursor, topLeft2, written);
                 FillConsoleOutputCharacterW(console, ' ', lengthToCursor, topLeft2, written);
                 break;
             case ERASE_SCREEN_TO_END:
                 int lengthToEnd = (info.window.bottom - info.cursorPosition.y) * info.size.x +
                         (info.size.x - info.cursorPosition.x);
-                FillConsoleOutputAttribute(console, originalColors, lengthToEnd, info.cursorPosition.copy(), written);
+                FillConsoleOutputAttribute(console, info.attributes, lengthToEnd, info.cursorPosition.copy(), written);
                 FillConsoleOutputCharacterW(console, ' ', lengthToEnd, info.cursorPosition.copy(), written);
                 break;
             default:
@@ -189,18 +189,18 @@ public final class WindowsAnsiProcessor extends AnsiProcessor {
             case ERASE_LINE:
                 COORD leftColCurrRow = info.cursorPosition.copy();
                 leftColCurrRow.x = 0;
-                FillConsoleOutputAttribute(console, originalColors, info.size.x, leftColCurrRow, written);
+                FillConsoleOutputAttribute(console, info.attributes, info.size.x, leftColCurrRow, written);
                 FillConsoleOutputCharacterW(console, ' ', info.size.x, leftColCurrRow, written);
                 break;
             case ERASE_LINE_TO_BEGINING:
                 COORD leftColCurrRow2 = info.cursorPosition.copy();
                 leftColCurrRow2.x = 0;
-                FillConsoleOutputAttribute(console, originalColors, info.cursorPosition.x, leftColCurrRow2, written);
+                FillConsoleOutputAttribute(console, info.attributes, info.cursorPosition.x, leftColCurrRow2, written);
                 FillConsoleOutputCharacterW(console, ' ', info.cursorPosition.x, leftColCurrRow2, written);
                 break;
             case ERASE_LINE_TO_END:
                 int lengthToLastCol = info.size.x - info.cursorPosition.x;
-                FillConsoleOutputAttribute(console, originalColors, lengthToLastCol, info.cursorPosition.copy(), written);
+                FillConsoleOutputAttribute(console, info.attributes, lengthToLastCol, info.cursorPosition.copy(), written);
                 FillConsoleOutputCharacterW(console, ' ', lengthToLastCol, info.cursorPosition.copy(), written);
                 break;
             default:
