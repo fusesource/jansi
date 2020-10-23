@@ -135,7 +135,7 @@ public class AnsiConsole {
             int[] mode = new int[1];
             if (GetConsoleMode(console, mode) != 0
                     && SetConsoleMode(console, mode[0] | ENABLE_VIRTUAL_TERMINAL_PROCESSING) != 0) {
-                jansiOutputType = JansiOutputType.PASSTHROUGH;
+                jansiOutputType = JansiOutputType.VIRTUAL_TERMINAL;
                 return newPrintStream(out, enc);
             }
         }
@@ -517,7 +517,8 @@ public class AnsiConsole {
         RESET_ANSI_AT_CLOSE("like pass through but reset ANSI attributes when closing the stream"),
         STRIP_ANSI("strip ANSI escape codes, for example when output is not a terminal"),
         WINDOWS("detect ANSI escape codes and transform Jansi-supported ones into a Windows API to get desired effect" +
-                " (since ANSI escape codes are not natively supported by Windows terminals like cmd.exe or PowerShell)");
+                " (since ANSI escape codes are not natively supported by Windows terminals like cmd.exe or PowerShell)"),
+        VIRTUAL_TERMINAL("recent Windows support ANSI processing using a windows API call to configure the console in the correct mode");
 
         private final String description;
 
