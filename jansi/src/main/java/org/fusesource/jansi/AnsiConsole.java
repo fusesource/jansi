@@ -140,7 +140,7 @@ public class AnsiConsole {
             }
         }
 
-        if (IS_WINDOWS && !(IS_CON_EMU_ANSI || IS_CYGWIN || IS_MINGW_XTERM)) {
+        if (IS_WINDOWS && !(IS_CONEMU || IS_CYGWIN || IS_MSYSTEM)) {
 
             // On Windows, when no ANSI-capable terminal is used, we know the console does not natively interpret ANSI
             // codes but we can use jansi-native Kernel32 API for console
