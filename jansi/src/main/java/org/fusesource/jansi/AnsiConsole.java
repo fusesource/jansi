@@ -127,7 +127,7 @@ public class AnsiConsole {
         // the ansi escapes.
         if (getBoolean(JANSI_STRIP)) {
             jansiOutputType = JansiOutputType.STRIP_ANSI;
-            return new PrintStream(new AnsiNoSyncOutputStream(out, new AnsiProcessor(out)), true);
+            return new PrintStream(new AnsiNoSyncOutputStream(out, new AnsiProcessor(out), enc), true);
         }
 
         if (IS_WINDOWS) {
@@ -146,7 +146,7 @@ public class AnsiConsole {
             // codes but we can use jansi-native Kernel32 API for console
             try {
                 jansiOutputType = JansiOutputType.WINDOWS;
-                return newPrintStream(new AnsiNoSyncOutputStream(out, new WindowsAnsiProcessor(out, stdout)), enc);
+                return newPrintStream(new AnsiNoSyncOutputStream(out, new WindowsAnsiProcessor(out, stdout), enc), enc);
             } catch (Throwable ignore) {
                 // this happens when JNA is not in the path.. or
                 // this happens when the stdout is being redirected to a file.
@@ -154,7 +154,7 @@ public class AnsiConsole {
 
             // Use the ANSIOutputStream to strip out the ANSI escape sequences.
             jansiOutputType = JansiOutputType.STRIP_ANSI;
-            return newPrintStream(new AnsiNoSyncOutputStream(out, new AnsiProcessor(out)), enc);
+            return newPrintStream(new AnsiNoSyncOutputStream(out, new AnsiProcessor(out), enc), enc);
         }
 
         // We must be on some Unix variant or ANSI-enabled ConEmu, Cygwin or MSYS(2) on Windows...
@@ -166,7 +166,7 @@ public class AnsiConsole {
             // to strip the ANSI sequences..
             if (!forceColored && isatty(stdout ? 1 : 2) == 0) {
                 jansiOutputType = JansiOutputType.STRIP_ANSI;
-                return newPrintStream(new AnsiNoSyncOutputStream(out, new AnsiProcessor(out)), enc);
+                return newPrintStream(new AnsiNoSyncOutputStream(out, new AnsiProcessor(out), enc), enc);
             }
         } catch (Throwable ignore) {
             // These errors happen if the JNI lib is not available for your platform.

@@ -18,6 +18,7 @@ package org.fusesource.jansi;
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 /**
@@ -62,10 +63,22 @@ public class AnsiNoSyncOutputStream extends FilterOutputStream {
     private int startOfValue;
     private final ArrayList<Object> options = new ArrayList<Object>();
     private int state = LOOKING_FOR_FIRST_ESC_CHAR;
+    private final Charset cs;
 
     public AnsiNoSyncOutputStream(OutputStream os, AnsiProcessor ap) {
+        this(os, ap, Charset.defaultCharset());
+    }
+
+    public AnsiNoSyncOutputStream(OutputStream os, AnsiProcessor ap, Charset cs) {
         super(os);
         this.ap = ap;
+        this.cs = cs;
+    }
+
+    public AnsiNoSyncOutputStream(OutputStream os, AnsiProcessor ap, String encoding) {
+        super(os);
+        this.ap = ap;
+        this.cs = encoding != null ? Charset.forName(encoding) : Charset.defaultCharset();
     }
 
     /**
@@ -138,7 +151,7 @@ public class AnsiNoSyncOutputStream extends FilterOutputStream {
             case LOOKING_FOR_STR_ARG_END:
                 buffer[pos++] = (byte) data;
                 if ('"' != data) {
-                    String value = new String(buffer, startOfValue, (pos - 1) - startOfValue);
+                    String value = new String(buffer, startOfValue, (pos - 1) - startOfValue, cs);
                     options.add(value);
                     if (data == ';') {
                         state = LOOKING_FOR_NEXT_ARG;
@@ -177,7 +190,7 @@ public class AnsiNoSyncOutputStream extends FilterOutputStream {
             case LOOKING_FOR_OSC_PARAM:
                 buffer[pos++] = (byte) data;
                 if (BEL == data) {
-                    String value = new String(buffer, startOfValue, (pos - 1) - startOfValue);
+                    String value = new String(buffer, startOfValue, (pos - 1) - startOfValue, cs);
                     options.add(value);
                     reset(ap.processOperatingSystemCommand(options));
                 } else if (FIRST_ESC_CHAR == data) {
@@ -190,7 +203,7 @@ public class AnsiNoSyncOutputStream extends FilterOutputStream {
             case LOOKING_FOR_ST:
                 buffer[pos++] = (byte) data;
                 if (SECOND_ST_CHAR == data) {
-                    String value = new String(buffer, startOfValue, (pos - 2) - startOfValue);
+                    String value = new String(buffer, startOfValue, (pos - 2) - startOfValue, cs);
                     options.add(value);
                     reset(ap.processOperatingSystemCommand(options));
                 } else {
