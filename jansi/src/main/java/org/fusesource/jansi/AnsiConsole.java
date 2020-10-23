@@ -87,13 +87,22 @@ public class AnsiConsole {
 
     static final int ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004;
 
+    public static final String JANSI_PASSTHROUGH = "jansi.passthrough";
+    public static final String JANSI_STRIP = "jansi.strip";
+    public static final String JANSI_FORCE = "jansi.force";
+    public static final String JANSI_NO_OPTIMIZE = "jansi.no-optimize";
+    public static final String JANSI_DO_WRAP = "jansi.do-wrap";
+
+
     private static JansiOutputType jansiOutputType;
     static final JansiOutputType JANSI_STDOUT_TYPE;
     static final JansiOutputType JANSI_STDERR_TYPE;
+
     static {
-        out = ansiSystem(true);
+        boolean doWrap = getBoolean(JANSI_DO_WRAP);
+        out = doWrap ? wrapSystemOut(system_out) : ansiSystem(true);
         JANSI_STDOUT_TYPE = jansiOutputType;
-        err = ansiSystem(false);
+        err = doWrap ? wrapSystemErr(system_err) : ansiSystem(false);
         JANSI_STDERR_TYPE = jansiOutputType;
     }
 
@@ -109,14 +118,14 @@ public class AnsiConsole {
 
         // If the jansi.passthrough property is set, then don't interpret
         // any of the ansi sequences.
-        if (Boolean.getBoolean("jansi.passthrough")) {
+        if (getBoolean(JANSI_PASSTHROUGH)) {
             jansiOutputType = JansiOutputType.PASSTHROUGH;
             return newPrintStream(out, enc);
         }
 
         // If the jansi.strip property is set, then we just strip the
         // the ansi escapes.
-        if (Boolean.getBoolean("jansi.strip")) {
+        if (getBoolean(JANSI_STRIP)) {
             jansiOutputType = JansiOutputType.STRIP_ANSI;
             return new PrintStream(new AnsiNoSyncOutputStream(out, new AnsiProcessor(out)), true);
         }
@@ -152,7 +161,7 @@ public class AnsiConsole {
         try {
             // If the jansi.force property is set, then we force to output
             // the ansi escapes for piping it into ansi color aware commands (e.g. less -r)
-            boolean forceColored = Boolean.getBoolean("jansi.force");
+            boolean forceColored = getBoolean(JANSI_FORCE);
             // If we can detect that stdout is not a tty.. then setup
             // to strip the ANSI sequences..
             if (!forceColored && isatty(stdout ? 1 : 2) == 0) {
@@ -208,6 +217,17 @@ public class AnsiConsole {
         }
     }
 
+    static boolean getBoolean(String name) {
+        boolean result = false;
+        try {
+            String val = System.getProperty(name);
+            result = val.isEmpty() || Boolean.parseBoolean(val);
+        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
+        }
+        return result;
+    }
+
     @Deprecated
     public static OutputStream wrapOutputStream(final OutputStream stream) {
         try {
@@ -247,14 +267,14 @@ public class AnsiConsole {
 
         // If the jansi.passthrough property is set, then don't interpret
         // any of the ansi sequences.
-        if (Boolean.getBoolean("jansi.passthrough")) {
+        if (getBoolean(JANSI_PASSTHROUGH)) {
             jansiOutputType = JansiOutputType.PASSTHROUGH;
             return stream;
         }
 
         // If the jansi.strip property is set, then we just strip the
         // the ansi escapes.
-        if (Boolean.getBoolean("jansi.strip")) {
+        if (getBoolean(JANSI_STRIP)) {
             jansiOutputType = JansiOutputType.STRIP_ANSI;
             return new AnsiOutputStream(stream);
         }
@@ -280,7 +300,7 @@ public class AnsiConsole {
         try {
             // If the jansi.force property is set, then we force to output
             // the ansi escapes for piping it into ansi color aware commands (e.g. less -r)
-            boolean forceColored = Boolean.getBoolean("jansi.force");
+            boolean forceColored = getBoolean(JANSI_FORCE);
             // If we can detect that stdout is not a tty.. then setup
             // to strip the ANSI sequences..
             if (!forceColored && isatty(fileno) == 0) {
@@ -325,7 +345,7 @@ public class AnsiConsole {
     public static PrintStream wrapPrintStream(final PrintStream ps, int fileno) {
         PrintStream result = doWrapPrintStream(ps, fileno);
         if (result != ps) {
-            if (!Boolean.getBoolean("jansi.no-optimize")) {
+            if (!getBoolean(JANSI_NO_OPTIMIZE)) {
                 result = optimize(ps, result);
             }
         }
@@ -335,14 +355,14 @@ public class AnsiConsole {
     private static PrintStream doWrapPrintStream(final PrintStream ps, int fileno) {
         // If the jansi.passthrough property is set, then don't interpret
         // any of the ansi sequences.
-        if (Boolean.getBoolean("jansi.passthrough")) {
+        if (getBoolean(JANSI_PASSTHROUGH)) {
             jansiOutputType = JansiOutputType.PASSTHROUGH;
             return ps;
         }
 
         // If the jansi.strip property is set, then we just strip the
         // the ansi escapes.
-        if (Boolean.getBoolean("jansi.strip")) {
+        if (getBoolean(JANSI_STRIP)) {
             jansiOutputType = JansiOutputType.STRIP_ANSI;
             return new AnsiPrintStream(ps);
         }
@@ -368,7 +388,7 @@ public class AnsiConsole {
         try {
             // If the jansi.force property is set, then we force to output
             // the ansi escapes for piping it into ansi color aware commands (e.g. less -r)
-            boolean forceColored = Boolean.getBoolean("jansi.force");
+            boolean forceColored = getBoolean(JANSI_FORCE);
             // If we can detect that stdout is not a tty.. then setup
             // to strip the ANSI sequences..
             if (!forceColored && isatty(fileno) == 0) {
