@@ -1,0 +1,68 @@
+---
+# Copyright (C) 2009-2017 the original author(s).
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#     http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+title: Building
+--- name:overview
+
+# ${project_name} Site 
+How the website works
+
+--- name:content pipeline:jade
+
+.left
+  h1 How it works
+.right
+  :markdown
+  
+    The *${project_name}* documentation and site is created using Scalate
+    and is stored in git in the same [source control system as the
+    code](source.html)
+
+    **Note:** For code highlighting you will need to
+    [install](http://pygments.org/download/)
+    [http://pygments.org/](http://pygments.org).
+    
+.left
+  h1 Editing the source code
+.right
+  :markdown
+  
+    If you [grab the source code](source.html) you will find the site
+    source in the *${project_id}-website* directory.  The website is
+    also built using Maven so, you would
+
+        cd ${project_id}-website
+        mvn package
+
+    If you want to edit the files in your text editor and be able to
+    immediately see the site re-rendered in a browser then use
+
+        mvn jetty:run
+
+    You can now surf the site and see changes immediately.
+
+    If you are on OS X then we highly recommend
+    [TextMate](http://macromates.com/) as a great editor which supports
+    Textile and Markdown
+
+.left
+  h1 Deploying the site
+.right
+  :markdown
+  
+    The site is deployed through GitHub gh-pages branch: you can deploy the site using Maven:
+    
+        mvn install
+    

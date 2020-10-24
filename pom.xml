@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (C) 2009-2018 the original author(s).
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.fusesource</groupId>
+        <artifactId>fusesource-pom</artifactId>
+        <version>1.11</version>
+    </parent>
+
+    <groupId>org.fusesource.jansi</groupId>
+    <artifactId>jansi-website</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <name>${project.artifactId}</name>
+    <description>The Jansi Website</description>
+    <packaging>war</packaging>
+
+    <properties>
+        <netbeans.hint.deploy.server>Tomcat60</netbeans.hint.deploy.server>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jansi-version>1.18</jansi-version>
+        <jansi-native-version>1.8</jansi-native-version>
+        <scalate-version>1.9.6</scalate-version>
+        <scalamd-version>1.7.3</scalamd-version>
+        <slf4j-version>1.6.1</slf4j-version>
+        <jetty-plugin-version>9.4.33.v20201020</jetty-plugin-version>
+        <scala-plugin-version>2.15.2</scala-plugin-version>
+        <scala-version>2.13.3</scala-version>
+    </properties>
+
+    <distributionManagement>
+        <site>
+            <id>jansi-gh-pages</id>
+            <url>scm:git:https://github.com/fusesource/jansi.git</url>
+        </site>
+    </distributionManagement>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>${scala-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-compiler</artifactId>
+            <version>${scala-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.scalatra.scalate</groupId>
+            <artifactId>scalate-wikitext_2.13</artifactId>
+            <version>${scalate-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.scalatra.scalate</groupId>
+            <artifactId>scalate-page_2.13</artifactId>
+            <version>${scalate-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.scalatra.scalate</groupId>
+            <artifactId>scalamd_2.13</artifactId>
+            <version>${scalamd-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${slf4j-version}</version>
+        </dependency>
+
+        <!-- testing -->
+        <dependency>
+            <groupId>org.scalatra.scalate</groupId>
+            <artifactId>scalate-test_2.13</artifactId>
+            <version>${scalate-version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.fusesource.jansi</groupId>
+            <artifactId>jansi</artifactId>
+            <version>${jansi-version}</version>
+            <classifier>javadoc</classifier>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <sourceDirectory>ext</sourceDirectory>
+
+        <plugins>
+            <plugin>
+                <inherited>true</inherited>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.scala-tools</groupId>
+                <artifactId>maven-scala-plugin</artifactId>
+                <version>${scala-plugin-version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <jvmArgs>
+                        <jvmArg>-Xmx1024m</jvmArg>
+                    </jvmArgs>
+                    <scalaVersion>${scala-version}</scalaVersion>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <forkMode>once</forkMode>
+                    <!-- these settings are mandatory to avoid SureFire giving a bogus system property to the web container -->
+                    <useSystemClassLoader>false</useSystemClassLoader>
+                    <useManifestOnlyJar>false</useManifestOnlyJar>
+                    <includes>
+                        <include>**/*Test.*</include>
+                    </includes>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>com.stephenn</groupId>
+                <artifactId>scalate-maven-plugin_2.13</artifactId>
+                <version>0.0.3</version>
+
+                <configuration>
+                    <webappDirectory>${basedir}/src</webappDirectory>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <id>sitegen</id>
+                        <goals>
+                            <goal>sitegen</goal>
+                        </goals>
+                        <phase>package</phase>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-scm-publish-plugin</artifactId>
+                <version>1.1</version>
+                <configuration>
+                    <scmBranch>gh-pages</scmBranch>
+                    <content>${project.build.directory}/sitegen</content>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>gh-pages</id>
+                        <goals>
+                            <goal>publish-scm</goal>
+                        </goals>
+                        <phase>install</phase>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>${jetty-plugin-version}</version>
+                <configuration>
+                    <webAppSourceDirectory>${basedir}/src</webAppSourceDirectory>
+                    <webApp>
+                        <contextPath>/</contextPath>
+                    </webApp>
+                    <systemProperties>
+                        <systemProperty>
+                            <name>scalate.editor</name>
+                            <value>${env.SCALATE_EDITOR}</value>
+                        </systemProperty>
+                        <systemProperty>
+                            <name>scalate.workdir</name>
+                            <value>${basedir}/target/_scalate</value>
+                        </systemProperty>
+                        <systemProperty>
+                            <name>scalate.mode</name>
+                            <value>development</value>
+                        </systemProperty>
+                    </systemProperties>
+                    <scanIntervalSeconds>0</scanIntervalSeconds>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.2</version>
+                <executions>
+                    <execution>
+                        <id>unpack</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.fusesource.jansi</groupId>
+                                    <artifactId>jansi</artifactId>
+                                    <version>${jansi-version}</version>
+                                    <classifier>javadoc</classifier>
+                                    <outputDirectory>${basedir}/target/sitegen/documentation/api</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.fusesource.jansi</groupId>
+                                    <artifactId>jansi-native</artifactId>
+                                    <version>${jansi-native-version}</version>
+                                    <classifier>javadoc</classifier>
+                                    <outputDirectory>${basedir}/target/sitegen/documentation/native-api
+                                    </outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-war</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.fusesource.mvnplugins</groupId>
+                <artifactId>maven-linkchecker-plugin</artifactId>
+                <version>${mvnplugins-version}</version>
+                <configuration>
+                    <excludedLinks>
+                        <value>http://github.com/</value>
+                        <value>http://git.or.cz/</value>
+                        <value>http://localhost:8080/</value>
+                        <value>http://repo.fusesource.com/</value>
+                        <value>http://search.twitter.com/</value>
+                        <value>http://www.chengin.com/</value>
+                    </excludedLinks>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
+
+
+</project>
+

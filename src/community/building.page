@@ -1,0 +1,86 @@
+---
+# Copyright (C) 2009-2017 the original author(s).
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#     http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+title: Building
+--- name:overview
+
+# How to Build ${project_name}
+The way most developers get started contributing to a project.
+
+--- name:content 
+
+## Building with Maven
+
+${project_name} uses [Maven](http://maven.apache.org/) as its primary
+build tool for performing releases and uses the pom.xml to describe
+dependencies between modules.
+
+### Prequisites
+
+*Required:*
+
+* Java 1.6
+* Download and [install Maven 3](http://maven.apache.org/download.html)
+* Get the latest [source](source.html)
+
+### Maven options
+
+To build ${project_name} maven has to be configured to use more memory
+
+    set MAVEN_OPTS=-Xmx512m -XX:MaxPermSize=128m
+
+### A normal build
+
+    mvn install
+
+Once the build completes, you will find the jar of 
+${project_name} located in the `target` directory.
+
+
+### Doing a Quick Build
+
+The following avoids running all the unit test cases, we just skip the
+test running phase and not the building part
+
+    mvn -Dtest=false install
+
+### Using an IDE
+
+If you prefer to use an IDE then you can auto-generate the IDE's project
+files using maven plugins. e.g.
+
+    mvn eclipse:eclipse
+        
+or      
+        
+    mvn idea:idea
+
+### Importing into Eclipse
+
+If you have not already done so, you will need to make Eclipse aware of
+the Maven repository so that it can build everything. In the preferences,
+go to `Java -> Build Path -> Classpath` and define a new Classpath
+Variable named `M2_REPO` that points to your local Maven repository. i.e.
+`~/.m2/repository` on Unix and `c:\Documents and Settings\$username\.m2\repository` 
+on Windows).
+
+You can also get Maven to do this for you:
+
+    mvn eclipse:add-maven-repo -Declipse.workspace=/path/to/the/workspace/ 
+
+### See Also
+
+* [Source](source.html)
+* [Developer Links](developers.html)

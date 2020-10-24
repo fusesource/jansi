@@ -1,0 +1,61 @@
+---
+# Copyright (C) 2009-2017 the original author(s).
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#     http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+title: Jansi
+--- name:overview
+
+${project_slogan}
+
+--- name:content pipeline:jade 
+
+.left
+  h1 What is Jansi?
+.right
+  :markdown
+    
+    Jansi is a small ASl 2.0 licensed Java library that allows you to use ANSI escape sequences 
+    to format your console output which works even on windows.  
+
+    Using jansi is easy.  Before you start sending ANSI escape sequences to
+    `System.out` make sure you run:
+        
+    {pygmentize::java}
+    AnsiConsole.systemInstall();
+    {pygmentize}
+
+  :markdown
+    If you would rather not mess with the System.out settings, you can use the
+    `AnsiConsole.out` PrintStream instead.  For example:
+    
+    {pygmentize::java}
+    AnsiConsole.out.println("Hello World");
+    {pygmentize} 
+    
+.left
+  h1 Windows Examples
+.right
+  :markdown
+  
+    Most unix terminals support rendering ANSI escape sequences when Java
+    sends them via `System.out` but when this is done on Windows, they 
+    don't get interpreted and you get garbage on the console similar to:
+    
+    ![before](images/before-windows.png)
+  
+    If the application uses the jansi libary, things start to look
+    much better:
+    
+    ![after](images/after-jansi-windows.png)
+    
+    
