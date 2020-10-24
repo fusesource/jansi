@@ -30,57 +30,6 @@
   
   <dependencies>
     <dependency>
-      <groupId>org.fusesource.hawtjni</groupId>
-      <artifactId>hawtjni-runtime</artifactId>
-      <version>1.17</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.fusesource.jansi</groupId>
-      <artifactId>jansi-native</artifactId>
-      <version>${jansi-native-version}</version>
-    </dependency>
-
-    <!-- Bundle in the native libs for Windows, OS X, and 
-         Linux out of the box since those are the most popular 
-         platforms -->
-    <dependency>
-      <groupId>org.fusesource.jansi</groupId>
-      <artifactId>jansi-windows32</artifactId>
-      <version>${jansi-native-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.fusesource.jansi</groupId>
-      <artifactId>jansi-windows64</artifactId>
-      <version>${jansi-native-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.fusesource.jansi</groupId>
-      <artifactId>jansi-osx</artifactId>
-      <version>${jansi-native-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.fusesource.jansi</groupId>
-      <artifactId>jansi-linux32</artifactId>
-      <version>${jansi-native-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.fusesource.jansi</groupId>
-      <artifactId>jansi-linux64</artifactId>
-      <version>${jansi-native-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.fusesource.jansi</groupId>
-      <artifactId>jansi-freebsd32</artifactId>
-      <version>${jansi-native-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.fusesource.jansi</groupId>
-      <artifactId>jansi-freebsd64</artifactId>
-      <version>${jansi-native-version}</version>
-    </dependency>
-
-    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.13.1</version>
@@ -89,63 +38,46 @@
   </dependencies>
 
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+        <includes>
+          <include>**/*.properties</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>false</filtering>
+        <excludes>
+          <exclude>**/*.properties</exclude>
+        </excludes>
+      </resource>
+    </resources>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <configuration>
-          <archive>
-            <manifestEntries>
-              <Automatic-Module-Name>org.fusesource.jansi</Automatic-Module-Name>
-            </manifestEntries>
-          </archive>
-        </configuration>
-      </plugin>
 
       <!-- the older clean plugin has trouble deleting directories with symlinks in them -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-clean-plugin</artifactId>
-        <version>3.0.0</version>
-      </plugin>
-      
-      <!-- include all the dependencies into the jar so it can run standalone -->
-      <plugin>
-        <groupId>org.fusesource.mvnplugins</groupId>
-        <artifactId>maven-uberize-plugin</artifactId>
-        <version>1.5</version>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals><goal>uberize</goal></goals>
-          </execution>
-        </executions>
+        <version>3.1.0</version>
       </plugin>
       
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.20</version>
+        <version>3.0.0-M5</version>
         <configuration>
             <redirectTestOutputToFile>true</redirectTestOutputToFile>
-            <forkMode>once</forkMode>
-            <argLine>-ea</argLine>
-            <failIfNoTests>false</failIfNoTests>
-            <workingDirectory>${project.build.directory}</workingDirectory>
-            <excludes>
-                <exclude>**/Abstract*.java</exclude>
-                <exclude>**/Test*.java</exclude>
-            </excludes>
-            <includes>
-                <include>**/*Test.java</include>
-            </includes>
+            <forkCount>1</forkCount>
+            <reuseForks>true</reuseForks>
         </configuration>
       </plugin>
       
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
-        <version>2.5.4</version>
+        <version>5.1.1</version>
         <executions>
           <execution>
             <id>bundle-manifest</id>
@@ -157,13 +89,10 @@
               <instructions>
                 <Main-Class>org.fusesource.jansi.AnsiMain</Main-Class>
                 <Export-Package>
-                  org.fusesource.jansi,
-                  org.fusesource.jansi.internal
+                  org.fusesource.jansi;
+                  org.fusesource.jansi.internal;
+                    -noimport:=true
                 </Export-Package>
-                <Import-Package>
-                  !org.fusesource.jansi,
-                  !org.fusesource.jansi.internal
-                </Import-Package>
               </instructions>
             </configuration>
           </execution>
@@ -172,7 +101,10 @@
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
-          <archive>  
+          <archive>
+            <manifestEntries>
+              <Automatic-Module-Name>org.fusesource.jansi</Automatic-Module-Name>
+            </manifestEntries>
             <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
           </archive> 
         </configuration>

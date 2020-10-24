@@ -1,0 +1,199 @@
+ifndef JAVA_HOME
+$(warning Set JAVA_HOME environment variable)
+endif
+
+JAVA  := "$$JAVA_HOME/bin/java"
+JAVAC := "$$JAVA_HOME/bin/javac" 
+JAVAH := "$$JAVA_HOME/bin/javah"
+
+TARGET := target
+
+# building OSInfo.java
+#$(info compiling OSInfo.java)
+#$(shell mkdir -p target/lib)
+#$(shell $(JAVAC) lib/OSInfo.java -d target/lib)
+
+#ifndef OS_NAME
+#OS_NAME := $(shell $(JAVA) -cp target/lib org.fusesource.jansi.OSInfo --os)
+#endif
+#ifndef OS_ARCH
+#OS_ARCH := $(shell $(JAVA) -cp target/lib org.fusesource.jansi.OSInfo --arch)
+#endif
+
+# Windows uses different path separators
+ifeq ($(OS_NAME),Windows)
+	sep := ;
+else
+	sep := :
+endif
+
+jansi := jansi-native-$(version)
+
+ifdef JAVA_HOME
+jni_h := $(shell find -L "$(JAVA_HOME)" -name jni.h)
+ifneq ($(jni_h),)
+jni_include := $(shell dirname "$(jni_h)")
+endif
+
+jni_md := $(shell find -L "$(JAVA_HOME)" -name jni_md.h)
+ifneq ($(jni_md),)
+jni_md_include := $(shell dirname "$(jni_md)")
+endif
+endif
+
+# os=Default is meant to be generic unix/linux
+
+known_targets := Linux-x86 Linux-x86_64 Linux-arm Linux-armv6 Linux-armv7 Linux-android-arm Linux-ppc64 Mac-x86 Mac-x86_64 DragonFly-x86_64 FreeBSD-x86_64 OpenBSD-x86_64 Windows-x86 Windows-x86_64 SunOS-sparcv9 HPUX-ia64_32
+target := $(OS_NAME)-$(OS_ARCH)
+
+ifeq (,$(findstring $(strip $(target)),$(known_targets)))
+  target := Default
+endif
+
+# cross-compilation toolchain prefix (e.g. "arm-linux-gnueabi-")
+CROSS_PREFIX :=
+
+Default_CC        := $(CROSS_PREFIX)gcc
+Default_STRIP     := $(CROSS_PREFIX)strip
+Default_CCFLAGS   := -I$(JAVA_HOME)/include -Isrc/main/lib/inc_linux -Os -fPIC -fvisibility=hidden
+Default_LINKFLAGS := -shared
+Default_LIBNAME   := libjansi.so
+Default_JANSI_FLAGS  := 
+
+Linux-x86_CC        := $(CROSS_PREFIX)gcc
+Linux-x86_STRIP     := $(CROSS_PREFIX)strip
+Linux-x86_CCFLAGS   := -I$(JAVA_HOME)/include -Isrc/main/lib/inc_linux -Os -fPIC -m32 -fvisibility=hidden
+Linux-x86_LINKFLAGS := -shared -static-libgcc
+Linux-x86_LIBNAME   := libjansi.so
+Linux-x86_JANSI_FLAGS  := 
+
+Linux-x86_64_CC        := $(CROSS_PREFIX)gcc
+Linux-x86_64_STRIP     := $(CROSS_PREFIX)strip
+Linux-x86_64_CCFLAGS   := -Isrc/main/lib/inc_linux -I$(JAVA_HOME)/include -Os -fPIC -m64 -fvisibility=hidden
+Linux-x86_64_LINKFLAGS := -shared -static-libgcc
+Linux-x86_64_LIBNAME   := libjansi.so
+Linux-x86_64_JANSI_FLAGS  := 
+
+Linux-arm_CC          := $(CROSS_PREFIX)gcc
+Linux-arm_STRIP       := $(CROSS_PREFIX)strip
+Linux-arm_CCFLAGS     := -I$(JAVA_HOME)/include -Isrc/main/lib/inc_linux -Os -fPIC -mfloat-abi=softfp -mfpu=vfp -fvisibility=hidden
+Linux-arm_LINKFLAGS   := -shared -static-libgcc
+Linux-arm_LIBNAME     := libjansi.so
+Linux-arm_JANSI_FLAGS  :=
+
+Linux-armv6_CC        := $(CROSS_PREFIX)gcc
+Linux-armv6_STRIP     := $(CROSS_PREFIX)strip
+Linux-armv6_CCFLAGS   := -I$(JAVA_HOME)/include -Isrc/main/lib/inc_linux -Os -mfloat-abi=hard -mfpu=vfp -fPIC -fvisibility=hidden
+Linux-armv6_LINKFLAGS := -shared -static-libgcc
+Linux-armv6_LIBNAME   := libjansi.so
+Linux-armv6_JANSI_FLAGS  :=
+
+Linux-armv7_CC        := $(CROSS_PREFIX)gcc
+Linux-armv7_STRIP     := $(CROSS_PREFIX)strip
+Linux-armv7_CCFLAGS   := -I$(JAVA_HOME)/include -Isrc/main/lib/inc_linux -Os -mfloat-abi=hard -mfpu=vfp -fPIC -fvisibility=hidden
+Linux-armv7_LINKFLAGS := -shared -static-libgcc
+Linux-armv7_LIBNAME   := libjansi.so
+Linux-armv7_JANSI_FLAGS  :=
+
+Linux-arm64_CC        := $(CROSS_PREFIX)gcc
+Linux-arm64_STRIP     := $(CROSS_PREFIX)strip
+Linux-arm64_CCFLAGS   := -I$(JAVA_HOME)/include -Isrc/main/lib/inc_linux -Os -mfloat-abi=hard -mfpu=vfp -fPIC -fvisibility=hidden
+Linux-arm64_LINKFLAGS := -shared -static-libgcc
+Linux-arm64_LIBNAME   := libjansi.so
+Linux-arm64_JANSI_FLAGS  :=
+
+Linux-ppc64_CC        := $(CROSS_PREFIX)gcc
+Linux-ppc64_STRIP     := $(CROSS_PREFIX)strip
+Linux-ppc64_CCFLAGS   := -I$(JAVA_HOME)/include -Isrc/main/lib/inc_linux -Os -fPIC -fvisibility=hidden
+Linux-ppc64_LINKFLAGS := -shared -static-libgcc
+Linux-ppc64_LIBNAME   := libjansi.so
+Linux-ppc64_JANSI_FLAGS  :=
+
+DragonFly-x86_64_CC        := $(CROSS_PREFIX)cc
+DragonFly-x86_64_STRIP     := $(CROSS_PREFIX)strip
+DragonFly-x86_64_CCFLAGS   := -I$(JAVA_HOME)/include -Isrc/main/lib/inc_linux -O2 -fPIC -fvisibility=hidden
+DragonFly-x86_64_LINKFLAGS := -shared
+DragonFly-x86_64_LIBNAME   := libjansi.so
+DragonFly-x86_64_JANSI_FLAGS  :=
+
+FreeBSD-x86_CC        := $(CROSS_PREFIX)gcc
+FreeBSD-x86_STRIP     := $(CROSS_PREFIX)strip
+FreeBSD-x86_CCFLAGS   := -I$(JAVA_HOME)/include -Isrc/main/lib/inc_linux -Os -fPIC -fvisibility=hidden
+FreeBSD-x86_LINKFLAGS := -shared
+FreeBSD-x86_LIBNAME   := libjansi.so
+FreeBSD-x86_JANSI_FLAGS  :=
+
+FreeBSD-x86_64_CC        := $(CROSS_PREFIX)gcc
+FreeBSD-x86_64_STRIP     := $(CROSS_PREFIX)strip
+FreeBSD-x86_64_CCFLAGS   := -I$(JAVA_HOME)/include -Isrc/main/lib/inc_linux -Os -fPIC -fvisibility=hidden
+FreeBSD-x86_64_LINKFLAGS := -shared
+FreeBSD-x86_64_LIBNAME   := libjansi.so
+FreeBSD-x86_64_JANSI_FLAGS  :=
+
+OpenBSD-x86_64_CC        := $(CROSS_PREFIX)gcc
+OpenBSD-x86_64_STRIP     := $(CROSS_PREFIX)strip
+OpenBSD-x86_64_CCFLAGS   := -I$(JAVA_HOME)/include -Isrc/main/lib/inc_linux -Os -fPIC -fvisibility=hidden
+OpenBSD-x86_64_LINKFLAGS := -shared
+OpenBSD-x86_64_LIBNAME   := libjansi.so
+OpenBSD-x86_64_JANSI_FLAGS  := 
+
+SunOS-sparcv9_CC        := $(CROSS_PREFIX)gcc
+SunOS-sparcv9_STRIP     := $(CROSS_PREFIX)strip
+SunOS-sparcv9_CCFLAGS   := -I$(JAVA_HOME)/include -Isrc/main/lib/inc_linux -O2s-fPIC -m64 -fvisibility=hidden
+SunOS-sparcv9_LINKFLAGS := -shared -static-libgcc
+SunOS-sparcv9_LIBNAME   := libjansi.so
+SunOS-sparcv9_JANSI_FLAGS  := 
+
+HPUX-ia64_32_CC			:= cc
+HPUX-ia64_32_STRIP		:= strip
+HPUX-ia64_32_CCFLAGS	:= -Isrc/main/lib/inc_linux +Osize +z -Bhidden
+HPUX-ia64_32_LINKFLAGS	:= -b
+HPUX-ia64_32_LIBNAME	:= libjansi.so
+HPUX-ia64_32_JANSI_FLAGS :=
+
+Mac-x86_CC        := gcc
+Mac-x86_STRIP     := strip -x
+Mac-x86_CCFLAGS    := -I$(JAVA_HOME)/include -Isrc/main/lib/inc_mac -Os -fPIC -mmacosx-version-min=10.4 -fvisibility=hidden
+Mac-x86_LINKFLAGS := -dynamiclib
+Mac-x86_LIBNAME   := libjansi.jnilib
+Mac-x86_JANSI_FLAGS  := -DJANSI_ENABLE_LOCKING_STYLE=0
+
+Mac-x86_64_CC        := gcc -arch $(OS_ARCH)
+Mac-x86_64_STRIP     := strip -x
+MAC_SDK := /Developer/SDKs/MacOSX10.10.sdk
+ifeq ($(wildcard MAC_SDK),)
+	MAC_SDK := /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk
+endif
+Mac-x86_64_CCFLAGS    := -I$(MAC_SDK)/System/Library/Frameworks/JavaVM.framework/Headers -Isrc/main/lib/inc_mac -Os -fPIC -mmacosx-version-min=10.6 -fvisibility=hidden
+Mac-x86_64_LINKFLAGS := -dynamiclib 
+Mac-x86_64_LIBNAME   := libjansi.jnilib
+Mac-x86_64_JANSI_FLAGS  := 
+
+Windows-x86_CC           := $(CROSS_PREFIX)gcc
+Windows-x86_STRIP        := $(CROSS_PREFIX)strip
+Windows-x86_CCFLAGS      := -D_JNI_IMPLEMENTATION_ -Isrc/main/lib/inc_win -Os
+Windows-x86_LINKFLAGS    := -Wl,--kill-at -shared -static-libgcc
+Windows-x86_LIBNAME      := jansi.dll
+Windows-x86_JANSI_FLAGS := 
+
+Windows-x86_64_CC           := $(CROSS_PREFIX)gcc
+Windows-x86_64_STRIP        := $(CROSS_PREFIX)strip
+Windows-x86_64_CCFLAGS      := -D_JNI_IMPLEMENTATION_ -Isrc/main/lib/inc_win -Os
+Windows-x86_64_LINKFLAGS    := -Wl,--kill-at -shared -static-libgcc
+Windows-x86_64_LIBNAME      := jansi.dll
+Windows-x86_64_JANSI_FLAGS := 
+
+
+CC        := $($(target)_CC)
+STRIP     := $($(target)_STRIP)
+CCFLAGS   := $($(target)_CCFLAGS) 
+LINKFLAGS := $($(target)_LINKFLAGS) 
+LIBNAME   := $($(target)_LIBNAME)
+CCFLAGS := $(CCFLAGS)
+ifneq ($(jni_include),)
+CCFLAGS := $(CCFLAGS) -I"$(jni_include)"
+endif
+ifneq ($(jni_md_include),)
+CCFLAGS := $(CCFLAGS) -I"$(jni_md_include)"
+endif
+$(info CCFLAGS=$(CCFLAGS))

@@ -27,8 +27,9 @@ import java.io.PrintStream;
 import java.io.Reader;
 import java.util.Properties;
 
-import org.fusesource.hawtjni.runtime.Library;
 import org.fusesource.jansi.internal.CLibrary;
+import org.fusesource.jansi.internal.JansiLoader;
+
 import static org.fusesource.jansi.internal.CLibrary.isatty;
 
 /**
@@ -50,20 +51,17 @@ import static org.fusesource.jansi.internal.CLibrary.isatty;
  */
 public class AnsiMain {
     public static void main(String... args) throws IOException {
-        System.out.println("Jansi " + getJansiVersion()
-            + " (Jansi native " + getPomPropertiesVersion("org.fusesource.jansi/jansi-native")
-            + ", HawtJNI runtime " + getPomPropertiesVersion("org.fusesource.hawtjni/hawtjni-runtime") + ")");
+        System.out.println("Jansi " + getJansiVersion());
 
         System.out.println();
 
         // info on native library
         System.out.println("library.jansi.path= " + System.getProperty("library.jansi.path", ""));
         System.out.println("library.jansi.version= " + System.getProperty("library.jansi.version", ""));
-        Library lib = new Library("jansi", CLibrary.class);
-        lib.load();
-        System.out.println("Jansi native library loaded from " + lib.getNativeLibraryPath());
-        if (lib.getNativeLibrarySourceUrl() != null) {
-            System.out.println("   which was auto-extracted from " + lib.getNativeLibrarySourceUrl());
+        JansiLoader.initialize();
+        System.out.println("Jansi native library loaded from " + JansiLoader.getNativeLibraryPath());
+        if (JansiLoader.getNativeLibrarySourceUrl() != null) {
+            System.out.println("   which was auto-extracted from " + JansiLoader.getNativeLibrarySourceUrl());
         }
 
         System.out.println();

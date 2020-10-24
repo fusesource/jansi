@@ -180,12 +180,6 @@
           <artifactId>maven-resources-plugin</artifactId>
           <version>3.1.0</version>
           <configuration>
-            <resources>
-              <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-              </resource>
-            </resources>
           </configuration>
         </plugin>
       </plugins>
