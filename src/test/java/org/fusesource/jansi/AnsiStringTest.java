@@ -15,13 +15,11 @@
  */
 package org.fusesource.jansi;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Tests for {@link AnsiString}.
- *
  * @author <a href="mailto:jason@planet57.com">Jason Dillon</a>
  */
 public class AnsiStringTest {
