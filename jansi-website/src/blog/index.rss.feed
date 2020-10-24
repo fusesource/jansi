@@ -1,5 +1,0 @@
----
-link: ${website_base_url}/blog/
-author: "${project_name} Team"
-title: "The ${project_name} Blog"
-description: "${project_slogan}"
