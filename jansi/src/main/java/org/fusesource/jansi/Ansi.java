@@ -697,35 +697,6 @@ public class Ansi {
         return this;
     }
 
-    /**
-     * Uses the {@link AnsiRenderer}
-     * to generate the ANSI escape sequences for the supplied text.
-     *
-     * @param text text
-     * @return this
-     *
-     * @since 1.1
-     */
-    public Ansi render(final String text) {
-        a(AnsiRenderer.render(text));
-        return this;
-    }
-
-    /**
-     * String formats and renders the supplied arguments.  Uses the {@link AnsiRenderer}
-     * to generate the ANSI escape sequences.
-     *
-     * @param text format
-     * @param args arguments
-     * @return this
-     *
-     * @since 1.1
-     */
-    public Ansi render(final String text, Object... args) {
-        a(String.format(AnsiRenderer.render(text), args));
-        return this;
-    }
-
     @Override
     public String toString() {
         flushAttributes();

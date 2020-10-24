@@ -25,20 +25,6 @@ import static org.junit.Assert.assertEquals;
  * @author <a href="mailto:jason@planet57.com">Jason Dillon</a>
  */
 public class AnsiStringTest {
-    @Test
-    public void testNotEncoded() {
-        AnsiString as = new AnsiString("foo");
-        assertEquals("foo", as.getEncoded());
-        assertEquals("foo", as.getPlain());
-        assertEquals(3, as.length());
-    }
-
-    @Test
-    public void testEncoded() {
-        AnsiString as = new AnsiString(Ansi.ansi().a(Ansi.Attribute.INTENSITY_BOLD).a("foo").reset().toString());
-        assertEquals("foo", as.getPlain());
-        assertEquals(3, as.length());
-    }
 
     @Test
     public void testCursorPosition() {

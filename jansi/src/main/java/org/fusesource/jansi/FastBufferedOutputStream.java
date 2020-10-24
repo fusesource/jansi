@@ -22,12 +22,12 @@ import java.io.OutputStream;
 /**
  * A simple buffering output stream with no synchronization.
  */
-public class BufferedNoSyncOutputStream extends FilterOutputStream {
+public class FastBufferedOutputStream extends FilterOutputStream {
 
     protected final byte buf[] = new byte[8192];
     protected int count;
 
-    public BufferedNoSyncOutputStream(OutputStream out) {
+    public FastBufferedOutputStream(OutputStream out) {
         super(out);
     }
 

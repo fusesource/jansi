@@ -30,6 +30,7 @@ import java.util.Iterator;
  *
  * @since 1.19
  */
+@SuppressWarnings("unused")
 public class AnsiProcessor {
     protected final OutputStream os;
 
@@ -53,9 +54,6 @@ public class AnsiProcessor {
     }
 
     /**
-     *
-     * @param options
-     * @param command
      * @return true if the escape command was processed.
      */
     protected boolean processEscapeCommand(ArrayList<Object> options, int command) throws IOException { // expected diff with AnsiOutputStream.java
@@ -188,11 +186,11 @@ public class AnsiProcessor {
                     return true;
 
                 default:
-                    if ('a' <= command && 'z' <= command) {
+                    if ('a' <= command && command <= 'z') {
                         processUnknownExtension(options, command);
                         return true;
                     }
-                    if ('A' <= command && 'Z' <= command) {
+                    if ('A' <= command && command <= 'Z') {
                         processUnknownExtension(options, command);
                         return true;
                     }
@@ -204,8 +202,6 @@ public class AnsiProcessor {
     }
 
     /**
-     *
-     * @param options
      * @return true if the operating system command was processed.
      */
     protected boolean processOperatingSystemCommand(ArrayList<Object> options) { // expected diff with AnsiOutputStream.java
@@ -353,8 +349,6 @@ public class AnsiProcessor {
     protected static final int ATTRIBUTE_INTENSITY_NORMAL = 22; // 	Intensity; Normal 	not bold and not faint
     protected static final int ATTRIBUTE_UNDERLINE_OFF = 24; // 	Underline; None
     protected static final int ATTRIBUTE_BLINK_OFF = 25; // 	Blink; off
-    @Deprecated
-    protected static final int ATTRIBUTE_NEGATIVE_Off = 27; // 	Image; Positive
     protected static final int ATTRIBUTE_NEGATIVE_OFF = 27; // 	Image; Positive
     protected static final int ATTRIBUTE_CONCEAL_OFF = 28; // 	Reveal 	conceal off
 

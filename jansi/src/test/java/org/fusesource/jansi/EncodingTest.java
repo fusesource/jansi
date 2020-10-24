@@ -29,7 +29,7 @@ public class EncodingTest {
     public void testEncoding8859() throws UnsupportedEncodingException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         final AtomicReference<String> newLabel = new AtomicReference<String>();
-        PrintStream ansi = new PrintStream(new AnsiNoSyncOutputStream(baos, new AnsiProcessor(baos) {
+        PrintStream ansi = new PrintStream(new AnsiOutputStream(baos, new AnsiProcessor(baos) {
             @Override
             protected void processChangeWindowTitle(String label) {
                 newLabel.set(label);
@@ -45,7 +45,7 @@ public class EncodingTest {
     public void testEncodingUtf8() throws UnsupportedEncodingException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         final AtomicReference<String> newLabel = new AtomicReference<String>();
-        PrintStream ansi = new PrintStream(new AnsiNoSyncOutputStream(baos, new AnsiProcessor(baos) {
+        PrintStream ansi = new PrintStream(new AnsiOutputStream(baos, new AnsiProcessor(baos) {
             @Override
             protected void processChangeWindowTitle(String label) {
                 newLabel.set(label);

@@ -79,8 +79,6 @@ public class AnsiMain {
         System.out.println(AnsiConsole.JANSI_PASSTHROUGH + "= " + AnsiConsole.getBoolean(AnsiConsole.JANSI_PASSTHROUGH));
         System.out.println(AnsiConsole.JANSI_STRIP + "= " + AnsiConsole.getBoolean(AnsiConsole.JANSI_STRIP));
         System.out.println(AnsiConsole.JANSI_FORCE + "= " + AnsiConsole.getBoolean(AnsiConsole.JANSI_FORCE));
-        System.out.println(AnsiConsole.JANSI_DO_WRAP + "= " + AnsiConsole.getBoolean(AnsiConsole.JANSI_DO_WRAP));
-        System.out.println(AnsiConsole.JANSI_NO_OPTIMIZE + "= " + AnsiConsole.getBoolean(AnsiConsole.JANSI_NO_OPTIMIZE));
         System.out.println(Ansi.DISABLE + "= " + AnsiConsole.getBoolean(Ansi.DISABLE));
 
         System.out.println();
@@ -90,8 +88,6 @@ public class AnsiMain {
             System.out.println("IS_CONEMU: " + AnsiConsole.IS_CONEMU);
             System.out.println("IS_CYGWIN: " + AnsiConsole.IS_CYGWIN);
             System.out.println("IS_MSYSTEM: " + AnsiConsole.IS_MSYSTEM);
-            System.out.println("IS_CON_EMU_ANSI: " + AnsiConsole.IS_CON_EMU_ANSI + " (deprecated)");
-            System.out.println("IS_MINGW_XTERM: " + AnsiConsole.IS_MINGW_XTERM + " (deprecated)");
         }
 
         System.out.println();
