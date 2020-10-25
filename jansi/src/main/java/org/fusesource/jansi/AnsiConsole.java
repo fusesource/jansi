@@ -127,7 +127,7 @@ public class AnsiConsole {
         // the ansi escapes.
         if (getBoolean(JANSI_STRIP)) {
             jansiOutputType = JansiOutputType.STRIP_ANSI;
-            return new PrintStream(new AnsiNoSyncOutputStream(out, new AnsiProcessor(out), enc), true);
+            return newPrintStream(new AnsiNoSyncOutputStream(out, new AnsiProcessor(out), enc), enc);
         }
 
         if (IS_WINDOWS) {
