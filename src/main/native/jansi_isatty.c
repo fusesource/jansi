@@ -14,7 +14,6 @@
  * limitations under the License.
  *******************************************************************************/
 #include "jansi.h"
-#include "hawtjni.h"
 #include "jansi_structs.h"
 
 #define CLibrary_NATIVE(func) Java_org_fusesource_jansi_internal_CLibrary_##func

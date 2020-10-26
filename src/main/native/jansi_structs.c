@@ -14,7 +14,6 @@
  * limitations under the License.
  *******************************************************************************/
 #include "jansi.h"
-#include "hawtjni.h"
 #include "jansi_structs.h"
 
 #if defined(HAVE_IOCTL)
@@ -497,20 +496,10 @@ KEY_EVENT_RECORD *getKEY_EVENT_RECORDFields(JNIEnv *env, jobject lpObject, KEY_E
 	if (!KEY_EVENT_RECORDFc.cached) cacheKEY_EVENT_RECORDFields(env, lpObject);
 #if defined(_WIN32) || defined(_WIN64)
 	lpStruct->bKeyDown = (*env)->GetBooleanField(env, lpObject, KEY_EVENT_RECORDFc.keyDown);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	lpStruct->wRepeatCount = (*env)->GetShortField(env, lpObject, KEY_EVENT_RECORDFc.repeatCount);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	lpStruct->wVirtualKeyCode = (*env)->GetShortField(env, lpObject, KEY_EVENT_RECORDFc.keyCode);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	lpStruct->wVirtualScanCode = (*env)->GetShortField(env, lpObject, KEY_EVENT_RECORDFc.scanCode);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	lpStruct->uChar.UnicodeChar = (*env)->GetCharField(env, lpObject, KEY_EVENT_RECORDFc.uchar);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	lpStruct->dwControlKeyState = (*env)->GetIntField(env, lpObject, KEY_EVENT_RECORDFc.controlKeyState);
 #endif
 	return lpStruct;
@@ -521,20 +510,10 @@ void setKEY_EVENT_RECORDFields(JNIEnv *env, jobject lpObject, KEY_EVENT_RECORD *
 	if (!KEY_EVENT_RECORDFc.cached) cacheKEY_EVENT_RECORDFields(env, lpObject);
 #if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetBooleanField(env, lpObject, KEY_EVENT_RECORDFc.keyDown, (jboolean)lpStruct->bKeyDown);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetShortField(env, lpObject, KEY_EVENT_RECORDFc.repeatCount, (jshort)lpStruct->wRepeatCount);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetShortField(env, lpObject, KEY_EVENT_RECORDFc.keyCode, (jshort)lpStruct->wVirtualKeyCode);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetShortField(env, lpObject, KEY_EVENT_RECORDFc.scanCode, (jshort)lpStruct->wVirtualScanCode);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetCharField(env, lpObject, KEY_EVENT_RECORDFc.uchar, (jchar)lpStruct->uChar.UnicodeChar);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetIntField(env, lpObject, KEY_EVENT_RECORDFc.controlKeyState, (jint)lpStruct->dwControlKeyState);
 #endif
 }
@@ -601,18 +580,12 @@ MOUSE_EVENT_RECORD *getMOUSE_EVENT_RECORDFields(JNIEnv *env, jobject lpObject, M
 {
 	if (!MOUSE_EVENT_RECORDFc.cached) cacheMOUSE_EVENT_RECORDFields(env, lpObject);
 #if defined(_WIN32) || defined(_WIN64)
-		{
-	jobject lpObject1 = (*env)->GetObjectField(env, lpObject, MOUSE_EVENT_RECORDFc.mousePosition);
-	if (lpObject1 != NULL) getCOORDFields(env, lpObject1, &lpStruct->dwMousePosition);
+    {
+	    jobject lpObject1 = (*env)->GetObjectField(env, lpObject, MOUSE_EVENT_RECORDFc.mousePosition);
+	    if (lpObject1 != NULL) getCOORDFields(env, lpObject1, &lpStruct->dwMousePosition);
 	}
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	lpStruct->dwButtonState = (*env)->GetIntField(env, lpObject, MOUSE_EVENT_RECORDFc.buttonState);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	lpStruct->dwControlKeyState = (*env)->GetIntField(env, lpObject, MOUSE_EVENT_RECORDFc.controlKeyState);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	lpStruct->dwEventFlags = (*env)->GetIntField(env, lpObject, MOUSE_EVENT_RECORDFc.eventFlags);
 #endif
 	return lpStruct;
@@ -623,17 +596,11 @@ void setMOUSE_EVENT_RECORDFields(JNIEnv *env, jobject lpObject, MOUSE_EVENT_RECO
 	if (!MOUSE_EVENT_RECORDFc.cached) cacheMOUSE_EVENT_RECORDFields(env, lpObject);
 #if defined(_WIN32) || defined(_WIN64)
 	{
-	jobject lpObject1 = (*env)->GetObjectField(env, lpObject, MOUSE_EVENT_RECORDFc.mousePosition);
-	if (lpObject1 != NULL) setCOORDFields(env, lpObject1, &lpStruct->dwMousePosition);
+	    jobject lpObject1 = (*env)->GetObjectField(env, lpObject, MOUSE_EVENT_RECORDFc.mousePosition);
+	    if (lpObject1 != NULL) setCOORDFields(env, lpObject1, &lpStruct->dwMousePosition);
 	}
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetIntField(env, lpObject, MOUSE_EVENT_RECORDFc.buttonState, (jint)lpStruct->dwButtonState);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetIntField(env, lpObject, MOUSE_EVENT_RECORDFc.controlKeyState, (jint)lpStruct->dwControlKeyState);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetIntField(env, lpObject, MOUSE_EVENT_RECORDFc.eventFlags, (jint)lpStruct->dwEventFlags);
 #endif
 }
@@ -665,14 +632,8 @@ SMALL_RECT *getSMALL_RECTFields(JNIEnv *env, jobject lpObject, SMALL_RECT *lpStr
 	if (!SMALL_RECTFc.cached) cacheSMALL_RECTFields(env, lpObject);
 #if defined(_WIN32) || defined(_WIN64)
 	lpStruct->Left = (*env)->GetShortField(env, lpObject, SMALL_RECTFc.left);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	lpStruct->Top = (*env)->GetShortField(env, lpObject, SMALL_RECTFc.top);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	lpStruct->Right = (*env)->GetShortField(env, lpObject, SMALL_RECTFc.right);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	lpStruct->Bottom = (*env)->GetShortField(env, lpObject, SMALL_RECTFc.bottom);
 #endif
 	return lpStruct;
@@ -683,14 +644,8 @@ void setSMALL_RECTFields(JNIEnv *env, jobject lpObject, SMALL_RECT *lpStruct)
 	if (!SMALL_RECTFc.cached) cacheSMALL_RECTFields(env, lpObject);
 #if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetShortField(env, lpObject, SMALL_RECTFc.left, (jshort)lpStruct->Left);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetShortField(env, lpObject, SMALL_RECTFc.top, (jshort)lpStruct->Top);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetShortField(env, lpObject, SMALL_RECTFc.right, (jshort)lpStruct->Right);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetShortField(env, lpObject, SMALL_RECTFc.bottom, (jshort)lpStruct->Bottom);
 #endif
 }
@@ -718,9 +673,9 @@ WINDOW_BUFFER_SIZE_RECORD *getWINDOW_BUFFER_SIZE_RECORDFields(JNIEnv *env, jobje
 {
 	if (!WINDOW_BUFFER_SIZE_RECORDFc.cached) cacheWINDOW_BUFFER_SIZE_RECORDFields(env, lpObject);
 #if defined(_WIN32) || defined(_WIN64)
-		{
-	jobject lpObject1 = (*env)->GetObjectField(env, lpObject, WINDOW_BUFFER_SIZE_RECORDFc.size);
-	if (lpObject1 != NULL) getCOORDFields(env, lpObject1, &lpStruct->dwSize);
+	{
+	    jobject lpObject1 = (*env)->GetObjectField(env, lpObject, WINDOW_BUFFER_SIZE_RECORDFc.size);
+	    if (lpObject1 != NULL) getCOORDFields(env, lpObject1, &lpStruct->dwSize);
 	}
 #endif
 	return lpStruct;
@@ -731,8 +686,8 @@ void setWINDOW_BUFFER_SIZE_RECORDFields(JNIEnv *env, jobject lpObject, WINDOW_BU
 	if (!WINDOW_BUFFER_SIZE_RECORDFc.cached) cacheWINDOW_BUFFER_SIZE_RECORDFields(env, lpObject);
 #if defined(_WIN32) || defined(_WIN64)
 	{
-	jobject lpObject1 = (*env)->GetObjectField(env, lpObject, WINDOW_BUFFER_SIZE_RECORDFc.size);
-	if (lpObject1 != NULL) setCOORDFields(env, lpObject1, &lpStruct->dwSize);
+    	jobject lpObject1 = (*env)->GetObjectField(env, lpObject, WINDOW_BUFFER_SIZE_RECORDFc.size);
+	    if (lpObject1 != NULL) setCOORDFields(env, lpObject1, &lpStruct->dwSize);
 	}
 #endif
 }

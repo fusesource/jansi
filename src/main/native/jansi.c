@@ -14,8 +14,11 @@
  * limitations under the License.
  *******************************************************************************/
 #include "jansi.h"
-#include "hawtjni.h"
 #include "jansi_structs.h"
+
+JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
+  return JNI_VERSION_1_2;
+}
 
 #define CLibrary_NATIVE(func) Java_org_fusesource_jansi_internal_CLibrary_##func
 
@@ -56,6 +59,7 @@ JNIEXPORT void JNICALL CLibrary_NATIVE(init)(JNIEnv *env, jclass that)
 #endif
    return;
 }
+
 #if defined(HAVE_IOCTL)
 JNIEXPORT jint JNICALL CLibrary_NATIVE(ioctl__IJLorg_fusesource_jansi_internal_CLibrary_00024WinSize_2)
 	(JNIEnv *env, jclass that, jint arg0, jlong arg1, jobject arg2)
@@ -70,9 +74,7 @@ fail:
 
 	return rc;
 }
-#endif
 
-#if defined(HAVE_IOCTL)
 JNIEXPORT jint JNICALL CLibrary_NATIVE(ioctl__IJ_3I)
 	(JNIEnv *env, jclass that, jint arg0, jlong arg1, jintArray arg2)
 {
@@ -83,18 +85,6 @@ JNIEXPORT jint JNICALL CLibrary_NATIVE(ioctl__IJ_3I)
 	rc = (jint)ioctl(arg0, arg1, lparg2);
 fail:
 	if (arg2 && lparg2) (*env)->ReleaseIntArrayElements(env, arg2, lparg2, 0);
-
-	return rc;
-}
-#endif
-
-#if FALSE
-JNIEXPORT jint JNICALL CLibrary_NATIVE(isatty)
-	(JNIEnv *env, jclass that, jint arg0)
-{
-	jint rc = 0;
-
-	rc = (jint)isatty(arg0);
 
 	return rc;
 }
@@ -157,18 +147,6 @@ fail:
 }
 #endif
 
-#if FALSE
-JNIEXPORT jstring JNICALL CLibrary_NATIVE(ttyname)
-	(JNIEnv *env, jclass that, jint arg0)
-{
-	jstring rc = 0;
-
-	rc = (jstring)ttyname(arg0);
-
-	return rc;
-}
-#endif
-
 #define Termios_NATIVE(func) Java_org_fusesource_jansi_internal_CLibrary_00024Termios_##func
 
 JNIEXPORT void JNICALL Termios_NATIVE(init)(JNIEnv *env, jclass that)
@@ -178,6 +156,7 @@ JNIEXPORT void JNICALL Termios_NATIVE(init)(JNIEnv *env, jclass that)
 #endif
    return;
 }
+
 #define WinSize_NATIVE(func) Java_org_fusesource_jansi_internal_CLibrary_00024WinSize_##func
 
 JNIEXPORT void JNICALL WinSize_NATIVE(init)(JNIEnv *env, jclass that)
@@ -197,9 +176,7 @@ JNIEXPORT jint JNICALL Kernel32_NATIVE(CloseHandle)
 	rc = (jint)CloseHandle((HANDLE)arg0);
 	return rc;
 }
-#endif
 
-#if defined(_WIN32) || defined(_WIN64)
 JNIEXPORT jint JNICALL Kernel32_NATIVE(FillConsoleOutputAttribute)
 	(JNIEnv *env, jclass that, jlong arg0, jshort arg1, jint arg2, jobject arg3, jintArray arg4)
 {
@@ -213,9 +190,7 @@ fail:
 	if (arg4 && lparg4) (*env)->ReleaseIntArrayElements(env, arg4, lparg4, 0);
 	return rc;
 }
-#endif
 
-#if defined(_WIN32) || defined(_WIN64)
 JNIEXPORT jint JNICALL Kernel32_NATIVE(FillConsoleOutputCharacterW)
 	(JNIEnv *env, jclass that, jlong arg0, jchar arg1, jint arg2, jobject arg3, jintArray arg4)
 {
@@ -229,9 +204,7 @@ fail:
 	if (arg4 && lparg4) (*env)->ReleaseIntArrayElements(env, arg4, lparg4, 0);
 	return rc;
 }
-#endif
 
-#if defined(_WIN32) || defined(_WIN64)
 JNIEXPORT jint JNICALL Kernel32_NATIVE(FlushConsoleInputBuffer)
 	(JNIEnv *env, jclass that, jlong arg0)
 {
@@ -239,42 +212,22 @@ JNIEXPORT jint JNICALL Kernel32_NATIVE(FlushConsoleInputBuffer)
 	rc = (jint)FlushConsoleInputBuffer((HANDLE)(intptr_t)arg0);
 	return rc;
 }
-#endif
 
-#if defined(_WIN32) || defined(_WIN64)
 JNIEXPORT jint JNICALL Kernel32_NATIVE(FormatMessageW)
 	(JNIEnv *env, jclass that, jint arg0, jlong arg1, jint arg2, jint arg3, jbyteArray arg4, jint arg5, jlongArray arg6)
 {
 	jbyte *lparg4=NULL;
 	jlong *lparg6=NULL;
 	jint rc = 0;
-#ifdef JNI_VERSION_1_2
-	if (IS_JNI_1_2) {
-		if (arg4) if ((lparg4 = (*env)->GetPrimitiveArrayCritical(env, arg4, NULL)) == NULL) goto fail;
-		if (arg6) if ((lparg6 = (*env)->GetPrimitiveArrayCritical(env, arg6, NULL)) == NULL) goto fail;
-	} else
-#endif
-	{
-		if (arg4) if ((lparg4 = (*env)->GetByteArrayElements(env, arg4, NULL)) == NULL) goto fail;
-		if (arg6) if ((lparg6 = (*env)->GetLongArrayElements(env, arg6, NULL)) == NULL) goto fail;
-	}
+    if (arg4) if ((lparg4 = (*env)->GetPrimitiveArrayCritical(env, arg4, NULL)) == NULL) goto fail;
+    if (arg6) if ((lparg6 = (*env)->GetPrimitiveArrayCritical(env, arg6, NULL)) == NULL) goto fail;
 	rc = (jint)FormatMessageW(arg0, (void *)(intptr_t)arg1, arg2, arg3, (void *)lparg4, arg5, (void *)NULL);
 fail:
-#ifdef JNI_VERSION_1_2
-	if (IS_JNI_1_2) {
-		if (arg6 && lparg6) (*env)->ReleasePrimitiveArrayCritical(env, arg6, lparg6, 0);
-		if (arg4 && lparg4) (*env)->ReleasePrimitiveArrayCritical(env, arg4, lparg4, 0);
-	} else
-#endif
-	{
-		if (arg6 && lparg6) (*env)->ReleaseLongArrayElements(env, arg6, lparg6, 0);
-		if (arg4 && lparg4) (*env)->ReleaseByteArrayElements(env, arg4, lparg4, 0);
-	}
+    if (arg6 && lparg6) (*env)->ReleasePrimitiveArrayCritical(env, arg6, lparg6, 0);
+    if (arg4 && lparg4) (*env)->ReleasePrimitiveArrayCritical(env, arg4, lparg4, 0);
 	return rc;
 }
-#endif
 
-#if defined(_WIN32) || defined(_WIN64)
 JNIEXPORT jint JNICALL Kernel32_NATIVE(GetConsoleMode)
 	(JNIEnv *env, jclass that, jlong arg0, jintArray arg1)
 {
@@ -286,9 +239,7 @@ fail:
 	if (arg1 && lparg1) (*env)->ReleaseIntArrayElements(env, arg1, lparg1, 0);
 	return rc;
 }
-#endif
 
-#if defined(_WIN32) || defined(_WIN64)
 JNIEXPORT jint JNICALL Kernel32_NATIVE(GetConsoleOutputCP)
 	(JNIEnv *env, jclass that)
 {
@@ -296,9 +247,7 @@ JNIEXPORT jint JNICALL Kernel32_NATIVE(GetConsoleOutputCP)
 	rc = (jint)GetConsoleOutputCP();
 	return rc;
 }
-#endif
 
-#if defined(_WIN32) || defined(_WIN64)
 JNIEXPORT jint JNICALL Kernel32_NATIVE(GetConsoleScreenBufferInfo)
 	(JNIEnv *env, jclass that, jlong arg0, jobject arg1)
 {
@@ -310,9 +259,7 @@ fail:
 	if (arg1 && lparg1) setCONSOLE_SCREEN_BUFFER_INFOFields(env, arg1, lparg1);
 	return rc;
 }
-#endif
 
-#if defined(_WIN32) || defined(_WIN64)
 JNIEXPORT jint JNICALL Kernel32_NATIVE(GetLastError)
 	(JNIEnv *env, jclass that)
 {
@@ -320,9 +267,7 @@ JNIEXPORT jint JNICALL Kernel32_NATIVE(GetLastError)
 	rc = (jint)GetLastError();
 	return rc;
 }
-#endif
 
-#if defined(_WIN32) || defined(_WIN64)
 JNIEXPORT jint JNICALL Kernel32_NATIVE(GetNumberOfConsoleInputEvents)
 	(JNIEnv *env, jclass that, jlong arg0, jintArray arg1)
 {
@@ -334,9 +279,7 @@ fail:
 	if (arg1 && lparg1) (*env)->ReleaseIntArrayElements(env, arg1, lparg1, 0);
 	return rc;
 }
-#endif
 
-#if defined(_WIN32) || defined(_WIN64)
 JNIEXPORT jlong JNICALL Kernel32_NATIVE(GetStdHandle)
 	(JNIEnv *env, jclass that, jint arg0)
 {
@@ -344,9 +287,7 @@ JNIEXPORT jlong JNICALL Kernel32_NATIVE(GetStdHandle)
 	rc = (intptr_t)(HANDLE)GetStdHandle(arg0);
 	return rc;
 }
-#endif
 
-#if defined(_WIN32) || defined(_WIN64)
 JNIEXPORT jint JNICALL Kernel32_NATIVE(PeekConsoleInputW)
 	(JNIEnv *env, jclass that, jlong arg0, jlong arg1, jint arg2, jintArray arg3)
 {
@@ -358,9 +299,7 @@ fail:
 	if (arg3 && lparg3) (*env)->ReleaseIntArrayElements(env, arg3, lparg3, 0);
 	return rc;
 }
-#endif
 
-#if defined(_WIN32) || defined(_WIN64)
 JNIEXPORT jint JNICALL Kernel32_NATIVE(ReadConsoleInputW)
 	(JNIEnv *env, jclass that, jlong arg0, jlong arg1, jint arg2, jintArray arg3)
 {
@@ -372,9 +311,7 @@ fail:
 	if (arg3 && lparg3) (*env)->ReleaseIntArrayElements(env, arg3, lparg3, 0);
 	return rc;
 }
-#endif
 
-#if defined(_WIN32) || defined(_WIN64)
 JNIEXPORT jint JNICALL Kernel32_NATIVE(ScrollConsoleScreenBuffer)
 	(JNIEnv *env, jclass that, jlong arg0, jobject arg1, jobject arg2, jobject arg3, jobject arg4)
 {
@@ -391,9 +328,7 @@ JNIEXPORT jint JNICALL Kernel32_NATIVE(ScrollConsoleScreenBuffer)
 fail:
 	return rc;
 }
-#endif
 
-#if defined(_WIN32) || defined(_WIN64)
 JNIEXPORT jint JNICALL Kernel32_NATIVE(SetConsoleCursorPosition)
 	(JNIEnv *env, jclass that, jlong arg0, jobject arg1)
 {
@@ -404,33 +339,25 @@ JNIEXPORT jint JNICALL Kernel32_NATIVE(SetConsoleCursorPosition)
 fail:
 	return rc;
 }
-#endif
 
-#if defined(_WIN32) || defined(_WIN64)
 JNIEXPORT jint JNICALL Kernel32_NATIVE(SetConsoleMode)
 	(JNIEnv *env, jclass that, jlong arg0, jint arg1)
 {
 	return (jint)SetConsoleMode((HANDLE)(intptr_t)arg0, arg1);
 }
-#endif
 
-#if defined(_WIN32) || defined(_WIN64)
 JNIEXPORT jint JNICALL Kernel32_NATIVE(SetConsoleOutputCP)
 	(JNIEnv *env, jclass that, jint arg0)
 {
 	return (jint)SetConsoleOutputCP(arg0);
 }
-#endif
 
-#if defined(_WIN32) || defined(_WIN64)
 JNIEXPORT jint JNICALL Kernel32_NATIVE(SetConsoleTextAttribute)
 	(JNIEnv *env, jclass that, jlong arg0, jshort arg1)
 {
 	return (jint)SetConsoleTextAttribute((HANDLE)arg0, arg1);
 }
-#endif
 
-#if defined(_WIN32) || defined(_WIN64)
 JNIEXPORT jint JNICALL Kernel32_NATIVE(SetConsoleTitle)
 	(JNIEnv *env, jclass that, jstring arg0)
 {
@@ -442,17 +369,13 @@ fail:
 	if (arg0 && lparg0) (*env)->ReleaseStringChars(env, arg0, lparg0);
 	return rc;
 }
-#endif
 
-#if defined(_WIN32) || defined(_WIN64)
 JNIEXPORT jint JNICALL Kernel32_NATIVE(WaitForSingleObject)
 	(JNIEnv *env, jclass that, jlong arg0, jint arg1)
 {
 	return (jint)WaitForSingleObject((HANDLE)arg0, arg1);
 }
-#endif
 
-#if defined(_WIN32) || defined(_WIN64)
 JNIEXPORT jint JNICALL Kernel32_NATIVE(WriteConsoleW)
 	(JNIEnv *env, jclass that, jlong arg0, jcharArray arg1, jint arg2, jintArray arg3, jlong arg4)
 {
@@ -467,19 +390,15 @@ fail:
 	if (arg1 && lparg1) (*env)->ReleaseCharArrayElements(env, arg1, lparg1, JNI_ABORT);
 	return rc;
 }
-#endif
 
-#if defined(_WIN32) || defined(_WIN64)
 JNIEXPORT jint JNICALL Kernel32_NATIVE(_1getch)
 	(JNIEnv *env, jclass that)
 {
 	jint rc = 0;
-	rc = (jint)getch();
+	rc = (jint)_getch();
 	return rc;
 }
-#endif
 
-#if defined(_WIN32) || defined(_WIN64)
 JNIEXPORT void JNICALL Kernel32_NATIVE(free)
 	(JNIEnv *env, jclass that, jlong arg0)
 {
@@ -513,6 +432,7 @@ JNIEXPORT void JNICALL Kernel32_NATIVE(init)(JNIEnv *env, jclass that)
 #endif
    return;
 }
+
 #if defined(_WIN32) || defined(_WIN64)
 JNIEXPORT jlong JNICALL Kernel32_NATIVE(malloc)
 	(JNIEnv *env, jclass that, jlong arg0)
@@ -591,32 +511,14 @@ JNIEXPORT void JNICALL KEY_EVENT_RECORD_NATIVE(init)(JNIEnv *env, jclass that)
 {
 #if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetStaticIntField(env, that, (*env)->GetStaticFieldID(env, that, "SIZEOF", "I"), (jint)sizeof(KEY_EVENT_RECORD));
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetStaticIntField(env, that, (*env)->GetStaticFieldID(env, that, "CAPSLOCK_ON", "I"), (jint)CAPSLOCK_ON);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetStaticIntField(env, that, (*env)->GetStaticFieldID(env, that, "NUMLOCK_ON", "I"), (jint)NUMLOCK_ON);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetStaticIntField(env, that, (*env)->GetStaticFieldID(env, that, "SCROLLLOCK_ON", "I"), (jint)SCROLLLOCK_ON);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetStaticIntField(env, that, (*env)->GetStaticFieldID(env, that, "ENHANCED_KEY", "I"), (jint)ENHANCED_KEY);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetStaticIntField(env, that, (*env)->GetStaticFieldID(env, that, "LEFT_ALT_PRESSED", "I"), (jint)LEFT_ALT_PRESSED);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetStaticIntField(env, that, (*env)->GetStaticFieldID(env, that, "LEFT_CTRL_PRESSED", "I"), (jint)LEFT_CTRL_PRESSED);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetStaticIntField(env, that, (*env)->GetStaticFieldID(env, that, "RIGHT_ALT_PRESSED", "I"), (jint)RIGHT_ALT_PRESSED);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetStaticIntField(env, that, (*env)->GetStaticFieldID(env, that, "RIGHT_CTRL_PRESSED", "I"), (jint)RIGHT_CTRL_PRESSED);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetStaticIntField(env, that, (*env)->GetStaticFieldID(env, that, "SHIFT_PRESSED", "I"), (jint)SHIFT_PRESSED);
 #endif
    return;
@@ -636,59 +538,23 @@ JNIEXPORT void JNICALL MOUSE_EVENT_RECORD_NATIVE(init)(JNIEnv *env, jclass that)
 {
 #if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetStaticIntField(env, that, (*env)->GetStaticFieldID(env, that, "SIZEOF", "I"), (jint)sizeof(MOUSE_EVENT_RECORD));
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetStaticIntField(env, that, (*env)->GetStaticFieldID(env, that, "FROM_LEFT_1ST_BUTTON_PRESSED", "I"), (jint)FROM_LEFT_1ST_BUTTON_PRESSED);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetStaticIntField(env, that, (*env)->GetStaticFieldID(env, that, "FROM_LEFT_2ND_BUTTON_PRESSED", "I"), (jint)FROM_LEFT_2ND_BUTTON_PRESSED);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetStaticIntField(env, that, (*env)->GetStaticFieldID(env, that, "FROM_LEFT_3RD_BUTTON_PRESSED", "I"), (jint)FROM_LEFT_3RD_BUTTON_PRESSED);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetStaticIntField(env, that, (*env)->GetStaticFieldID(env, that, "FROM_LEFT_4TH_BUTTON_PRESSED", "I"), (jint)FROM_LEFT_4TH_BUTTON_PRESSED);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetStaticIntField(env, that, (*env)->GetStaticFieldID(env, that, "RIGHTMOST_BUTTON_PRESSED", "I"), (jint)RIGHTMOST_BUTTON_PRESSED);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetStaticIntField(env, that, (*env)->GetStaticFieldID(env, that, "CAPSLOCK_ON", "I"), (jint)CAPSLOCK_ON);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetStaticIntField(env, that, (*env)->GetStaticFieldID(env, that, "NUMLOCK_ON", "I"), (jint)NUMLOCK_ON);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetStaticIntField(env, that, (*env)->GetStaticFieldID(env, that, "SCROLLLOCK_ON", "I"), (jint)SCROLLLOCK_ON);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetStaticIntField(env, that, (*env)->GetStaticFieldID(env, that, "ENHANCED_KEY", "I"), (jint)ENHANCED_KEY);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetStaticIntField(env, that, (*env)->GetStaticFieldID(env, that, "LEFT_ALT_PRESSED", "I"), (jint)LEFT_ALT_PRESSED);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetStaticIntField(env, that, (*env)->GetStaticFieldID(env, that, "LEFT_CTRL_PRESSED", "I"), (jint)LEFT_CTRL_PRESSED);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetStaticIntField(env, that, (*env)->GetStaticFieldID(env, that, "RIGHT_ALT_PRESSED", "I"), (jint)RIGHT_ALT_PRESSED);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetStaticIntField(env, that, (*env)->GetStaticFieldID(env, that, "RIGHT_CTRL_PRESSED", "I"), (jint)RIGHT_CTRL_PRESSED);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetStaticIntField(env, that, (*env)->GetStaticFieldID(env, that, "SHIFT_PRESSED", "I"), (jint)SHIFT_PRESSED);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetStaticIntField(env, that, (*env)->GetStaticFieldID(env, that, "DOUBLE_CLICK", "I"), (jint)DOUBLE_CLICK);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetStaticIntField(env, that, (*env)->GetStaticFieldID(env, that, "MOUSE_HWHEELED", "I"), (jint)MOUSE_HWHEELED);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetStaticIntField(env, that, (*env)->GetStaticFieldID(env, that, "MOUSE_MOVED", "I"), (jint)MOUSE_MOVED);
-#endif
-#if defined(_WIN32) || defined(_WIN64)
 	(*env)->SetStaticIntField(env, that, (*env)->GetStaticFieldID(env, that, "MOUSE_WHEELED", "I"), (jint)MOUSE_WHEELED);
 #endif
    return;

@@ -16,23 +16,58 @@
 #ifndef JANSI_H
 #define JANSI_H
 
-#ifdef HAVE_CONFIG_H
-  /* configure based build.. we will use what it discovered about the platform */
-  #include "config.h"
-#else
-  #if defined(_WIN32) || defined(_WIN64)
-    /* Windows based build */
-    #define HAVE_STDLIB_H 1
-    #define HAVE_STRINGS_H 1
+#ifdef __linux__
+
+    #define HAVE_ISATTY 1
+    #define HAVE_TTYNAME 1
+    #define HAVE_TCGETATTR 1
+    #define HAVE_TCSETATTR 1
+    #define HAVE_IOCTL 1
+    #define HAVE_OPENPTY 1
+
+    #include <termios.h>
+    #include <sys/ioctl.h>
+    #include <pty.h>
+    #include <unistd.h>
+
+    #include "inc_linux/jni.h"
+    #include "inc_linux/jni_md.h"
+#endif
+
+#ifdef __FreeBSD__
+
+    #define HAVE_ISATTY 1
+    #define HAVE_TTYNAME 1
+    #define HAVE_TCGETATTR 1
+    #define HAVE_TCSETATTR 1
+    #define HAVE_IOCTL 1
+    #define HAVE_OPENPTY 1
+
+    #include <unistd.h>
+    #include <stdlib.h>
+    #include <string.h>
+
+    #include <term.h>
+    #include <libutil.h>
+    #include <termios.h>
+    #include <sys/ioctl.h>
+
+    #include "inc_linux/jni.h"
+    #include "inc_linux/jni_md.h"
+#endif
+
+/* Windows based build */
+#if defined(_WIN32) || defined(_WIN64)
+
+    #include <stdlib.h>
+    #include <string.h>
+    #include <windows.h>
+    #include <conio.h>
+    #include <io.h>
 
     #define STDIN_FILENO 0
     #define STDOUT_FILENO 1
     #define STDERR_FILENO 2
-    #define HAVE_ISATTY
-
-    #include <windows.h>
-    #include <conio.h>
-    #include <io.h>
 
     #define isatty _isatty
     #define getch _getch
@@ -41,44 +76,116 @@
       #define MOUSE_HWHEELED 0x0008
     #endif
 
-  #endif
+    #include "inc_win/jni.h"
+    #include "inc_win/jni_md.h"
 #endif
 
-#ifdef HAVE_UNISTD_H
-  #include <unistd.h>
+#if defined(__APPLE__) && defined(__MACH__)
+
+    #define HAVE_ISATTY 1
+    #define HAVE_TTYNAME 1
+    #define HAVE_TCGETATTR 1
+    #define HAVE_TCSETATTR 1
+    #define HAVE_IOCTL 1
+    #define HAVE_OPENPTY 1
+
+    #include <term.h>
+    #include <util.h>
+    #include <termios.h>
+    #include <sys/ioctl.h>
+    #include <unistd.h>
+
+    #include "inc_mac/jni.h"
+    #include "inc_mac/jni_md.h"
 #endif
 
-#ifdef HAVE_STDLIB_H
-  #include <stdlib.h>
+#include <stdint.h>
+
+
+#ifndef JNI64
+#if defined(_LP64)
+#define JNI64
+#endif
 #endif
 
-#ifdef HAVE_STRINGS_H
-  #include <string.h>
+/* 64 bit support */
+#ifndef JNI64
+
+/* int/long defines */
+#define GetIntLongField GetIntField
+#define SetIntLongField SetIntField
+#define GetIntLongArrayElements GetIntArrayElements
+#define ReleaseIntLongArrayElements ReleaseIntArrayElements
+#define GetIntLongArrayRegion GetIntArrayRegion
+#define SetIntLongArrayRegion SetIntArrayRegion
+#define NewIntLongArray NewIntArray
+#define CallStaticIntLongMethod CallStaticIntMethod
+#define CallIntLongMethod CallIntMethod
+#define CallStaticIntLongMethodV CallStaticIntMethodV
+#define CallIntLongMethodV CallIntMethodV
+#define jintLongArray jintArray
+#define jintLong jint
+#define I_J "I"
+#define I_JArray "[I"
+
+/* float/double defines */
+#define GetFloatDoubleField GetFloatField
+#define SetFloatDoubleField SetFloatField
+#define GetFloatDoubleArrayElements GetFloatArrayElements
+#define ReleaseFloatDoubleArrayElements ReleaseFloatArrayElements
+#define GetFloatDoubleArrayRegion GetFloatArrayRegion
+#define jfloatDoubleArray jfloatArray
+#define jfloatDouble jfloat
+#define F_D "F"
+#define F_DArray "[F"
+
+#else
+
+/* int/long defines */
+#define GetIntLongField GetLongField
+#define SetIntLongField SetLongField
+#define GetIntLongArrayElements GetLongArrayElements
+#define ReleaseIntLongArrayElements ReleaseLongArrayElements
+#define GetIntLongArrayRegion GetLongArrayRegion
+#define SetIntLongArrayRegion SetLongArrayRegion
+#define NewIntLongArray NewLongArray
+#define CallStaticIntLongMethod CallStaticLongMethod
+#define CallIntLongMethod CallLongMethod
+#define CallStaticIntLongMethodV CallStaticLongMethodV
+#define CallIntLongMethodV CallLongMethodV
+#define jintLongArray jlongArray
+#define jintLong jlong
+#define I_J "J"
+#define I_JArray "[J"
+
+/* float/double defines */
+#define GetFloatDoubleField GetDoubleField
+#define SetFloatDoubleField SetDoubleField
+#define GetFloatDoubleArrayElements GetDoubleArrayElements
+#define ReleaseFloatDoubleArrayElements ReleaseDoubleArrayElements
+#define GetFloatDoubleArrayRegion GetDoubleArrayRegion
+#define jfloatDoubleArray jdoubleArray
+#define jfloatDouble jdouble
+#define F_D "D"
+#define F_DArray "[D"
+
 #endif
 
-#ifdef HAVE_JANSI_TERM_H
-  #include <term.h>
+
+#ifdef __GNUC__
+  #define hawtjni_w_barrier() __sync_synchronize()
+#elif defined(SOLARIS2) && SOLARIS2 >= 10
+  #include <mbarrier.h>
+  #define hawtjni_w_barrier() __machine_w_barrier()
+#elif defined(__APPLE__)
+  #include <libkern/OSAtomic.h>
+  #define hawtjni_w_barrier() OSMemoryBarrier()
+#elif defined(_WIN32) || defined(_WIN64)
+  #include <intrin.h>
+  #define hawtjni_w_barrier() _mm_sfence(); _WriteBarrier()
+#else
+  #pragma message ( "Don't know how to do a memory barrier on this platform" )
+  #define hawtjni_w_barrier()
 #endif
 
-#ifdef HAVE_JANSI_LIBUTIL_H
-  #include <libutil.h>
-#endif
-
-#ifdef HAVE_JANSI_UTIL_H
-  #include <util.h>
-#endif
-
-#ifdef HAVE_TERMIOS_H
-  #include <termios.h>
-#endif
-
-#ifdef HAVE_IOCTL_H
-  #include <sys/ioctl.h>
-#endif
-
-#ifdef HAVE_PTY_H
-  #include <pty.h>
-#endif
-
-
-#endif /* JANSI_H */
+    #endif /* JANSI_H */

@@ -1,46 +1,3 @@
-ifndef JAVA_HOME
-$(warning Set JAVA_HOME environment variable)
-endif
-
-JAVA  := "$$JAVA_HOME/bin/java"
-JAVAC := "$$JAVA_HOME/bin/javac" 
-JAVAH := "$$JAVA_HOME/bin/javah"
-
-TARGET := target
-
-# building OSInfo.java
-#$(info compiling OSInfo.java)
-#$(shell mkdir -p target/lib)
-#$(shell $(JAVAC) lib/OSInfo.java -d target/lib)
-
-#ifndef OS_NAME
-#OS_NAME := $(shell $(JAVA) -cp target/lib org.fusesource.jansi.OSInfo --os)
-#endif
-#ifndef OS_ARCH
-#OS_ARCH := $(shell $(JAVA) -cp target/lib org.fusesource.jansi.OSInfo --arch)
-#endif
-
-# Windows uses different path separators
-ifeq ($(OS_NAME),Windows)
-	sep := ;
-else
-	sep := :
-endif
-
-jansi := jansi-native-$(version)
-
-ifdef JAVA_HOME
-jni_h := $(shell find -L "$(JAVA_HOME)" -name jni.h)
-ifneq ($(jni_h),)
-jni_include := $(shell dirname "$(jni_h)")
-endif
-
-jni_md := $(shell find -L "$(JAVA_HOME)" -name jni_md.h)
-ifneq ($(jni_md),)
-jni_md_include := $(shell dirname "$(jni_md)")
-endif
-endif
-
 # os=Default is meant to be generic unix/linux
 
 known_targets := Linux-x86 Linux-x86_64 Linux-arm Linux-armv6 Linux-armv7 Linux-android-arm Linux-ppc64 Mac-x86 Mac-x86_64 DragonFly-x86_64 FreeBSD-x86_64 OpenBSD-x86_64 Windows-x86 Windows-x86_64 SunOS-sparcv9 HPUX-ia64_32
@@ -190,10 +147,3 @@ CCFLAGS   := $($(target)_CCFLAGS)
 LINKFLAGS := $($(target)_LINKFLAGS) 
 LIBNAME   := $($(target)_LIBNAME)
 CCFLAGS := $(CCFLAGS)
-ifneq ($(jni_include),)
-CCFLAGS := $(CCFLAGS) -I"$(jni_include)"
-endif
-ifneq ($(jni_md_include),)
-CCFLAGS := $(CCFLAGS) -I"$(jni_md_include)"
-endif
-$(info CCFLAGS=$(CCFLAGS))
