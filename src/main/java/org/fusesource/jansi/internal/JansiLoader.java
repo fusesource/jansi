@@ -106,26 +106,45 @@ public class JansiLoader {
         }
     }
 
-    private static boolean contentsEquals(InputStream in1, InputStream in2) throws IOException {
+    private static int readNBytes(InputStream in, byte[] b) throws IOException {
+        int n = 0;
+        int len = b.length;
+        while (n < len) {
+            int count = in.read(b, n, len - n);
+            if (count <= 0)
+                break;
+            n += count;
+        }
+        return n;
+    }
+
+    private static String contentsEquals(InputStream in1, InputStream in2) throws IOException {
         byte[] buffer1 = new byte[8192];
         byte[] buffer2 = new byte[8192];
-        int numRead1 = 0;
-        int numRead2 = 0;
+        int numRead1;
+        int numRead2;
         while (true) {
-            numRead1 = in1.read(buffer1);
-            numRead2 = in2.read(buffer2);
-            if (numRead1 > -1) {
+            numRead1 = readNBytes(in1, buffer1);
+            numRead2 = readNBytes(in2, buffer2);
+            if (numRead1 > 0) {
+                if (numRead2 <= 0) {
+                    return "EOF on second stream but not first";
+                }
                 if (numRead2 != numRead1) {
-                    return false;
+                    return "Read size different (" + numRead1 + " vs " + numRead2 + ")";
                 }
                 // Otherwise same number of bytes read
                 if (!Arrays.equals(buffer1, buffer2)) {
-                    return false;
+                    return "Content differs";
                 }
                 // Otherwise same bytes read, so continue ...
             } else {
                 // Nothing more in stream 1 ...
-                return numRead2 < 0;
+                if (numRead2 > 0) {
+                    return "EOF on first stream but not second";
+                } else {
+                    return null;
+                }
             }
         }
     }
@@ -157,7 +176,7 @@ public class JansiLoader {
                 if (!extractedLckFile.exists()) {
                     new FileOutputStream(extractedLckFile).close();
                 }
-                OutputStream out = new BufferedOutputStream(new FileOutputStream(extractedLibFile));
+                OutputStream out = new FileOutputStream(extractedLibFile);
                 try {
                     copy(in, out);
                 } finally {
@@ -180,8 +199,9 @@ public class JansiLoader {
             try {
                 InputStream extractedLibIn = new FileInputStream(extractedLibFile);
                 try {
-                    if (!contentsEquals(nativeIn, extractedLibIn)) {
-                        throw new RuntimeException(String.format("Failed to write a native library file at %s", extractedLibFile));
+                    String eq = contentsEquals(nativeIn, extractedLibIn);
+                    if (eq != null) {
+                        throw new RuntimeException(String.format("Failed to write a native library file at %s because %s", extractedLibFile, eq));
                     }
                 } finally {
                     extractedLibIn.close();
