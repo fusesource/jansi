@@ -1,6 +1,42 @@
 # ![Jansi](http://fusesource.github.io/jansi/images/project-logo.png)
 
 <!-- git log --pretty=format:'* [`%h`](https://github.com/fusesource/jansi/commit/%H) %s' -->
+## [Jansi 2.0][2_0], released 2020-10-26
+[2_0]: https://repo.maven.apache.org/maven2/org/fusesource/jansi/jansi/2.0
+
+* [`8d65958`](https://github.com/fusesource/jansi/commit/8d659588bc7861397073532a926cafc9fb58c08c) Remove old pom
+* [`3d828cb`](https://github.com/fusesource/jansi/commit/3d828cb998c13e404de7db0d984d4c945682232b) Try to be more resilient when verifying the extracted library
+* [`8bafdf7`](https://github.com/fusesource/jansi/commit/8bafdf7dbec790d7180863b033936f1d0e85136f) Add resources for graalvm support
+* [`71b5164`](https://github.com/fusesource/jansi/commit/71b5164523ee19d687f0d404122c615002b66291) Clean a bit the native build part
+* [`3ac28bb`](https://github.com/fusesource/jansi/commit/3ac28bb72c44e3a6a8c021610a1d218e415b7a37) Upgrade to junit 5
+* [`146b5f9`](https://github.com/fusesource/jansi/commit/146b5f9e8d9e8cb2a8fee6d90e3fea32cb45b549) Reorganize to a single module
+* [`4d24cd8`](https://github.com/fusesource/jansi/commit/4d24cd8e62556c8a3254c9a31831e72143f17910) Remove hardly used stuff
+* [`aa0c419`](https://github.com/fusesource/jansi/commit/aa0c4194b41f6ee0aeb83922d4cc39f585df78ac) Include jansi native
+* [`f252f0a`](https://github.com/fusesource/jansi/commit/f252f0a6cdd6223582201202971b94b05a7ce56a) Switch to 2.0-SNAPSHOT
+* [`672c0f9`](https://github.com/fusesource/jansi/commit/672c0f9bf3adc9847d0a1b5f881c028604000f7b) Forgot one call to new PrintStream
+* [`8283aaf`](https://github.com/fusesource/jansi/commit/8283aafa1a7870488e302c7499b9e127ae9265ba) Fix possible encoding issues in the new AnsiNoSyncOutputStream
+* [`182b884`](https://github.com/fusesource/jansi/commit/182b884d73d950e6d370e70162f92b0fd4b79372) Fix attributes used when erasing on windows, fixes #160
+* [`e12ff97`](https://github.com/fusesource/jansi/commit/e12ff979f0e5ede59b477733349c6f333a2c0314) Merge pull request #173 from fusesource/dependabot/maven/jansi/junit-junit-4.13.1
+* [`8370e29`](https://github.com/fusesource/jansi/commit/8370e29bb5cda83ccab1ab472debde59deb22844) Use a different enum when using the ENABLE_VIRTUAL_TERMINAL_PROCESSING on windows
+* [`7be32c5`](https://github.com/fusesource/jansi/commit/7be32c54b3fdd0c60d5930657b56334031ff32cc) Do use the new variables
+* [`ef60bc5`](https://github.com/fusesource/jansi/commit/ef60bc5bf53cdb29ec706517d2eec5c988d55238) Use constants for properties, allow by-passing the new system
+* [`11b52d2`](https://github.com/fusesource/jansi/commit/11b52d20a93763653f9327939431453556f50c4f) Fix logo
+* [`57aa84d`](https://github.com/fusesource/jansi/commit/57aa84d4120395922458f61f20e741198f051087) Fix windows support, do not use reflection while creating the system out/err print streams
+* [`07916c1`](https://github.com/fusesource/jansi/commit/07916c1af9769ded99ce6770db1348db4e062921) Optimize system print streams when processing ANSI sequences
+* [`f6e8a9a`](https://github.com/fusesource/jansi/commit/f6e8a9a5527805c102761dec14000f4dcbd7c32e) Remove unneeded boxing/unboxing
+* [`753c662`](https://github.com/fusesource/jansi/commit/753c6625e528ef9245ba469d004ca8e2661a010a) Bump junit from 4.7 to 4.13.1 in /jansi
+* [`1461096`](https://github.com/fusesource/jansi/commit/146109610a85892efdad4f50a1a974d9d6ac21ee) fixed typos giving ANSI output inconsistent with Ansi method name
+* [`c2aaada`](https://github.com/fusesource/jansi/commit/c2aaadaff3b8f5e34d6767585f6ba668fa2ba651) introduce jansi-native
+* [`f9e85d0`](https://github.com/fusesource/jansi/commit/f9e85d0c48713743f671d59253060d3e8cb8e462) #151 extracted more common code to AnsiProcessor
+* [`7e6bd5b`](https://github.com/fusesource/jansi/commit/7e6bd5b2a5f10a32ec50e3d85b2c452328bdbac1) #151 extracted AnsiProcessor and WindowsAnsiProcessor
+* [`3b65176`](https://github.com/fusesource/jansi/commit/3b6517625edd9b66ef22ce9109b1746d27ead8a9) typo...
+* [`48489d0`](https://github.com/fusesource/jansi/commit/48489d09c1731b8afb9e9cad94688b248fe8fcf3) #153 fixed buffer size
+* [`0e7a582`](https://github.com/fusesource/jansi/commit/0e7a5822f56dfa4345ac74ebfeacf8fe4207845b) example artifact has better maven-metadata than jansi
+* [`adb9e24`](https://github.com/fusesource/jansi/commit/adb9e24fccac4107f705327cd8fe28739c5f6d12) enhance memory usage using buffer, or avoiding alloc
+* [`2f866c4`](https://github.com/fusesource/jansi/commit/2f866c4cf31b8ae44e005515326ad9b2819a394f) #146 add support for ConEmu (used by cmder)
+* [`fe749a5`](https://github.com/fusesource/jansi/commit/fe749a526f1c1d6925e60fd6deb939f54732cad7) prepare for next development iteration
+* [`da13459`](https://github.com/fusesource/jansi/commit/da13459c758e94f31ac6a24c48fac3ed5abab5c9) fixed links to commit
+* [`07702b4`](https://github.com/fusesource/jansi/commit/07702b455d23034523c2f5be0e52dda82973699e) prepare 1.18 site publication
 
 ## [Jansi 1.18][1_18], released 2019-04-02
 [1_18]: https://repo.maven.apache.org/maven2/org/fusesource/jansi/jansi/1.18
