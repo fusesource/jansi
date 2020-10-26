@@ -56,7 +56,7 @@ public class AnsiProcessor {
     /**
      * @return true if the escape command was processed.
      */
-    protected boolean processEscapeCommand(ArrayList<Object> options, int command) throws IOException { // expected diff with AnsiOutputStream.java
+    protected boolean processEscapeCommand(ArrayList<Object> options, int command) throws IOException {
         try {
             switch (command) {
                 case 'A':
@@ -204,7 +204,7 @@ public class AnsiProcessor {
     /**
      * @return true if the operating system command was processed.
      */
-    protected boolean processOperatingSystemCommand(ArrayList<Object> options) { // expected diff with AnsiOutputStream.java
+    protected boolean processOperatingSystemCommand(ArrayList<Object> options) {
         int command = optionInt(options, 0);
         String label = (String) options.get(1);
         // for command > 2 label could be composed (i.e. contain ';'), but we'll leave
