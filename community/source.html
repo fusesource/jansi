@@ -30,7 +30,7 @@
     <div id="navigation">
       <div class="wrapper">
 <ul>
-<li><a href="../index.html">Jansi 1.18</a></li>
+<li><a href="../index.html">Jansi 2.0.1</a></li>
 <li><a href="../documentation/api/index.html">API Docs</a></li>
 <li><a href="../download.html">Download</a></li>
 <li><a href="index.html">Support</a></li>
@@ -78,8 +78,8 @@
 
   <p>You must first install a <a href="http://git-scm.com/download">Git client</a>. Then you clone the repository using the following:</p>
 
-  <pre><code>git clone git://github.com/fusesource/jansi.git
-  cd jansi</code></pre>
+  <div class="syntax"><pre name='code' class='brush: shell; gutter: false;'><code>  git clone git://github.com/fusesource/jansi.git
+  cd jansi</code></pre></div>
 
   <p>Now you probably want to try <a href="building.html">build the Jansi code</a></p>
 </div>
@@ -95,8 +95,8 @@
 
   <p>You must first install a <a href="http://git-scm.com/download">Git client</a>. Then you clone the repository using the Git URL:</p>
 
-  <pre><code>git clone git@github.com:fusesources/jansi.git
-  cd jansi</code></pre>
+  <div class="syntax"><pre name='code' class='brush: shell; gutter: false;'><code>  git clone git@github.com:fusesources/jansi.git
+  cd jansi</code></pre></div>
 </div>
 <div class="left">
   <h1 id = "Contributing_patches">Contributing patches</h1>
@@ -106,26 +106,12 @@
 <p>We gladly accept patches if you can find ways to improve, tune or fix
 Jansi in some way.</p>
 
-<p>Most IDEs can create nice patches now very easily. e.g. in Eclipse just
-right click on a file/directory and select <code>Team -&gt; Create Patch</code>. Then
-just save the patch as a file and then submit it. (You may have to click
-on <code>Team -&gt; Share...</code> first to enable the Subversion options).
-Incidentally if you are an Eclipse user you should install the
-<a href="http://subclipse.tigris.org/">subclipse</a> plugin.</p>
-
-<p>If you're a command line person try the following to create the patch</p>
-
-<pre><code>diff -u Main.java.orig Main.java &gt;&gt; patchfile.txt</code></pre>
-
-<p>or
-    svn diff Main.java >> patchfile.txt</p>
-
 <h3 id = "Submitting_patches">Submitting patches</h3>
 
 <p>The easiest way to submit a patch is to create a new issue at our <a href="https://github.com/fusesource/jansi/issues">Issue
-Tracker</a>, attach the patch, tick the Patch
-Attached button on the issue then fire off an email to the mailing
-lists.</p></div>
+Tracker</a>, and provide a 
+<a href="https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/proposing-changes-to-your-work-with-pull-requests">Github pull request</a>
+so that we can review it.</p></div>
 <div class="left">
   <h1 id = "Next_steps">Next steps</h1>
 </div>

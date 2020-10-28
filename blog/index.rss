@@ -4,10 +4,56 @@
                     <title>The Jansi Blog</title>
                     <link>http://fusesource.github.io/jansi/blog/</link>
                     <description>Eliminating boring console output.</description>
-                    <pubDate>Sat, 24 Oct 2020 22:01:36 +0200</pubDate>
-                    <lastBuildDate>Sat, 24 Oct 2020 22:01:36 +0200</lastBuildDate>
+                    <pubDate>Wed, 28 Oct 2020 15:15:35 +0100</pubDate>
+                    <lastBuildDate>Wed, 28 Oct 2020 15:15:35 +0100</lastBuildDate>
                     <generator>Scalate - http://scalate.fusesource.org/</generator>
                     <item>
+                          <title>Jansi 2.0.1</title>
+                          <link>http://fusesource.github.io/jansi/blog/releases/release-2.0.1.html</link>
+                          <description>&lt;p&gt;The &lt;a href=&quot;http://fusesource.github.io/jansi&quot;&gt;Jansi&lt;/a&gt; project is pleased to announce
+the availability of Jansi 2.0.1. Jansi is a small java library that allows
+you to use ANSI escape sequences to format your console output which works 
+even on windows and to access low-level OS support for consoles.&lt;/p&gt;
+
+&lt;p&gt;Changes:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Add some missing information for native compilation using GraalVM&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Further information:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;http://http://fusesource.github.io/jansi/download.html&quot;&gt;Downloads&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://fusesource.github.io/jansi/community/index.html&quot;&gt;Feedback&lt;/a&gt; is always welcome!&lt;/p&gt;</description>
+                        </item><item>
+                          <title>Jansi 2.0</title>
+                          <link>http://fusesource.github.io/jansi/blog/releases/release-2.0.html</link>
+                          <description>&lt;p&gt;The &lt;a href=&quot;http://fusesource.github.io/jansi&quot;&gt;Jansi&lt;/a&gt; project is pleased to announce
+the availability of Jansi 2.0. Jansi is a small java library that allows
+you to use ANSI escape sequences to format your console output which works 
+even on windows and to access low-level OS support for consoles.&lt;/p&gt;
+
+&lt;p&gt;Changes:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Merge jansi and jansi-native&lt;/li&gt;
+&lt;li&gt;Support for more architectures&lt;/li&gt;
+&lt;li&gt;Speed improvements when using ansi enabled print streams&lt;/li&gt;
+&lt;li&gt;Native compilation support using GraalVM&lt;/li&gt;
+&lt;li&gt;Remove non widely used and deprecated  classes&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Further information:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;http://http://fusesource.github.io/jansi/download.html&quot;&gt;Downloads&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://fusesource.github.io/jansi/community/index.html&quot;&gt;Feedback&lt;/a&gt; is always welcome!&lt;/p&gt;</description>
+                        </item><item>
                           <title>Jansi 1.9</title>
                           <link>http://fusesource.github.io/jansi/blog/releases/release-1.9.html</link>
                           <description>&lt;p&gt;The &lt;a href=&quot;http://fusesource.github.io/jansi&quot;&gt;Jansi&lt;/a&gt; project is pleased to announce
