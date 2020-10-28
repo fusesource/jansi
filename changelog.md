@@ -1,6 +1,11 @@
 # ![Jansi](http://fusesource.github.io/jansi/images/project-logo.png)
-
 <!-- git log --pretty=format:'* [`%h`](https://github.com/fusesource/jansi/commit/%H) %s' -->
+
+## [Jansi 2.0.1][2_0_1], released 2020-10-28
+[2_0_1]: https://repo.maven.apache.org/maven2/org/fusesource/jansi/jansi/2.0
+
+* [`282568f`](https://github.com/fusesource/jansi/commit/282568f5abe188aeebd04b0c8714d2e7f0f77762) Make sure to include the jansi.properties file in native mode, use regex for libs
+
 ## [Jansi 2.0][2_0], released 2020-10-26
 [2_0]: https://repo.maven.apache.org/maven2/org/fusesource/jansi/jansi/2.0
 
