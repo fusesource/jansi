@@ -40,8 +40,8 @@ ${project_slogan}
     
     {pygmentize::java}
     AnsiConsole.out.println("Hello World");
-    {pygmentize} 
-    
+    {pygmentize}
+
 .left
   h1 Windows Examples
 .right
@@ -58,4 +58,16 @@ ${project_slogan}
     
     ![after](images/after-jansi-windows.png)
     
-    
+.left
+  h1 Native libraries
+.right
+  :markdown
+    Jansi also provides the native libraries needed for low-level access
+    to the system console using the standard C library or the Kernel32
+    windows api.
+
+    Those are used first internally, but also in projects such as
+    [JLine](https://github.com/jline/jline3) which provides a full
+    access to the terminal.
+
+
