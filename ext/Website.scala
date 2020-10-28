@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2009-2018 the original author(s).
+ * Copyright (C) 2009-2020 the original author(s).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,10 +32,12 @@ object Website {
   val project_forums_url= "http://groups.google.com/group/jansi"
   val project_wiki_url= "https://github.com/fusesource/jansi/wiki"
   val project_logo= "/images/project-logo.png"
-  val project_version= "1.18"
-  val project_snapshot_version= "1.19-SNAPSHOT"
+  val project_version= "2.0.1"
+  val project_snapshot_version= "2.0.2-SNAPSHOT"
   val project_versions = List(
         project_version,
+        "2.0",
+        "1.18",
         "1.17.1",
         "1.17",
         "1.16",

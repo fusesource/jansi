@@ -6,4 +6,5 @@ docs/webgen.cache
 target
 .DS_Store
 .idea
-*.iml
+*.i*
+
