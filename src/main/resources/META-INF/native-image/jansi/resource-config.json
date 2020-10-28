@@ -1,16 +1,6 @@
 {
   "resources": [
-    {"pattern": "org/fusesource/jansi/internal/native/FreeBSD/x86/libjansi.so"},
-    {"pattern": "org/fusesource/jansi/internal/native/FreeBSD/x86_64/libjansi.so"},
-    {"pattern": "org/fusesource/jansi/internal/native/Linux/arm/libjansi.so"},
-    {"pattern": "org/fusesource/jansi/internal/native/Linux/arm64/libjansi.so"},
-    {"pattern": "org/fusesource/jansi/internal/native/Linux/armv7/libjansi.so"},
-    {"pattern": "org/fusesource/jansi/internal/native/Linux/ppc64/libjansi.so"},
-    {"pattern": "org/fusesource/jansi/internal/native/Linux/x86/libjansi.so"},
-    {"pattern": "org/fusesource/jansi/internal/native/Linux/x86_64/libjansi.so"},
-    {"pattern": "org/fusesource/jansi/internal/native/Mac/x86/libjansi.jnilib"},
-    {"pattern": "org/fusesource/jansi/internal/native/Mac/x86_64/libjansi.jnilib"},
-    {"pattern": "org/fusesource/jansi/internal/native/Windows/x86/jansi.dll"},
-    {"pattern": "org/fusesource/jansi/internal/native/Windows/x86_64/jansi.dll"}
+    {"pattern": "org/fusesource/jansi/jansi.properties"},
+    {"pattern": "org/fusesource/jansi/internal/native/.*"}
   ]
 }
