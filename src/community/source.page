@@ -47,8 +47,8 @@ Get the latest source code
 
     You must first install a [Git client](http://git-scm.com/download). Then you clone the repository using the following:
 
-        git clone #{git_user_url}
-        cd #{project_id}
+    {pygmentize::shell}  git clone #{git_user_url}
+    cd #{project_id}{pygmentize}
 
     Now you probably want to try [build the ${project_name} code](building.html) 
 
@@ -63,8 +63,8 @@ Get the latest source code
 
     You must first install a [Git client](http://git-scm.com/download). Then you clone the repository using the Git URL:
 
-        git clone #{git_commiter_url}
-        cd #{project_id}
+    {pygmentize::shell}  git clone #{git_commiter_url}
+    cd #{project_id}{pygmentize}
 
 
 .left
