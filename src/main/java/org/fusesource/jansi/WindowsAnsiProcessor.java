@@ -252,6 +252,22 @@ public final class WindowsAnsiProcessor extends AnsiProcessor {
     }
 
     @Override
+    protected void processCursorUpLine(int count) throws IOException {
+        getConsoleInfo();
+        info.cursorPosition.x = 0;
+        info.cursorPosition.y = (short) Math.max(info.window.top, info.cursorPosition.y - count);
+        applyCursorPosition();
+    }
+
+    @Override
+    protected void processCursorDownLine(int count) throws IOException {
+        getConsoleInfo();
+        info.cursorPosition.x = 0;
+        info.cursorPosition.y = (short) Math.max(info.window.top, info.cursorPosition.y + count);
+        applyCursorPosition();
+    }
+
+    @Override
     protected void processSetForegroundColor(int color, boolean bright) throws IOException {
         info.attributes = (short) ((info.attributes & ~0x0007) | ANSI_FOREGROUND_COLOR_MAP[color]);
         if (bright) {
