@@ -70,10 +70,10 @@ mac-x86_64:
 	docker run -it --rm -v $$PWD:/workdir -e CROSS_TRIPLE=x86_64-apple-darwin multiarch/crossbuild make clean-native native OS_NAME=Mac OS_ARCH=x86_64
 
 freebsd-x86:
-	docker run -it --rm -v $$PWD:/build empterdose/freebsd-cross-build:9.3 make -C /build clean-native native CROSS_PREFIX=i386-freebsd9- OS_NAME=FreeBSD OS_ARCH=x86
+	docker run -it --rm -v $$PWD:/workdir empterdose/freebsd-cross-build:9.3 make clean-native native CROSS_PREFIX=i386-freebsd9- OS_NAME=FreeBSD OS_ARCH=x86
 
 freebsd-x86_64:
-	docker run -it --rm -v $$PWD:/build empterdose/freebsd-cross-build:9.3 make -C /build clean-native native CROSS_PREFIX=x86_64-freebsd9- OS_NAME=FreeBSD OS_ARCH=x86_64
+	docker run -it --rm -v $$PWD:/workdir empterdose/freebsd-cross-build:9.3 make clean-native native CROSS_PREFIX=x86_64-freebsd9- OS_NAME=FreeBSD OS_ARCH=x86_64
 
 #sparcv9:
 #	$(MAKE) native OS_NAME=SunOS OS_ARCH=sparcv9
