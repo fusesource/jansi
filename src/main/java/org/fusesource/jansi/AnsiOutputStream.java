@@ -128,7 +128,7 @@ public class AnsiOutputStream extends FilterOutputStream {
                 } else if ('=' == data) {
                     options.add('=');
                 } else {
-                    reset(ap.processEscapeCommand(options, data));
+                    processEscapeCommand(data);
                 }
                 break;
             default:
@@ -143,7 +143,7 @@ public class AnsiOutputStream extends FilterOutputStream {
                     if (data == ';') {
                         state = LOOKING_FOR_NEXT_ARG;
                     } else {
-                        reset(ap.processEscapeCommand(options, data));
+                        processEscapeCommand(data);
                     }
                 }
                 break;
@@ -156,7 +156,7 @@ public class AnsiOutputStream extends FilterOutputStream {
                     if (data == ';') {
                         state = LOOKING_FOR_NEXT_ARG;
                     } else {
-                        reset(ap.processEscapeCommand(options, data));
+                        processEscapeCommand(data);
                     }
                 }
                 break;
@@ -192,7 +192,7 @@ public class AnsiOutputStream extends FilterOutputStream {
                 if (BEL == data) {
                     String value = new String(buffer, startOfValue, (pos - 1) - startOfValue, cs);
                     options.add(value);
-                    reset(ap.processOperatingSystemCommand(options));
+                    processOperatingSystemCommand();
                 } else if (FIRST_ESC_CHAR == data) {
                     state = LOOKING_FOR_ST;
                 } else {
@@ -205,7 +205,7 @@ public class AnsiOutputStream extends FilterOutputStream {
                 if (SECOND_ST_CHAR == data) {
                     String value = new String(buffer, startOfValue, (pos - 2) - startOfValue, cs);
                     options.add(value);
-                    reset(ap.processOperatingSystemCommand(options));
+                    processOperatingSystemCommand();
                 } else {
                     state = LOOKING_FOR_OSC_PARAM;
                 }
@@ -213,13 +213,40 @@ public class AnsiOutputStream extends FilterOutputStream {
 
             case LOOKING_FOR_CHARSET:
                 options.add((char) data);
-                reset(ap.processCharsetSelect(options));
+                processCharsetSelect();
                 break;
         }
 
         // Is it just too long?
         if (pos >= buffer.length) {
             reset(false);
+        }
+    }
+
+    private void processCharsetSelect() throws IOException {
+        try {
+            reset(ap.processCharsetSelect(options));
+        } catch (RuntimeException e) {
+            reset(true);
+            throw e;
+        }
+    }
+
+    private void processOperatingSystemCommand() throws IOException {
+        try {
+            reset(ap.processOperatingSystemCommand(options));
+        } catch (RuntimeException e) {
+            reset(true);
+            throw e;
+        }
+    }
+
+    private void processEscapeCommand(int data) throws IOException {
+        try {
+            reset(ap.processEscapeCommand(options, data));
+        } catch (RuntimeException e) {
+            reset(true);
+            throw e;
         }
     }
 
