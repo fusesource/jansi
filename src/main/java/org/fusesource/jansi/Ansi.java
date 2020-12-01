@@ -15,6 +15,7 @@
  */
 package org.fusesource.jansi;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
 
@@ -25,7 +26,7 @@ import java.util.concurrent.Callable;
  * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  * @since 1.0
  */
-public class Ansi {
+public class Ansi implements Appendable {
 
     private static final char FIRST_ESC_CHAR = 27;
     private static final char SECOND_ESC_CHAR = '[';
@@ -758,4 +759,21 @@ public class Ansi {
         return this;
     }
 
+    @Override
+    public Ansi append(CharSequence csq) {
+        builder.append(csq);
+        return this;
+    }
+
+    @Override
+    public Ansi append(CharSequence csq, int start, int end) {
+        builder.append(csq, start, end);
+        return this;
+    }
+
+    @Override
+    public Ansi append(char c) {
+        builder.append(c);
+        return this;
+    }
 }
