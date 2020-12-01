@@ -523,7 +523,7 @@ public class Ansi {
     }
 
     public Ansi cursorToColumn(final int x) {
-        return appendEscapeSequence('G', x);
+        return x >= 0 ? appendEscapeSequence('G', x) : this;
     }
 
     public Ansi cursorUp(final int y) {
@@ -531,15 +531,15 @@ public class Ansi {
     }
 
     public Ansi cursorDown(final int y) {
-        return appendEscapeSequence('B', y);
+        return y > 0 ? appendEscapeSequence('B', y) : this;
     }
 
     public Ansi cursorRight(final int x) {
-        return appendEscapeSequence('C', x);
+        return x > 0 ? appendEscapeSequence('C', x) : this;
     }
 
     public Ansi cursorLeft(final int x) {
-        return appendEscapeSequence('D', x);
+        return x > 0 ? appendEscapeSequence('D', x) : this;
     }
 
     public Ansi cursorDownLine() {
@@ -547,7 +547,7 @@ public class Ansi {
     }
 
     public Ansi cursorDownLine(final int n) {
-        return appendEscapeSequence('E', n);
+        return n > 0 ? appendEscapeSequence('E', n) : this;
     }
 
     public Ansi cursorUpLine() {
@@ -555,7 +555,7 @@ public class Ansi {
     }
 
     public Ansi cursorUpLine(final int n) {
-        return appendEscapeSequence('F', n);
+        return n > 0 ? appendEscapeSequence('F', n) : this;
     }
 
     public Ansi eraseScreen() {
@@ -575,11 +575,11 @@ public class Ansi {
     }
 
     public Ansi scrollUp(final int rows) {
-        return appendEscapeSequence('S', rows);
+        return rows > 0 ? appendEscapeSequence('S', rows) : this;
     }
 
     public Ansi scrollDown(final int rows) {
-        return appendEscapeSequence('T', rows);
+        return rows > 0 ? appendEscapeSequence('T', rows) : this;
     }
 
     public Ansi saveCursorPosition() {
