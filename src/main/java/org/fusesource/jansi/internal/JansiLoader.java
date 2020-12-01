@@ -15,7 +15,6 @@
  *--------------------------------------------------------------------------*/
 package org.fusesource.jansi.internal;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -28,7 +27,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
-import java.util.UUID;
+import java.util.Random;
 
 /**
  * Set the system properties, org.jansi.lib.path, org.jansi.lib.name,
@@ -162,7 +161,7 @@ public class JansiLoader {
         String nativeLibraryFilePath = libFolderForCurrentOS + "/" + libraryFileName;
         // Include architecture name in temporary filename in order to avoid conflicts
         // when multiple JVMs with different architectures running at the same time
-        String uuid = UUID.randomUUID().toString();
+        String uuid = randomUUID();
         String extractedLibFileName = String.format("jansi-%s-%s-%s", getVersion(), uuid, libraryFileName);
         String extractedLckFileName = extractedLibFileName + ".lck";
 
@@ -219,6 +218,10 @@ public class JansiLoader {
             System.err.println(e.getMessage());
         }
         return false;
+    }
+
+    private static String randomUUID() {
+        return Long.toHexString(new Random().nextLong());
     }
 
     private static void copy(InputStream in, OutputStream out) throws IOException {
