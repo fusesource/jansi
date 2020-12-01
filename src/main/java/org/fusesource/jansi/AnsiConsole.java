@@ -40,15 +40,41 @@ import static org.fusesource.jansi.internal.Kernel32.SetConsoleMode;
  * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  * @since 1.0
  * @see #systemInstall()
+ * @see #out()
+ * @see #err()
  * @see #ansiStream(boolean) for more details on ANSI mode selection
  */
 public class AnsiConsole {
 
-    public static final PrintStream system_out = System.out;
-    public static final PrintStream out;
+    /**
+     * If the <code>jansi.passthrough</code> system property is set to true, will not perform any transformation
+     * and any ansi sequence will be conveyed without any modification.
+     */
+    public static final String JANSI_PASSTHROUGH = "jansi.passthrough";
+    /**
+     * If the <code>jansi.strip</code> system property is set to true, and <code>jansi.passthrough</code>
+     * is not enabled, all ansi sequences will be stripped before characters are written to the output streams.
+     */
+    public static final String JANSI_STRIP = "jansi.strip";
+    /**
+     * If the <code>jansi.force</code> system property is set to true, and neither <code>jansi.passthrough</code>
+     * nor <code>jansi.strip</code> are set, then ansi sequences will be printed to the output stream.
+     * This forces the behavior which is by default dependent on the output stream being a real console: if the
+     * output stream is redirected to a file or through a system pipe, ansi sequences are disabled by default.
+     */
+    public static final String JANSI_FORCE = "jansi.force";
+    /**
+     * If the <code>jansi.eager</code> system property is set to true, the system streams will be eagerly
+     * initialized, else the initialization is delayed until {@link #out()}, {@link #err()} or {@link #systemInstall()}
+     * is called.
+     */
+    public static final String JANSI_EAGER = "jansi.eager";
 
-    public static final PrintStream system_err = System.err;
-    public static final PrintStream err;
+    public static PrintStream system_out = System.out;
+    public static PrintStream out;
+
+    public static PrintStream system_err = System.err;
+    public static PrintStream err;
 
     static final boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("win");
 
@@ -66,22 +92,19 @@ public class AnsiConsole {
 
     static final int ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004;
 
-    public static final String JANSI_PASSTHROUGH = "jansi.passthrough";
-    public static final String JANSI_STRIP = "jansi.strip";
-    public static final String JANSI_FORCE = "jansi.force";
-
 
     private static JansiOutputType jansiOutputType;
-    static final JansiOutputType JANSI_STDOUT_TYPE;
-    static final JansiOutputType JANSI_STDERR_TYPE;
 
     static {
-        out = ansiStream(true);
-        JANSI_STDOUT_TYPE = jansiOutputType;
-        err = ansiStream(false);
-        JANSI_STDERR_TYPE = jansiOutputType;
+        if (getBoolean(JANSI_EAGER)) {
+            initStreams();
+        }
     }
 
+    static JansiOutputType JANSI_STDOUT_TYPE;
+    static JansiOutputType JANSI_STDERR_TYPE;
+
+    private static boolean initialized;
     private static int installed;
 
     private AnsiConsole() {
@@ -213,6 +236,7 @@ public class AnsiConsole {
      * @return a PrintStream which is ANSI aware.
      */
     public static PrintStream out() {
+        initStreams();
         return out;
     }
 
@@ -225,6 +249,7 @@ public class AnsiConsole {
      * @return a PrintStream which is ANSI aware.
      */
     public static PrintStream err() {
+        initStreams();
         return err;
     }
 
@@ -236,6 +261,23 @@ public class AnsiConsole {
     synchronized static public void systemInstall() {
         installed++;
         if (installed == 1) {
+            initStreams();
+            System.setOut(out);
+            System.setErr(err);
+        }
+    }
+
+    /**
+     * Re-installs the system streams.  This can be usefull if the system
+     * properties that control the streams, mainly {@link #JANSI_PASSTHROUGH},
+     * {@link #JANSI_STRIP} and {@link #JANSI_FORCE} are modified.
+     * Note that the streams will be installed only if they were previously
+     * installed.
+     */
+    synchronized static public void systemReinstall() {
+        if (installed > 0) {
+            initialized = false;
+            initStreams();
             System.setOut(out);
             System.setErr(err);
         }
@@ -251,6 +293,21 @@ public class AnsiConsole {
         if (installed == 0) {
             System.setOut(system_out);
             System.setErr(system_err);
+        }
+    }
+
+    /**
+     * Initialize the out/err ansi-enabled streams
+     */
+    synchronized static void initStreams()
+    {
+        if ( !initialized )
+        {
+            out = ansiStream(true);
+            JANSI_STDOUT_TYPE = jansiOutputType;
+            err = ansiStream(false);
+            JANSI_STDERR_TYPE = jansiOutputType;
+            initialized = true;
         }
     }
 
