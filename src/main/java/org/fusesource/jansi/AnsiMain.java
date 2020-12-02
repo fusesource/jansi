@@ -17,6 +17,7 @@ package org.fusesource.jansi;
 
 import static org.fusesource.jansi.Ansi.ansi;
 
+import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
@@ -199,14 +200,11 @@ public class AnsiMain {
     }
 
     private static void printJansiLogoDemo() throws IOException {
-        Reader in = new InputStreamReader(AnsiMain.class.getResourceAsStream("jansi.txt"), "UTF-8");
+        BufferedReader in = new BufferedReader(new InputStreamReader(AnsiMain.class.getResourceAsStream("jansi.txt"), "UTF-8"));
         try {
-            char[] buf = new char[1024];
-            int l = 0;
-            while ((l = in.read(buf)) >= 0) {
-                for(int i = 0; i < l; i++) {
-                    System.out.print(buf[i]);
-                }
+            String l;
+            while ((l = in.readLine()) != null) {
+                System.out.println(l);
             }
         } finally {
             closeQuietly(in);
