@@ -22,6 +22,8 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Locale;
 
+import org.fusesource.jansi.internal.CLibrary;
+
 import static org.fusesource.jansi.internal.CLibrary.isatty;
 import static org.fusesource.jansi.internal.Kernel32.GetConsoleMode;
 import static org.fusesource.jansi.internal.Kernel32.GetStdHandle;
@@ -163,7 +165,7 @@ public class AnsiConsole {
             boolean forceColored = getBoolean(JANSI_FORCE);
             // If we can detect that stdout is not a tty.. then setup
             // to strip the ANSI sequences..
-            if (!forceColored && isatty(stdout ? 1 : 2) == 0) {
+            if (!forceColored && isatty(stdout ? CLibrary.STDOUT_FILENO : CLibrary.STDERR_FILENO) == 0) {
                 jansiOutputType = JansiOutputType.STRIP_ANSI;
                 return newPrintStream(new AnsiOutputStream(out, new AnsiProcessor(out), enc), enc);
             }
