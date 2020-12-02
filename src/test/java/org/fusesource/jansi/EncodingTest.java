@@ -18,6 +18,7 @@ package org.fusesource.jansi;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.jupiter.api.Test;
@@ -31,12 +32,12 @@ public class EncodingTest {
     public void testEncoding8859() throws UnsupportedEncodingException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         final AtomicReference<String> newLabel = new AtomicReference<String>();
-        PrintStream ansi = new PrintStream(new AnsiOutputStream(baos, new AnsiProcessor(baos) {
+        PrintStream ansi = new AnsiPrintStream(new AnsiOutputStream(baos, AnsiMode.Default, new AnsiProcessor(baos) {
             @Override
             protected void processChangeWindowTitle(String label) {
                 newLabel.set(label);
             }
-        }, "ISO-8859-1"), true, "ISO-8859-1");
+        }, AnsiProcessorType.Emulation, StandardCharsets.ISO_8859_1, null, null, false), true, "ISO-8859-1");
 
         ansi.print("\033]0;un bon café\007");
         ansi.flush();
@@ -47,12 +48,12 @@ public class EncodingTest {
     public void testEncodingUtf8() throws UnsupportedEncodingException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         final AtomicReference<String> newLabel = new AtomicReference<String>();
-        PrintStream ansi = new PrintStream(new AnsiOutputStream(baos, new AnsiProcessor(baos) {
+        PrintStream ansi = new PrintStream(new AnsiOutputStream(baos, AnsiMode.Default, new AnsiProcessor(baos) {
             @Override
             protected void processChangeWindowTitle(String label) {
                 newLabel.set(label);
             }
-        }, "UTF-8"), true, "UTF-8");
+        }, AnsiProcessorType.Emulation, StandardCharsets.UTF_8, null, null, false), true, "UTF-8");
 
         ansi.print("\033]0;ひらがな\007");
         ansi.flush();

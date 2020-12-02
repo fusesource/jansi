@@ -37,6 +37,10 @@ public class AnsiOutputStream extends FilterOutputStream {
 
     public static final byte[] RESET_CODE = "\033[0m".getBytes();
 
+    public interface IoRunnable {
+        void run() throws IOException;
+    }
+
     private static final int LOOKING_FOR_FIRST_ESC_CHAR = 0;
     private static final int LOOKING_FOR_SECOND_ESC_CHAR = 1;
     private static final int LOOKING_FOR_NEXT_ARG = 2;
@@ -56,7 +60,7 @@ public class AnsiOutputStream extends FilterOutputStream {
     private static final int SECOND_CHARSET0_CHAR = '(';
     private static final int SECOND_CHARSET1_CHAR = ')';
 
-    private final AnsiProcessor ap;
+    private AnsiProcessor ap;
     private final static int MAX_ESCAPE_SEQUENCE_LENGTH = 100;
     private final byte[] buffer = new byte[MAX_ESCAPE_SEQUENCE_LENGTH];
     private int pos = 0;
@@ -65,20 +69,56 @@ public class AnsiOutputStream extends FilterOutputStream {
     private int state = LOOKING_FOR_FIRST_ESC_CHAR;
     private final Charset cs;
 
-    public AnsiOutputStream(OutputStream os, AnsiProcessor ap) {
-        this(os, ap, Charset.defaultCharset());
-    }
+    private final AnsiProcessor processor;
+    private final AnsiProcessorType processorType;
+    private final IoRunnable installer;
+    private final IoRunnable uninstaller;
+    private AnsiMode ansiMode;
+    private boolean resetAtUninstall;
 
-    public AnsiOutputStream(OutputStream os, AnsiProcessor ap, Charset cs) {
+    public AnsiOutputStream(OutputStream os, AnsiMode ansiMode,
+                            AnsiProcessor processor, AnsiProcessorType defaultProcessorType,
+                            Charset cs, IoRunnable installer, IoRunnable uninstaller, boolean resetAtUninstall) {
         super(os);
-        this.ap = ap;
+        this.processor = processor;
+        this.processorType = defaultProcessorType;
+        this.installer = installer;
+        this.uninstaller = uninstaller;
+        this.resetAtUninstall = resetAtUninstall;
         this.cs = cs;
+        setAnsiMode(ansiMode);
     }
 
-    public AnsiOutputStream(OutputStream os, AnsiProcessor ap, String encoding) {
-        super(os);
-        this.ap = ap;
-        this.cs = encoding != null ? Charset.forName(encoding) : Charset.defaultCharset();
+    public AnsiProcessorType getProcessorType() {
+        return processorType;
+    }
+
+    public AnsiMode getAnsiMode() {
+        return ansiMode;
+    }
+
+    /**
+     * Change the mode in which the stream operates.
+     * If the mode is <code>Strip</code>, then all ansi sequences will be stripped from the stream.
+     * If the mode is <code>Force</code>, then all
+     *
+     * @param ansiMode the new AnsiMod to use
+     */
+    public void setAnsiMode(AnsiMode ansiMode) {
+        ap = ansiMode == AnsiMode.Strip ? new AnsiProcessor(out) : ansiMode == AnsiMode.Force ? null : processor;
+        this.ansiMode = ansiMode;
+    }
+
+    public boolean isResetAtUninstall() {
+        return resetAtUninstall;
+    }
+
+    /**
+     *
+     * @param resetAtUninstall whether the
+     */
+    public void setResetAtUninstall(boolean resetAtUninstall) {
+        this.resetAtUninstall = resetAtUninstall;
     }
 
     /**
@@ -225,7 +265,7 @@ public class AnsiOutputStream extends FilterOutputStream {
 
     private void processCharsetSelect() throws IOException {
         try {
-            reset(ap.processCharsetSelect(options));
+            reset(ap != null && ap.processCharsetSelect(options));
         } catch (RuntimeException e) {
             reset(true);
             throw e;
@@ -234,7 +274,7 @@ public class AnsiOutputStream extends FilterOutputStream {
 
     private void processOperatingSystemCommand() throws IOException {
         try {
-            reset(ap.processOperatingSystemCommand(options));
+            reset(ap != null && ap.processOperatingSystemCommand(options));
         } catch (RuntimeException e) {
             reset(true);
             throw e;
@@ -243,7 +283,7 @@ public class AnsiOutputStream extends FilterOutputStream {
 
     private void processEscapeCommand(int data) throws IOException {
         try {
-            reset(ap.processEscapeCommand(options, data));
+            reset(ap != null && ap.processEscapeCommand(options, data));
         } catch (RuntimeException e) {
             reset(true);
             throw e;
@@ -265,4 +305,28 @@ public class AnsiOutputStream extends FilterOutputStream {
         state = LOOKING_FOR_FIRST_ESC_CHAR;
     }
 
+    public void install() throws IOException {
+        if (installer != null) {
+            installer.run();
+        }
+    }
+
+    public void uninstall() throws IOException {
+        if (resetAtUninstall
+                && processorType != AnsiProcessorType.Redirected
+                && processorType != AnsiProcessorType.Unsupported) {
+            setAnsiMode(AnsiMode.Default);
+            write(RESET_CODE);
+            flush();
+        }
+        if (uninstaller != null) {
+            uninstaller.run();
+        }
+    }
+
+    @Override
+    public void close() throws IOException {
+        uninstall();
+        super.close();
+    }
 }

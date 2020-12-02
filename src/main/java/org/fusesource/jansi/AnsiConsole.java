@@ -17,9 +17,13 @@ package org.fusesource.jansi;
 
 import java.io.FileDescriptor;
 import java.io.FileOutputStream;
+import java.io.IOError;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.UnsupportedCharsetException;
 import java.util.Locale;
 
 import org.fusesource.jansi.internal.CLibrary;
@@ -49,34 +53,96 @@ import static org.fusesource.jansi.internal.Kernel32.SetConsoleMode;
 public class AnsiConsole {
 
     /**
+     * The default mode which Jansi will use, can be either <code>force</code>, <code>strip</code>
+     * or <code>default</code> (the default).
+     * If this property is set, it will override <code>jansi.passthrough</code>,
+     * <code>jansi.strip</code> and <code>jansi.force</code> properties.
+     */
+    public static final String JANSI_MODE = "jansi.mode";
+    /**
+     * Jansi mode specific to the standard output stream.
+     */
+    public static final String JANSI_OUT_MODE = "jansi.out.mode";
+    /**
+     * Jansi mode specific to the standard error stream.
+     */
+    public static final String JANSI_ERR_MODE = "jansi.err.mode";
+
+    /**
+     * Jansi mode value to strip all ansi sequences.
+     */
+    public static final String JANSI_MODE_STRIP = "strip";
+    /**
+     * Jansi mode value to force ansi sequences to the stream even if it's not a terminal.
+     */
+    public static final String JANSI_MODE_FORCE = "force";
+    /**
+     * Jansi mode value that output sequences if on a terminal, else strip them.
+     */
+    public static final String JANSI_MODE_DEFAULT = "default";
+
+    /**
      * If the <code>jansi.passthrough</code> system property is set to true, will not perform any transformation
      * and any ansi sequence will be conveyed without any modification.
+     *
+     * @deprecated use {@link #JANSI_MODE} instead
      */
+    @Deprecated
     public static final String JANSI_PASSTHROUGH = "jansi.passthrough";
     /**
      * If the <code>jansi.strip</code> system property is set to true, and <code>jansi.passthrough</code>
      * is not enabled, all ansi sequences will be stripped before characters are written to the output streams.
+     *
+     * @deprecated use {@link #JANSI_MODE} instead
      */
+    @Deprecated
     public static final String JANSI_STRIP = "jansi.strip";
     /**
      * If the <code>jansi.force</code> system property is set to true, and neither <code>jansi.passthrough</code>
      * nor <code>jansi.strip</code> are set, then ansi sequences will be printed to the output stream.
      * This forces the behavior which is by default dependent on the output stream being a real console: if the
      * output stream is redirected to a file or through a system pipe, ansi sequences are disabled by default.
+     *
+     * @deprecated use {@link #JANSI_MODE} instead
      */
+    @Deprecated
     public static final String JANSI_FORCE = "jansi.force";
     /**
      * If the <code>jansi.eager</code> system property is set to true, the system streams will be eagerly
      * initialized, else the initialization is delayed until {@link #out()}, {@link #err()} or {@link #systemInstall()}
      * is called.
+     *
+     * @deprecated this property has been added but only for backward compatibility.
+     * @since 2.1
      */
+    @Deprecated()
     public static final String JANSI_EAGER = "jansi.eager";
+    /**
+     * If the <code>jansi.noreset</code> system property is set to true, the attributes won't be
+     * reset when the streams are uninstalled.
+     */
+    public static final String JANSI_NORESET = "jansi.noreset";
 
+    /**
+     * @deprecated this field will be made private in a future release, use {@link #sysOut()} instead
+     */
+    @Deprecated
     public static PrintStream system_out = System.out;
-    public static PrintStream out;
-
+    /**
+     * @deprecated this field will be made private in a future release, use {@link #out()} instead
+     */
+    @Deprecated
+    public static AnsiPrintStream out;
+    /**
+     * @deprecated this field will be made private in a future release, use {@link #sysErr()} instead
+     */
+    @Deprecated
     public static PrintStream system_err = System.err;
-    public static PrintStream err;
+    /**
+     * @deprecated this field will be made private in a future release, use {@link #err()} instead
+     */
+    @Deprecated
+    public static AnsiPrintStream err;
 
     static final boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("win");
 
@@ -95,127 +161,164 @@ public class AnsiConsole {
     static final int ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004;
 
 
-    private static JansiOutputType jansiOutputType;
-
     static {
         if (getBoolean(JANSI_EAGER)) {
             initStreams();
         }
     }
 
-    static JansiOutputType JANSI_STDOUT_TYPE;
-    static JansiOutputType JANSI_STDERR_TYPE;
-
     private static boolean initialized;
     private static int installed;
+    private static int virtualProcessing;
 
     private AnsiConsole() {
     }
 
-    private static PrintStream ansiStream(boolean stdout) {
-        OutputStream out = new FastBufferedOutputStream(new FileOutputStream(stdout ? FileDescriptor.out : FileDescriptor.err));
+    private static AnsiPrintStream ansiStream(boolean stdout) {
+        final OutputStream out = new FastBufferedOutputStream(new FileOutputStream(stdout ? FileDescriptor.out : FileDescriptor.err));
 
         String enc = System.getProperty(stdout ? "sun.stdout.encoding" : "sun.stderr.encoding");
 
+        final boolean isatty;
+        boolean isAtty;
+        boolean withException;
+        try {
+            // If we can detect that stdout is not a tty.. then setup
+            // to strip the ANSI sequences..
+            isAtty = isatty(stdout ? CLibrary.STDOUT_FILENO : CLibrary.STDERR_FILENO) != 0;
+            withException = false;
+        } catch (Throwable ignore) {
+            // These errors happen if the JNI lib is not available for your platform.
+            // But since we are on ANSI friendly platform, assume the user is on the console.
+            isAtty = false;
+            withException = true;
+        }
+        isatty = isAtty;
+
+        final AnsiProcessor processor;
+        final AnsiProcessorType processorType;
+        final AnsiOutputStream.IoRunnable installer;
+        final AnsiOutputStream.IoRunnable uninstaller;
+        if (!isatty) {
+            processor = null;
+            processorType = withException ? AnsiProcessorType.Unsupported : AnsiProcessorType.Redirected;
+            installer = uninstaller = null;
+        }
+        else if (IS_WINDOWS) {
+            final long console = GetStdHandle(stdout ? STD_OUTPUT_HANDLE : STD_ERROR_HANDLE);
+            final int[] mode = new int[1];
+            if (GetConsoleMode(console, mode) != 0
+                    && SetConsoleMode(console, mode[0] | ENABLE_VIRTUAL_TERMINAL_PROCESSING) != 0) {
+                SetConsoleMode(console, mode[0]); // set it back for now, but we know it works
+                processor = null;
+                processorType = AnsiProcessorType.VirtualTerminal;
+                installer = new AnsiOutputStream.IoRunnable() {
+                    @Override
+                    public void run() throws IOException {
+                        virtualProcessing++;
+                        SetConsoleMode(console, mode[0] | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+                    }
+                };
+                uninstaller = new AnsiOutputStream.IoRunnable() {
+                    @Override
+                    public void run() throws IOException {
+                        if (--virtualProcessing == 0) {
+                            SetConsoleMode(console, mode[0]);
+                        }
+                    }
+                };
+            }
+            else if (IS_CONEMU || IS_CYGWIN || IS_MSYSTEM) {
+                // ANSI-enabled ConEmu, Cygwin or MSYS(2) on Windows...
+                processor = null;
+                processorType = AnsiProcessorType.Native;
+                installer = uninstaller = null;
+            }
+            else {
+                // On Windows, when no ANSI-capable terminal is used, we know the console does not natively interpret ANSI
+                // codes but we can use jansi Kernel32 API for console
+                AnsiProcessor proc;
+                AnsiProcessorType type;
+                try {
+                    proc = new WindowsAnsiProcessor(out, stdout);
+                    type = AnsiProcessorType.Emulation;
+                } catch (Throwable ignore) {
+                    // this happens when the stdout is being redirected to a file.
+                    // Use the AnsiProcessor to strip out the ANSI escape sequences.
+                    proc = new AnsiProcessor(out);
+                    type = AnsiProcessorType.Unsupported;
+                }
+                processor = proc;
+                processorType = type;
+                installer = uninstaller = null;
+            }
+        }
+
+        // We must be on some Unix variant...
+        else {
+            // ANSI-enabled ConEmu, Cygwin or MSYS(2) on Windows...
+            processor = null;
+            processorType = AnsiProcessorType.Native;
+            installer = uninstaller = null;
+        }
+
+        AnsiMode ansiMode;
+
+        // If the jansi.jansiMode property is set, use it
+        String jansiMode = System.getProperty(stdout ? JANSI_OUT_MODE : JANSI_ERR_MODE, System.getProperty(JANSI_MODE));
+        if (JANSI_MODE_FORCE.equals(jansiMode)) {
+            ansiMode = AnsiMode.Force;
+        } else if (JANSI_MODE_STRIP.equals(jansiMode)) {
+            ansiMode = AnsiMode.Strip;
+        } else if (jansiMode != null) {
+            ansiMode = isatty ? AnsiMode.Default : AnsiMode.Strip;
+        }
+
         // If the jansi.passthrough property is set, then don't interpret
         // any of the ansi sequences.
-        if (getBoolean(JANSI_PASSTHROUGH)) {
-            jansiOutputType = JansiOutputType.PASSTHROUGH;
-            return newPrintStream(out, enc);
+        else if (getBoolean(JANSI_PASSTHROUGH)) {
+            ansiMode = AnsiMode.Force;
         }
 
         // If the jansi.strip property is set, then we just strip the
         // the ansi escapes.
-        if (getBoolean(JANSI_STRIP)) {
-            jansiOutputType = JansiOutputType.STRIP_ANSI;
-            return newPrintStream(new AnsiOutputStream(out, new AnsiProcessor(out), enc), enc);
+        else if (getBoolean(JANSI_STRIP)) {
+            ansiMode = AnsiMode.Strip;
         }
 
-        if (IS_WINDOWS) {
-            long console = GetStdHandle(stdout ? STD_OUTPUT_HANDLE : STD_ERROR_HANDLE);
-            int[] mode = new int[1];
-            if (GetConsoleMode(console, mode) != 0
-                    && SetConsoleMode(console, mode[0] | ENABLE_VIRTUAL_TERMINAL_PROCESSING) != 0) {
-                jansiOutputType = JansiOutputType.VIRTUAL_TERMINAL;
-                return newPrintStream(out, enc);
-            }
+        // If the jansi.force property is set, then we force to output
+        // the ansi escapes for piping it into ansi color aware commands (e.g. less -r)
+        else if (getBoolean(JANSI_FORCE)) {
+            ansiMode = AnsiMode.Force;
         }
 
-        if (IS_WINDOWS && !(IS_CONEMU || IS_CYGWIN || IS_MSYSTEM)) {
-
-            // On Windows, when no ANSI-capable terminal is used, we know the console does not natively interpret ANSI
-            // codes but we can use jansi-native Kernel32 API for console
-            try {
-                jansiOutputType = JansiOutputType.WINDOWS;
-                return newPrintStream(new AnsiOutputStream(out, new WindowsAnsiProcessor(out, stdout), enc), enc);
-            } catch (Throwable ignore) {
-                // this happens when JNA is not in the path.. or
-                // this happens when the stdout is being redirected to a file.
-            }
-
-            // Use the ANSIOutputStream to strip out the ANSI escape sequences.
-            jansiOutputType = JansiOutputType.STRIP_ANSI;
-            return newPrintStream(new AnsiOutputStream(out, new AnsiProcessor(out), enc), enc);
+        else {
+            ansiMode = isatty ? AnsiMode.Default : AnsiMode.Strip;
         }
 
-        // We must be on some Unix variant or ANSI-enabled ConEmu, Cygwin or MSYS(2) on Windows...
-        try {
-            // If the jansi.force property is set, then we force to output
-            // the ansi escapes for piping it into ansi color aware commands (e.g. less -r)
-            boolean forceColored = getBoolean(JANSI_FORCE);
-            // If we can detect that stdout is not a tty.. then setup
-            // to strip the ANSI sequences..
-            if (!forceColored && isatty(stdout ? CLibrary.STDOUT_FILENO : CLibrary.STDERR_FILENO) == 0) {
-                jansiOutputType = JansiOutputType.STRIP_ANSI;
-                return newPrintStream(new AnsiOutputStream(out, new AnsiProcessor(out), enc), enc);
-            }
-        } catch (Throwable ignore) {
-            // These errors happen if the JNI lib is not available for your platform.
-            // But since we are on ANSI friendly platform, assume the user is on the console.
-        }
+        // If the jansi.noreset property is not set, reset the attributes
+        // when the stream is closed
+        boolean resetAtUninstall = !getBoolean(JANSI_NORESET);
 
-        // By default we assume your Unix tty can handle ANSI codes.
-        // Just wrap it up so that when we get closed, we reset the
-        // attributes.
-        jansiOutputType = JansiOutputType.RESET_ANSI_AT_CLOSE;
-        return newPrintStream(out, enc, AnsiOutputStream.RESET_CODE);
-    }
-
-    private static PrintStream newPrintStream(OutputStream out, String enc) {
-        return newPrintStream(out, enc, null);
-    }
-
-    private static PrintStream newPrintStream(OutputStream out, String enc, byte[] reset) {
+        Charset cs = Charset.defaultCharset();
         if (enc != null) {
             try {
-                return new ResetAtClosePrintStream(out, enc, reset);
+                cs = Charset.forName(enc);
+            } catch (UnsupportedCharsetException e) {
+            }
+        }
+        return newPrintStream(new AnsiOutputStream(out, ansiMode, processor, processorType, cs,
+                installer, uninstaller, resetAtUninstall), cs.name());
+    }
+
+    private static AnsiPrintStream newPrintStream(AnsiOutputStream out, String enc) {
+        if (enc != null) {
+            try {
+                return new AnsiPrintStream(out, true, enc);
             } catch (UnsupportedEncodingException e) {
             }
         }
-        return new ResetAtClosePrintStream(out, reset);
-    }
-
-    static class ResetAtClosePrintStream extends PrintStream {
-
-        private final byte[] reset;
-
-        public ResetAtClosePrintStream(OutputStream out, byte[] reset) {
-            super(out, true);
-            this.reset = reset;
-        }
-
-        public ResetAtClosePrintStream(OutputStream out, String encoding, byte[] reset) throws UnsupportedEncodingException {
-            super(out, true, encoding);
-            this.reset = reset;
-        }
-
-        @Override
-        public void close() {
-            if (reset != null) {
-                write(reset, 0, reset.length);
-            }
-            super.close();
-        }
+        return new AnsiPrintStream(out, true);
     }
 
     static boolean getBoolean(String name) {
@@ -237,9 +340,18 @@ public class AnsiConsole {
      *
      * @return a PrintStream which is ANSI aware.
      */
-    public static PrintStream out() {
+    public static AnsiPrintStream out() {
         initStreams();
         return out;
+    }
+
+    /**
+     * Access to the original System.out stream before ansi streams were installed.
+     *
+     * @return the originial System.out print stream
+     */
+    public static PrintStream sysOut() {
+        return system_out;
     }
 
     /**
@@ -250,36 +362,35 @@ public class AnsiConsole {
      *
      * @return a PrintStream which is ANSI aware.
      */
-    public static PrintStream err() {
+    public static AnsiPrintStream err() {
         initStreams();
         return err;
     }
 
     /**
-     * Install <code>AnsiConsole.out</code> to <code>System.out</code> and
-     * <code>AnsiConsole.err</code> to <code>System.err</code>.
+     * Access to the original System.err stream before ansi streams were installed.
+     *
+     * @return the originial System.err print stream
+     */
+    public static PrintStream sysErr() {
+        return system_err;
+    }
+
+    /**
+     * Install <code>AnsiConsole.out()</code> to <code>System.out</code> and
+     * <code>AnsiConsole.err()</code> to <code>System.err</code>.
      * @see #systemUninstall()
      */
     synchronized static public void systemInstall() {
         installed++;
         if (installed == 1) {
             initStreams();
-            System.setOut(out);
-            System.setErr(err);
-        }
-    }
-
-    /**
-     * Re-installs the system streams.  This can be usefull if the system
-     * properties that control the streams, mainly {@link #JANSI_PASSTHROUGH},
-     * {@link #JANSI_STRIP} and {@link #JANSI_FORCE} are modified.
-     * Note that the streams will be installed only if they were previously
-     * installed.
-     */
-    synchronized static public void systemReinstall() {
-        if (installed > 0) {
-            initialized = false;
-            initStreams();
+            try {
+                out.install();
+                err.install();
+            } catch (IOException e) {
+                throw new IOError(e);
+            }
             System.setOut(out);
             System.setErr(err);
         }
@@ -300,6 +411,13 @@ public class AnsiConsole {
     synchronized public static void systemUninstall() {
         installed--;
         if (installed == 0) {
+            try {
+                out.uninstall();
+                err.uninstall();
+            } catch (IOException e) {
+                throw new IOError(e);
+            }
+            initialized = false;
             System.setOut(system_out);
             System.setErr(system_err);
         }
@@ -313,32 +431,10 @@ public class AnsiConsole {
         if ( !initialized )
         {
             out = ansiStream(true);
-            JANSI_STDOUT_TYPE = jansiOutputType;
             err = ansiStream(false);
-            JANSI_STDERR_TYPE = jansiOutputType;
             initialized = true;
         }
     }
 
-    /**
-     * Type of output installed by AnsiConsole.
-     */
-    enum JansiOutputType {
-        PASSTHROUGH("just pass through, ANSI escape codes are supposed to be supported by terminal"),
-        RESET_ANSI_AT_CLOSE("like pass through but reset ANSI attributes when closing the stream"),
-        STRIP_ANSI("strip ANSI escape codes, for example when output is not a terminal"),
-        WINDOWS("detect ANSI escape codes and transform Jansi-supported ones into a Windows API to get desired effect" +
-                " (since ANSI escape codes are not natively supported by Windows terminals like cmd.exe or PowerShell)"),
-        VIRTUAL_TERMINAL("recent Windows support ANSI processing using a windows API call to configure the console in the correct mode");
-
-        private final String description;
-
-        private JansiOutputType(String description) {
-            this.description = description;
-        }
-
-        String getDescription() {
-            return description;
-        }
-    };
+    ;
 }

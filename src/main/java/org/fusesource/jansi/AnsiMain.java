@@ -25,13 +25,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.io.Reader;
 import java.util.Properties;
 
 import org.fusesource.jansi.internal.CLibrary;
 import org.fusesource.jansi.internal.JansiLoader;
-
-import static org.fusesource.jansi.internal.CLibrary.isatty;
 
 /**
  * Main class for the library, providing executable jar to diagnose Jansi setup.
@@ -77,9 +74,13 @@ public class AnsiMain {
 
         System.out.println();
 
+        System.out.println(AnsiConsole.JANSI_MODE + "= " + System.getProperty(AnsiConsole.JANSI_MODE, ""));
+        System.out.println(AnsiConsole.JANSI_OUT_MODE + "= " + System.getProperty(AnsiConsole.JANSI_OUT_MODE, ""));
+        System.out.println(AnsiConsole.JANSI_ERR_MODE + "= " + System.getProperty(AnsiConsole.JANSI_ERR_MODE, ""));
         System.out.println(AnsiConsole.JANSI_PASSTHROUGH + "= " + AnsiConsole.getBoolean(AnsiConsole.JANSI_PASSTHROUGH));
         System.out.println(AnsiConsole.JANSI_STRIP + "= " + AnsiConsole.getBoolean(AnsiConsole.JANSI_STRIP));
         System.out.println(AnsiConsole.JANSI_FORCE + "= " + AnsiConsole.getBoolean(AnsiConsole.JANSI_FORCE));
+        System.out.println(AnsiConsole.JANSI_NORESET + "= " + AnsiConsole.getBoolean(AnsiConsole.JANSI_NORESET));
         System.out.println(Ansi.DISABLE + "= " + AnsiConsole.getBoolean(Ansi.DISABLE));
 
         System.out.println();
@@ -101,12 +102,15 @@ public class AnsiMain {
         System.out.println();
 
         System.out.println("Resulting Jansi modes for stout/stderr streams:");
-        System.out.println("  - System.out: " + AnsiConsole.JANSI_STDOUT_TYPE);
-        System.out.println("  - System.err: " + AnsiConsole.JANSI_STDERR_TYPE);
-        System.out.println("modes description:");
-        int n = 1;
-        for (AnsiConsole.JansiOutputType type: AnsiConsole.JansiOutputType.values()) {
-            System.out.println("  - " + n++ + ". " + type + ": " + type.getDescription());
+        System.out.println("  - System.out: " + AnsiConsole.out().toString());
+        System.out.println("  - System.err: " + AnsiConsole.err().toString());
+        System.out.println("Processor types description:");
+        for (AnsiProcessorType type : AnsiProcessorType.values()) {
+            System.out.println("  - " + type + ": " + type.getDescription());
+        }
+        System.out.println("Modes description:");
+        for (AnsiMode mode : AnsiMode.values()) {
+            System.out.println("  - " + mode + ": " + mode.getDescription());
         }
 
         try {
@@ -159,7 +163,7 @@ public class AnsiMain {
 
     private static void diagnoseTty(boolean stderr) {
         int fd = stderr ? CLibrary.STDERR_FILENO : CLibrary.STDOUT_FILENO;
-        int isatty = isatty(fd);
+        int isatty = CLibrary.isatty(fd);
 
         System.out.println("isatty(STD" + (stderr ? "ERR" : "OUT") + "_FILENO): " + isatty + ", System."
             + (stderr ? "err" : "out") + " " + ((isatty == 0) ? "is *NOT*" : "is") + " a terminal");
