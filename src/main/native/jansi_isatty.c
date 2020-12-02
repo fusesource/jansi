@@ -20,11 +20,16 @@
 
 #if defined(_WIN32) || defined(_WIN64)
 
-typedef struct _FILE_NAME_INFORMATION {
-	uint16_t FileNameLength;
-	WCHAR FileName[1];
-} FILE_NAME_INFORMATION, *PFILE_NAME_INFORMATION;
+typedef struct _UNICODE_STRING {
+	USHORT Length;
+	USHORT MaximumLength;
+	PWSTR  Buffer;
+} UNICODE_STRING, *PUNICODE_STRING;
 
+typedef struct _OBJECT_NAME_INFORMATION {
+	UNICODE_STRING          Name;
+	WCHAR                   NameBuffer[0];
+} OBJECT_NAME_INFORMATION, *POBJECT_NAME_INFORMATION;
 
 typedef enum {
 	ObjectBasicInformation,
@@ -46,17 +51,17 @@ JNIEXPORT jint JNICALL CLibrary_NATIVE(isatty)
 
 	ULONG result;
 	BYTE buffer[1024];
-	PFILE_NAME_INFORMATION nameinfo = (PFILE_NAME_INFORMATION) buffer;
+	POBJECT_NAME_INFORMATION nameinfo = (POBJECT_NAME_INFORMATION) buffer;
 	PWSTR name;
+	DWORD mode;
 
 	/* check if fd is a pipe */
 	HANDLE h = (HANDLE) _get_osfhandle(arg0);
 	DWORD t = GetFileType(h);
 	if (t == FILE_TYPE_CHAR) {
-		rc = 1;
-	}
-	else if (t != FILE_TYPE_PIPE) {
-		rc = 0;
+	    // check that this is a real tty because the /dev/null
+	    // and /dev/zero streams are also of type FILE_TYPE_CHAR
+		rc = GetConsoleMode(h, &mode) != 0;
 	}
 	else {
 		if (hModuleNtDll == 0) {
@@ -78,17 +83,19 @@ JNIEXPORT jint JNICALL CLibrary_NATIVE(isatty)
 			}
 			else {
 
-				name = nameinfo->FileName;
-				name[nameinfo->FileNameLength / sizeof(*name)] = 0;
+				name = nameinfo->Name.Buffer;
+				name[nameinfo->Name.Length / 2] = 0;
+
+				//fprintf( stderr, "Standard stream %d: pipe name: %S\n", arg0, name);
 
 				/*
 				 * Check if this could be a MSYS2 pty pipe ('msys-XXXX-ptyN-XX')
 				 * or a cygwin pty pipe ('cygwin-XXXX-ptyN-XX')
 				 */
-				if ((!wcsstr(name, L"msys-") && !wcsstr(name, L"cygwin-"))
-						|| !wcsstr(name, L"-pty")) {
+				if ((wcsstr(name, L"msys-") || wcsstr(name, L"cygwin-")) && wcsstr(name, L"-pty")) {
 					rc = 1;
 				} else {
+					// This is definitely not a tty
 					rc = 0;
 				}
 			}
