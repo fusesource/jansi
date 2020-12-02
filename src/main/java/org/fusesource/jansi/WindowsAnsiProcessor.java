@@ -300,7 +300,7 @@ public final class WindowsAnsiProcessor extends AnsiProcessor {
     }
 
     @Override
-    protected void processAttributeRest() throws IOException {
+    protected void processAttributeReset() throws IOException {
         info.attributes = (short) ((info.attributes & ~0x00FF) | originalColors);
         this.negative = false;
         applyAttribute();

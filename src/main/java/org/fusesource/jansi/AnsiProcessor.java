@@ -166,7 +166,7 @@ public class AnsiProcessor {
                                         processDefaultBackgroundColor();
                                         break;
                                     case 0:
-                                        processAttributeRest();
+                                        processAttributeReset();
                                         break;
                                     default:
                                         processSetAttribute(value);
@@ -175,7 +175,7 @@ public class AnsiProcessor {
                         }
                     }
                     if (count == 0) {
-                        processAttributeRest();
+                        processAttributeReset();
                     }
                     return true;
                 case 's':
@@ -358,7 +358,7 @@ public class AnsiProcessor {
      * <code>100-107</code> (background high intensity)
      * @param attribute attribute
      * @throws IOException IOException
-     * @see #processAttributeRest()
+     * @see #processAttributeReset()
      * @see #processSetForegroundColor(int)
      * @see #processSetForegroundColor(int, boolean)
      * @see #processSetForegroundColorExt(int)
@@ -474,7 +474,7 @@ public class AnsiProcessor {
      * process <code>SGR 0</code> corresponding to <code>Reset / Normal</code>
      * @throws IOException IOException
      */
-    protected void processAttributeRest() throws IOException {
+    protected void processAttributeReset() throws IOException {
     }
 
     /**
