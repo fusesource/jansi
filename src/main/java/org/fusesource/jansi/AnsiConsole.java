@@ -286,6 +286,13 @@ public class AnsiConsole {
     }
 
     /**
+     * check if the streams have been installed or not
+     */
+    synchronized public static boolean isInstalled() {
+        return installed > 0;
+    }
+
+    /**
      * undo a previous {@link #systemInstall()}.  If {@link #systemInstall()} was called
      * multiple times, {@link #systemUninstall()} must be called the same number of times before
      * it is actually uninstalled.
