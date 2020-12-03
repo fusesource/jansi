@@ -97,13 +97,6 @@ public class AnsiOutputStream extends FilterOutputStream {
         return ansiMode;
     }
 
-    /**
-     * Change the mode in which the stream operates.
-     * If the mode is <code>Strip</code>, then all ansi sequences will be stripped from the stream.
-     * If the mode is <code>Force</code>, then all
-     *
-     * @param ansiMode the new AnsiMod to use
-     */
     public void setAnsiMode(AnsiMode ansiMode) {
         ap = ansiMode == AnsiMode.Strip ? new AnsiProcessor(out) : ansiMode == AnsiMode.Force ? null : processor;
         this.ansiMode = ansiMode;
@@ -113,10 +106,6 @@ public class AnsiOutputStream extends FilterOutputStream {
         return resetAtUninstall;
     }
 
-    /**
-     *
-     * @param resetAtUninstall whether the
-     */
     public void setResetAtUninstall(boolean resetAtUninstall) {
         this.resetAtUninstall = resetAtUninstall;
     }
