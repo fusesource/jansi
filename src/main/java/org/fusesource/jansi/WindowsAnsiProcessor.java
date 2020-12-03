@@ -55,8 +55,6 @@ import org.fusesource.jansi.internal.Kernel32.COORD;
  */
 public final class WindowsAnsiProcessor extends AnsiProcessor {
 
-    private static final long stdout_handle = GetStdHandle(STD_OUTPUT_HANDLE);
-    private static final long stderr_handle = GetStdHandle(STD_ERROR_HANDLE);
     private final long console;
 
     private static final short FOREGROUND_BLACK = 0;
@@ -100,11 +98,15 @@ public final class WindowsAnsiProcessor extends AnsiProcessor {
     private short savedX = -1;
     private short savedY = -1;
 
-    public WindowsAnsiProcessor(OutputStream ps, boolean stdout) throws IOException {
+    public WindowsAnsiProcessor(OutputStream ps, long console) throws IOException {
         super(ps);
-        this.console = stdout ? stdout_handle : stderr_handle;
+        this.console = console;
         getConsoleInfo();
         originalColors = info.attributes;
+    }
+
+    public WindowsAnsiProcessor(OutputStream ps, boolean stdout) throws IOException {
+        this(ps, GetStdHandle(stdout ? STD_OUTPUT_HANDLE : STD_ERROR_HANDLE));
     }
 
     public WindowsAnsiProcessor(OutputStream ps) throws IOException {

@@ -240,7 +240,7 @@ public class AnsiConsole {
                 AnsiProcessor proc;
                 AnsiProcessorType type;
                 try {
-                    proc = new WindowsAnsiProcessor(out, stdout);
+                    proc = new WindowsAnsiProcessor(out, console);
                     type = AnsiProcessorType.Emulation;
                 } catch (Throwable ignore) {
                     // this happens when the stdout is being redirected to a file.
