@@ -274,7 +274,8 @@ public class JansiLoader {
         String jansiNativeLibraryName = System.getProperty("library.jansi.name");
         if (jansiNativeLibraryName == null) {
             jansiNativeLibraryName = System.mapLibraryName("jansi");
-            if (jansiNativeLibraryName != null && jansiNativeLibraryName.endsWith(".dylib")) {
+            assert jansiNativeLibraryName != null;
+            if (jansiNativeLibraryName.endsWith(".dylib")) {
                 jansiNativeLibraryName = jansiNativeLibraryName.replace(".dylib", ".jnilib");
             }
         }
