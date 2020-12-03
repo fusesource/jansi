@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fusesource.jansi;
+package org.fusesource.jansi.io;
 
 import java.io.IOException;
 import java.io.OutputStream;

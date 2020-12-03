@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fusesource.jansi;
+package org.fusesource.jansi.io;
 
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+
+import org.fusesource.jansi.AnsiMode;
+import org.fusesource.jansi.AnsiProcessorType;
 
 /**
  * A ANSI print stream extracts ANSI escape codes written to 

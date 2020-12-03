@@ -27,6 +27,10 @@ import java.nio.charset.UnsupportedCharsetException;
 import java.util.Locale;
 
 import org.fusesource.jansi.internal.CLibrary;
+import org.fusesource.jansi.io.AnsiOutputStream;
+import org.fusesource.jansi.io.AnsiProcessor;
+import org.fusesource.jansi.io.FastBufferedOutputStream;
+import org.fusesource.jansi.io.WindowsAnsiProcessor;
 
 import static org.fusesource.jansi.internal.CLibrary.isatty;
 import static org.fusesource.jansi.internal.Kernel32.GetConsoleMode;

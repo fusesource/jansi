@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fusesource.jansi;
+package org.fusesource.jansi.io;
 
 import static org.fusesource.jansi.internal.Kernel32.BACKGROUND_BLUE;
 import static org.fusesource.jansi.internal.Kernel32.BACKGROUND_GREEN;
@@ -41,6 +41,7 @@ import java.io.OutputStream;
 
 import org.fusesource.jansi.internal.Kernel32.CONSOLE_SCREEN_BUFFER_INFO;
 import org.fusesource.jansi.internal.Kernel32.COORD;
+import org.fusesource.jansi.WindowsSupport;
 
 /**
  * A Windows ANSI escape processor, that uses JNA to access native platform

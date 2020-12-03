@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 
+import org.fusesource.jansi.io.AnsiOutputStream;
+
 /**
  * Simple PrintStream holding an AnsiOutputStream.
  * This allows changing the mode in which the underlying AnsiOutputStream operates.

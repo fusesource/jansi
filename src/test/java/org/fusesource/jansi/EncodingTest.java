@@ -23,6 +23,9 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.jupiter.api.Test;
 
+import org.fusesource.jansi.io.AnsiOutputStream;
+import org.fusesource.jansi.io.AnsiProcessor;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
