@@ -77,6 +77,9 @@ public class AnsiMain {
         System.out.println(AnsiConsole.JANSI_MODE + "= " + System.getProperty(AnsiConsole.JANSI_MODE, ""));
         System.out.println(AnsiConsole.JANSI_OUT_MODE + "= " + System.getProperty(AnsiConsole.JANSI_OUT_MODE, ""));
         System.out.println(AnsiConsole.JANSI_ERR_MODE + "= " + System.getProperty(AnsiConsole.JANSI_ERR_MODE, ""));
+        System.out.println(AnsiConsole.JANSI_COLORS + "= " + System.getProperty(AnsiConsole.JANSI_COLORS, ""));
+        System.out.println(AnsiConsole.JANSI_OUT_COLORS + "= " + System.getProperty(AnsiConsole.JANSI_OUT_COLORS, ""));
+        System.out.println(AnsiConsole.JANSI_ERR_COLORS + "= " + System.getProperty(AnsiConsole.JANSI_ERR_COLORS, ""));
         System.out.println(AnsiConsole.JANSI_PASSTHROUGH + "= " + AnsiConsole.getBoolean(AnsiConsole.JANSI_PASSTHROUGH));
         System.out.println(AnsiConsole.JANSI_STRIP + "= " + AnsiConsole.getBoolean(AnsiConsole.JANSI_STRIP));
         System.out.println(AnsiConsole.JANSI_FORCE + "= " + AnsiConsole.getBoolean(AnsiConsole.JANSI_FORCE));
@@ -107,6 +110,10 @@ public class AnsiMain {
         System.out.println("Processor types description:");
         for (AnsiType type : AnsiType.values()) {
             System.out.println("  - " + type + ": " + type.getDescription());
+        }
+        System.out.println("Colors support description:");
+        for (AnsiColors colors : AnsiColors.values()) {
+            System.out.println("  - " + colors + ": " + colors.getDescription());
         }
         System.out.println("Modes description:");
         for (AnsiMode mode : AnsiMode.values()) {
@@ -187,6 +194,39 @@ public class AnsiMain {
             s.print(" " + ansi().bold().fg(c) + c + ansi().reset());
         }
         s.println();
+        Ansi ansi = ansi();
+        ansi.a("        256 colors: ");
+        for (int i = 0; i < 6*6*6; i++) {
+            if (i > 0 && i % 36 == 0) {
+                ansi.reset();
+                ansi.newline();
+                ansi.a("                    ");
+            } else if (i > 0 && i % 6 == 0) {
+                ansi.reset();
+                ansi.a("  ");
+            }
+            int a0 = i % 6;
+            int a1 = (i  / 6) % 6;
+            int a2 = i / 36;
+            ansi.bg(16 + a0 + a2 * 6 + a1 * 36).a(' ');
+        }
+        ansi.reset();
+        s.println(ansi);
+        ansi = ansi();
+        ansi.a("         truecolor: ");
+        for (int i = 0; i < 256; i++) {
+            if (i > 0 && i % 48 == 0) {
+                ansi.reset();
+                ansi.newline();
+                ansi.a("                    ");
+            }
+            int r = 255 - i;
+            int g = i * 2 > 255 ? 255 - 2 * i : 2 * i;
+            int b = i;
+            ansi.bgRgb(r, g, b).fgRgb(255 - r, 255 - g, 255 - b).a(i % 2 == 0 ? '/' : '\\');
+        }
+        ansi.reset();
+        s.println(ansi);
     }
 
     private static String getPomPropertiesVersion(String path) throws IOException {

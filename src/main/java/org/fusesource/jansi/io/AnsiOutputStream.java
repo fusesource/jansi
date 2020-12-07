@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 
+import org.fusesource.jansi.AnsiColors;
 import org.fusesource.jansi.AnsiMode;
 import org.fusesource.jansi.AnsiType;
 
@@ -74,17 +75,19 @@ public class AnsiOutputStream extends FilterOutputStream {
 
     private final AnsiProcessor processor;
     private final AnsiType type;
+    private final AnsiColors colors;
     private final IoRunnable installer;
     private final IoRunnable uninstaller;
     private AnsiMode mode;
     private boolean resetAtUninstall;
 
     public AnsiOutputStream(OutputStream os, AnsiMode mode,
-                            AnsiProcessor processor, AnsiType type,
+                            AnsiProcessor processor, AnsiType type, AnsiColors colors,
                             Charset cs, IoRunnable installer, IoRunnable uninstaller, boolean resetAtUninstall) {
         super(os);
         this.processor = processor;
         this.type = type;
+        this.colors = colors;
         this.installer = installer;
         this.uninstaller = uninstaller;
         this.resetAtUninstall = resetAtUninstall;
@@ -96,12 +99,18 @@ public class AnsiOutputStream extends FilterOutputStream {
         return type;
     }
 
+    public AnsiColors getColors() {
+        return colors;
+    }
+
     public AnsiMode getMode() {
         return mode;
     }
 
     public void setMode(AnsiMode mode) {
-        ap = mode == AnsiMode.Strip ? new AnsiProcessor(out) : mode == AnsiMode.Force ? null : processor;
+        ap = mode == AnsiMode.Strip
+                ? new AnsiProcessor(out)
+                : mode == AnsiMode.Force || processor == null ? new ColorsAnsiProcessor(out, colors) : processor;
         this.mode = mode;
     }
 

@@ -20,6 +20,8 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.fusesource.jansi.AnsiColors;
+
 /**
  * ANSI processor providing <code>process*</code> corresponding to ANSI escape codes. 
  * This class methods implementations are empty: subclasses should actually perform the
@@ -43,7 +45,7 @@ public class AnsiProcessor {
      * @param  optionsIterator  the underlying iterator
      * @throws IOException      if no more non-null values left
      */
-    private int getNextOptionInt(Iterator<Object> optionsIterator) throws IOException {
+    protected int getNextOptionInt(Iterator<Object> optionsIterator) throws IOException {
         for (;;) {
             if (!optionsIterator.hasNext())
                 throw new IllegalArgumentException();

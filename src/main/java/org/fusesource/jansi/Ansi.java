@@ -378,6 +378,26 @@ public class Ansi implements Appendable {
         return this;
     }
 
+    public Ansi fg(int color) {
+        attributeOptions.add(38);
+        attributeOptions.add(5);
+        attributeOptions.add(color & 0xff);
+        return this;
+    }
+
+    public Ansi fgRgb(int color) {
+        return fgRgb(color >> 16, color >> 8, color);
+    }
+
+    public Ansi fgRgb(int r, int g, int b) {
+        attributeOptions.add(38);
+        attributeOptions.add(2);
+        attributeOptions.add(r & 0xff);
+        attributeOptions.add(g & 0xff);
+        attributeOptions.add(b & 0xff);
+        return this;
+    }
+
     public Ansi fgBlack() {
         return this.fg(Color.BLACK);
     }
@@ -412,6 +432,26 @@ public class Ansi implements Appendable {
 
     public Ansi bg(Color color) {
         attributeOptions.add(color.bg());
+        return this;
+    }
+
+    public Ansi bg(int color) {
+        attributeOptions.add(48);
+        attributeOptions.add(5);
+        attributeOptions.add(color & 0xff);
+        return this;
+    }
+
+    public Ansi bgRgb(int color) {
+        return bgRgb(color >> 16, color >> 8, color);
+    }
+
+    public Ansi bgRgb(int r, int g, int b) {
+        attributeOptions.add(48);
+        attributeOptions.add(2);
+        attributeOptions.add(r & 0xff);
+        attributeOptions.add(g & 0xff);
+        attributeOptions.add(b & 0xff);
         return this;
     }
 

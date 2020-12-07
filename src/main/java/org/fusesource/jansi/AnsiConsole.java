@@ -86,6 +86,37 @@ public class AnsiConsole {
     public static final String JANSI_MODE_DEFAULT = "default";
 
     /**
+     * The default color support that Jansi will use, can be either <code>16</code>,
+     * <code>256</code> or <code>truecolor</code>.  If not set, JANSI will try to
+     * autodetect the number of colors supported by the terminal by checking the
+     * <code>COLORTERM</code> and <code>TERM</code> variables.
+     */
+    public static final String JANSI_COLORS = "jansi.colors";
+    /**
+     * Jansi colors specific to the standard output stream.
+     */
+    public static final String JANSI_OUT_COLORS = "jansi.out.colors";
+    /**
+     * Jansi colors specific to the standard error stream.
+     */
+    public static final String JANSI_ERR_COLORS = "jansi.err.colors";
+
+    /**
+     * Force the use of 16 colors. When using a 256-indexed color, or an RGB
+     * color, the color will be rounded to the nearest one from the 16 palette.
+     */
+    public static final String JANSI_COLORS_16 = "16";
+    /**
+     * Force the use of 256 colors. When using an RGB color, the color will be
+     * rounded to the nearest one from the standard 256 palette.
+     */
+    public static final String JANSI_COLORS_256 = "256";
+    /**
+     * Force the use of 24-bit colors.
+     */
+    public static final String JANSI_COLORS_TRUECOLOR = "truecolor";
+
+    /**
      * If the <code>jansi.passthrough</code> system property is set to true, will not perform any transformation
      * and any ansi sequence will be conveyed without any modification.
      *
@@ -300,6 +331,41 @@ public class AnsiConsole {
             mode = isatty ? AnsiMode.Default : AnsiMode.Strip;
         }
 
+        AnsiColors colors;
+
+        String colorterm, term;
+        // If the jansi.colors property is set, use it
+        String jansiColors = System.getProperty(stdout ? JANSI_OUT_COLORS : JANSI_ERR_COLORS, System.getProperty(JANSI_COLORS));
+        if (JANSI_COLORS_TRUECOLOR.equals(jansiColors)) {
+            colors = AnsiColors.TrueColor;
+        } else if (JANSI_COLORS_256.equals(jansiColors)) {
+            colors = AnsiColors.Colors256;
+        } else if (jansiColors != null) {
+            colors = AnsiColors.Colors16;
+        }
+
+        // If the COLORTERM env variable contains "truecolor" or "24bit", assume true color support
+        // see https://gist.github.com/XVilka/8346728#true-color-detection
+        else if ((colorterm = System.getenv("COLORTERM")) != null
+                && (colorterm.contains("truecolor") || colorterm.contains("24bit"))) {
+            colors = AnsiColors.TrueColor;
+        }
+
+        // check the if TERM contains -direct
+        else if ((term = System.getenv("TERM")) != null && term.contains("-direct")) {
+            colors = AnsiColors.TrueColor;
+        }
+
+        // check the if TERM contains -256color
+        else if (term != null && term.contains("-256color")) {
+            colors = AnsiColors.Colors256;
+        }
+
+        // else defaults to 16 colors
+        else {
+            colors = AnsiColors.Colors16;
+        }
+
         // If the jansi.noreset property is not set, reset the attributes
         // when the stream is closed
         boolean resetAtUninstall = !getBoolean(JANSI_NORESET);
@@ -311,7 +377,7 @@ public class AnsiConsole {
             } catch (UnsupportedCharsetException e) {
             }
         }
-        return newPrintStream(new AnsiOutputStream(out, mode, processor, type, cs,
+        return newPrintStream(new AnsiOutputStream(out, mode, processor, type, colors, cs,
                 installer, uninstaller, resetAtUninstall), cs.name());
     }
 

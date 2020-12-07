@@ -43,6 +43,10 @@ public class AnsiPrintStream extends PrintStream {
         return getOut().getType();
     }
 
+    public AnsiColors getColors() {
+        return getOut().getColors();
+    }
+
     public AnsiMode getMode() {
         return getOut().getMode();
     }
@@ -71,6 +75,7 @@ public class AnsiPrintStream extends PrintStream {
     public String toString() {
         return "AnsiPrintStream{"
                 + "type=" + getType()
+                + ", colors=" + getColors()
                 + ", mode=" + getMode()
                 + ", resetAtUninstall=" + isResetAtUninstall()
                 + "}";

@@ -280,12 +280,36 @@ public final class WindowsAnsiProcessor extends AnsiProcessor {
     }
 
     @Override
+    protected void processSetForegroundColorExt(int paletteIndex) throws IOException {
+        int round = Colors.roundColor(paletteIndex, 16);
+        processSetForegroundColor(round >= 8 ? round - 8 : round, round >= 8);
+    }
+
+    @Override
+    protected void processSetForegroundColorExt(int r, int g, int b) throws IOException {
+        int round = Colors.roundRgbColor(r, g, b, 16);
+        processSetForegroundColor(round >= 8 ? round - 8 : round, round >= 8);
+    }
+
+    @Override
     protected void processSetBackgroundColor(int color, boolean bright) throws IOException {
         info.attributes = (short) ((info.attributes & ~0x0070) | ANSI_BACKGROUND_COLOR_MAP[color]);
         if (bright) {
             info.attributes |= BACKGROUND_INTENSITY;
         }
         applyAttribute();
+    }
+
+    @Override
+    protected void processSetBackgroundColorExt(int paletteIndex) throws IOException {
+        int round = Colors.roundColor(paletteIndex, 16);
+        processSetBackgroundColor(round >= 8 ? round - 8 : round, round >= 8);
+    }
+
+    @Override
+    protected void processSetBackgroundColorExt(int r, int g, int b) throws IOException {
+        int round = Colors.roundRgbColor(r, g, b, 16);
+        processSetBackgroundColor(round >= 8 ? round - 8 : round, round >= 8);
     }
 
     @Override

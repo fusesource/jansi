@@ -19,7 +19,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.jupiter.api.Test;
@@ -41,7 +40,7 @@ public class EncodingTest {
             protected void processChangeWindowTitle(String label) {
                 newLabel.set(label);
             }
-        }, AnsiProcessorType.Emulation, Charset.forName("ISO-8859-1"), null, null, false), true, "ISO-8859-1");
+        }, AnsiType.Emulation, AnsiColors.TrueColor, Charset.forName("ISO-8859-1"), null, null, false), true, "ISO-8859-1");
 
         ansi.print("\033]0;un bon café\007");
         ansi.flush();
@@ -57,7 +56,7 @@ public class EncodingTest {
             protected void processChangeWindowTitle(String label) {
                 newLabel.set(label);
             }
-        }, AnsiProcessorType.Emulation, Charset.forName("UTF-8"), null, null, false), true, "UTF-8");
+        }, AnsiType.Emulation, AnsiColors.TrueColor, Charset.forName("UTF-8"), null, null, false), true, "UTF-8");
 
         ansi.print("\033]0;ひらがな\007");
         ansi.flush();
