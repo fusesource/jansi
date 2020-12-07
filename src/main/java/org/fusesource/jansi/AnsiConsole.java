@@ -200,12 +200,12 @@ public class AnsiConsole {
         isatty = isAtty;
 
         final AnsiProcessor processor;
-        final AnsiProcessorType processorType;
+        final AnsiType type;
         final AnsiOutputStream.IoRunnable installer;
         final AnsiOutputStream.IoRunnable uninstaller;
         if (!isatty) {
             processor = null;
-            processorType = withException ? AnsiProcessorType.Unsupported : AnsiProcessorType.Redirected;
+            type = withException ? AnsiType.Unsupported : AnsiType.Redirected;
             installer = uninstaller = null;
         }
         else if (IS_WINDOWS) {
@@ -215,7 +215,7 @@ public class AnsiConsole {
                     && SetConsoleMode(console, mode[0] | ENABLE_VIRTUAL_TERMINAL_PROCESSING) != 0) {
                 SetConsoleMode(console, mode[0]); // set it back for now, but we know it works
                 processor = null;
-                processorType = AnsiProcessorType.VirtualTerminal;
+                type = AnsiType.VirtualTerminal;
                 installer = new AnsiOutputStream.IoRunnable() {
                     @Override
                     public void run() throws IOException {
@@ -235,25 +235,25 @@ public class AnsiConsole {
             else if (IS_CONEMU || IS_CYGWIN || IS_MSYSTEM) {
                 // ANSI-enabled ConEmu, Cygwin or MSYS(2) on Windows...
                 processor = null;
-                processorType = AnsiProcessorType.Native;
+                type = AnsiType.Native;
                 installer = uninstaller = null;
             }
             else {
                 // On Windows, when no ANSI-capable terminal is used, we know the console does not natively interpret ANSI
                 // codes but we can use jansi Kernel32 API for console
                 AnsiProcessor proc;
-                AnsiProcessorType type;
+                AnsiType ttype;
                 try {
                     proc = new WindowsAnsiProcessor(out, console);
-                    type = AnsiProcessorType.Emulation;
+                    ttype = AnsiType.Emulation;
                 } catch (Throwable ignore) {
                     // this happens when the stdout is being redirected to a file.
                     // Use the AnsiProcessor to strip out the ANSI escape sequences.
                     proc = new AnsiProcessor(out);
-                    type = AnsiProcessorType.Unsupported;
+                    ttype = AnsiType.Unsupported;
                 }
                 processor = proc;
-                processorType = type;
+                type = ttype;
                 installer = uninstaller = null;
             }
         }
@@ -262,42 +262,42 @@ public class AnsiConsole {
         else {
             // ANSI-enabled ConEmu, Cygwin or MSYS(2) on Windows...
             processor = null;
-            processorType = AnsiProcessorType.Native;
+            type = AnsiType.Native;
             installer = uninstaller = null;
         }
 
-        AnsiMode ansiMode;
+        AnsiMode mode;
 
-        // If the jansi.jansiMode property is set, use it
+        // If the jansi.mode property is set, use it
         String jansiMode = System.getProperty(stdout ? JANSI_OUT_MODE : JANSI_ERR_MODE, System.getProperty(JANSI_MODE));
         if (JANSI_MODE_FORCE.equals(jansiMode)) {
-            ansiMode = AnsiMode.Force;
+            mode = AnsiMode.Force;
         } else if (JANSI_MODE_STRIP.equals(jansiMode)) {
-            ansiMode = AnsiMode.Strip;
+            mode = AnsiMode.Strip;
         } else if (jansiMode != null) {
-            ansiMode = isatty ? AnsiMode.Default : AnsiMode.Strip;
+            mode = isatty ? AnsiMode.Default : AnsiMode.Strip;
         }
 
         // If the jansi.passthrough property is set, then don't interpret
         // any of the ansi sequences.
         else if (getBoolean(JANSI_PASSTHROUGH)) {
-            ansiMode = AnsiMode.Force;
+            mode = AnsiMode.Force;
         }
 
         // If the jansi.strip property is set, then we just strip the
         // the ansi escapes.
         else if (getBoolean(JANSI_STRIP)) {
-            ansiMode = AnsiMode.Strip;
+            mode = AnsiMode.Strip;
         }
 
         // If the jansi.force property is set, then we force to output
         // the ansi escapes for piping it into ansi color aware commands (e.g. less -r)
         else if (getBoolean(JANSI_FORCE)) {
-            ansiMode = AnsiMode.Force;
+            mode = AnsiMode.Force;
         }
 
         else {
-            ansiMode = isatty ? AnsiMode.Default : AnsiMode.Strip;
+            mode = isatty ? AnsiMode.Default : AnsiMode.Strip;
         }
 
         // If the jansi.noreset property is not set, reset the attributes
@@ -311,7 +311,7 @@ public class AnsiConsole {
             } catch (UnsupportedCharsetException e) {
             }
         }
-        return newPrintStream(new AnsiOutputStream(out, ansiMode, processor, processorType, cs,
+        return newPrintStream(new AnsiOutputStream(out, mode, processor, type, cs,
                 installer, uninstaller, resetAtUninstall), cs.name());
     }
 

@@ -20,7 +20,7 @@ package org.fusesource.jansi;
  *
  * @since 2.1
  */
-public enum AnsiProcessorType {
+public enum AnsiType {
 
     Native("Supports ansi sequences natively"),
     Unsupported("Ansi sequences are stripped out"),
@@ -30,7 +30,7 @@ public enum AnsiProcessorType {
 
     private final String description;
 
-    AnsiProcessorType(String description) {
+    AnsiType(String description) {
         this.description = description;
     }
 

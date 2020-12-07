@@ -39,16 +39,16 @@ public class AnsiPrintStream extends PrintStream {
         return (AnsiOutputStream) out;
     }
 
-    public AnsiProcessorType getProcessorType() {
-        return getOut().getProcessorType();
+    public AnsiType getType() {
+        return getOut().getType();
     }
 
-    public AnsiMode getAnsiMode() {
-        return getOut().getAnsiMode();
+    public AnsiMode getMode() {
+        return getOut().getMode();
     }
 
-    public void setAnsiMode(AnsiMode ansiMode) {
-        getOut().setAnsiMode(ansiMode);
+    public void setMode(AnsiMode ansiMode) {
+        getOut().setMode(ansiMode);
     }
 
     public boolean isResetAtUninstall() {
@@ -70,8 +70,8 @@ public class AnsiPrintStream extends PrintStream {
     @Override
     public String toString() {
         return "AnsiPrintStream{"
-                + "type=" + getProcessorType()
-                + ", mode=" + getAnsiMode()
+                + "type=" + getType()
+                + ", mode=" + getMode()
                 + ", resetAtUninstall=" + isResetAtUninstall()
                 + "}";
     }

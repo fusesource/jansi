@@ -25,8 +25,8 @@ public class InstallUninstallTest {
         AnsiConsole.systemInstall();
         print(System.out, "consectetur adipiscing elit");
         print(System.err, "sed do eiusmod");
-        AnsiConsole.out().setAnsiMode(AnsiMode.Strip);
-        AnsiConsole.err().setAnsiMode(AnsiMode.Strip);
+        AnsiConsole.out().setMode(AnsiMode.Strip);
+        AnsiConsole.err().setMode(AnsiMode.Strip);
         print(System.out, "tempor incididunt ut");
         print(System.err, "labore et dolore");
         AnsiConsole.systemUninstall();

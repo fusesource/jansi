@@ -22,7 +22,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 import org.fusesource.jansi.AnsiMode;
-import org.fusesource.jansi.AnsiProcessorType;
+import org.fusesource.jansi.AnsiType;
 
 /**
  * A ANSI print stream extracts ANSI escape codes written to 
@@ -73,36 +73,36 @@ public class AnsiOutputStream extends FilterOutputStream {
     private final Charset cs;
 
     private final AnsiProcessor processor;
-    private final AnsiProcessorType processorType;
+    private final AnsiType type;
     private final IoRunnable installer;
     private final IoRunnable uninstaller;
-    private AnsiMode ansiMode;
+    private AnsiMode mode;
     private boolean resetAtUninstall;
 
-    public AnsiOutputStream(OutputStream os, AnsiMode ansiMode,
-                            AnsiProcessor processor, AnsiProcessorType defaultProcessorType,
+    public AnsiOutputStream(OutputStream os, AnsiMode mode,
+                            AnsiProcessor processor, AnsiType type,
                             Charset cs, IoRunnable installer, IoRunnable uninstaller, boolean resetAtUninstall) {
         super(os);
         this.processor = processor;
-        this.processorType = defaultProcessorType;
+        this.type = type;
         this.installer = installer;
         this.uninstaller = uninstaller;
         this.resetAtUninstall = resetAtUninstall;
         this.cs = cs;
-        setAnsiMode(ansiMode);
+        setMode(mode);
     }
 
-    public AnsiProcessorType getProcessorType() {
-        return processorType;
+    public AnsiType getType() {
+        return type;
     }
 
-    public AnsiMode getAnsiMode() {
-        return ansiMode;
+    public AnsiMode getMode() {
+        return mode;
     }
 
-    public void setAnsiMode(AnsiMode ansiMode) {
-        ap = ansiMode == AnsiMode.Strip ? new AnsiProcessor(out) : ansiMode == AnsiMode.Force ? null : processor;
-        this.ansiMode = ansiMode;
+    public void setMode(AnsiMode mode) {
+        ap = mode == AnsiMode.Strip ? new AnsiProcessor(out) : mode == AnsiMode.Force ? null : processor;
+        this.mode = mode;
     }
 
     public boolean isResetAtUninstall() {
@@ -305,9 +305,9 @@ public class AnsiOutputStream extends FilterOutputStream {
 
     public void uninstall() throws IOException {
         if (resetAtUninstall
-                && processorType != AnsiProcessorType.Redirected
-                && processorType != AnsiProcessorType.Unsupported) {
-            setAnsiMode(AnsiMode.Default);
+                && type != AnsiType.Redirected
+                && type != AnsiType.Unsupported) {
+            setMode(AnsiMode.Default);
             write(RESET_CODE);
             flush();
         }

@@ -105,7 +105,7 @@ public class AnsiMain {
         System.out.println("  - System.out: " + AnsiConsole.out().toString());
         System.out.println("  - System.err: " + AnsiConsole.err().toString());
         System.out.println("Processor types description:");
-        for (AnsiProcessorType type : AnsiProcessorType.values()) {
+        for (AnsiType type : AnsiType.values()) {
             System.out.println("  - " + type + ": " + type.getDescription());
         }
         System.out.println("Modes description:");
