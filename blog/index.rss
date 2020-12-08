@@ -4,10 +4,55 @@
                     <title>The Jansi Blog</title>
                     <link>http://fusesource.github.io/jansi/blog/</link>
                     <description>Eliminating boring console output.</description>
-                    <pubDate>Wed, 28 Oct 2020 15:15:35 +0100</pubDate>
-                    <lastBuildDate>Wed, 28 Oct 2020 15:15:35 +0100</lastBuildDate>
+                    <pubDate>Tue, 8 Dec 2020 09:20:31 +0100</pubDate>
+                    <lastBuildDate>Tue, 8 Dec 2020 09:20:31 +0100</lastBuildDate>
                     <generator>Scalate - http://scalate.fusesource.org/</generator>
                     <item>
+                          <title>Jansi 2.1.0</title>
+                          <link>http://fusesource.github.io/jansi/blog/releases/release-2.1.0.html</link>
+                          <description>&lt;p&gt;The &lt;a href=&quot;http://fusesource.github.io/jansi&quot;&gt;Jansi&lt;/a&gt; project is pleased to announce
+the availability of Jansi 2.1.0. Jansi is a small java library that allows
+you to use ANSI escape sequences to format your console output which works 
+even on windows and to access low-level OS support for consoles.&lt;/p&gt;
+
+&lt;p&gt;Changes:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/fusesource/jansi/commit/235b653bbb57101dca7db3ff2f880115d781bc38&quot;&gt;&lt;code&gt;235b653&lt;/code&gt;&lt;/a&gt; 256 colors and truecolor support&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/fusesource/jansi/commit/7dc9c1b553542a6d7bca4faaf0966fd1547a4327&quot;&gt;&lt;code&gt;7dc9c1b&lt;/code&gt;&lt;/a&gt; Rename AnsiProcessorType to AnsiType&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/fusesource/jansi/commit/5f87f097602f3800ac3afd916bc7d63db483af72&quot;&gt;&lt;code&gt;5f87f09&lt;/code&gt;&lt;/a&gt; Remove jdk 1.7 specific method, as we're still on jdk 1.6&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/fusesource/jansi/commit/322c4d9790e5410988ab3a165d4c9c998e2b7daf&quot;&gt;&lt;code&gt;322c4d9&lt;/code&gt;&lt;/a&gt; Move IO implementation classes to a separate package&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/fusesource/jansi/commit/04d771c3c7f2a4c29301191e65e7ce3cdeb92918&quot;&gt;&lt;code&gt;04d771c&lt;/code&gt;&lt;/a&gt; Move IO implementation classes to a separate package&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/fusesource/jansi/commit/2babe3dfa5506f5348d77e9eb3f0d89d7ae0eea0&quot;&gt;&lt;code&gt;2babe3d&lt;/code&gt;&lt;/a&gt; Pass the console handle directly to the WindowsAnsiProcessor&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/fusesource/jansi/commit/cc7c8d988c766487f04b067834e7bd49db9306f1&quot;&gt;&lt;code&gt;cc7c8d9&lt;/code&gt;&lt;/a&gt; Change test into an assertion as mapLibraryName should never return null&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/fusesource/jansi/commit/63bd892b2bdfc253ec119a57bdd42df5e80fd859&quot;&gt;&lt;code&gt;63bd892&lt;/code&gt;&lt;/a&gt; Improve dynamism so that the ansi mode can be set per stream and after initialization, #178&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/fusesource/jansi/commit/8c681e900758716824152242fd881a20645b6bd3&quot;&gt;&lt;code&gt;8c681e9&lt;/code&gt;&lt;/a&gt; Add a (manuel) test&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/fusesource/jansi/commit/9477b530f9c91fdf374ae28d6f704d24163ad4f3&quot;&gt;&lt;code&gt;9477b53&lt;/code&gt;&lt;/a&gt; Expose a isInstalled() method&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/fusesource/jansi/commit/8be96cc05d46da91a8bb0bd84b03c5b0baa3c8ed&quot;&gt;&lt;code&gt;8be96cc&lt;/code&gt;&lt;/a&gt; Fix typo in AnsiProcessor name&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/fusesource/jansi/commit/f43e32b8dd924d48b924fee2dd6edc615baf46e9&quot;&gt;&lt;code&gt;f43e32b&lt;/code&gt;&lt;/a&gt; Remove references to old fusesource web site&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/fusesource/jansi/commit/a00711c34177d1f5a82c3f4e01a0fa09ce9f5bdc&quot;&gt;&lt;code&gt;a00711c&lt;/code&gt;&lt;/a&gt; Avoid possible flushing problems when displaying the logo&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/fusesource/jansi/commit/9f43faa66139ccc19e53136895280d8b13be3616&quot;&gt;&lt;code&gt;9f43faa&lt;/code&gt;&lt;/a&gt; Avoid hardcoded numbers&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/fusesource/jansi/commit/23e71d0abaefc4d7c8a5df1230cc2b3cdaa9c858&quot;&gt;&lt;code&gt;23e71d0&lt;/code&gt;&lt;/a&gt; Fix test to identify pipes on cygwin/msys, fixes #179&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/fusesource/jansi/commit/092675487c91133144d4f1b81b5cf69a444883d3&quot;&gt;&lt;code&gt;0926754&lt;/code&gt;&lt;/a&gt; Fix ansi stream state after an exception is thrown, fixes #30&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/fusesource/jansi/commit/c77ec6c5e48c89ae2b641aa58e50b207d3edeaf0&quot;&gt;&lt;code&gt;c77ec6c&lt;/code&gt;&lt;/a&gt; Just use a plain random to avoid a dependency on SecureRandom&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/fusesource/jansi/commit/090132d8160e50ef0c9d4b85990b32744f14e439&quot;&gt;&lt;code&gt;090132d&lt;/code&gt;&lt;/a&gt; Movement with cursorUpLine/cursorDownLine don't work on windows, fixes #140&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/fusesource/jansi/commit/2e840849f842c74943718ec291acecfb4556a9ed&quot;&gt;&lt;code&gt;2e84084&lt;/code&gt;&lt;/a&gt; jansi parent dependency upgrade, fixes #154&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/fusesource/jansi/commit/8420b9c381fc41f36561f8dc453b5ba6765947e3&quot;&gt;&lt;code&gt;8420b9c&lt;/code&gt;&lt;/a&gt; Ansi should implement java.lang.Appendable, fixes #168&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/fusesource/jansi/commit/70adaebb1d8d38c9851b4de1c846441d753c8152&quot;&gt;&lt;code&gt;70adaeb&lt;/code&gt;&lt;/a&gt; Check values when emitting ansi sequences for cursor movement, fixes #172&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/fusesource/jansi/commit/0171ecba47d28cfb467b04a87617205d41072fa3&quot;&gt;&lt;code&gt;0171ecb&lt;/code&gt;&lt;/a&gt; Allow the re-initialization of streams, fixes #178&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/fusesource/jansi/commit/5ce085b7e3acc9a3a95d42f40a49be0cec301947&quot;&gt;&lt;code&gt;5ce085b&lt;/code&gt;&lt;/a&gt; Merge pull request #177 from MrDOS/improvement/use-freebsd-container-working-directory&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/fusesource/jansi/commit/816da962a3e592e933a82d57c1a295ced6520d3f&quot;&gt;&lt;code&gt;816da96&lt;/code&gt;&lt;/a&gt; Use the FreeBSD container working directory.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/fusesource/jansi/commit/47316638568da54154821373f3e3d63388a481dc&quot;&gt;&lt;code&gt;4731663&lt;/code&gt;&lt;/a&gt; Fix changelog&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Further information:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;http://http://fusesource.github.io/jansi/download.html&quot;&gt;Downloads&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://fusesource.github.io/jansi/community/index.html&quot;&gt;Feedback&lt;/a&gt; is always welcome!&lt;/p&gt;</description>
+                        </item><item>
                           <title>Jansi 2.0.1</title>
                           <link>http://fusesource.github.io/jansi/blog/releases/release-2.0.1.html</link>
                           <description>&lt;p&gt;The &lt;a href=&quot;http://fusesource.github.io/jansi&quot;&gt;Jansi&lt;/a&gt; project is pleased to announce
