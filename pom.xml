@@ -169,8 +169,8 @@
                             <instructions>
                                 <Main-Class>org.fusesource.jansi.AnsiMain</Main-Class>
                                 <Export-Package>
-                                    org.fusesource.jansi;
-                                    org.fusesource.jansi.internal;
+                                    !org.fusesource.jansi.internal.native.*;
+                                    org.fusesource.jansi.*;
                                     -noimport:=true
                                 </Export-Package>
                                 <_removeheaders>Bnd-LastModified</_removeheaders>
