@@ -1,0 +1,60 @@
+---
+# Copyright (C) 2009-2020 the original author(s).
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#     http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+blog_post: true
+title: Jansi 2.1.0
+author: Guillaume Nodet
+created_at: 2020-12-08 15:42:00 +0100
+--- 
+
+The [${project_name}](${website_base_url}) project is pleased to announce
+the availability of ${project_name} 2.1.0. Jansi is a small java library that allows
+you to use ANSI escape sequences to format your console output which works 
+even on windows and to access low-level OS support for consoles.
+
+Changes:
+
+* [`235b653`](https://github.com/fusesource/jansi/commit/235b653bbb57101dca7db3ff2f880115d781bc38) 256 colors and truecolor support
+* [`7dc9c1b`](https://github.com/fusesource/jansi/commit/7dc9c1b553542a6d7bca4faaf0966fd1547a4327) Rename AnsiProcessorType to AnsiType
+* [`5f87f09`](https://github.com/fusesource/jansi/commit/5f87f097602f3800ac3afd916bc7d63db483af72) Remove jdk 1.7 specific method, as we're still on jdk 1.6
+* [`322c4d9`](https://github.com/fusesource/jansi/commit/322c4d9790e5410988ab3a165d4c9c998e2b7daf) Move IO implementation classes to a separate package
+* [`04d771c`](https://github.com/fusesource/jansi/commit/04d771c3c7f2a4c29301191e65e7ce3cdeb92918) Move IO implementation classes to a separate package
+* [`2babe3d`](https://github.com/fusesource/jansi/commit/2babe3dfa5506f5348d77e9eb3f0d89d7ae0eea0) Pass the console handle directly to the WindowsAnsiProcessor
+* [`cc7c8d9`](https://github.com/fusesource/jansi/commit/cc7c8d988c766487f04b067834e7bd49db9306f1) Change test into an assertion as mapLibraryName should never return null
+* [`63bd892`](https://github.com/fusesource/jansi/commit/63bd892b2bdfc253ec119a57bdd42df5e80fd859) Improve dynamism so that the ansi mode can be set per stream and after initialization, #178
+* [`8c681e9`](https://github.com/fusesource/jansi/commit/8c681e900758716824152242fd881a20645b6bd3) Add a (manuel) test
+* [`9477b53`](https://github.com/fusesource/jansi/commit/9477b530f9c91fdf374ae28d6f704d24163ad4f3) Expose a isInstalled() method
+* [`8be96cc`](https://github.com/fusesource/jansi/commit/8be96cc05d46da91a8bb0bd84b03c5b0baa3c8ed) Fix typo in AnsiProcessor name
+* [`f43e32b`](https://github.com/fusesource/jansi/commit/f43e32b8dd924d48b924fee2dd6edc615baf46e9) Remove references to old fusesource web site
+* [`a00711c`](https://github.com/fusesource/jansi/commit/a00711c34177d1f5a82c3f4e01a0fa09ce9f5bdc) Avoid possible flushing problems when displaying the logo
+* [`9f43faa`](https://github.com/fusesource/jansi/commit/9f43faa66139ccc19e53136895280d8b13be3616) Avoid hardcoded numbers
+* [`23e71d0`](https://github.com/fusesource/jansi/commit/23e71d0abaefc4d7c8a5df1230cc2b3cdaa9c858) Fix test to identify pipes on cygwin/msys, fixes #179
+* [`0926754`](https://github.com/fusesource/jansi/commit/092675487c91133144d4f1b81b5cf69a444883d3) Fix ansi stream state after an exception is thrown, fixes #30
+* [`c77ec6c`](https://github.com/fusesource/jansi/commit/c77ec6c5e48c89ae2b641aa58e50b207d3edeaf0) Just use a plain random to avoid a dependency on SecureRandom
+* [`090132d`](https://github.com/fusesource/jansi/commit/090132d8160e50ef0c9d4b85990b32744f14e439) Movement with cursorUpLine/cursorDownLine don't work on windows, fixes #140
+* [`2e84084`](https://github.com/fusesource/jansi/commit/2e840849f842c74943718ec291acecfb4556a9ed) jansi parent dependency upgrade, fixes #154
+* [`8420b9c`](https://github.com/fusesource/jansi/commit/8420b9c381fc41f36561f8dc453b5ba6765947e3) Ansi should implement java.lang.Appendable, fixes #168
+* [`70adaeb`](https://github.com/fusesource/jansi/commit/70adaebb1d8d38c9851b4de1c846441d753c8152) Check values when emitting ansi sequences for cursor movement, fixes #172
+* [`0171ecb`](https://github.com/fusesource/jansi/commit/0171ecba47d28cfb467b04a87617205d41072fa3) Allow the re-initialization of streams, fixes #178
+* [`5ce085b`](https://github.com/fusesource/jansi/commit/5ce085b7e3acc9a3a95d42f40a49be0cec301947) Merge pull request #177 from MrDOS/improvement/use-freebsd-container-working-directory
+* [`816da96`](https://github.com/fusesource/jansi/commit/816da962a3e592e933a82d57c1a295ced6520d3f) Use the FreeBSD container working directory.
+* [`4731663`](https://github.com/fusesource/jansi/commit/47316638568da54154821373f3e3d63388a481dc) Fix changelog
+
+Further information:
+
+* [Downloads](http://${website_base_url}/download.html)
+
+[Feedback](${website_base_url}/community/index.html) is always welcome! 
+

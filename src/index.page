@@ -39,7 +39,7 @@ ${project_slogan}
     `AnsiConsole.out` PrintStream instead.  For example:
     
     {pygmentize::java}
-    AnsiConsole.out.println("Hello World");
+    AnsiConsole.out().println("Hello World");
     {pygmentize}
 
 .left
