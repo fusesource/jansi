@@ -33,10 +33,10 @@ import java.util.Random;
  * Set the system properties, org.jansi.lib.path, org.jansi.lib.name,
  * appropriately so that jansi can find *.dll, *.jnilib and
  * *.so files, according to the current OS (win, linux, mac).
- * <p/>
+ * <p>
  * The library files are automatically extracted from this project's package
  * (JAR).
- * <p/>
+ * <p>
  * usage: call {@link #initialize()} before using Jansi.
  */
 public class JansiLoader {
