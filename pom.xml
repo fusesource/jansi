@@ -247,7 +247,6 @@
                     <windowtitle>${project.name} API Reference (${project.version})</windowtitle>
                     <locale>en_US</locale>
                     <linksource>true</linksource>
-                    <excludePackageNames>*.internal</excludePackageNames>
                     <notimestamp>true</notimestamp>
                     <quiet>true</quiet>
                     <docencoding>UTF-8</docencoding>
