@@ -15,7 +15,6 @@
  */
 package org.fusesource.jansi;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
 

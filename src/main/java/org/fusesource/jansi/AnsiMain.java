@@ -27,6 +27,7 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.Properties;
 
+import org.fusesource.jansi.Ansi.Attribute;
 import org.fusesource.jansi.internal.CLibrary;
 import org.fusesource.jansi.internal.JansiLoader;
 
@@ -192,6 +193,16 @@ public class AnsiMain {
         s.print("              bold:");
         for(Ansi.Color c: Ansi.Color.values()) {
             s.print(" " + ansi().bold().fg(c) + c + ansi().reset());
+        }
+        s.println();
+        s.print("             faint:");
+        for(Ansi.Color c: Ansi.Color.values()) {
+            s.print(" " + ansi().a(Attribute.INTENSITY_FAINT).fg(c) + c + ansi().reset());
+        }
+        s.println();
+        s.print("        bold+faint:");
+        for(Ansi.Color c: Ansi.Color.values()) {
+            s.print(" " + ansi().bold().a(Attribute.INTENSITY_FAINT).fg(c) + c + ansi().reset());
         }
         s.println();
         Ansi ansi = ansi();
