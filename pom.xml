@@ -34,6 +34,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j-version>1.6.1</slf4j-version>
+        <project.build.outputTimestamp>2020-12-13T17:04:00Z</project.build.outputTimestamp>
     </properties>
 
     <url>http://fusesource.github.io/jansi</url>
@@ -172,6 +173,7 @@
                                     org.fusesource.jansi.internal;
                                     -noimport:=true
                                 </Export-Package>
+                                <_removeheaders>Bnd-LastModified</_removeheaders>
                             </instructions>
                         </configuration>
                     </execution>
@@ -265,7 +267,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>2.2.1</version>
+                <version>3.2.1</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
