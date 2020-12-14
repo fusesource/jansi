@@ -167,7 +167,7 @@ public class AnsiConsole {
      * @deprecated this field will be made private in a future release, use {@link #out()} instead
      */
     @Deprecated
-    public static AnsiPrintStream out;
+    public static PrintStream out;
     /**
      * @deprecated this field will be made private in a future release, use {@link #sysErr()} instead
      */
@@ -177,7 +177,7 @@ public class AnsiConsole {
      * @deprecated this field will be made private in a future release, use {@link #err()} instead
      */
     @Deprecated
-    public static AnsiPrintStream err;
+    public static PrintStream err;
 
     static final boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("win");
 
@@ -412,7 +412,7 @@ public class AnsiConsole {
      */
     public static AnsiPrintStream out() {
         initStreams();
-        return out;
+        return (AnsiPrintStream) out;
     }
 
     /**
@@ -434,7 +434,7 @@ public class AnsiConsole {
      */
     public static AnsiPrintStream err() {
         initStreams();
-        return err;
+        return (AnsiPrintStream) err;
     }
 
     /**
@@ -456,8 +456,8 @@ public class AnsiConsole {
         if (installed == 1) {
             initStreams();
             try {
-                out.install();
-                err.install();
+                ((AnsiPrintStream) out).install();
+                ((AnsiPrintStream) err).install();
             } catch (IOException e) {
                 throw new IOError(e);
             }
@@ -482,8 +482,8 @@ public class AnsiConsole {
         installed--;
         if (installed == 0) {
             try {
-                out.uninstall();
-                err.uninstall();
+                ((AnsiPrintStream) out).uninstall();
+                ((AnsiPrintStream) err).uninstall();
             } catch (IOException e) {
                 throw new IOError(e);
             }
