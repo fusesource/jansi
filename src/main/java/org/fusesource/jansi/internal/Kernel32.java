@@ -17,6 +17,8 @@ package org.fusesource.jansi.internal;
 
 import java.io.IOException;
 
+import org.fusesource.jansi.WindowsSupport;
+
 /**
  * Interface to access Win32 base APIs.
  *
@@ -525,7 +527,7 @@ public class Kernel32 {
                     PeekConsoleInputW(handle, inputRecordPtr, count, length)
                     : ReadConsoleInputW(handle, inputRecordPtr, count, length);
             if (res == 0) {
-                throw new IOException("ReadConsoleInputW failed");
+                throw new IOException("ReadConsoleInputW failed: " + WindowsSupport.getLastErrorMessage());
             }
             if (length[0] <= 0) {
                 return new INPUT_RECORD[0];
