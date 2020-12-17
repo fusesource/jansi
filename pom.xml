@@ -74,7 +74,7 @@
         <connection>scm:git:https://github.com/fusesource/jansi.git</connection>
         <developerConnection>scm:git:https://github.com/fusesource/jansi.git</developerConnection>
         <url>https://github.com/fusesource/jansi/tree/${project.scm.tag}</url>
-        <tag>jansi-project-1.18</tag>
+        <tag>master</tag>
     </scm>
 
     <distributionManagement>
