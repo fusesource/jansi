@@ -17,6 +17,8 @@ package org.fusesource.jansi;
 
 import org.fusesource.jansi.Ansi.Color;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -51,5 +53,84 @@ public class AnsiTest {
         Ansi clone = new Ansi(ansi);
 
         assertEquals(ansi.a("test").reset().toString(), clone.a("test").reset().toString());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "-1,-1,ESC[-1;-1H", "-1,0,ESC[-1;0H", "-1,1,ESC[-1;1H", "-1,2,ESC[-1;2H",
+        "0,-1,ESC[0;-1H", "0,0,ESC[0;0H", "0,1,ESC[0;1H", "0,2,ESC[0;2H",
+        "1,-1,ESC[1;-1H", "1,0,ESC[1;0H", "1,1,ESC[1;1H", "1,2,ESC[1;2H",
+        "2,-1,ESC[2;-1H", "2,0,ESC[2;0H", "2,1,ESC[2;1H", "2,2,ESC[2;2H"
+    })
+    public void testCursor(int x, int y, String expected) {
+        assertAnsi(expected, new Ansi().cursor(x, y));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"-2,''", "-1,''", "0,ESC[0G", "1,ESC[1G", "2,ESC[2G"})
+    public void testCursorToColumn(int x, String expected) {
+        assertAnsi(expected, new Ansi().cursorToColumn(x));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"-2,ESC[2B", "-1,ESC[1B", "0,''", "1,ESC[1A", "2,ESC[2A"})
+    public void testCursorUp(int y, String expected) {
+        assertAnsi(expected, new Ansi().cursorUp(y));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"-2,ESC[2A", "-1,ESC[1A", "0,''", "1,ESC[1B", "2,ESC[2B"})
+    public void testCursorDown(int y, String expected) {
+        assertAnsi(expected, new Ansi().cursorDown(y));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"-2,ESC[2D", "-1,ESC[1D", "0,''", "1,ESC[1C", "2,ESC[2C"})
+    public void testCursorRight(int x, String expected) {
+        assertAnsi(expected, new Ansi().cursorRight(x));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"-2,ESC[2C", "-1,ESC[1C", "0,''", "1,ESC[1D", "2,ESC[2D"})
+    public void testCursorLeft(int x, String expected) {
+        assertAnsi(expected, new Ansi().cursorLeft(x));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "-2,-2,ESC[2DESC[2A", "-2,-1,ESC[2DESC[1A", "-2,0,ESC[2D", "-2,1,ESC[2DESC[1B", "-2,2,ESC[2DESC[2B",
+        "-1,-2,ESC[1DESC[2A", "-1,-1,ESC[1DESC[1A", "-1,0,ESC[1D", "-1,1,ESC[1DESC[1B", "-1,2,ESC[1DESC[2B",
+        "0,-2,ESC[2A", "0,-1,ESC[1A", "0,0,''", "0,1,ESC[1B", "0,2,ESC[2B",
+        "1,-2,ESC[1CESC[2A", "1,-1,ESC[1CESC[1A", "1,0,ESC[1C", "1,1,ESC[1CESC[1B", "1,2,ESC[1CESC[2B",
+        "2,-2,ESC[2CESC[2A", "2,-1,ESC[2CESC[1A", "2,0,ESC[2C", "2,1,ESC[2CESC[1B", "2,2,ESC[2CESC[2B"
+    })
+    public void testCursorMove(int x, int y, String expected) {
+        assertAnsi(expected, new Ansi().cursorMove(x, y));
+    }
+
+    @Test
+    public void testCursorDownLine() {
+        assertAnsi("ESC[E", new Ansi().cursorDownLine());
+    }
+
+    @ParameterizedTest
+    @CsvSource({"-2,ESC[2F", "-1,ESC[1F", "0,''", "1,ESC[1E", "2,ESC[2E"})
+    public void testCursorDownLine(int n, String expected) {
+        assertAnsi(expected, new Ansi().cursorDownLine(n));
+    }
+
+    @Test
+    public void testCursorUpLine() {
+        assertAnsi("ESC[F", new Ansi().cursorUpLine());
+    }
+
+    @ParameterizedTest
+    @CsvSource({"-2,ESC[2E", "-1,ESC[1E", "0,''", "1,ESC[1F", "2,ESC[2F"})
+    public void testCursorUpLine(int n, String expected) {
+        assertAnsi(expected, new Ansi().cursorUpLine(n));
+    }
+
+    private static void assertAnsi(String expected, Ansi actual) {
+        assertEquals(expected.replace("ESC", "\033"), actual.toString());
     }
 }
