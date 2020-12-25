@@ -52,4 +52,13 @@ public class AnsiTest {
 
         assertEquals(ansi.a("test").reset().toString(), clone.a("test").reset().toString());
     }
+
+    @Test
+    public void testApply() {
+        assertEquals("test", Ansi.ansi().apply(new Ansi.Consumer() {
+            public void apply(Ansi ansi) {
+                ansi.a("test");
+            }
+        }).toString());
+    }
 }
