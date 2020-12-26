@@ -550,26 +550,26 @@ public class Ansi implements Appendable {
     }
 
     /**
-     * Moves the cursor to row n, column m.
-     * The values are 1-based, and default to 1 (top left corner) if omitted.
-     * A sequence such as CSI ;5H is a synonym for CSI 1;5H as well as CSI 17;H is the same as CSI 17H and CSI 17;1H
+     * Moves the cursor to row n, column m. The values are 1-based.
+     * Any values less than 1 are mapped to 1.
      *
-     * @param row row (1-based) from top
+     * @param row    row (1-based) from top
      * @param column column (1 based) from left
      * @return this Ansi instance
      */
     public Ansi cursor(final int row, final int column) {
-        return appendEscapeSequence('H', row, column);
+        return appendEscapeSequence('H', Math.max(1, row), Math.max(1, column));
     }
 
     /**
-     * Moves the cursor to column n. If n is negative it is not moved.
+     * Moves the cursor to column n. The parameter n is 1-based.
+     * If n is less than 1 it is moved to the first column.
      *
-     * @param x the index of the column to move to
+     * @param x the index (1-based) of the column to move to
      * @return this Ansi instance
      */
     public Ansi cursorToColumn(final int x) {
-        return x >= 0 ? appendEscapeSequence('G', x) : this;
+        return appendEscapeSequence('G', Math.max(1, x));
     }
 
     /**
@@ -641,7 +641,7 @@ public class Ansi implements Appendable {
      * @return this Ansi instance
      */
     public Ansi cursorDownLine(final int n) {
-        return n > 0 ? appendEscapeSequence('E', n) : n < 0 ? cursorUpLine(-n) : this;
+        return n < 0 ? cursorUpLine(-n) : appendEscapeSequence('E', n);
     }
 
     /**
@@ -661,7 +661,7 @@ public class Ansi implements Appendable {
      * @return this Ansi instance
      */
     public Ansi cursorUpLine(final int n) {
-        return n > 0 ? appendEscapeSequence('F', n) : n < 0 ? cursorDownLine(-n) : this;
+        return n < 0 ? cursorDownLine(-n) : appendEscapeSequence('F', n);
     }
 
     public Ansi eraseScreen() {
@@ -681,11 +681,11 @@ public class Ansi implements Appendable {
     }
 
     public Ansi scrollUp(final int rows) {
-        return rows > 0 ? appendEscapeSequence('S', rows) : this;
+        return rows > 0 ? appendEscapeSequence('S', rows) : rows < 0 ? scrollDown(-rows) : this;
     }
 
     public Ansi scrollDown(final int rows) {
-        return rows > 0 ? appendEscapeSequence('T', rows) : this;
+        return rows > 0 ? appendEscapeSequence('T', rows) : rows < 0 ? scrollUp(-rows) : this;
     }
 
     public Ansi saveCursorPosition() {

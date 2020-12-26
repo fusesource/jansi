@@ -57,17 +57,17 @@ public class AnsiTest {
 
     @ParameterizedTest
     @CsvSource({
-        "-1,-1,ESC[-1;-1H", "-1,0,ESC[-1;0H", "-1,1,ESC[-1;1H", "-1,2,ESC[-1;2H",
-        "0,-1,ESC[0;-1H", "0,0,ESC[0;0H", "0,1,ESC[0;1H", "0,2,ESC[0;2H",
-        "1,-1,ESC[1;-1H", "1,0,ESC[1;0H", "1,1,ESC[1;1H", "1,2,ESC[1;2H",
-        "2,-1,ESC[2;-1H", "2,0,ESC[2;0H", "2,1,ESC[2;1H", "2,2,ESC[2;2H"
+        "-1,-1,ESC[1;1H", "-1,0,ESC[1;1H", "-1,1,ESC[1;1H", "-1,2,ESC[1;2H",
+        "0,-1,ESC[1;1H", "0,0,ESC[1;1H", "0,1,ESC[1;1H", "0,2,ESC[1;2H",
+        "1,-1,ESC[1;1H", "1,0,ESC[1;1H", "1,1,ESC[1;1H", "1,2,ESC[1;2H",
+        "2,-1,ESC[2;1H", "2,0,ESC[2;1H", "2,1,ESC[2;1H", "2,2,ESC[2;2H"
     })
     public void testCursor(int x, int y, String expected) {
         assertAnsi(expected, new Ansi().cursor(x, y));
     }
 
     @ParameterizedTest
-    @CsvSource({"-2,''", "-1,''", "0,ESC[0G", "1,ESC[1G", "2,ESC[2G"})
+    @CsvSource({"-1,ESC[1G", "0,ESC[1G", "1,ESC[1G", "2,ESC[2G"})
     public void testCursorToColumn(int x, String expected) {
         assertAnsi(expected, new Ansi().cursorToColumn(x));
     }
@@ -114,7 +114,7 @@ public class AnsiTest {
     }
 
     @ParameterizedTest
-    @CsvSource({"-2,ESC[2F", "-1,ESC[1F", "0,''", "1,ESC[1E", "2,ESC[2E"})
+    @CsvSource({"-2,ESC[2F", "-1,ESC[1F", "0,ESC[0E", "1,ESC[1E", "2,ESC[2E"})
     public void testCursorDownLine(int n, String expected) {
         assertAnsi(expected, new Ansi().cursorDownLine(n));
     }
@@ -125,7 +125,7 @@ public class AnsiTest {
     }
 
     @ParameterizedTest
-    @CsvSource({"-2,ESC[2E", "-1,ESC[1E", "0,''", "1,ESC[1F", "2,ESC[2F"})
+    @CsvSource({"-2,ESC[2E", "-1,ESC[1E", "0,ESC[0F", "1,ESC[1F", "2,ESC[2F"})
     public void testCursorUpLine(int n, String expected) {
         assertAnsi(expected, new Ansi().cursorUpLine(n));
     }
