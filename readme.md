@@ -99,4 +99,3 @@ http://www.microsoft.com/en-us/download/details.aspx?displaylang=en&id=5582
 * [Release Downloads](http://fusesource.github.io/jansi/download.html)
 * [GitHub](https://github.com/fusesource/jansi)
 * [Issue Tracker](https://github.com/fusesource/jansi/issues)
-
