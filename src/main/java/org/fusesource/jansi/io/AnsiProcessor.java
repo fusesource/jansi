@@ -20,8 +20,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.fusesource.jansi.AnsiColors;
-
 /**
  * ANSI processor providing <code>process*</code> corresponding to ANSI escape codes. 
  * This class methods implementations are empty: subclasses should actually perform the
