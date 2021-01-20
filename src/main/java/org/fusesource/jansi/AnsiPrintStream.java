@@ -63,6 +63,14 @@ public class AnsiPrintStream extends PrintStream {
         getOut().setResetAtUninstall(resetAtClose);
     }
 
+    /**
+     * Returns the width of the terminal associated with this stream or 0.
+     * @since 2.2
+     */
+    public int getTerminalWidth() {
+        return getOut().getTerminalWidth();
+    }
+
     public void install() throws IOException {
         getOut().install();
     }

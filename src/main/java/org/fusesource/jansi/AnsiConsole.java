@@ -27,17 +27,21 @@ import java.nio.charset.UnsupportedCharsetException;
 import java.util.Locale;
 
 import org.fusesource.jansi.internal.CLibrary;
+import org.fusesource.jansi.internal.CLibrary.WinSize;
 import org.fusesource.jansi.io.AnsiOutputStream;
 import org.fusesource.jansi.io.AnsiProcessor;
 import org.fusesource.jansi.io.FastBufferedOutputStream;
 import org.fusesource.jansi.io.WindowsAnsiProcessor;
+import org.fusesource.jansi.internal.Kernel32.CONSOLE_SCREEN_BUFFER_INFO;
 
+import static org.fusesource.jansi.internal.CLibrary.ioctl;
 import static org.fusesource.jansi.internal.CLibrary.isatty;
 import static org.fusesource.jansi.internal.Kernel32.GetConsoleMode;
 import static org.fusesource.jansi.internal.Kernel32.GetStdHandle;
 import static org.fusesource.jansi.internal.Kernel32.STD_ERROR_HANDLE;
 import static org.fusesource.jansi.internal.Kernel32.STD_OUTPUT_HANDLE;
 import static org.fusesource.jansi.internal.Kernel32.SetConsoleMode;
+import static org.fusesource.jansi.internal.Kernel32.GetConsoleScreenBufferInfo;
 
 /**
  * Provides consistent access to an ANSI aware console PrintStream or an ANSI codes stripping PrintStream
@@ -179,6 +183,20 @@ public class AnsiConsole {
     @Deprecated
     public static PrintStream err;
 
+    /**
+     * Try to find the width of the console for this process.
+     * Both output and error streams will be checked to determine the width.
+     * A value of 0 is returned if the width can not be determined.
+     * @since 2.2
+     */
+    public static int getTerminalWidth() {
+        int w = out().getTerminalWidth();
+        if (w <= 0) {
+            w = err().getTerminalWidth();
+        }
+        return w;
+    }
+
     static final boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("win");
 
     static final boolean IS_CYGWIN = IS_WINDOWS
@@ -210,17 +228,19 @@ public class AnsiConsole {
     }
 
     private static AnsiPrintStream ansiStream(boolean stdout) {
-        final OutputStream out = new FastBufferedOutputStream(new FileOutputStream(stdout ? FileDescriptor.out : FileDescriptor.err));
+        FileDescriptor descriptor = stdout ? FileDescriptor.out : FileDescriptor.err;
+        final OutputStream out = new FastBufferedOutputStream(new FileOutputStream(descriptor));
 
         String enc = System.getProperty(stdout ? "sun.stdout.encoding" : "sun.stderr.encoding");
 
         final boolean isatty;
         boolean isAtty;
         boolean withException;
+        final int fd = stdout ? CLibrary.STDOUT_FILENO : CLibrary.STDERR_FILENO;
         try {
             // If we can detect that stdout is not a tty.. then setup
             // to strip the ANSI sequences..
-            isAtty = isatty(stdout ? CLibrary.STDOUT_FILENO : CLibrary.STDERR_FILENO) != 0;
+            isAtty = isatty(fd) != 0;
             withException = false;
         } catch (Throwable ignore) {
             // These errors happen if the JNI lib is not available for your platform.
@@ -230,6 +250,7 @@ public class AnsiConsole {
         }
         isatty = isAtty;
 
+        final AnsiOutputStream.WidthSupplier width;
         final AnsiProcessor processor;
         final AnsiType type;
         final AnsiOutputStream.IoRunnable installer;
@@ -238,6 +259,7 @@ public class AnsiConsole {
             processor = null;
             type = withException ? AnsiType.Unsupported : AnsiType.Redirected;
             installer = uninstaller = null;
+            width = new AnsiOutputStream.ZeroWidthSupplier();
         }
         else if (IS_WINDOWS) {
             final long console = GetStdHandle(stdout ? STD_OUTPUT_HANDLE : STD_ERROR_HANDLE);
@@ -287,6 +309,14 @@ public class AnsiConsole {
                 type = ttype;
                 installer = uninstaller = null;
             }
+            width = new AnsiOutputStream.WidthSupplier() {
+                @Override
+                public int getTerminalWidth() {
+                    CONSOLE_SCREEN_BUFFER_INFO info = new CONSOLE_SCREEN_BUFFER_INFO();
+                    GetConsoleScreenBufferInfo(console, info);
+                    return info.windowWidth();
+                }
+            };
         }
 
         // We must be on some Unix variant...
@@ -295,6 +325,14 @@ public class AnsiConsole {
             processor = null;
             type = AnsiType.Native;
             installer = uninstaller = null;
+            width = new AnsiOutputStream.WidthSupplier() {
+                @Override
+                public int getTerminalWidth() {
+                    WinSize sz = new WinSize();
+                    ioctl(fd, CLibrary.TIOCGWINSZ, sz);
+                    return sz.ws_col;
+                }
+            };
         }
 
         AnsiMode mode;
@@ -377,7 +415,7 @@ public class AnsiConsole {
             } catch (UnsupportedCharsetException e) {
             }
         }
-        return newPrintStream(new AnsiOutputStream(out, mode, processor, type, colors, cs,
+        return newPrintStream(new AnsiOutputStream(out, width, mode, processor, type, colors, cs,
                 installer, uninstaller, resetAtUninstall), cs.name());
     }
 

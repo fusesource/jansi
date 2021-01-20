@@ -45,6 +45,17 @@ public class AnsiOutputStream extends FilterOutputStream {
         void run() throws IOException;
     }
 
+    public interface WidthSupplier {
+        int getTerminalWidth();
+    }
+
+    public static class ZeroWidthSupplier implements WidthSupplier {
+        @Override
+        public int getTerminalWidth() {
+            return 0;
+        }
+    }
+
     private static final int LOOKING_FOR_FIRST_ESC_CHAR = 0;
     private static final int LOOKING_FOR_SECOND_ESC_CHAR = 1;
     private static final int LOOKING_FOR_NEXT_ARG = 2;
@@ -73,6 +84,7 @@ public class AnsiOutputStream extends FilterOutputStream {
     private int state = LOOKING_FOR_FIRST_ESC_CHAR;
     private final Charset cs;
 
+    private final WidthSupplier width;
     private final AnsiProcessor processor;
     private final AnsiType type;
     private final AnsiColors colors;
@@ -81,10 +93,11 @@ public class AnsiOutputStream extends FilterOutputStream {
     private AnsiMode mode;
     private boolean resetAtUninstall;
 
-    public AnsiOutputStream(OutputStream os, AnsiMode mode,
+    public AnsiOutputStream(OutputStream os, WidthSupplier width, AnsiMode mode,
                             AnsiProcessor processor, AnsiType type, AnsiColors colors,
                             Charset cs, IoRunnable installer, IoRunnable uninstaller, boolean resetAtUninstall) {
         super(os);
+        this.width = width;
         this.processor = processor;
         this.type = type;
         this.colors = colors;
@@ -93,6 +106,10 @@ public class AnsiOutputStream extends FilterOutputStream {
         this.resetAtUninstall = resetAtUninstall;
         this.cs = cs;
         setMode(mode);
+    }
+
+    public int getTerminalWidth() {
+        return width.getTerminalWidth();
     }
 
     public AnsiType getType() {
