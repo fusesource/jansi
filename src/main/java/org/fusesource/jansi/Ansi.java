@@ -623,6 +623,7 @@ public class Ansi implements Appendable {
      * @param x the number of characters to move horizontally
      * @param y the number of lines to move vertically
      * @return this Ansi instance
+     * @since 2.2
      */
     public Ansi cursorMove(final int x, final int y) {
         return cursorRight(x).cursorDown(y);
@@ -812,6 +813,7 @@ public class Ansi implements Appendable {
      *
      * @param fun the function to apply
      * @return this Ansi instance
+     * @since 2.2
      */
     public Ansi apply(Consumer fun) {
         fun.apply(this);
