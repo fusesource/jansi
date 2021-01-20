@@ -173,7 +173,7 @@
                                     org.fusesource.jansi.*;
                                     -noimport:=true
                                 </Export-Package>
-                                <_removeheaders>Bnd-LastModified</_removeheaders>
+                                <_removeheaders>Bnd-LastModified,Include-Resource,Private-Package</_removeheaders>
                                 <_reproducible>true</_reproducible>
                             </instructions>
                         </configuration>
