@@ -151,6 +151,10 @@ public class Ansi implements Appendable {
         }
     }
 
+    public interface Consumer {
+        void apply(Ansi ansi);
+    }
+
     public static final String DISABLE = Ansi.class.getName() + ".disable";
 
     private static Callable<Boolean> detector = new Callable<Boolean>() {
@@ -734,6 +738,17 @@ public class Ansi implements Appendable {
     public Ansi format(String pattern, Object... args) {
         flushAttributes();
         builder.append(String.format(pattern, args));
+        return this;
+    }
+
+    /**
+     * Applies another function to this Ansi instance.
+     *
+     * @param fun the function to apply
+     * @return this Ansi instance
+     */
+    public Ansi apply(Consumer fun) {
+        fun.apply(this);
         return this;
     }
 
