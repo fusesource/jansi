@@ -554,52 +554,118 @@ public class Ansi implements Appendable {
     }
 
     /**
-     * Moves the cursor to row n, column m.
-     * The values are 1-based, and default to 1 (top left corner) if omitted.
-     * A sequence such as CSI ;5H is a synonym for CSI 1;5H as well as CSI 17;H is the same as CSI 17H and CSI 17;1H
+     * Moves the cursor to row n, column m. The values are 1-based.
+     * Any values less than 1 are mapped to 1.
      *
-     * @param row row (1-based) from top
+     * @param row    row (1-based) from top
      * @param column column (1 based) from left
-     * @return Ansi
+     * @return this Ansi instance
      */
     public Ansi cursor(final int row, final int column) {
-        return appendEscapeSequence('H', row, column);
+        return appendEscapeSequence('H', Math.max(1, row), Math.max(1, column));
     }
 
+    /**
+     * Moves the cursor to column n. The parameter n is 1-based.
+     * If n is less than 1 it is moved to the first column.
+     *
+     * @param x the index (1-based) of the column to move to
+     * @return this Ansi instance
+     */
     public Ansi cursorToColumn(final int x) {
-        return x >= 0 ? appendEscapeSequence('G', x) : this;
+        return appendEscapeSequence('G', Math.max(1, x));
     }
 
+    /**
+     * Moves the cursor up. If the parameter y is negative it moves the cursor down.
+     *
+     * @param y the number of lines to move up
+     * @return this Ansi instance
+     */
     public Ansi cursorUp(final int y) {
-        return appendEscapeSequence('A', y);
+        return y > 0 ? appendEscapeSequence('A', y) : y < 0 ? cursorDown(-y) : this;
     }
 
+    /**
+     * Moves the cursor down. If the parameter y is negative it moves the cursor up.
+     *
+     * @param y the number of lines to move down
+     * @return this Ansi instance
+     */
     public Ansi cursorDown(final int y) {
-        return y > 0 ? appendEscapeSequence('B', y) : this;
+        return y > 0 ? appendEscapeSequence('B', y) : y < 0 ? cursorUp(-y) : this;
     }
 
+    /**
+     * Moves the cursor right. If the parameter x is negative it moves the cursor left.
+     *
+     * @param x the number of characters to move right
+     * @return this Ansi instance
+     */
     public Ansi cursorRight(final int x) {
-        return x > 0 ? appendEscapeSequence('C', x) : this;
+        return x > 0 ? appendEscapeSequence('C', x) : x < 0 ? cursorLeft(-x) : this;
     }
 
+    /**
+     * Moves the cursor left. If the parameter x is negative it moves the cursor right.
+     *
+     * @param x the number of characters to move left
+     * @return this Ansi instance
+     */
     public Ansi cursorLeft(final int x) {
-        return x > 0 ? appendEscapeSequence('D', x) : this;
+        return x > 0 ? appendEscapeSequence('D', x) : x < 0 ? cursorRight(-x) : this;
     }
 
+    /**
+     * Moves the cursor relative to the current position. The cursor is moved right if x is
+     * positive, left if negative and down if y is positive and up if negative.
+     *
+     * @param x the number of characters to move horizontally
+     * @param y the number of lines to move vertically
+     * @return this Ansi instance
+     */
+    public Ansi cursorMove(final int x, final int y) {
+        return cursorRight(x).cursorDown(y);
+    }
+
+    /**
+     * Moves the cursor to the beginning of the line below.
+     *
+     * @return this Ansi instance
+     */
     public Ansi cursorDownLine() {
         return appendEscapeSequence('E');
     }
 
+    /**
+     * Moves the cursor to the beginning of the n-th line below. If the parameter n is negative it
+     * moves the cursor to the beginning of the n-th line above.
+     *
+     * @param n the number of lines to move the cursor
+     * @return this Ansi instance
+     */
     public Ansi cursorDownLine(final int n) {
-        return n > 0 ? appendEscapeSequence('E', n) : this;
+        return n < 0 ? cursorUpLine(-n) : appendEscapeSequence('E', n);
     }
 
+    /**
+     * Moves the cursor to the beginning of the line above.
+     *
+     * @return this Ansi instance
+     */
     public Ansi cursorUpLine() {
         return appendEscapeSequence('F');
     }
 
+    /**
+     * Moves the cursor to the beginning of the n-th line above. If the parameter n is negative it
+     * moves the cursor to the beginning of the n-th line below.
+     *
+     * @param n the number of lines to move the cursor
+     * @return this Ansi instance
+     */
     public Ansi cursorUpLine(final int n) {
-        return n > 0 ? appendEscapeSequence('F', n) : this;
+        return n < 0 ? cursorDownLine(-n) : appendEscapeSequence('F', n);
     }
 
     public Ansi eraseScreen() {
@@ -619,11 +685,11 @@ public class Ansi implements Appendable {
     }
 
     public Ansi scrollUp(final int rows) {
-        return rows > 0 ? appendEscapeSequence('S', rows) : this;
+        return rows > 0 ? appendEscapeSequence('S', rows) : rows < 0 ? scrollDown(-rows) : this;
     }
 
     public Ansi scrollDown(final int rows) {
-        return rows > 0 ? appendEscapeSequence('T', rows) : this;
+        return rows > 0 ? appendEscapeSequence('T', rows) : rows < 0 ? scrollUp(-rows) : this;
     }
 
     public Ansi saveCursorPosition() {
