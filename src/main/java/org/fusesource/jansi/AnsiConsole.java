@@ -264,7 +264,8 @@ public class AnsiConsole {
         else if (IS_WINDOWS) {
             final long console = GetStdHandle(stdout ? STD_OUTPUT_HANDLE : STD_ERROR_HANDLE);
             final int[] mode = new int[1];
-            if (GetConsoleMode(console, mode) != 0
+            final boolean isConsole = GetConsoleMode(console, mode) != 0;
+            if (isConsole
                     && SetConsoleMode(console, mode[0] | ENABLE_VIRTUAL_TERMINAL_PROCESSING) != 0) {
                 SetConsoleMode(console, mode[0]); // set it back for now, but we know it works
                 processor = null;
@@ -285,7 +286,7 @@ public class AnsiConsole {
                     }
                 };
             }
-            else if (IS_CONEMU || IS_CYGWIN || IS_MSYSTEM) {
+            else if ((IS_CONEMU || IS_CYGWIN || IS_MSYSTEM) && !isConsole) {
                 // ANSI-enabled ConEmu, Cygwin or MSYS(2) on Windows...
                 processor = null;
                 type = AnsiType.Native;
@@ -406,7 +407,7 @@ public class AnsiConsole {
 
         // If the jansi.noreset property is not set, reset the attributes
         // when the stream is closed
-        boolean resetAtUninstall = !getBoolean(JANSI_NORESET);
+        boolean resetAtUninstall = type != AnsiType.Unsupported && !getBoolean(JANSI_NORESET);
 
         Charset cs = Charset.defaultCharset();
         if (enc != null) {
