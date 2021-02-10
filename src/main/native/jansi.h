@@ -29,6 +29,7 @@
     #include <sys/ioctl.h>
     #include <pty.h>
     #include <unistd.h>
+    #include <stdlib.h>
 
     #include "inc_linux/jni.h"
     #include "inc_linux/jni_md.h"
