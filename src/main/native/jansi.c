@@ -579,12 +579,22 @@ JNIEXPORT void JNICALL WINDOW_BUFFER_SIZE_RECORD_NATIVE(init)(JNIEnv *env, jclas
 }
 
 #if defined(_WIN32) || defined(_WIN64)
-JNIEXPORT jint JNICALL Kernel32_NATIVE(chdir)(JNIEnv *env, jstring path)
+wchar_t* java_to_wchar(JNIEnv* env, jstring string) {
+    jsize len = (*env)->GetStringLength(env, string);
+    wchar_t* str = (wchar_t*) malloc(sizeof(wchar_t) * (len + 1));
+    (*env)->GetStringRegion(env, string, 0, len, (jchar*) str);
+    str[len] = L'\0';
+    return str;
+}
+#endif
+
+#if defined(_WIN32) || defined(_WIN64)
+JNIEXPORT jint JNICALL CLibrary_NATIVE(chdir)(JNIEnv *env, jstring path)
 {
 	jint rc = 0;
-	const char *nativePath = (*env)->GetStringUTFChars(env, path, 0);
+	const char *nativePath = path != NULL ? java_to_wchar(env, path) : NULL;
 	rc = (jint)SetCurrentDirectoryW(nativePath);
-	(*env)->ReleaseStringUTFChars(env, path, nativePath);
+	if (nativePath) free(nativePath);
 	return rc;
 }
 #else
@@ -602,11 +612,11 @@ JNIEXPORT jint JNICALL CLibrary_NATIVE(chdir)(JNIEnv *env, jstring path)
 JNIEXPORT jint JNICALL CLibrary_NATIVE(setenv)(JNIEnv *env, jstring name, jstring value)
 {
 	jint rc = 0;
-	const char *nativeName = (*env)->GetStringUTFChars(env, name, 0);
-	const char *nativeValue = (*env)->GetStringUTFChars(env, value, 0);
+	const char *nativeName = name != NULL ? java_to_wchar(env, name) : NULL;
+	const char *nativeValue = value != NULL ? java_to_wchar(env, value) : NULL;
 	rc = (jint)SetEnvironmentVariableW(nativeName, nativeValue);
-	(*env)->ReleaseStringUTFChars(env, name, nativeName);
-	(*env)->ReleaseStringUTFChars(env, value, nativeValue);
+	if (nativeName) free(nativeName);
+	if (nativeValue) free(nativeValue);
 	return rc;
 }
 #else
