@@ -10,7 +10,7 @@ It also provides the required JNI libraries:
 - [Kernel32](http://fusesource.github.io/jansi/documentation/native-api/org/fusesource/jansi/internal/Kernel32.html) and [WindowsSupport](http://fusesource.github.io/jansi/documentation/native-api/org/fusesource/jansi/internal/WindowsSupport.html) for ANSI support on Windows
 - [CLibrary](http://fusesource.github.io/jansi/documentation/native-api/org/fusesource/jansi/internal/CLibrary.html) for POSIX tty functions on Unix and Windows
 
-[![Maven Central](https://img.shields.io/maven-central/v/org.fusesource.jansi/example.svg?label=Maven%20Central)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.fusesource.jansi%22%20a%3A%22jansi%22)
+[![Maven Central](https://img.shields.io/maven-central/v/org.fusesource.jansi/jansi.svg?label=Maven%20Central)](https://search.maven.org/artifact/org.fusesource.jansi/jansi)
 
 [Jansi]: http://fusesource.github.io/jansi/
 [ansi]: http://en.wikipedia.org/wiki/ANSI_escape_code "Wikipedia"
