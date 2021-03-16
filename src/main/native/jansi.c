@@ -579,6 +579,7 @@ JNIEXPORT void JNICALL WINDOW_BUFFER_SIZE_RECORD_NATIVE(init)(JNIEnv *env, jclas
 }
 
 #if defined(_WIN32) || defined(_WIN64)
+
 wchar_t* java_to_wchar(JNIEnv* env, jstring string) {
     jsize len = (*env)->GetStringLength(env, string);
     wchar_t* str = (wchar_t*) malloc(sizeof(wchar_t) * (len + 1));
@@ -586,54 +587,62 @@ wchar_t* java_to_wchar(JNIEnv* env, jstring string) {
     str[len] = L'\0';
     return str;
 }
-#endif
 
-#if defined(_WIN32) || defined(_WIN64)
-JNIEXPORT jint JNICALL CLibrary_NATIVE(chdir)(JNIEnv *env, jstring path)
+JNIEXPORT jint JNICALL CLibrary_NATIVE(chdir)(JNIEnv *env, jobject thiz, jstring path)
 {
 	jint rc = 0;
-	const char *nativePath = path != NULL ? java_to_wchar(env, path) : NULL;
-	rc = (jint)SetCurrentDirectoryW(nativePath);
+	wchar_t* nativePath = path != NULL ? java_to_wchar(env, path) : NULL;
+	rc = (jint) SetCurrentDirectoryW(nativePath);
 	if (nativePath) free(nativePath);
 	return rc;
 }
-#else
-JNIEXPORT jint JNICALL CLibrary_NATIVE(chdir)(JNIEnv *env, jstring path)
-{
-	jint rc = 0;
-	const char *nativePath = (*env)->GetStringUTFChars(env, path, 0);
-	rc = (jint)chdir(nativePath);
-	(*env)->ReleaseStringUTFChars(env, path, nativePath);
-	return rc;
-}
-#endif
 
-#if defined(_WIN32) || defined(_WIN64)
-JNIEXPORT jint JNICALL CLibrary_NATIVE(setenv)(JNIEnv *env, jstring name, jstring value)
+JNIEXPORT jint JNICALL CLibrary_NATIVE(setenv)(JNIEnv *env, jobject thiz, jstring name, jstring value)
 {
 	jint rc = 0;
-	const char *nativeName = name != NULL ? java_to_wchar(env, name) : NULL;
-	const char *nativeValue = value != NULL ? java_to_wchar(env, value) : NULL;
-	rc = (jint)SetEnvironmentVariableW(nativeName, nativeValue);
+	wchar_t* nativeName = name != NULL ? java_to_wchar(env, name) : NULL;
+	wchar_t* nativeValue = value != NULL ? java_to_wchar(env, value) : NULL;
+	rc = (jint) SetEnvironmentVariableW(nativeName, nativeValue);
 	if (nativeName) free(nativeName);
 	if (nativeValue) free(nativeValue);
 	return rc;
 }
+
 #else
-JNIEXPORT jint JNICALL CLibrary_NATIVE(setenv)(JNIEnv *env, jstring name, jstring value)
+
+char* java_to_char(JNIEnv* env, jstring string) {
+    size_t len = (*env)->GetStringLength(env, string);
+    size_t bytes = (*env)->GetStringUTFLength(env, string);
+    char* chars = (char*) malloc(bytes + 1);
+    (*env)->GetStringUTFRegion(env, string, 0, len, chars);
+    chars[bytes] = 0;
+    return chars;
+}
+
+JNIEXPORT jint JNICALL CLibrary_NATIVE(chdir)(JNIEnv *env, jobject thiz, jstring path)
 {
 	jint rc = 0;
-	const char *nativeName = (*env)->GetStringUTFChars(env, name, 0);
-	const char *nativeValue = (*env)->GetStringUTFChars(env, value, 0);
-	if (nativeName) {
-	    if (nativeValue) {
+	char* nativePath = java_to_char(env, path);
+	rc = (jint) chdir(nativePath);
+	free(nativePath);
+    return rc;
+}
+
+JNIEXPORT jint JNICALL CLibrary_NATIVE(setenv)(JNIEnv *env, jobject thiz, jstring name, jstring value)
+{
+	jint rc = 0;
+	if (name) {
+	    char* nativeName = java_to_char(env, name);
+	    if (value) {
+        	char* nativeValue = java_to_char(env, value);
 	        rc = setenv(nativeName, nativeValue, 1);
+	        free(nativeValue);
 	    } else {
 	        rc = unsetenv(nativeName);
 	    }
+	    free(nativeName);
 	}
-	(*env)->ReleaseStringUTFChars(env, name, nativeName);
-	(*env)->ReleaseStringUTFChars(env, value, nativeValue);
 	return rc;
 }
+
 #endif

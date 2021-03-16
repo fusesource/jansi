@@ -18,13 +18,7 @@ package org.fusesource.jansi.internal;
 import java.io.File;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledOnJre;
-import org.junit.jupiter.api.condition.DisabledOnOs;
-import org.junit.jupiter.api.condition.JRE;
-import org.junit.jupiter.api.condition.OS;
 
-@DisabledOnOs(OS.WINDOWS)
-@DisabledOnJre({JRE.JAVA_15, JRE.JAVA_16})
 public class CLibraryTest {
 
     @Test
