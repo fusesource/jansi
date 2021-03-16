@@ -1,6 +1,55 @@
 # ![Jansi](http://fusesource.github.io/jansi/images/project-logo.png)
 <!-- git log --pretty=format:'* [`%h`](https://github.com/fusesource/jansi/commit/%H) %s' -->
 
+## [Jansi 2.3.2][2_3_2], released 2021-03-16
+[2_3_2]: https://repo.maven.apache.org/maven2/org/fusesource/jansi/jansi/2.3.2
+
+* [`629fdaf`](https://github.com/fusesource/jansi/commit/629fdafae88a1b468b9d43f6d9cd30cebc881ff5) Fix sigsegv in chdir / setenv
+* [`ffc9fbb`](https://github.com/fusesource/jansi/commit/ffc9fbbb9ac18cf8e299c1ab8fefe3ccee6fea4b) Add a simple test for CLibrary.setenv/chdir
+* [`35bd6b5`](https://github.com/fusesource/jansi/commit/35bd6b5c6e23a5f47c7afe7fbb16fd0dc760e7ad) Add CI build
+* [`65e93ed`](https://github.com/fusesource/jansi/commit/65e93ed8d8ee6d93252d5b6f8f3702a3c0cbb299) Use correct scm urls, fixes #197
+* [`86bd1c3`](https://github.com/fusesource/jansi/commit/86bd1c3552f6b446feabf25ed195cd26e574cdf4) fix Maven Central badge
+
+## [Jansi 2.3.1][2_3_1], released 2021-02-11
+[2_3_1]: https://repo.maven.apache.org/maven2/org/fusesource/jansi/jansi/2.3.1
+
+* [`753a7f1`](https://github.com/fusesource/jansi/commit/753a7f18ba80f1c99fd65474813a350553b25ed8) Fix completely broken windows code for chdir/setenv
+
+## [Jansi 2.3.0][2_3_0], released 2021-02-11
+[2_3_0]: https://repo.maven.apache.org/maven2/org/fusesource/jansi/jansi/2.3.0
+
+* [`6d61a76`](https://github.com/fusesource/jansi/commit/6d61a763ebc4a97399e57c38e7c2e0eac7b8cf3c) Add setenv and chdir methods to the CLibrary, fixes #196
+* [`abca999`](https://github.com/fusesource/jansi/commit/abca99945574f468768e2648a459eba0ad42f122) Improve build reproductibility, fixes #192
+
+## [Jansi 2.2.0][2_2_0], released 2021-01-20
+[2_2_0]: https://repo.maven.apache.org/maven2/org/fusesource/jansi/jansi/2.2.0
+
+* [`d8934d8`](https://github.com/fusesource/jansi/commit/d8934d82bd64a3899f2c6ca2eb838dc3f79e0646) Output of Jansi is corrupted in cygwin console on Windows 7, fixes #190
+* [`6ace12e`](https://github.com/fusesource/jansi/commit/6ace12ec4b355425565552f0ae5d393469be3e50) Remove unused import
+* [`0b1e2ec`](https://github.com/fusesource/jansi/commit/0b1e2ecf1e0fff0fbb5ff4e146ff720bacc97ac2) Add a getTerminalWidth method, fixes #175
+* [`8a27841`](https://github.com/fusesource/jansi/commit/8a278418a3fb92f9e220e8a0a55100b72414b8e1) Add @since tags on new methods
+* [`faf9331`](https://github.com/fusesource/jansi/commit/faf93318be3cda0b3a3894ae9d2032835601bc73) Bring back the AnsiRenderer, fixes #184
+* [`0a06ceb`](https://github.com/fusesource/jansi/commit/0a06ceb8710f97e42e15999d7b90d6634533e745) Force removal of unneeded OSGi headers
+* [`94439a9`](https://github.com/fusesource/jansi/commit/94439a9467d790743ff3a0bf7dbe186fb043c97b) Create javadoc for the native methods
+* [`6097e80`](https://github.com/fusesource/jansi/commit/6097e8076332295bf832d784e580100c02f6e703) Fix javadoc syntax
+* [`254ddf2`](https://github.com/fusesource/jansi/commit/254ddf229c6c48b5ce38ae3cf4325d111aaaf1eb) Fix OSGi exports
+* [`4a530b1`](https://github.com/fusesource/jansi/commit/4a530b1b550e81b0d478e125636d2d21e02be747) Merge pull request #188 from romge/apply-method
+* [`30cd5a9`](https://github.com/fusesource/jansi/commit/30cd5a9a3126c251333a93675bdf586719aa78f7) Update readme.md
+* [`399473a`](https://github.com/fusesource/jansi/commit/399473a583018927ef4a4dcaa2aa14502bb96885) Handle SGRs with multiple options
+* [`f8fa335`](https://github.com/fusesource/jansi/commit/f8fa335b932058a2dc1dc685722abec953097d6e) Mapping negative absolute positions to the first column/row
+* [`8e1b67b`](https://github.com/fusesource/jansi/commit/8e1b67b3ed7fe0d4cc3765c099f29fe8d9e1995e) Generalize cursor movement
+* [`2f93859`](https://github.com/fusesource/jansi/commit/2f93859ec3046920aedad7dfbb5f8935187e68b2) Add Ansi.apply method
+* [`d386c6a`](https://github.com/fusesource/jansi/commit/d386c6afa62e7c5dc883e7158577caf175eb0d3a) configure _reproducible for maven-bundle-plugin #185
+* [`b8f80e4`](https://github.com/fusesource/jansi/commit/b8f80e47f8a7ad5570ac5007e7b0438e78e7fd81) update scm tag
+
+## [Jansi 2.1.1][2_1_1], released 2020-12-15
+[2_1_1]: https://repo.maven.apache.org/maven2/org/fusesource/jansi/jansi/2.1.1
+
+* [`9a84c14`](https://github.com/fusesource/jansi/commit/9a84c14dc6614976e387dadd997d8889d45cdca6) Report the error in the exception, fixes #183
+* [`b9348fc`](https://github.com/fusesource/jansi/commit/b9348fc702a6800f47c072f80abc757a0496495f) Restore binary compatibility with previous versions
+* [`f5a9b92`](https://github.com/fusesource/jansi/commit/f5a9b92cfaa98f3623946e5ffaf5f73e8b71a777) add faint to test table
+* [`39616d3`](https://github.com/fusesource/jansi/commit/39616d3acc2a313de68c95d1df6bd1a1f59f8713) make build reproducible
+
 ## [Jansi 2.1.0][2_1_0], released 2020-12-07
 [2_1_0]: https://repo.maven.apache.org/maven2/org/fusesource/jansi/jansi/2.1.0
 
