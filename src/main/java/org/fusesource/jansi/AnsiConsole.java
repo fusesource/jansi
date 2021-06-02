@@ -236,8 +236,11 @@ public class AnsiConsole {
         final boolean isatty;
         boolean isAtty;
         boolean withException;
-        final int fd = stdout ? CLibrary.STDOUT_FILENO : CLibrary.STDERR_FILENO;
+        final int fd;
         try {
+            // static initializer of CLibrary can throw ExceptionInInitializerError
+            fd = stdout ? CLibrary.STDOUT_FILENO : CLibrary.STDERR_FILENO;
+            
             // If we can detect that stdout is not a tty.. then setup
             // to strip the ANSI sequences..
             isAtty = isatty(fd) != 0;
