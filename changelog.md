@@ -1,6 +1,11 @@
 # ![Jansi](http://fusesource.github.io/jansi/images/project-logo.png)
 <!-- git log --pretty=format:'* [`%h`](https://github.com/fusesource/jansi/commit/%H) %s' -->
 
+## [Jansi 2.3.3][2_3_3], released 2021-06-11
+[2_3_3]: https://repo.maven.apache.org/maven2/org/fusesource/jansi/jansi/2.3.3
+
+* [`e4d58d9`](https://github.com/fusesource/jansi/commit/e4d58d94eab5ecbc2f466978a5006835cf728da7) Jansi fails to start on Mac arm, fixes #207
+
 ## [Jansi 2.3.2][2_3_2], released 2021-03-16
 [2_3_2]: https://repo.maven.apache.org/maven2/org/fusesource/jansi/jansi/2.3.2
 
