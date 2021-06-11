@@ -213,6 +213,10 @@ public class AnsiConsole {
 
     static final int ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004;
 
+    static int STDOUT_FILENO = 1;
+
+    static int STDERR_FILENO = 2;
+
 
     static {
         if (getBoolean(JANSI_EAGER)) {
@@ -236,7 +240,9 @@ public class AnsiConsole {
         final boolean isatty;
         boolean isAtty;
         boolean withException;
-        final int fd = stdout ? CLibrary.STDOUT_FILENO : CLibrary.STDERR_FILENO;
+        // Do not use the CLibrary.STDOUT_FILENO to avoid errors in case
+        // the library can not be loaded on unsupported platforms
+        final int fd = stdout ? STDOUT_FILENO : STDERR_FILENO;
         try {
             // If we can detect that stdout is not a tty.. then setup
             // to strip the ANSI sequences..
