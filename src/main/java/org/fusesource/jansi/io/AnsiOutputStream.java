@@ -85,7 +85,7 @@ public class AnsiOutputStream extends FilterOutputStream {
     private final Charset cs;
 
     private final WidthSupplier width;
-    private final AnsiProcessor processor;
+    private AnsiProcessor processor;
     private final AnsiType type;
     private final AnsiColors colors;
     private final IoRunnable installer;
@@ -110,6 +110,22 @@ public class AnsiOutputStream extends FilterOutputStream {
 
     public int getTerminalWidth() {
         return width.getTerminalWidth();
+    }
+
+    public AnsiProcessor getAp() {
+        return ap;
+    }
+
+    public void setAp(AnsiProcessor ap) {
+        this.ap = ap;
+    }
+
+    public AnsiProcessor getProcessor() {
+        return processor;
+    }
+
+    public void setProcessor(AnsiProcessor processor) {
+        this.processor = processor;
     }
 
     public AnsiType getType() {
