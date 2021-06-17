@@ -129,7 +129,9 @@ public class AnsiOutputStream extends FilterOutputStream {
     }
 
     public void setMode(AnsiMode mode) {
-        ap = (mode == AnsiMode.Strip) ? new AnsiProcessor(out) : ((mode == AnsiMode.Force || processor == null) ? new ColorsAnsiProcessor(out, colors) : processor);
+        ap = mode == AnsiMode.Strip
+                ? new AnsiProcessor(out)
+                : mode == AnsiMode.Force || processor == null ? new ColorsAnsiProcessor(out, colors) : processor;
         this.mode = mode;
     }
 
