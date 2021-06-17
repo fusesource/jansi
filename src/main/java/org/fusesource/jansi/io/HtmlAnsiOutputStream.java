@@ -56,7 +56,7 @@ public class HtmlAnsiOutputStream extends AnsiOutputStream {
                     }
                 },
                 AnsiMode.Default,
-                new AnsiToHtmlProcessor(AnsiConsole.out()),
+                new AnsiToHtmlProcessor(os),
                 AnsiType.Native,
                 AnsiColors.Colors16,
                 Charset.defaultCharset(),
