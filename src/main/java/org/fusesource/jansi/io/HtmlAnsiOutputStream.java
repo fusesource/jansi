@@ -48,8 +48,7 @@ public class HtmlAnsiOutputStream extends AnsiOutputStream {
     private static final byte[] BYTES_GT = "&gt;".getBytes();
 
     public HtmlAnsiOutputStream(OutputStream os) {
-        super(os, // With jdk8 the below could be simplified to:
-                // AnsiConsole.out()::getTerminalWidth
+        super(os,
                 new WidthSupplier() {
                     @Override
                     public int getTerminalWidth() {
@@ -112,7 +111,7 @@ public class HtmlAnsiOutputStream extends AnsiOutputStream {
         closeAttributes();
     }
 
-    private static class AnsiToHtmlProcessor extends AnsiProcessor {
+    private class AnsiToHtmlProcessor extends AnsiProcessor {
         private boolean concealOn = false;
         private HtmlAnsiOutputStream haos;
 
