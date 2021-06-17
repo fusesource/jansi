@@ -39,7 +39,7 @@ public class HtmlAnsiOutputStream extends AnsiOutputStream {
         super.close();
     }
 
-    private static final String[] ANSI_COLOR_MAP = {"black", "red",
+    public static final String[] ANSI_COLOR_MAP = {"black", "red",
             "green", "yellow", "blue", "magenta", "cyan", "white",};
 
     private static final byte[] BYTES_QUOT = "&quot;".getBytes();
@@ -56,31 +56,28 @@ public class HtmlAnsiOutputStream extends AnsiOutputStream {
                     }
                 },
                 AnsiMode.Default,
-                null,
+                new AnsiToHtmlProcessor(AnsiConsole.out()),
                 AnsiType.Native,
                 AnsiColors.Colors16,
                 Charset.defaultCharset(),
                 null,
                 null,
                 true);
-        AnsiToHtmlProcessor ansiToHtmlProcessor = new AnsiToHtmlProcessor(AnsiConsole.out());
-        ansiToHtmlProcessor.setHtmlAnsiOutputStream(this);
-        this.setAp(ansiToHtmlProcessor);
-        this.setProcessor(ansiToHtmlProcessor);
+        ((AnsiToHtmlProcessor) this.getProcessor()).setHtmlAnsiOutputStream(this);
     }
 
     private final List<String> closingAttributes = new ArrayList<>();
 
-    private void write(String s) throws IOException {
+    public void write(String s) throws IOException {
         super.out.write(s.getBytes());
     }
 
-    private void writeAttribute(String s) throws IOException {
+    public void writeAttribute(String s) throws IOException {
         write("<" + s + ">");
         closingAttributes.add(0, s.split(" ", 2)[0]);
     }
 
-    private void closeAttributes() throws IOException {
+    public void closeAttributes() throws IOException {
         for (String attr : closingAttributes) {
             write("</" + attr + ">");
         }
@@ -109,70 +106,5 @@ public class HtmlAnsiOutputStream extends AnsiOutputStream {
     public void writeLine(byte[] buf, int offset, int len) throws IOException {
         write(buf, offset, len);
         closeAttributes();
-    }
-
-    private class AnsiToHtmlProcessor extends AnsiProcessor {
-        private boolean concealOn = false;
-        private HtmlAnsiOutputStream haos;
-
-        AnsiToHtmlProcessor(OutputStream os) {
-            super(os);
-        }
-
-        public HtmlAnsiOutputStream getHtmlAnsiOutputStream() {
-            return haos;
-        }
-
-        public void setHtmlAnsiOutputStream(HtmlAnsiOutputStream haos) {
-            this.haos = haos;
-        }
-
-        @Override
-        protected void processSetAttribute(int attribute) throws IOException {
-            switch (attribute) {
-                case ATTRIBUTE_CONCEAL_ON:
-                    haos.write("\u001B[8m");
-                    concealOn = true;
-                    break;
-                case ATTRIBUTE_INTENSITY_BOLD:
-                    haos.writeAttribute("b");
-                    break;
-                case ATTRIBUTE_INTENSITY_NORMAL:
-                    haos.closeAttributes();
-                    break;
-                case ATTRIBUTE_UNDERLINE:
-                    haos.writeAttribute("u");
-                    break;
-                case ATTRIBUTE_UNDERLINE_OFF:
-                    haos.closeAttributes();
-                    break;
-                case ATTRIBUTE_NEGATIVE_ON:
-                    break;
-                case ATTRIBUTE_NEGATIVE_OFF:
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        @Override
-        protected void processAttributeReset() throws IOException {
-            if (concealOn) {
-                haos.write("\u001B[0m");
-                concealOn = false;
-            }
-            haos.closeAttributes();
-        }
-
-        @Override
-        protected void processSetForegroundColor(int color, boolean bright) throws IOException {
-            haos.writeAttribute("span style=\"color: " + ANSI_COLOR_MAP[color] + ";\"");
-        }
-
-        @Override
-        protected void processSetBackgroundColor(int color, boolean bright) throws IOException {
-            haos.writeAttribute("span style=\"background-color: " + ANSI_COLOR_MAP[color] + ";\"");
-        }
-
     }
 }

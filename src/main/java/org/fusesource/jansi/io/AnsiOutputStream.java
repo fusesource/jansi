@@ -85,7 +85,7 @@ public class AnsiOutputStream extends FilterOutputStream {
     private final Charset cs;
 
     private final WidthSupplier width;
-    private AnsiProcessor processor;
+    private final AnsiProcessor processor;
     private final AnsiType type;
     private final AnsiColors colors;
     private final IoRunnable installer;
@@ -112,20 +112,8 @@ public class AnsiOutputStream extends FilterOutputStream {
         return width.getTerminalWidth();
     }
 
-    public AnsiProcessor getAp() {
-        return ap;
-    }
-
-    public void setAp(AnsiProcessor ap) {
-        this.ap = ap;
-    }
-
     public AnsiProcessor getProcessor() {
         return processor;
-    }
-
-    public void setProcessor(AnsiProcessor processor) {
-        this.processor = processor;
     }
 
     public AnsiType getType() {
@@ -141,9 +129,7 @@ public class AnsiOutputStream extends FilterOutputStream {
     }
 
     public void setMode(AnsiMode mode) {
-        ap = mode == AnsiMode.Strip
-                ? new AnsiProcessor(out)
-                : mode == AnsiMode.Force || processor == null ? new ColorsAnsiProcessor(out, colors) : processor;
+        ap = (mode == AnsiMode.Strip) ? new AnsiProcessor(out) : ((mode == AnsiMode.Force || processor == null) ? new ColorsAnsiProcessor(out, colors) : processor);
         this.mode = mode;
     }
 
