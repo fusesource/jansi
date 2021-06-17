@@ -15,7 +15,10 @@
  */
 package org.fusesource.jansi.io;
 
+import org.fusesource.jansi.AnsiColors;
 import org.fusesource.jansi.AnsiConsole;
+import org.fusesource.jansi.AnsiMode;
+import org.fusesource.jansi.AnsiType;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -50,13 +53,13 @@ public class HtmlAnsiOutputStream extends AnsiOutputStream {
                 new WidthSupplier() {
                     @Override
                     public int getTerminalWidth() {
-                        return AnsiConsole.out().getTerminalWidth();
+                        return Integer.MAX_VALUE;
                     }
                 },
-                AnsiConsole.out().getMode(),
+                AnsiMode.Default,
                 null,
-                AnsiConsole.out().getType(),
-                AnsiConsole.out().getColors(),
+                AnsiType.Native,
+                AnsiColors.Colors16,
                 Charset.defaultCharset(),
                 null,
                 null,
