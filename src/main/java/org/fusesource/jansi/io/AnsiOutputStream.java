@@ -112,10 +112,6 @@ public class AnsiOutputStream extends FilterOutputStream {
         return width.getTerminalWidth();
     }
 
-    public AnsiProcessor getProcessor() {
-        return processor;
-    }
-
     public AnsiType getType() {
         return type;
     }

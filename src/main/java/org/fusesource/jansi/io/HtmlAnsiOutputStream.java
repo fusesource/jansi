@@ -16,7 +16,6 @@
 package org.fusesource.jansi.io;
 
 import org.fusesource.jansi.AnsiColors;
-import org.fusesource.jansi.AnsiConsole;
 import org.fusesource.jansi.AnsiMode;
 import org.fusesource.jansi.AnsiType;
 
@@ -24,7 +23,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A optimized/edited {@link HtmlAnsiOutputStream} for ansi 2.x and above. <br>
@@ -32,6 +34,20 @@ import java.util.List;
  * @author <a href="http://code.dblock.org">Daniel Doubrovkine</a>
  */
 public class HtmlAnsiOutputStream extends AnsiOutputStream {
+
+    private static final Map<OutputStream, AnsiToHtmlProcessor> streamsAndProcessors = new ConcurrentHashMap<>();
+
+    /**
+     * Creates a new {@link AnsiToHtmlProcessor} for the provided {@link OutputStream}, <br>
+     * and adds both to the {@link #streamsAndProcessors} map. <br>
+     * This is done to have working multithreading and diminish the need of a getProcessor() method <br>
+     * in the {@link AnsiOutputStream}.
+     */
+    private static synchronized AnsiToHtmlProcessor createAnsiToHtmlProcessorForOutput(OutputStream out){
+        AnsiToHtmlProcessor processor = new AnsiToHtmlProcessor(out);
+        streamsAndProcessors.put(out, processor);
+        return processor;
+    }
 
     @Override
     public void close() throws IOException {
@@ -56,14 +72,14 @@ public class HtmlAnsiOutputStream extends AnsiOutputStream {
                     }
                 },
                 AnsiMode.Default,
-                new AnsiToHtmlProcessor(os),
+                createAnsiToHtmlProcessorForOutput(os),
                 AnsiType.Native,
                 AnsiColors.Colors16,
                 Charset.defaultCharset(),
                 null,
                 null,
                 true);
-        ((AnsiToHtmlProcessor) this.getProcessor()).setHtmlAnsiOutputStream(this);
+        streamsAndProcessors.get(os).setHtmlAnsiOutputStream(this);
     }
 
     private final List<String> closingAttributes = new ArrayList<>();
