@@ -76,7 +76,11 @@ public class AnsiPrintStream extends PrintStream {
     }
 
     public void uninstall() throws IOException {
-        getOut().uninstall();
+        // If the system output stream has been closed, out should be null, so avoid a NPE
+        AnsiOutputStream out = getOut();
+        if (out != null) {
+            out.uninstall();
+        }
     }
 
     @Override
