@@ -139,6 +139,16 @@ public class AnsiTest {
         assertAnsi(expected, new Ansi().cursorUpLine(n));
     }
 
+    @Test
+    public void testColorDisabled() {
+        Ansi.setEnabled(false);
+        try {
+            assertEquals("test", Ansi.ansi().fg(32).a("t").fgRgb(0).a("e").bg(24).a("s").bgRgb(100).a("t").toString());
+        } finally {
+            Ansi.setEnabled(true);
+        }
+    }
+
     private static void assertAnsi(String expected, Ansi actual) {
         assertEquals(expected.replace("ESC", "\033"), actual.toString());
     }

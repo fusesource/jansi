@@ -250,6 +250,26 @@ public class Ansi implements Appendable {
         }
 
         @Override
+        public Ansi fg(int color) {
+            return this;
+        }
+
+        @Override
+        public Ansi fgRgb(int r, int g, int b) {
+            return this;
+        }
+
+        @Override
+        public Ansi bg(int color) {
+            return this;
+        }
+
+        @Override
+        public Ansi bgRgb(int r, int g, int b) {
+            return this;
+        }
+
+        @Override
         public Ansi a(Attribute attribute) {
             return this;
         }
