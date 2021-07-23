@@ -247,6 +247,11 @@ public class AnsiConsole {
             // If we can detect that stdout is not a tty.. then setup
             // to strip the ANSI sequences..
             isAtty = isatty(fd) != 0;
+            String term = System.getenv("TERM");
+            String emacs = System.getenv("INSIDE_EMACS");
+            if (isAtty && "dumb".equals(term) && emacs != null && !emacs.contains("comint")) {
+                isAtty = false;
+            }
             withException = false;
         } catch (Throwable ignore) {
             // These errors happen if the JNI lib is not available for your platform.
