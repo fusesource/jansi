@@ -1,6 +1,14 @@
 # ![Jansi](http://fusesource.github.io/jansi/images/project-logo.png)
 <!-- git log --pretty=format:'* [`%h`](https://github.com/fusesource/jansi/commit/%H) %s' -->
 
+## [Jansi 2.3.4][2_3_4], released 2021-07-23
+[2_3_4]: https://repo.maven.apache.org/maven2/org/fusesource/jansi/jansi/2.3.4
+
+* [`09722b7`](https://github.com/fusesource/jansi/commit/09722b7cccc8a99f14ac1656db3072dbeef34478) Disable colors when running inside emacs without comint, fixes #205
+* [`e019a75`](https://github.com/fusesource/jansi/commit/e019a75ee267a53a48d02ac983266cdf2b4e16a9) Add missing colors to AnsiRender, fixes #213
+* [`01d68f0`](https://github.com/fusesource/jansi/commit/01d68f03c6b69c323a05738efec1fd4404c0f0f8) Fix Ansi outputting escape sequences when disabled, fixes #215
+* [`3ba11e9`](https://github.com/fusesource/jansi/commit/3ba11e9d324f81b359229715ceacadcb9137ff46) Avoid possible NPE, fixes #214
+
 ## [Jansi 2.3.3][2_3_3], released 2021-06-11
 [2_3_3]: https://repo.maven.apache.org/maven2/org/fusesource/jansi/jansi/2.3.3
 
