@@ -164,8 +164,4 @@ public class CLibrary {
         public long c_ospeed;
     }
 
-    public static native int setenv(String name, String value);
-
-    public static native int chdir(String path);
-
 }
