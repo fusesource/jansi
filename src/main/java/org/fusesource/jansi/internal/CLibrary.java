@@ -26,12 +26,24 @@ package org.fusesource.jansi.internal;
 @SuppressWarnings("unused")
 public class CLibrary {
 
+    //
+    // Initialization
+    //
+
+    public static final boolean LOADED;
+
     static {
-        JansiLoader.initialize();
-        init();
+        LOADED = JansiLoader.initialize();
+        if (LOADED) {
+            init();
+        }
     }
 
     private static native void init();
+
+    //
+    // Constants
+    //
 
     public static int STDOUT_FILENO = 1;
 

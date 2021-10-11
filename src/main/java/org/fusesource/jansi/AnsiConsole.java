@@ -161,6 +161,12 @@ public class AnsiConsole {
      * reset when the streams are uninstalled.
      */
     public static final String JANSI_NORESET = "jansi.noreset";
+    /**
+     * If the <code>jansi.graceful</code> system property is set to false, any exception that occurs
+     * during the initialization will cause the library to report this exception and fail. The default
+     * behavior is to behave gracefully and fall back to pure emulation on posix systems.
+     */
+    public static final String JANSI_GRACEFUL = "jansi.graceful";
 
     /**
      * @deprecated this field will be made private in a future release, use {@link #sysOut()} instead

@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 
+import org.fusesource.jansi.AnsiConsole;
+
 /**
  * Set the system properties, org.jansi.lib.path, org.jansi.lib.name,
  * appropriately so that jansi can find *.dll, *.jnilib and
@@ -41,7 +43,7 @@ import java.util.Random;
  */
 public class JansiLoader {
 
-    private static boolean extracted = false;
+    private static boolean loaded = false;
     private static String nativeLibraryPath;
     private static String nativeLibrarySourceUrl;
 
@@ -53,15 +55,15 @@ public class JansiLoader {
      */
     public static synchronized boolean initialize() {
         // only cleanup before the first extract
-        if (!extracted) {
+        if (!loaded) {
             cleanup();
         }
         try {
             loadJansiNativeLibrary();
         } catch (Exception e) {
-            throw new RuntimeException("Unable to load jansi native library", e);
+            throw new RuntimeException("Unable to load jansi native library. You may want set the `jansi.graceful` system property to true to be able to use Jansi on your platform", e);
         }
-        return extracted;
+        return loaded;
     }
 
     public static String getNativeLibraryPath() {
@@ -263,7 +265,7 @@ public class JansiLoader {
      * @throws
      */
     private static void loadJansiNativeLibrary() throws Exception {
-        if (extracted) {
+        if (loaded) {
             return;
         }
 
@@ -283,14 +285,14 @@ public class JansiLoader {
         if (jansiNativeLibraryPath != null) {
             String withOs = jansiNativeLibraryPath + "/" + OSInfo.getNativeLibFolderPathForCurrentOS();
             if (loadNativeLibrary(new File(withOs, jansiNativeLibraryName))) {
-                extracted = true;
+                loaded = true;
                 return;
             } else {
                 triedPaths.add(withOs);
             }
 
             if (loadNativeLibrary(new File(jansiNativeLibraryPath, jansiNativeLibraryName))) {
-                extracted = true;
+                loaded = true;
                 return;
             } else {
                 triedPaths.add(jansiNativeLibraryPath);
@@ -308,7 +310,7 @@ public class JansiLoader {
             String tempFolder = getTempDir().getAbsolutePath();
             // Try extracting the library from jar
             if (extractAndLoadLibraryFile(jansiNativeLibraryPath, jansiNativeLibraryName, tempFolder)) {
-                extracted = true;
+                loaded = true;
                 return;
             } else {
                 triedPaths.add(jansiNativeLibraryPath);
@@ -322,16 +324,18 @@ public class JansiLoader {
                 continue;
             }
             if (loadNativeLibrary(new File(ldPath, jansiNativeLibraryName))) {
-                extracted = true;
+                loaded = true;
                 return;
             } else {
                 triedPaths.add(ldPath);
             }
         }
 
-        extracted = false;
-        throw new Exception(String.format("No native library found for os.name=%s, os.arch=%s, paths=[%s]",
-                OSInfo.getOSName(), OSInfo.getArchName(), join(triedPaths, File.pathSeparator)));
+        loaded = false;
+        if (!Boolean.parseBoolean(System.getProperty(AnsiConsole.JANSI_GRACEFUL, "true"))) {
+            throw new Exception(String.format("No native library found for os.name=%s, os.arch=%s, paths=[%s]",
+                    OSInfo.getOSName(), OSInfo.getArchName(), join(triedPaths, File.pathSeparator)));
+        }
     }
 
     private static boolean hasResource(String path) {

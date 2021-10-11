@@ -57,10 +57,26 @@ public class AnsiMain {
         // info on native library
         System.out.println("library.jansi.path= " + System.getProperty("library.jansi.path", ""));
         System.out.println("library.jansi.version= " + System.getProperty("library.jansi.version", ""));
-        JansiLoader.initialize();
-        System.out.println("Jansi native library loaded from " + JansiLoader.getNativeLibraryPath());
-        if (JansiLoader.getNativeLibrarySourceUrl() != null) {
-            System.out.println("   which was auto-extracted from " + JansiLoader.getNativeLibrarySourceUrl());
+        boolean loaded = JansiLoader.initialize();
+        if (loaded) {
+            System.out.println("Jansi native library loaded from " + JansiLoader.getNativeLibraryPath());
+            if (JansiLoader.getNativeLibrarySourceUrl() != null) {
+                System.out.println("   which was auto-extracted from " + JansiLoader.getNativeLibrarySourceUrl());
+            }
+        } else {
+            String prev = System.getProperty(AnsiConsole.JANSI_GRACEFUL);
+            try {
+                System.setProperty(AnsiConsole.JANSI_GRACEFUL, "false");
+                JansiLoader.initialize();
+            } catch (Throwable e) {
+                e.printStackTrace(System.out);
+            } finally {
+                if (prev != null) {
+                    System.setProperty(AnsiConsole.JANSI_GRACEFUL, prev);
+                } else {
+                    System.clearProperty(AnsiConsole.JANSI_GRACEFUL);
+                }
+            }
         }
 
         System.out.println();
@@ -75,6 +91,7 @@ public class AnsiMain {
 
         System.out.println();
 
+        System.out.println(AnsiConsole.JANSI_GRACEFUL + "= " + System.getProperty(AnsiConsole.JANSI_GRACEFUL, ""));
         System.out.println(AnsiConsole.JANSI_MODE + "= " + System.getProperty(AnsiConsole.JANSI_MODE, ""));
         System.out.println(AnsiConsole.JANSI_OUT_MODE + "= " + System.getProperty(AnsiConsole.JANSI_OUT_MODE, ""));
         System.out.println(AnsiConsole.JANSI_ERR_MODE + "= " + System.getProperty(AnsiConsole.JANSI_ERR_MODE, ""));
@@ -171,7 +188,7 @@ public class AnsiMain {
 
     private static void diagnoseTty(boolean stderr) {
         int fd = stderr ? CLibrary.STDERR_FILENO : CLibrary.STDOUT_FILENO;
-        int isatty = CLibrary.isatty(fd);
+        int isatty = CLibrary.LOADED ? CLibrary.isatty(fd) : 0;
 
         System.out.println("isatty(STD" + (stderr ? "ERR" : "OUT") + "_FILENO): " + isatty + ", System."
             + (stderr ? "err" : "out") + " " + ((isatty == 0) ? "is *NOT*" : "is") + " a terminal");
