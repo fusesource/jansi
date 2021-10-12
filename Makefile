@@ -48,7 +48,7 @@ linux-arm:
 	docker run -it --rm -v $$PWD:/workdir -e CROSS_TRIPLE=arm-linux-gnueabi multiarch/crossbuild make clean-native native OS_NAME=Linux OS_ARCH=arm
 
 linux-armv6:
-	./docker/dockcross-linux-armv6 bash -c 'make clean-native native OS_NAME=Linux OS_ARCH=armv6'
+	./docker/dockcross-linux-armv6 bash -c 'make clean-native native CROSS_PREFIX=armv6-unknown-linux-gnueabihf- OS_NAME=Linux OS_ARCH=armv6'
 
 linux-armv7:
 	docker run -it --rm -v $$PWD:/workdir -e CROSS_TRIPLE=arm-linux-gnueabihf multiarch/crossbuild make clean-native native OS_NAME=Linux OS_ARCH=armv7
