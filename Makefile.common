@@ -40,7 +40,7 @@ Linux-arm_JANSI_FLAGS  :=
 
 Linux-armv6_CC        := $(CROSS_PREFIX)gcc
 Linux-armv6_STRIP     := $(CROSS_PREFIX)strip
-Linux-armv6_CCFLAGS   := -I$(JAVA_HOME)/include -Isrc/main/lib/inc_linux -Os -mfloat-abi=hard -mfpu=vfp -fPIC -fvisibility=hidden
+Linux-armv6_CCFLAGS   := -I$(JAVA_HOME)/include -Isrc/main/lib/inc_linux -Os -fPIC -fvisibility=hidden
 Linux-armv6_LINKFLAGS := -shared -static-libgcc
 Linux-armv6_LIBNAME   := libjansi.so
 Linux-armv6_JANSI_FLAGS  :=

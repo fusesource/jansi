@@ -27,8 +27,7 @@ NATIVE_TARGET_DIR:=target/classes/org/fusesource/jansi/internal/native/$(OS_NAME
 NATIVE_DLL:=$(NATIVE_DIR)/$(LIBNAME)
 
 # For cross-compilation, install docker. See also https://github.com/dockcross/dockcross
-# Disabled linux-armv6 build because of this issue; https://github.com/dockcross/dockcross/issues/190
-native-all: linux-x86 linux-x86_64 linux-arm linux-armv7 \
+native-all: linux-x86 linux-x86_64 linux-arm linux-armv6 linux-armv7 \
 	linux-arm64 linux-ppc64 win-x86 win-x86_64 mac-x86 mac-x86_64 freebsd-x86 freebsd-x86_64
 
 native: $(NATIVE_DLL)
@@ -47,6 +46,9 @@ linux-x86_64:
 
 linux-arm:
 	docker run -it --rm -v $$PWD:/workdir -e CROSS_TRIPLE=arm-linux-gnueabi multiarch/crossbuild make clean-native native OS_NAME=Linux OS_ARCH=arm
+
+linux-armv6:
+	./docker/dockcross-linux-armv6 bash -c 'make clean-native native CROSS_PREFIX=armv6-unknown-linux-gnueabihf- OS_NAME=Linux OS_ARCH=armv6'
 
 linux-armv7:
 	docker run -it --rm -v $$PWD:/workdir -e CROSS_TRIPLE=arm-linux-gnueabihf multiarch/crossbuild make clean-native native OS_NAME=Linux OS_ARCH=armv7
