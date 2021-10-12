@@ -172,6 +172,7 @@ public class AnsiRenderer {
         MAGENTA(Color.MAGENTA),
         CYAN(Color.CYAN),
         WHITE(Color.WHITE),
+        DEFAULT(Color.DEFAULT),
 
         // Foreground Colors
         FG_BLACK(Color.BLACK, false),
@@ -182,6 +183,7 @@ public class AnsiRenderer {
         FG_MAGENTA(Color.MAGENTA, false),
         FG_CYAN(Color.CYAN, false),
         FG_WHITE(Color.WHITE, false),
+        FG_DEFAULT(Color.DEFAULT, false),
 
         // Background Colors
         BG_BLACK(Color.BLACK, true),
@@ -192,6 +194,7 @@ public class AnsiRenderer {
         BG_MAGENTA(Color.MAGENTA, true),
         BG_CYAN(Color.CYAN, true),
         BG_WHITE(Color.WHITE, true),
+        BG_DEFAULT(Color.DEFAULT, true),
 
         // Attributes
         RESET(Attribute.RESET),

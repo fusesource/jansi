@@ -30,8 +30,9 @@ import org.fusesource.jansi.WindowsSupport;
 public class Kernel32 {
 
     static {
-        JansiLoader.initialize();
-        init();
+        if (JansiLoader.initialize()) {
+            init();
+        }
     }
 
     private static native void init();

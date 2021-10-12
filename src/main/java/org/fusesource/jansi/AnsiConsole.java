@@ -161,6 +161,12 @@ public class AnsiConsole {
      * reset when the streams are uninstalled.
      */
     public static final String JANSI_NORESET = "jansi.noreset";
+    /**
+     * If the <code>jansi.graceful</code> system property is set to false, any exception that occurs
+     * during the initialization will cause the library to report this exception and fail. The default
+     * behavior is to behave gracefully and fall back to pure emulation on posix systems.
+     */
+    public static final String JANSI_GRACEFUL = "jansi.graceful";
 
     /**
      * @deprecated this field will be made private in a future release, use {@link #sysOut()} instead
@@ -247,6 +253,11 @@ public class AnsiConsole {
             // If we can detect that stdout is not a tty.. then setup
             // to strip the ANSI sequences..
             isAtty = isatty(fd) != 0;
+            String term = System.getenv("TERM");
+            String emacs = System.getenv("INSIDE_EMACS");
+            if (isAtty && "dumb".equals(term) && emacs != null && !emacs.contains("comint")) {
+                isAtty = false;
+            }
             withException = false;
         } catch (Throwable ignore) {
             // These errors happen if the JNI lib is not available for your platform.

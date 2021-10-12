@@ -26,12 +26,24 @@ package org.fusesource.jansi.internal;
 @SuppressWarnings("unused")
 public class CLibrary {
 
+    //
+    // Initialization
+    //
+
+    public static final boolean LOADED;
+
     static {
-        JansiLoader.initialize();
-        init();
+        LOADED = JansiLoader.initialize();
+        if (LOADED) {
+            init();
+        }
     }
 
     private static native void init();
+
+    //
+    // Constants
+    //
 
     public static int STDOUT_FILENO = 1;
 
@@ -163,9 +175,5 @@ public class CLibrary {
         public long c_ispeed;
         public long c_ospeed;
     }
-
-    public static native int setenv(String name, String value);
-
-    public static native int chdir(String path);
 
 }
