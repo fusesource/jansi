@@ -61,7 +61,9 @@ public class JansiLoader {
         try {
             loadJansiNativeLibrary();
         } catch (Exception e) {
-            throw new RuntimeException("Unable to load jansi native library. You may want set the `jansi.graceful` system property to true to be able to use Jansi on your platform", e);
+            if (!Boolean.parseBoolean(System.getProperty(AnsiConsole.JANSI_GRACEFUL, "true"))) {
+                throw new RuntimeException("Unable to load jansi native library. You may want set the `jansi.graceful` system property to true to be able to use Jansi on your platform", e);
+            }
         }
         return loaded;
     }
@@ -249,7 +251,17 @@ public class JansiLoader {
                 nativeLibraryPath = path;
                 return true;
             } catch (UnsatisfiedLinkError e) {
-                System.err.println("Failed to load native library:" + libPath.getName() + ". osinfo: " + OSInfo.getNativeLibFolderPathForCurrentOS());
+                if (!libPath.canExecute()) {
+                    // NOTE: this can be tested using something like:
+                    // docker run --rm --tmpfs /tmp -v $PWD:/jansi openjdk:11 java -jar /jansi/target/jansi-xxx-SNAPSHOT.jar
+                    System.err.printf("Failed to load native library:%s. The native library file at %s is not executable, "
+                            + "make sure that the directory is mounted on a partition without the noexec flag, or set the "
+                            + "jansi.tmpdir system property to point to a proper location.  osinfo: %s%n",
+                            libPath.getName(), libPath, OSInfo.getNativeLibFolderPathForCurrentOS());
+                } else {
+                    System.err.printf("Failed to load native library:%s. osinfo: %s%n",
+                            libPath.getName(), OSInfo.getNativeLibFolderPathForCurrentOS());
+                }
                 System.err.println(e);
                 return false;
             }
@@ -331,11 +343,8 @@ public class JansiLoader {
             }
         }
 
-        loaded = false;
-        if (!Boolean.parseBoolean(System.getProperty(AnsiConsole.JANSI_GRACEFUL, "true"))) {
-            throw new Exception(String.format("No native library found for os.name=%s, os.arch=%s, paths=[%s]",
-                    OSInfo.getOSName(), OSInfo.getArchName(), join(triedPaths, File.pathSeparator)));
-        }
+        throw new Exception(String.format("No native library found for os.name=%s, os.arch=%s, paths=[%s]",
+                OSInfo.getOSName(), OSInfo.getArchName(), join(triedPaths, File.pathSeparator)));
     }
 
     private static boolean hasResource(String path) {
