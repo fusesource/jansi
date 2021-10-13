@@ -174,43 +174,32 @@ public class JansiLoader {
 
         try {
             // Extract a native library file into the target directory
-            InputStream in = JansiLoader.class.getResourceAsStream(nativeLibraryFilePath);
-            try {
+            try (InputStream in = JansiLoader.class.getResourceAsStream(nativeLibraryFilePath)) {
                 if (!extractedLckFile.exists()) {
                     new FileOutputStream(extractedLckFile).close();
                 }
-                OutputStream out = new FileOutputStream(extractedLibFile);
-                try {
+                try (OutputStream out = new FileOutputStream(extractedLibFile)) {
                     copy(in, out);
-                } finally {
-                    out.close();
                 }
             } finally {
                 // Delete the extracted lib file on JVM exit.
                 extractedLibFile.deleteOnExit();
                 extractedLckFile.deleteOnExit();
-                in.close();
             }
 
             // Set executable (x) flag to enable Java to load the native library
             extractedLibFile.setReadable(true);
-            extractedLibFile.setWritable(true, true);
+            extractedLibFile.setWritable(true);
             extractedLibFile.setExecutable(true);
 
             // Check whether the contents are properly copied from the resource folder
-            InputStream nativeIn = JansiLoader.class.getResourceAsStream(nativeLibraryFilePath);
-            try {
-                InputStream extractedLibIn = new FileInputStream(extractedLibFile);
-                try {
+            try (InputStream nativeIn = JansiLoader.class.getResourceAsStream(nativeLibraryFilePath)) {
+                try (InputStream extractedLibIn = new FileInputStream(extractedLibFile)) {
                     String eq = contentsEquals(nativeIn, extractedLibIn);
                     if (eq != null) {
                         throw new RuntimeException(String.format("Failed to write a native library file at %s because %s", extractedLibFile, eq));
                     }
-                } finally {
-                    extractedLibIn.close();
                 }
-            } finally {
-                nativeIn.close();
             }
 
             // Load library
@@ -244,7 +233,6 @@ public class JansiLoader {
      */
     private static boolean loadNativeLibrary(File libPath) {
         if (libPath.exists()) {
-
             try {
                 String path = libPath.getAbsolutePath();
                 System.load(path);
@@ -381,7 +369,7 @@ public class JansiLoader {
                 Properties versionData = new Properties();
                 versionData.load(versionFile.openStream());
                 version = versionData.getProperty("version", version);
-                version = version.trim().replaceAll("[^0-9\\.]", "");
+                version = version.trim().replaceAll("[^0-9.]", "");
             }
         } catch (IOException e) {
             System.err.println(e);
