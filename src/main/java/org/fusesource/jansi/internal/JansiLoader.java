@@ -361,7 +361,7 @@ public class JansiLoader {
      */
     public static String getVersion() {
 
-        URL versionFile = JansiLoader.class.getResource("/META-INF/maven/org.fusesource.jansi/jansi/pom.properties");
+        URL versionFile = JansiLoader.class.getResource("/org/fusesource/jansi/jansi.properties");
 
         String version = "unknown";
         try {

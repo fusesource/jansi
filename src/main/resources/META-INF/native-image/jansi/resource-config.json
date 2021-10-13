@@ -1,6 +1,7 @@
 {
   "resources": [
     {"pattern": "org/fusesource/jansi/jansi.properties"},
+    {"pattern": "org/fusesource/jansi/jansi.txt"},
     {"pattern": "org/fusesource/jansi/internal/native/.*"}
   ]
 }
