@@ -126,8 +126,8 @@ Mac-x86_64_LINKFLAGS := -dynamiclib
 Mac-x86_64_LIBNAME   := libjansi.jnilib
 Mac-x86_64_JANSI_FLAGS  := 
 
-Mac-arm64_CC        := clang
-Mac-arm64_STRIP     := strip -x
+Mac-arm64_CC        := $(CROSS_PREFIX)clang -v
+Mac-arm64_STRIP     := $(CROSS_PREFIX)strip -x
 MAC_SDK := /usr/local/osxcross/SDK/MacOSX11.3.sdk/
 Mac-arm64_CCFLAGS    := -I$(MAC_SDK)/System/Library/Frameworks/JavaVM.framework/Headers  -Isrc/main/lib/inc_mac -Os -fPIC -mmacosx-version-min=11.0 -fvisibility=hidden
 Mac-arm64_LINKFLAGS := -shared

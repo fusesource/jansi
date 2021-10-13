@@ -72,7 +72,7 @@ mac-x86_64:
 	docker run -it --rm -v $$PWD:/workdir -e CROSS_TRIPLE=x86_64-apple-darwin multiarch/crossbuild make clean-native native OS_NAME=Mac OS_ARCH=x86_64
 
 mac-arm64:
-	docker run -it --rm -v $$PWD:/src -e TARGET=arm64-apple-darwin mcandre/snek:darwin sh -c "make clean-native native OS_NAME=Mac OS_ARCH=arm64"
+	docker run -it --rm -v $$PWD:/src -e TARGET=arm64-apple-darwin mcandre/snek:darwin sh -c "make clean-native native CROSS_PREFIX=arm64-apple-darwin20.4- OS_NAME=Mac OS_ARCH=arm64"
 
 freebsd-x86:
 	docker run -it --rm -v $$PWD:/workdir empterdose/freebsd-cross-build:9.3 make clean-native native CROSS_PREFIX=i386-freebsd9- OS_NAME=FreeBSD OS_ARCH=x86
