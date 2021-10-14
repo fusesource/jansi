@@ -1,6 +1,27 @@
 # ![Jansi](http://fusesource.github.io/jansi/images/project-logo.png)
 <!-- git log --pretty=format:'* [`%h`](https://github.com/fusesource/jansi/commit/%H) %s' -->
 
+## [Jansi 2.4.0][2_4_0], released 2021-10-14
+[2_4_0]: https://repo.maven.apache.org/maven2/org/fusesource/jansi/jansi/2.4.0
+
+* [`2cf4461`](https://github.com/fusesource/jansi/commit/2cf446182c823a4c110411b765a1f0367eb8a913) Fix support for GraalVM native-image, fixes #199
+* [`d83ab13`](https://github.com/fusesource/jansi/commit/d83ab13378ca17bc359ba1c780b2a2f0474877b1) Code cleanup
+* [`3d97645`](https://github.com/fusesource/jansi/commit/3d976451adce20e8ab48528fbe4051595a1d21c5) Improve error reporting when the tmp dir has the noexec flag, fixes #193
+* [`454d858`](https://github.com/fusesource/jansi/commit/454d8582c689af7646a21b036e887d6737b20e66) Support Mac-arm64 target, fixes #218 (#222)
+* [`4e5ab5b`](https://github.com/fusesource/jansi/commit/4e5ab5b1628df50f06d13fbe2d1bfeeead37d01e) Support linux armv6 platform, fixes #201 (#221)
+* [`98c430a`](https://github.com/fusesource/jansi/commit/98c430a4d42368f9a5524470e74ca87aeee03bcb) Change the behavior to fail gracefuly in case the system is not supported, fixes #204
+* [`cb843bf`](https://github.com/fusesource/jansi/commit/cb843bff3fab9cfa2008093483cf6c161899a749) Switch to test on LTS versions
+* [`ae20846`](https://github.com/fusesource/jansi/commit/ae20846652a85926676ad61b90dba43f49b6b636) Remove native methods not used by jansi, fixes #208
+* [`1ab54ca`](https://github.com/fusesource/jansi/commit/1ab54ca6d40c92600411e7d84bbe02d22e22fb06) Add aarch64 support, fix #219
+* [`b3fe92b`](https://github.com/fusesource/jansi/commit/b3fe92b4ba2dfe7af23a7175e00329724ff0644a) Remove old Win XP need to download something
+* [`321a8ff`](https://github.com/fusesource/jansi/commit/321a8ff71c731e10f4ea05c607860180276b2215) [maven-release-plugin] prepare for next development iteration
+* [`4e2e6a9`](https://github.com/fusesource/jansi/commit/4e2e6a9f6813bedb4d788b2cd1f70c5617214a9a) [maven-release-plugin] prepare release jansi-2.3.4
+* [`ba575ba`](https://github.com/fusesource/jansi/commit/ba575ba6ef2e963405c462db271d31ef05442dbb) Update changelog for release
+* [`09722b7`](https://github.com/fusesource/jansi/commit/09722b7cccc8a99f14ac1656db3072dbeef34478) Disable colors when running inside emacs without comint, fixes #205
+* [`e019a75`](https://github.com/fusesource/jansi/commit/e019a75ee267a53a48d02ac983266cdf2b4e16a9) Add missing colors to AnsiRender, fixes #213
+* [`01d68f0`](https://github.com/fusesource/jansi/commit/01d68f03c6b69c323a05738efec1fd4404c0f0f8) Fix Ansi outputting escape sequences when disabled, fixes #215
+* [`3ba11e9`](https://github.com/fusesource/jansi/commit/3ba11e9d324f81b359229715ceacadcb9137ff46) Avoid possible NPE, fixes #214
+
 ## [Jansi 2.3.4][2_3_4], released 2021-07-23
 [2_3_4]: https://repo.maven.apache.org/maven2/org/fusesource/jansi/jansi/2.3.4
 
