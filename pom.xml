@@ -28,7 +28,7 @@
     <version>2.4.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>${project.artifactId}</name>
+    <name>Jansi</name>
     <description>Jansi is a java library for generating and interpreting ANSI escape sequences.</description>
 
     <properties>
