@@ -508,8 +508,7 @@ public class AnsiConsole {
      * @see #systemUninstall()
      */
     synchronized static public void systemInstall() {
-        installed++;
-        if (installed == 1) {
+        if (installed == 0) {
             initStreams();
             try {
                 ((AnsiPrintStream) out).install();
@@ -520,6 +519,7 @@ public class AnsiConsole {
             System.setOut(out);
             System.setErr(err);
         }
+        installed++;
     }
 
     /**
