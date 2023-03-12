@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"org.fusesource.jansi"},{"l":"org.fusesource.jansi.internal"},{"l":"org.fusesource.jansi.io"}]

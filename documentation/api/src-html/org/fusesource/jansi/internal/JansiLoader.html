@@ -1,0 +1,468 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">/*--------------------------------------------------------------------------</a>
+<span class="sourceLineNo">002</span><a id="line.2"> *  Copyright 2007 Taro L. Saito</a>
+<span class="sourceLineNo">003</span><a id="line.3"> *</a>
+<span class="sourceLineNo">004</span><a id="line.4"> *  Licensed under the Apache License, Version 2.0 (the "License");</a>
+<span class="sourceLineNo">005</span><a id="line.5"> *  you may not use this file except in compliance with the License.</a>
+<span class="sourceLineNo">006</span><a id="line.6"> *  You may obtain a copy of the License at</a>
+<span class="sourceLineNo">007</span><a id="line.7"> *</a>
+<span class="sourceLineNo">008</span><a id="line.8"> *     http://www.apache.org/licenses/LICENSE-2.0</a>
+<span class="sourceLineNo">009</span><a id="line.9"> *</a>
+<span class="sourceLineNo">010</span><a id="line.10"> *  Unless required by applicable law or agreed to in writing, software</a>
+<span class="sourceLineNo">011</span><a id="line.11"> *  distributed under the License is distributed on an "AS IS" BASIS,</a>
+<span class="sourceLineNo">012</span><a id="line.12"> *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</a>
+<span class="sourceLineNo">013</span><a id="line.13"> *  See the License for the specific language governing permissions and</a>
+<span class="sourceLineNo">014</span><a id="line.14"> *  limitations under the License.</a>
+<span class="sourceLineNo">015</span><a id="line.15"> *--------------------------------------------------------------------------*/</a>
+<span class="sourceLineNo">016</span><a id="line.16">package org.fusesource.jansi.internal;</a>
+<span class="sourceLineNo">017</span><a id="line.17"></a>
+<span class="sourceLineNo">018</span><a id="line.18">import java.io.File;</a>
+<span class="sourceLineNo">019</span><a id="line.19">import java.io.FileInputStream;</a>
+<span class="sourceLineNo">020</span><a id="line.20">import java.io.FileOutputStream;</a>
+<span class="sourceLineNo">021</span><a id="line.21">import java.io.FilenameFilter;</a>
+<span class="sourceLineNo">022</span><a id="line.22">import java.io.IOException;</a>
+<span class="sourceLineNo">023</span><a id="line.23">import java.io.InputStream;</a>
+<span class="sourceLineNo">024</span><a id="line.24">import java.io.OutputStream;</a>
+<span class="sourceLineNo">025</span><a id="line.25">import java.net.URL;</a>
+<span class="sourceLineNo">026</span><a id="line.26">import java.util.Arrays;</a>
+<span class="sourceLineNo">027</span><a id="line.27">import java.util.LinkedList;</a>
+<span class="sourceLineNo">028</span><a id="line.28">import java.util.List;</a>
+<span class="sourceLineNo">029</span><a id="line.29">import java.util.Properties;</a>
+<span class="sourceLineNo">030</span><a id="line.30">import java.util.Random;</a>
+<span class="sourceLineNo">031</span><a id="line.31"></a>
+<span class="sourceLineNo">032</span><a id="line.32">import org.fusesource.jansi.AnsiConsole;</a>
+<span class="sourceLineNo">033</span><a id="line.33"></a>
+<span class="sourceLineNo">034</span><a id="line.34">/**</a>
+<span class="sourceLineNo">035</span><a id="line.35"> * Set the system properties, org.jansi.lib.path, org.jansi.lib.name,</a>
+<span class="sourceLineNo">036</span><a id="line.36"> * appropriately so that jansi can find *.dll, *.jnilib and</a>
+<span class="sourceLineNo">037</span><a id="line.37"> * *.so files, according to the current OS (win, linux, mac).</a>
+<span class="sourceLineNo">038</span><a id="line.38"> * &lt;p&gt;</a>
+<span class="sourceLineNo">039</span><a id="line.39"> * The library files are automatically extracted from this project's package</a>
+<span class="sourceLineNo">040</span><a id="line.40"> * (JAR).</a>
+<span class="sourceLineNo">041</span><a id="line.41"> * &lt;p&gt;</a>
+<span class="sourceLineNo">042</span><a id="line.42"> * usage: call {@link #initialize()} before using Jansi.</a>
+<span class="sourceLineNo">043</span><a id="line.43"> */</a>
+<span class="sourceLineNo">044</span><a id="line.44">public class JansiLoader {</a>
+<span class="sourceLineNo">045</span><a id="line.45"></a>
+<span class="sourceLineNo">046</span><a id="line.46">    private static boolean loaded = false;</a>
+<span class="sourceLineNo">047</span><a id="line.47">    private static String nativeLibraryPath;</a>
+<span class="sourceLineNo">048</span><a id="line.48">    private static String nativeLibrarySourceUrl;</a>
+<span class="sourceLineNo">049</span><a id="line.49"></a>
+<span class="sourceLineNo">050</span><a id="line.50">    /**</a>
+<span class="sourceLineNo">051</span><a id="line.51">     * Loads Jansi native library.</a>
+<span class="sourceLineNo">052</span><a id="line.52">     *</a>
+<span class="sourceLineNo">053</span><a id="line.53">     * @return True if jansi native library is successfully loaded; false</a>
+<span class="sourceLineNo">054</span><a id="line.54">     * otherwise.</a>
+<span class="sourceLineNo">055</span><a id="line.55">     */</a>
+<span class="sourceLineNo">056</span><a id="line.56">    public static synchronized boolean initialize() {</a>
+<span class="sourceLineNo">057</span><a id="line.57">        // only cleanup before the first extract</a>
+<span class="sourceLineNo">058</span><a id="line.58">        if (!loaded) {</a>
+<span class="sourceLineNo">059</span><a id="line.59">            cleanup();</a>
+<span class="sourceLineNo">060</span><a id="line.60">        }</a>
+<span class="sourceLineNo">061</span><a id="line.61">        try {</a>
+<span class="sourceLineNo">062</span><a id="line.62">            loadJansiNativeLibrary();</a>
+<span class="sourceLineNo">063</span><a id="line.63">        } catch (Exception e) {</a>
+<span class="sourceLineNo">064</span><a id="line.64">            if (!Boolean.parseBoolean(System.getProperty(AnsiConsole.JANSI_GRACEFUL, "true"))) {</a>
+<span class="sourceLineNo">065</span><a id="line.65">                throw new RuntimeException("Unable to load jansi native library. You may want set the `jansi.graceful` system property to true to be able to use Jansi on your platform", e);</a>
+<span class="sourceLineNo">066</span><a id="line.66">            }</a>
+<span class="sourceLineNo">067</span><a id="line.67">        }</a>
+<span class="sourceLineNo">068</span><a id="line.68">        return loaded;</a>
+<span class="sourceLineNo">069</span><a id="line.69">    }</a>
+<span class="sourceLineNo">070</span><a id="line.70"></a>
+<span class="sourceLineNo">071</span><a id="line.71">    public static String getNativeLibraryPath() {</a>
+<span class="sourceLineNo">072</span><a id="line.72">        return nativeLibraryPath;</a>
+<span class="sourceLineNo">073</span><a id="line.73">    }</a>
+<span class="sourceLineNo">074</span><a id="line.74"></a>
+<span class="sourceLineNo">075</span><a id="line.75">    public static String getNativeLibrarySourceUrl() {</a>
+<span class="sourceLineNo">076</span><a id="line.76">        return nativeLibrarySourceUrl;</a>
+<span class="sourceLineNo">077</span><a id="line.77">    }</a>
+<span class="sourceLineNo">078</span><a id="line.78"></a>
+<span class="sourceLineNo">079</span><a id="line.79">    private static File getTempDir() {</a>
+<span class="sourceLineNo">080</span><a id="line.80">        return new File(System.getProperty("jansi.tmpdir", System.getProperty("java.io.tmpdir")));</a>
+<span class="sourceLineNo">081</span><a id="line.81">    }</a>
+<span class="sourceLineNo">082</span><a id="line.82"></a>
+<span class="sourceLineNo">083</span><a id="line.83">    /**</a>
+<span class="sourceLineNo">084</span><a id="line.84">     * Deleted old native libraries e.g. on Windows the DLL file is not removed</a>
+<span class="sourceLineNo">085</span><a id="line.85">     * on VM-Exit (bug #80)</a>
+<span class="sourceLineNo">086</span><a id="line.86">     */</a>
+<span class="sourceLineNo">087</span><a id="line.87">    static void cleanup() {</a>
+<span class="sourceLineNo">088</span><a id="line.88">        String tempFolder = getTempDir().getAbsolutePath();</a>
+<span class="sourceLineNo">089</span><a id="line.89">        File dir = new File(tempFolder);</a>
+<span class="sourceLineNo">090</span><a id="line.90"></a>
+<span class="sourceLineNo">091</span><a id="line.91">        File[] nativeLibFiles = dir.listFiles(new FilenameFilter() {</a>
+<span class="sourceLineNo">092</span><a id="line.92">            private final String searchPattern = "jansi-" + getVersion();</a>
+<span class="sourceLineNo">093</span><a id="line.93"></a>
+<span class="sourceLineNo">094</span><a id="line.94">            public boolean accept(File dir, String name) {</a>
+<span class="sourceLineNo">095</span><a id="line.95">                return name.startsWith(searchPattern) &amp;&amp; !name.endsWith(".lck");</a>
+<span class="sourceLineNo">096</span><a id="line.96">            }</a>
+<span class="sourceLineNo">097</span><a id="line.97">        });</a>
+<span class="sourceLineNo">098</span><a id="line.98">        if (nativeLibFiles != null) {</a>
+<span class="sourceLineNo">099</span><a id="line.99">            for (File nativeLibFile : nativeLibFiles) {</a>
+<span class="sourceLineNo">100</span><a id="line.100">                File lckFile = new File(nativeLibFile.getAbsolutePath() + ".lck");</a>
+<span class="sourceLineNo">101</span><a id="line.101">                if (!lckFile.exists()) {</a>
+<span class="sourceLineNo">102</span><a id="line.102">                    try {</a>
+<span class="sourceLineNo">103</span><a id="line.103">                        nativeLibFile.delete();</a>
+<span class="sourceLineNo">104</span><a id="line.104">                    } catch (SecurityException e) {</a>
+<span class="sourceLineNo">105</span><a id="line.105">                        System.err.println("Failed to delete old native lib" + e.getMessage());</a>
+<span class="sourceLineNo">106</span><a id="line.106">                    }</a>
+<span class="sourceLineNo">107</span><a id="line.107">                }</a>
+<span class="sourceLineNo">108</span><a id="line.108">            }</a>
+<span class="sourceLineNo">109</span><a id="line.109">        }</a>
+<span class="sourceLineNo">110</span><a id="line.110">    }</a>
+<span class="sourceLineNo">111</span><a id="line.111"></a>
+<span class="sourceLineNo">112</span><a id="line.112">    private static int readNBytes(InputStream in, byte[] b) throws IOException {</a>
+<span class="sourceLineNo">113</span><a id="line.113">        int n = 0;</a>
+<span class="sourceLineNo">114</span><a id="line.114">        int len = b.length;</a>
+<span class="sourceLineNo">115</span><a id="line.115">        while (n &lt; len) {</a>
+<span class="sourceLineNo">116</span><a id="line.116">            int count = in.read(b, n, len - n);</a>
+<span class="sourceLineNo">117</span><a id="line.117">            if (count &lt;= 0)</a>
+<span class="sourceLineNo">118</span><a id="line.118">                break;</a>
+<span class="sourceLineNo">119</span><a id="line.119">            n += count;</a>
+<span class="sourceLineNo">120</span><a id="line.120">        }</a>
+<span class="sourceLineNo">121</span><a id="line.121">        return n;</a>
+<span class="sourceLineNo">122</span><a id="line.122">    }</a>
+<span class="sourceLineNo">123</span><a id="line.123"></a>
+<span class="sourceLineNo">124</span><a id="line.124">    private static String contentsEquals(InputStream in1, InputStream in2) throws IOException {</a>
+<span class="sourceLineNo">125</span><a id="line.125">        byte[] buffer1 = new byte[8192];</a>
+<span class="sourceLineNo">126</span><a id="line.126">        byte[] buffer2 = new byte[8192];</a>
+<span class="sourceLineNo">127</span><a id="line.127">        int numRead1;</a>
+<span class="sourceLineNo">128</span><a id="line.128">        int numRead2;</a>
+<span class="sourceLineNo">129</span><a id="line.129">        while (true) {</a>
+<span class="sourceLineNo">130</span><a id="line.130">            numRead1 = readNBytes(in1, buffer1);</a>
+<span class="sourceLineNo">131</span><a id="line.131">            numRead2 = readNBytes(in2, buffer2);</a>
+<span class="sourceLineNo">132</span><a id="line.132">            if (numRead1 &gt; 0) {</a>
+<span class="sourceLineNo">133</span><a id="line.133">                if (numRead2 &lt;= 0) {</a>
+<span class="sourceLineNo">134</span><a id="line.134">                    return "EOF on second stream but not first";</a>
+<span class="sourceLineNo">135</span><a id="line.135">                }</a>
+<span class="sourceLineNo">136</span><a id="line.136">                if (numRead2 != numRead1) {</a>
+<span class="sourceLineNo">137</span><a id="line.137">                    return "Read size different (" + numRead1 + " vs " + numRead2 + ")";</a>
+<span class="sourceLineNo">138</span><a id="line.138">                }</a>
+<span class="sourceLineNo">139</span><a id="line.139">                // Otherwise same number of bytes read</a>
+<span class="sourceLineNo">140</span><a id="line.140">                if (!Arrays.equals(buffer1, buffer2)) {</a>
+<span class="sourceLineNo">141</span><a id="line.141">                    return "Content differs";</a>
+<span class="sourceLineNo">142</span><a id="line.142">                }</a>
+<span class="sourceLineNo">143</span><a id="line.143">                // Otherwise same bytes read, so continue ...</a>
+<span class="sourceLineNo">144</span><a id="line.144">            } else {</a>
+<span class="sourceLineNo">145</span><a id="line.145">                // Nothing more in stream 1 ...</a>
+<span class="sourceLineNo">146</span><a id="line.146">                if (numRead2 &gt; 0) {</a>
+<span class="sourceLineNo">147</span><a id="line.147">                    return "EOF on first stream but not second";</a>
+<span class="sourceLineNo">148</span><a id="line.148">                } else {</a>
+<span class="sourceLineNo">149</span><a id="line.149">                    return null;</a>
+<span class="sourceLineNo">150</span><a id="line.150">                }</a>
+<span class="sourceLineNo">151</span><a id="line.151">            }</a>
+<span class="sourceLineNo">152</span><a id="line.152">        }</a>
+<span class="sourceLineNo">153</span><a id="line.153">    }</a>
+<span class="sourceLineNo">154</span><a id="line.154"></a>
+<span class="sourceLineNo">155</span><a id="line.155">    /**</a>
+<span class="sourceLineNo">156</span><a id="line.156">     * Extracts and loads the specified library file to the target folder</a>
+<span class="sourceLineNo">157</span><a id="line.157">     *</a>
+<span class="sourceLineNo">158</span><a id="line.158">     * @param libFolderForCurrentOS Library path.</a>
+<span class="sourceLineNo">159</span><a id="line.159">     * @param libraryFileName       Library name.</a>
+<span class="sourceLineNo">160</span><a id="line.160">     * @param targetFolder          Target folder.</a>
+<span class="sourceLineNo">161</span><a id="line.161">     * @return</a>
+<span class="sourceLineNo">162</span><a id="line.162">     */</a>
+<span class="sourceLineNo">163</span><a id="line.163">    private static boolean extractAndLoadLibraryFile(String libFolderForCurrentOS, String libraryFileName,</a>
+<span class="sourceLineNo">164</span><a id="line.164">                                                     String targetFolder) {</a>
+<span class="sourceLineNo">165</span><a id="line.165">        String nativeLibraryFilePath = libFolderForCurrentOS + "/" + libraryFileName;</a>
+<span class="sourceLineNo">166</span><a id="line.166">        // Include architecture name in temporary filename in order to avoid conflicts</a>
+<span class="sourceLineNo">167</span><a id="line.167">        // when multiple JVMs with different architectures running at the same time</a>
+<span class="sourceLineNo">168</span><a id="line.168">        String uuid = randomUUID();</a>
+<span class="sourceLineNo">169</span><a id="line.169">        String extractedLibFileName = String.format("jansi-%s-%s-%s", getVersion(), uuid, libraryFileName);</a>
+<span class="sourceLineNo">170</span><a id="line.170">        String extractedLckFileName = extractedLibFileName + ".lck";</a>
+<span class="sourceLineNo">171</span><a id="line.171"></a>
+<span class="sourceLineNo">172</span><a id="line.172">        File extractedLibFile = new File(targetFolder, extractedLibFileName);</a>
+<span class="sourceLineNo">173</span><a id="line.173">        File extractedLckFile = new File(targetFolder, extractedLckFileName);</a>
+<span class="sourceLineNo">174</span><a id="line.174"></a>
+<span class="sourceLineNo">175</span><a id="line.175">        try {</a>
+<span class="sourceLineNo">176</span><a id="line.176">            // Extract a native library file into the target directory</a>
+<span class="sourceLineNo">177</span><a id="line.177">            try (InputStream in = JansiLoader.class.getResourceAsStream(nativeLibraryFilePath)) {</a>
+<span class="sourceLineNo">178</span><a id="line.178">                if (!extractedLckFile.exists()) {</a>
+<span class="sourceLineNo">179</span><a id="line.179">                    new FileOutputStream(extractedLckFile).close();</a>
+<span class="sourceLineNo">180</span><a id="line.180">                }</a>
+<span class="sourceLineNo">181</span><a id="line.181">                try (OutputStream out = new FileOutputStream(extractedLibFile)) {</a>
+<span class="sourceLineNo">182</span><a id="line.182">                    copy(in, out);</a>
+<span class="sourceLineNo">183</span><a id="line.183">                }</a>
+<span class="sourceLineNo">184</span><a id="line.184">            } finally {</a>
+<span class="sourceLineNo">185</span><a id="line.185">                // Delete the extracted lib file on JVM exit.</a>
+<span class="sourceLineNo">186</span><a id="line.186">                extractedLibFile.deleteOnExit();</a>
+<span class="sourceLineNo">187</span><a id="line.187">                extractedLckFile.deleteOnExit();</a>
+<span class="sourceLineNo">188</span><a id="line.188">            }</a>
+<span class="sourceLineNo">189</span><a id="line.189"></a>
+<span class="sourceLineNo">190</span><a id="line.190">            // Set executable (x) flag to enable Java to load the native library</a>
+<span class="sourceLineNo">191</span><a id="line.191">            extractedLibFile.setReadable(true);</a>
+<span class="sourceLineNo">192</span><a id="line.192">            extractedLibFile.setWritable(true);</a>
+<span class="sourceLineNo">193</span><a id="line.193">            extractedLibFile.setExecutable(true);</a>
+<span class="sourceLineNo">194</span><a id="line.194"></a>
+<span class="sourceLineNo">195</span><a id="line.195">            // Check whether the contents are properly copied from the resource folder</a>
+<span class="sourceLineNo">196</span><a id="line.196">            try (InputStream nativeIn = JansiLoader.class.getResourceAsStream(nativeLibraryFilePath)) {</a>
+<span class="sourceLineNo">197</span><a id="line.197">                try (InputStream extractedLibIn = new FileInputStream(extractedLibFile)) {</a>
+<span class="sourceLineNo">198</span><a id="line.198">                    String eq = contentsEquals(nativeIn, extractedLibIn);</a>
+<span class="sourceLineNo">199</span><a id="line.199">                    if (eq != null) {</a>
+<span class="sourceLineNo">200</span><a id="line.200">                        throw new RuntimeException(String.format("Failed to write a native library file at %s because %s", extractedLibFile, eq));</a>
+<span class="sourceLineNo">201</span><a id="line.201">                    }</a>
+<span class="sourceLineNo">202</span><a id="line.202">                }</a>
+<span class="sourceLineNo">203</span><a id="line.203">            }</a>
+<span class="sourceLineNo">204</span><a id="line.204"></a>
+<span class="sourceLineNo">205</span><a id="line.205">            // Load library</a>
+<span class="sourceLineNo">206</span><a id="line.206">            if (loadNativeLibrary(extractedLibFile)) {</a>
+<span class="sourceLineNo">207</span><a id="line.207">                nativeLibrarySourceUrl = JansiLoader.class.getResource(nativeLibraryFilePath).toExternalForm();</a>
+<span class="sourceLineNo">208</span><a id="line.208">                return true;</a>
+<span class="sourceLineNo">209</span><a id="line.209">            }</a>
+<span class="sourceLineNo">210</span><a id="line.210">        } catch (IOException e) {</a>
+<span class="sourceLineNo">211</span><a id="line.211">            System.err.println(e.getMessage());</a>
+<span class="sourceLineNo">212</span><a id="line.212">        }</a>
+<span class="sourceLineNo">213</span><a id="line.213">        return false;</a>
+<span class="sourceLineNo">214</span><a id="line.214">    }</a>
+<span class="sourceLineNo">215</span><a id="line.215"></a>
+<span class="sourceLineNo">216</span><a id="line.216">    private static String randomUUID() {</a>
+<span class="sourceLineNo">217</span><a id="line.217">        return Long.toHexString(new Random().nextLong());</a>
+<span class="sourceLineNo">218</span><a id="line.218">    }</a>
+<span class="sourceLineNo">219</span><a id="line.219"></a>
+<span class="sourceLineNo">220</span><a id="line.220">    private static void copy(InputStream in, OutputStream out) throws IOException {</a>
+<span class="sourceLineNo">221</span><a id="line.221">        byte[] buf = new byte[8192];</a>
+<span class="sourceLineNo">222</span><a id="line.222">        int n;</a>
+<span class="sourceLineNo">223</span><a id="line.223">        while ((n = in.read(buf)) &gt; 0) {</a>
+<span class="sourceLineNo">224</span><a id="line.224">            out.write(buf, 0, n);</a>
+<span class="sourceLineNo">225</span><a id="line.225">        }</a>
+<span class="sourceLineNo">226</span><a id="line.226">    }</a>
+<span class="sourceLineNo">227</span><a id="line.227"></a>
+<span class="sourceLineNo">228</span><a id="line.228">    /**</a>
+<span class="sourceLineNo">229</span><a id="line.229">     * Loads native library using the given path and name of the library.</a>
+<span class="sourceLineNo">230</span><a id="line.230">     *</a>
+<span class="sourceLineNo">231</span><a id="line.231">     * @param libPath Path of the native library.</a>
+<span class="sourceLineNo">232</span><a id="line.232">     * @return True for successfully loading; false otherwise.</a>
+<span class="sourceLineNo">233</span><a id="line.233">     */</a>
+<span class="sourceLineNo">234</span><a id="line.234">    private static boolean loadNativeLibrary(File libPath) {</a>
+<span class="sourceLineNo">235</span><a id="line.235">        if (libPath.exists()) {</a>
+<span class="sourceLineNo">236</span><a id="line.236">            try {</a>
+<span class="sourceLineNo">237</span><a id="line.237">                String path = libPath.getAbsolutePath();</a>
+<span class="sourceLineNo">238</span><a id="line.238">                System.load(path);</a>
+<span class="sourceLineNo">239</span><a id="line.239">                nativeLibraryPath = path;</a>
+<span class="sourceLineNo">240</span><a id="line.240">                return true;</a>
+<span class="sourceLineNo">241</span><a id="line.241">            } catch (UnsatisfiedLinkError e) {</a>
+<span class="sourceLineNo">242</span><a id="line.242">                if (!libPath.canExecute()) {</a>
+<span class="sourceLineNo">243</span><a id="line.243">                    // NOTE: this can be tested using something like:</a>
+<span class="sourceLineNo">244</span><a id="line.244">                    // docker run --rm --tmpfs /tmp -v $PWD:/jansi openjdk:11 java -jar /jansi/target/jansi-xxx-SNAPSHOT.jar</a>
+<span class="sourceLineNo">245</span><a id="line.245">                    System.err.printf("Failed to load native library:%s. The native library file at %s is not executable, "</a>
+<span class="sourceLineNo">246</span><a id="line.246">                            + "make sure that the directory is mounted on a partition without the noexec flag, or set the "</a>
+<span class="sourceLineNo">247</span><a id="line.247">                            + "jansi.tmpdir system property to point to a proper location.  osinfo: %s%n",</a>
+<span class="sourceLineNo">248</span><a id="line.248">                            libPath.getName(), libPath, OSInfo.getNativeLibFolderPathForCurrentOS());</a>
+<span class="sourceLineNo">249</span><a id="line.249">                } else {</a>
+<span class="sourceLineNo">250</span><a id="line.250">                    System.err.printf("Failed to load native library:%s. osinfo: %s%n",</a>
+<span class="sourceLineNo">251</span><a id="line.251">                            libPath.getName(), OSInfo.getNativeLibFolderPathForCurrentOS());</a>
+<span class="sourceLineNo">252</span><a id="line.252">                }</a>
+<span class="sourceLineNo">253</span><a id="line.253">                System.err.println(e);</a>
+<span class="sourceLineNo">254</span><a id="line.254">                return false;</a>
+<span class="sourceLineNo">255</span><a id="line.255">            }</a>
+<span class="sourceLineNo">256</span><a id="line.256"></a>
+<span class="sourceLineNo">257</span><a id="line.257">        } else {</a>
+<span class="sourceLineNo">258</span><a id="line.258">            return false;</a>
+<span class="sourceLineNo">259</span><a id="line.259">        }</a>
+<span class="sourceLineNo">260</span><a id="line.260">    }</a>
+<span class="sourceLineNo">261</span><a id="line.261"></a>
+<span class="sourceLineNo">262</span><a id="line.262">    /**</a>
+<span class="sourceLineNo">263</span><a id="line.263">     * Loads jansi library using given path and name of the library.</a>
+<span class="sourceLineNo">264</span><a id="line.264">     *</a>
+<span class="sourceLineNo">265</span><a id="line.265">     * @throws</a>
+<span class="sourceLineNo">266</span><a id="line.266">     */</a>
+<span class="sourceLineNo">267</span><a id="line.267">    private static void loadJansiNativeLibrary() throws Exception {</a>
+<span class="sourceLineNo">268</span><a id="line.268">        if (loaded) {</a>
+<span class="sourceLineNo">269</span><a id="line.269">            return;</a>
+<span class="sourceLineNo">270</span><a id="line.270">        }</a>
+<span class="sourceLineNo">271</span><a id="line.271"></a>
+<span class="sourceLineNo">272</span><a id="line.272">        List&lt;String&gt; triedPaths = new LinkedList&lt;String&gt;();</a>
+<span class="sourceLineNo">273</span><a id="line.273"></a>
+<span class="sourceLineNo">274</span><a id="line.274">        // Try loading library from library.jansi.path library path */</a>
+<span class="sourceLineNo">275</span><a id="line.275">        String jansiNativeLibraryPath = System.getProperty("library.jansi.path");</a>
+<span class="sourceLineNo">276</span><a id="line.276">        String jansiNativeLibraryName = System.getProperty("library.jansi.name");</a>
+<span class="sourceLineNo">277</span><a id="line.277">        if (jansiNativeLibraryName == null) {</a>
+<span class="sourceLineNo">278</span><a id="line.278">            jansiNativeLibraryName = System.mapLibraryName("jansi");</a>
+<span class="sourceLineNo">279</span><a id="line.279">            assert jansiNativeLibraryName != null;</a>
+<span class="sourceLineNo">280</span><a id="line.280">            if (jansiNativeLibraryName.endsWith(".dylib")) {</a>
+<span class="sourceLineNo">281</span><a id="line.281">                jansiNativeLibraryName = jansiNativeLibraryName.replace(".dylib", ".jnilib");</a>
+<span class="sourceLineNo">282</span><a id="line.282">            }</a>
+<span class="sourceLineNo">283</span><a id="line.283">        }</a>
+<span class="sourceLineNo">284</span><a id="line.284"></a>
+<span class="sourceLineNo">285</span><a id="line.285">        if (jansiNativeLibraryPath != null) {</a>
+<span class="sourceLineNo">286</span><a id="line.286">            String withOs = jansiNativeLibraryPath + "/" + OSInfo.getNativeLibFolderPathForCurrentOS();</a>
+<span class="sourceLineNo">287</span><a id="line.287">            if (loadNativeLibrary(new File(withOs, jansiNativeLibraryName))) {</a>
+<span class="sourceLineNo">288</span><a id="line.288">                loaded = true;</a>
+<span class="sourceLineNo">289</span><a id="line.289">                return;</a>
+<span class="sourceLineNo">290</span><a id="line.290">            } else {</a>
+<span class="sourceLineNo">291</span><a id="line.291">                triedPaths.add(withOs);</a>
+<span class="sourceLineNo">292</span><a id="line.292">            }</a>
+<span class="sourceLineNo">293</span><a id="line.293"></a>
+<span class="sourceLineNo">294</span><a id="line.294">            if (loadNativeLibrary(new File(jansiNativeLibraryPath, jansiNativeLibraryName))) {</a>
+<span class="sourceLineNo">295</span><a id="line.295">                loaded = true;</a>
+<span class="sourceLineNo">296</span><a id="line.296">                return;</a>
+<span class="sourceLineNo">297</span><a id="line.297">            } else {</a>
+<span class="sourceLineNo">298</span><a id="line.298">                triedPaths.add(jansiNativeLibraryPath);</a>
+<span class="sourceLineNo">299</span><a id="line.299">            }</a>
+<span class="sourceLineNo">300</span><a id="line.300">        }</a>
+<span class="sourceLineNo">301</span><a id="line.301"></a>
+<span class="sourceLineNo">302</span><a id="line.302">        // Load the os-dependent library from the jar file</a>
+<span class="sourceLineNo">303</span><a id="line.303">        String packagePath = JansiLoader.class.getPackage().getName().replace('.', '/');</a>
+<span class="sourceLineNo">304</span><a id="line.304">        jansiNativeLibraryPath = String.format("/%s/native/%s", packagePath, OSInfo.getNativeLibFolderPathForCurrentOS());</a>
+<span class="sourceLineNo">305</span><a id="line.305">        boolean hasNativeLib = hasResource(jansiNativeLibraryPath + "/" + jansiNativeLibraryName);</a>
+<span class="sourceLineNo">306</span><a id="line.306"></a>
+<span class="sourceLineNo">307</span><a id="line.307"></a>
+<span class="sourceLineNo">308</span><a id="line.308">        if (hasNativeLib) {</a>
+<span class="sourceLineNo">309</span><a id="line.309">            // temporary library folder</a>
+<span class="sourceLineNo">310</span><a id="line.310">            String tempFolder = getTempDir().getAbsolutePath();</a>
+<span class="sourceLineNo">311</span><a id="line.311">            // Try extracting the library from jar</a>
+<span class="sourceLineNo">312</span><a id="line.312">            if (extractAndLoadLibraryFile(jansiNativeLibraryPath, jansiNativeLibraryName, tempFolder)) {</a>
+<span class="sourceLineNo">313</span><a id="line.313">                loaded = true;</a>
+<span class="sourceLineNo">314</span><a id="line.314">                return;</a>
+<span class="sourceLineNo">315</span><a id="line.315">            } else {</a>
+<span class="sourceLineNo">316</span><a id="line.316">                triedPaths.add(jansiNativeLibraryPath);</a>
+<span class="sourceLineNo">317</span><a id="line.317">            }</a>
+<span class="sourceLineNo">318</span><a id="line.318">        }</a>
+<span class="sourceLineNo">319</span><a id="line.319"></a>
+<span class="sourceLineNo">320</span><a id="line.320">        // As a last resort try from java.library.path</a>
+<span class="sourceLineNo">321</span><a id="line.321">        String javaLibraryPath = System.getProperty("java.library.path", "");</a>
+<span class="sourceLineNo">322</span><a id="line.322">        for (String ldPath : javaLibraryPath.split(File.pathSeparator)) {</a>
+<span class="sourceLineNo">323</span><a id="line.323">            if (ldPath.isEmpty()) {</a>
+<span class="sourceLineNo">324</span><a id="line.324">                continue;</a>
+<span class="sourceLineNo">325</span><a id="line.325">            }</a>
+<span class="sourceLineNo">326</span><a id="line.326">            if (loadNativeLibrary(new File(ldPath, jansiNativeLibraryName))) {</a>
+<span class="sourceLineNo">327</span><a id="line.327">                loaded = true;</a>
+<span class="sourceLineNo">328</span><a id="line.328">                return;</a>
+<span class="sourceLineNo">329</span><a id="line.329">            } else {</a>
+<span class="sourceLineNo">330</span><a id="line.330">                triedPaths.add(ldPath);</a>
+<span class="sourceLineNo">331</span><a id="line.331">            }</a>
+<span class="sourceLineNo">332</span><a id="line.332">        }</a>
+<span class="sourceLineNo">333</span><a id="line.333"></a>
+<span class="sourceLineNo">334</span><a id="line.334">        throw new Exception(String.format("No native library found for os.name=%s, os.arch=%s, paths=[%s]",</a>
+<span class="sourceLineNo">335</span><a id="line.335">                OSInfo.getOSName(), OSInfo.getArchName(), join(triedPaths, File.pathSeparator)));</a>
+<span class="sourceLineNo">336</span><a id="line.336">    }</a>
+<span class="sourceLineNo">337</span><a id="line.337"></a>
+<span class="sourceLineNo">338</span><a id="line.338">    private static boolean hasResource(String path) {</a>
+<span class="sourceLineNo">339</span><a id="line.339">        return JansiLoader.class.getResource(path) != null;</a>
+<span class="sourceLineNo">340</span><a id="line.340">    }</a>
+<span class="sourceLineNo">341</span><a id="line.341"></a>
+<span class="sourceLineNo">342</span><a id="line.342"></a>
+<span class="sourceLineNo">343</span><a id="line.343">    /**</a>
+<span class="sourceLineNo">344</span><a id="line.344">     * @return The major version of the jansi library.</a>
+<span class="sourceLineNo">345</span><a id="line.345">     */</a>
+<span class="sourceLineNo">346</span><a id="line.346">    public static int getMajorVersion() {</a>
+<span class="sourceLineNo">347</span><a id="line.347">        String[] c = getVersion().split("\\.");</a>
+<span class="sourceLineNo">348</span><a id="line.348">        return (c.length &gt; 0) ? Integer.parseInt(c[0]) : 1;</a>
+<span class="sourceLineNo">349</span><a id="line.349">    }</a>
+<span class="sourceLineNo">350</span><a id="line.350"></a>
+<span class="sourceLineNo">351</span><a id="line.351">    /**</a>
+<span class="sourceLineNo">352</span><a id="line.352">     * @return The minor version of the jansi library.</a>
+<span class="sourceLineNo">353</span><a id="line.353">     */</a>
+<span class="sourceLineNo">354</span><a id="line.354">    public static int getMinorVersion() {</a>
+<span class="sourceLineNo">355</span><a id="line.355">        String[] c = getVersion().split("\\.");</a>
+<span class="sourceLineNo">356</span><a id="line.356">        return (c.length &gt; 1) ? Integer.parseInt(c[1]) : 0;</a>
+<span class="sourceLineNo">357</span><a id="line.357">    }</a>
+<span class="sourceLineNo">358</span><a id="line.358"></a>
+<span class="sourceLineNo">359</span><a id="line.359">    /**</a>
+<span class="sourceLineNo">360</span><a id="line.360">     * @return The version of the jansi library.</a>
+<span class="sourceLineNo">361</span><a id="line.361">     */</a>
+<span class="sourceLineNo">362</span><a id="line.362">    public static String getVersion() {</a>
+<span class="sourceLineNo">363</span><a id="line.363"></a>
+<span class="sourceLineNo">364</span><a id="line.364">        URL versionFile = JansiLoader.class.getResource("/org/fusesource/jansi/jansi.properties");</a>
+<span class="sourceLineNo">365</span><a id="line.365"></a>
+<span class="sourceLineNo">366</span><a id="line.366">        String version = "unknown";</a>
+<span class="sourceLineNo">367</span><a id="line.367">        try {</a>
+<span class="sourceLineNo">368</span><a id="line.368">            if (versionFile != null) {</a>
+<span class="sourceLineNo">369</span><a id="line.369">                Properties versionData = new Properties();</a>
+<span class="sourceLineNo">370</span><a id="line.370">                versionData.load(versionFile.openStream());</a>
+<span class="sourceLineNo">371</span><a id="line.371">                version = versionData.getProperty("version", version);</a>
+<span class="sourceLineNo">372</span><a id="line.372">                version = version.trim().replaceAll("[^0-9.]", "");</a>
+<span class="sourceLineNo">373</span><a id="line.373">            }</a>
+<span class="sourceLineNo">374</span><a id="line.374">        } catch (IOException e) {</a>
+<span class="sourceLineNo">375</span><a id="line.375">            System.err.println(e);</a>
+<span class="sourceLineNo">376</span><a id="line.376">        }</a>
+<span class="sourceLineNo">377</span><a id="line.377">        return version;</a>
+<span class="sourceLineNo">378</span><a id="line.378">    }</a>
+<span class="sourceLineNo">379</span><a id="line.379"></a>
+<span class="sourceLineNo">380</span><a id="line.380">    private static String join(List&lt;String&gt; list, String separator) {</a>
+<span class="sourceLineNo">381</span><a id="line.381">        StringBuilder sb = new StringBuilder();</a>
+<span class="sourceLineNo">382</span><a id="line.382">        boolean first = true;</a>
+<span class="sourceLineNo">383</span><a id="line.383">        for (String item : list) {</a>
+<span class="sourceLineNo">384</span><a id="line.384">            if (first)</a>
+<span class="sourceLineNo">385</span><a id="line.385">                first = false;</a>
+<span class="sourceLineNo">386</span><a id="line.386">            else</a>
+<span class="sourceLineNo">387</span><a id="line.387">                sb.append(separator);</a>
+<span class="sourceLineNo">388</span><a id="line.388"></a>
+<span class="sourceLineNo">389</span><a id="line.389">            sb.append(item);</a>
+<span class="sourceLineNo">390</span><a id="line.390">        }</a>
+<span class="sourceLineNo">391</span><a id="line.391">        return sb.toString();</a>
+<span class="sourceLineNo">392</span><a id="line.392">    }</a>
+<span class="sourceLineNo">393</span><a id="line.393"></a>
+<span class="sourceLineNo">394</span><a id="line.394">}</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

@@ -1,0 +1,234 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">/*</a>
+<span class="sourceLineNo">002</span><a id="line.2"> * Copyright (c) 2002-2018, the original author or authors.</a>
+<span class="sourceLineNo">003</span><a id="line.3"> *</a>
+<span class="sourceLineNo">004</span><a id="line.4"> * This software is distributable under the BSD license. See the terms of the</a>
+<span class="sourceLineNo">005</span><a id="line.5"> * BSD license in the documentation provided with this software.</a>
+<span class="sourceLineNo">006</span><a id="line.6"> *</a>
+<span class="sourceLineNo">007</span><a id="line.7"> * https://opensource.org/licenses/BSD-3-Clause</a>
+<span class="sourceLineNo">008</span><a id="line.8"> */</a>
+<span class="sourceLineNo">009</span><a id="line.9">package org.fusesource.jansi.io;</a>
+<span class="sourceLineNo">010</span><a id="line.10"></a>
+<span class="sourceLineNo">011</span><a id="line.11">/**</a>
+<span class="sourceLineNo">012</span><a id="line.12"> * Helper class for dealing with color rounding.</a>
+<span class="sourceLineNo">013</span><a id="line.13"> * This is a simplified version of the JLine's one at</a>
+<span class="sourceLineNo">014</span><a id="line.14"> *   https://github.com/jline/jline3/blob/a24636dc5de83baa6b65049e8215fb372433b3b1/terminal/src/main/java/org/jline/utils/Colors.java</a>
+<span class="sourceLineNo">015</span><a id="line.15"> */</a>
+<span class="sourceLineNo">016</span><a id="line.16">public class Colors {</a>
+<span class="sourceLineNo">017</span><a id="line.17"></a>
+<span class="sourceLineNo">018</span><a id="line.18">    /**</a>
+<span class="sourceLineNo">019</span><a id="line.19">     * Default 256 colors palette</a>
+<span class="sourceLineNo">020</span><a id="line.20">     */</a>
+<span class="sourceLineNo">021</span><a id="line.21">    public static final int[] DEFAULT_COLORS_256 = {</a>
+<span class="sourceLineNo">022</span><a id="line.22">            // 16 ansi</a>
+<span class="sourceLineNo">023</span><a id="line.23">            0x000000, 0x800000, 0x008000, 0x808000, 0x000080, 0x800080, 0x008080, 0xc0c0c0,</a>
+<span class="sourceLineNo">024</span><a id="line.24">            0x808080, 0xff0000, 0x00ff00, 0xffff00, 0x0000ff, 0xff00ff, 0x00ffff, 0xffffff,</a>
+<span class="sourceLineNo">025</span><a id="line.25"></a>
+<span class="sourceLineNo">026</span><a id="line.26">            // 6x6x6 color cube</a>
+<span class="sourceLineNo">027</span><a id="line.27">            0x000000, 0x00005f, 0x000087, 0x0000af, 0x0000d7, 0x0000ff,</a>
+<span class="sourceLineNo">028</span><a id="line.28">            0x005f00, 0x005f5f, 0x005f87, 0x005faf, 0x005fd7, 0x005fff,</a>
+<span class="sourceLineNo">029</span><a id="line.29">            0x008700, 0x00875f, 0x008787, 0x0087af, 0x0087d7, 0x0087ff,</a>
+<span class="sourceLineNo">030</span><a id="line.30">            0x00af00, 0x00af5f, 0x00af87, 0x00afaf, 0x00afd7, 0x00afff,</a>
+<span class="sourceLineNo">031</span><a id="line.31">            0x00d700, 0x00d75f, 0x00d787, 0x00d7af, 0x00d7d7, 0x00d7ff,</a>
+<span class="sourceLineNo">032</span><a id="line.32">            0x00ff00, 0x00ff5f, 0x00ff87, 0x00ffaf, 0x00ffd7, 0x00ffff,</a>
+<span class="sourceLineNo">033</span><a id="line.33"></a>
+<span class="sourceLineNo">034</span><a id="line.34">            0x5f0000, 0x5f005f, 0x5f0087, 0x5f00af, 0x5f00d7, 0x5f00ff,</a>
+<span class="sourceLineNo">035</span><a id="line.35">            0x5f5f00, 0x5f5f5f, 0x5f5f87, 0x5f5faf, 0x5f5fd7, 0x5f5fff,</a>
+<span class="sourceLineNo">036</span><a id="line.36">            0x5f8700, 0x5f875f, 0x5f8787, 0x5f87af, 0x5f87d7, 0x5f87ff,</a>
+<span class="sourceLineNo">037</span><a id="line.37">            0x5faf00, 0x5faf5f, 0x5faf87, 0x5fafaf, 0x5fafd7, 0x5fafff,</a>
+<span class="sourceLineNo">038</span><a id="line.38">            0x5fd700, 0x5fd75f, 0x5fd787, 0x5fd7af, 0x5fd7d7, 0x5fd7ff,</a>
+<span class="sourceLineNo">039</span><a id="line.39">            0x5fff00, 0x5fff5f, 0x5fff87, 0x5fffaf, 0x5fffd7, 0x5fffff,</a>
+<span class="sourceLineNo">040</span><a id="line.40"></a>
+<span class="sourceLineNo">041</span><a id="line.41">            0x870000, 0x87005f, 0x870087, 0x8700af, 0x8700d7, 0x8700ff,</a>
+<span class="sourceLineNo">042</span><a id="line.42">            0x875f00, 0x875f5f, 0x875f87, 0x875faf, 0x875fd7, 0x875fff,</a>
+<span class="sourceLineNo">043</span><a id="line.43">            0x878700, 0x87875f, 0x878787, 0x8787af, 0x8787d7, 0x8787ff,</a>
+<span class="sourceLineNo">044</span><a id="line.44">            0x87af00, 0x87af5f, 0x87af87, 0x87afaf, 0x87afd7, 0x87afff,</a>
+<span class="sourceLineNo">045</span><a id="line.45">            0x87d700, 0x87d75f, 0x87d787, 0x87d7af, 0x87d7d7, 0x87d7ff,</a>
+<span class="sourceLineNo">046</span><a id="line.46">            0x87ff00, 0x87ff5f, 0x87ff87, 0x87ffaf, 0x87ffd7, 0x87ffff,</a>
+<span class="sourceLineNo">047</span><a id="line.47"></a>
+<span class="sourceLineNo">048</span><a id="line.48">            0xaf0000, 0xaf005f, 0xaf0087, 0xaf00af, 0xaf00d7, 0xaf00ff,</a>
+<span class="sourceLineNo">049</span><a id="line.49">            0xaf5f00, 0xaf5f5f, 0xaf5f87, 0xaf5faf, 0xaf5fd7, 0xaf5fff,</a>
+<span class="sourceLineNo">050</span><a id="line.50">            0xaf8700, 0xaf875f, 0xaf8787, 0xaf87af, 0xaf87d7, 0xaf87ff,</a>
+<span class="sourceLineNo">051</span><a id="line.51">            0xafaf00, 0xafaf5f, 0xafaf87, 0xafafaf, 0xafafd7, 0xafafff,</a>
+<span class="sourceLineNo">052</span><a id="line.52">            0xafd700, 0xafd75f, 0xafd787, 0xafd7af, 0xafd7d7, 0xafd7ff,</a>
+<span class="sourceLineNo">053</span><a id="line.53">            0xafff00, 0xafff5f, 0xafff87, 0xafffaf, 0xafffd7, 0xafffff,</a>
+<span class="sourceLineNo">054</span><a id="line.54"></a>
+<span class="sourceLineNo">055</span><a id="line.55">            0xd70000, 0xd7005f, 0xd70087, 0xd700af, 0xd700d7, 0xd700ff,</a>
+<span class="sourceLineNo">056</span><a id="line.56">            0xd75f00, 0xd75f5f, 0xd75f87, 0xd75faf, 0xd75fd7, 0xd75fff,</a>
+<span class="sourceLineNo">057</span><a id="line.57">            0xd78700, 0xd7875f, 0xd78787, 0xd787af, 0xd787d7, 0xd787ff,</a>
+<span class="sourceLineNo">058</span><a id="line.58">            0xd7af00, 0xd7af5f, 0xd7af87, 0xd7afaf, 0xd7afd7, 0xd7afff,</a>
+<span class="sourceLineNo">059</span><a id="line.59">            0xd7d700, 0xd7d75f, 0xd7d787, 0xd7d7af, 0xd7d7d7, 0xd7d7ff,</a>
+<span class="sourceLineNo">060</span><a id="line.60">            0xd7ff00, 0xd7ff5f, 0xd7ff87, 0xd7ffaf, 0xd7ffd7, 0xd7ffff,</a>
+<span class="sourceLineNo">061</span><a id="line.61"></a>
+<span class="sourceLineNo">062</span><a id="line.62">            0xff0000, 0xff005f, 0xff0087, 0xff00af, 0xff00d7, 0xff00ff,</a>
+<span class="sourceLineNo">063</span><a id="line.63">            0xff5f00, 0xff5f5f, 0xff5f87, 0xff5faf, 0xff5fd7, 0xff5fff,</a>
+<span class="sourceLineNo">064</span><a id="line.64">            0xff8700, 0xff875f, 0xff8787, 0xff87af, 0xff87d7, 0xff87ff,</a>
+<span class="sourceLineNo">065</span><a id="line.65">            0xffaf00, 0xffaf5f, 0xffaf87, 0xffafaf, 0xffafd7, 0xffafff,</a>
+<span class="sourceLineNo">066</span><a id="line.66">            0xffd700, 0xffd75f, 0xffd787, 0xffd7af, 0xffd7d7, 0xffd7ff,</a>
+<span class="sourceLineNo">067</span><a id="line.67">            0xffff00, 0xffff5f, 0xffff87, 0xffffaf, 0xffffd7, 0xffffff,</a>
+<span class="sourceLineNo">068</span><a id="line.68"></a>
+<span class="sourceLineNo">069</span><a id="line.69">            // 24 grey ramp</a>
+<span class="sourceLineNo">070</span><a id="line.70">            0x080808, 0x121212, 0x1c1c1c, 0x262626, 0x303030, 0x3a3a3a, 0x444444, 0x4e4e4e,</a>
+<span class="sourceLineNo">071</span><a id="line.71">            0x585858, 0x626262, 0x6c6c6c, 0x767676, 0x808080, 0x8a8a8a, 0x949494, 0x9e9e9e,</a>
+<span class="sourceLineNo">072</span><a id="line.72">            0xa8a8a8, 0xb2b2b2, 0xbcbcbc, 0xc6c6c6, 0xd0d0d0, 0xdadada, 0xe4e4e4, 0xeeeeee,</a>
+<span class="sourceLineNo">073</span><a id="line.73">    };</a>
+<span class="sourceLineNo">074</span><a id="line.74"></a>
+<span class="sourceLineNo">075</span><a id="line.75">    public static int roundColor(int col, int max) {</a>
+<span class="sourceLineNo">076</span><a id="line.76">        if (col &gt;= max) {</a>
+<span class="sourceLineNo">077</span><a id="line.77">            int c = DEFAULT_COLORS_256[col];</a>
+<span class="sourceLineNo">078</span><a id="line.78">            col = roundColor(c, DEFAULT_COLORS_256, max);</a>
+<span class="sourceLineNo">079</span><a id="line.79">        }</a>
+<span class="sourceLineNo">080</span><a id="line.80">        return col;</a>
+<span class="sourceLineNo">081</span><a id="line.81">    }</a>
+<span class="sourceLineNo">082</span><a id="line.82"></a>
+<span class="sourceLineNo">083</span><a id="line.83">    public static int roundRgbColor(int r, int g, int b, int max) {</a>
+<span class="sourceLineNo">084</span><a id="line.84">        return roundColor((r &lt;&lt; 16) + (g &lt;&lt; 8) + b, DEFAULT_COLORS_256, max);</a>
+<span class="sourceLineNo">085</span><a id="line.85">    }</a>
+<span class="sourceLineNo">086</span><a id="line.86"></a>
+<span class="sourceLineNo">087</span><a id="line.87">    private static int roundColor(int color, int[] colors, int max) {</a>
+<span class="sourceLineNo">088</span><a id="line.88">        double best_distance = Integer.MAX_VALUE;</a>
+<span class="sourceLineNo">089</span><a id="line.89">        int best_index = Integer.MAX_VALUE;</a>
+<span class="sourceLineNo">090</span><a id="line.90">        for (int idx = 0; idx &lt; max; idx++) {</a>
+<span class="sourceLineNo">091</span><a id="line.91">            double d = cie76(color, colors[idx]);</a>
+<span class="sourceLineNo">092</span><a id="line.92">            if (d &lt;= best_distance) {</a>
+<span class="sourceLineNo">093</span><a id="line.93">                best_index = idx;</a>
+<span class="sourceLineNo">094</span><a id="line.94">                best_distance = d;</a>
+<span class="sourceLineNo">095</span><a id="line.95">            }</a>
+<span class="sourceLineNo">096</span><a id="line.96">        }</a>
+<span class="sourceLineNo">097</span><a id="line.97">        return best_index;</a>
+<span class="sourceLineNo">098</span><a id="line.98">    }</a>
+<span class="sourceLineNo">099</span><a id="line.99"></a>
+<span class="sourceLineNo">100</span><a id="line.100">    private static double cie76(int c1, int c2) {</a>
+<span class="sourceLineNo">101</span><a id="line.101">        return scalar(rgb2cielab(c1), rgb2cielab(c2));</a>
+<span class="sourceLineNo">102</span><a id="line.102">    }</a>
+<span class="sourceLineNo">103</span><a id="line.103"></a>
+<span class="sourceLineNo">104</span><a id="line.104">    private static double scalar(double[] c1, double[] c2) {</a>
+<span class="sourceLineNo">105</span><a id="line.105">        return sqr(c1[0] - c2[0])</a>
+<span class="sourceLineNo">106</span><a id="line.106">             + sqr(c1[1] - c2[1])</a>
+<span class="sourceLineNo">107</span><a id="line.107">             + sqr(c1[2] - c2[2]);</a>
+<span class="sourceLineNo">108</span><a id="line.108">    }</a>
+<span class="sourceLineNo">109</span><a id="line.109"></a>
+<span class="sourceLineNo">110</span><a id="line.110">    private static double[] rgb(int color) {</a>
+<span class="sourceLineNo">111</span><a id="line.111">        int r = (color &gt;&gt; 16) &amp; 0xFF;</a>
+<span class="sourceLineNo">112</span><a id="line.112">        int g = (color &gt;&gt;  8) &amp; 0xFF;</a>
+<span class="sourceLineNo">113</span><a id="line.113">        int b = (color &gt;&gt;  0) &amp; 0xFF;</a>
+<span class="sourceLineNo">114</span><a id="line.114">        return new double[] { r / 255.0, g / 255.0, b / 255.0 };</a>
+<span class="sourceLineNo">115</span><a id="line.115">    }</a>
+<span class="sourceLineNo">116</span><a id="line.116"></a>
+<span class="sourceLineNo">117</span><a id="line.117">    private static double[] rgb2cielab(int color) {</a>
+<span class="sourceLineNo">118</span><a id="line.118">        return rgb2cielab(rgb(color));</a>
+<span class="sourceLineNo">119</span><a id="line.119">    }</a>
+<span class="sourceLineNo">120</span><a id="line.120"></a>
+<span class="sourceLineNo">121</span><a id="line.121">    private static double[] rgb2cielab(double[] rgb) {</a>
+<span class="sourceLineNo">122</span><a id="line.122">        return xyz2lab(rgb2xyz(rgb));</a>
+<span class="sourceLineNo">123</span><a id="line.123">    }</a>
+<span class="sourceLineNo">124</span><a id="line.124"></a>
+<span class="sourceLineNo">125</span><a id="line.125">    private static double[] rgb2xyz(double[] rgb) {</a>
+<span class="sourceLineNo">126</span><a id="line.126">        double vr = pivotRgb(rgb[0]);</a>
+<span class="sourceLineNo">127</span><a id="line.127">        double vg = pivotRgb(rgb[1]);</a>
+<span class="sourceLineNo">128</span><a id="line.128">        double vb = pivotRgb(rgb[2]);</a>
+<span class="sourceLineNo">129</span><a id="line.129">        // http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html</a>
+<span class="sourceLineNo">130</span><a id="line.130">        double x = vr * 0.4124564 + vg * 0.3575761 + vb * 0.1804375;</a>
+<span class="sourceLineNo">131</span><a id="line.131">        double y = vr * 0.2126729 + vg * 0.7151522 + vb * 0.0721750;</a>
+<span class="sourceLineNo">132</span><a id="line.132">        double z = vr * 0.0193339 + vg * 0.1191920 + vb * 0.9503041;</a>
+<span class="sourceLineNo">133</span><a id="line.133">        return new double[] { x, y, z };</a>
+<span class="sourceLineNo">134</span><a id="line.134">    }</a>
+<span class="sourceLineNo">135</span><a id="line.135"></a>
+<span class="sourceLineNo">136</span><a id="line.136">    private static double pivotRgb(double n) {</a>
+<span class="sourceLineNo">137</span><a id="line.137">        return n &gt; 0.04045 ? Math.pow((n + 0.055) / 1.055, 2.4) : n / 12.92;</a>
+<span class="sourceLineNo">138</span><a id="line.138">    }</a>
+<span class="sourceLineNo">139</span><a id="line.139"></a>
+<span class="sourceLineNo">140</span><a id="line.140">    private static double[] xyz2lab(double[] xyz) {</a>
+<span class="sourceLineNo">141</span><a id="line.141">        double fx = pivotXyz(xyz[0]);</a>
+<span class="sourceLineNo">142</span><a id="line.142">        double fy = pivotXyz(xyz[1]);</a>
+<span class="sourceLineNo">143</span><a id="line.143">        double fz = pivotXyz(xyz[2]);</a>
+<span class="sourceLineNo">144</span><a id="line.144">        double l = 116.0 * fy - 16.0;</a>
+<span class="sourceLineNo">145</span><a id="line.145">        double a = 500.0 * (fx - fy);</a>
+<span class="sourceLineNo">146</span><a id="line.146">        double b = 200.0 * (fy - fz);</a>
+<span class="sourceLineNo">147</span><a id="line.147">        return new double[] { l, a, b };</a>
+<span class="sourceLineNo">148</span><a id="line.148">    }</a>
+<span class="sourceLineNo">149</span><a id="line.149"></a>
+<span class="sourceLineNo">150</span><a id="line.150">    private static final double epsilon = 216.0 / 24389.0;</a>
+<span class="sourceLineNo">151</span><a id="line.151">    private static final double kappa = 24389.0 / 27.0;</a>
+<span class="sourceLineNo">152</span><a id="line.152">    private static double pivotXyz(double n) {</a>
+<span class="sourceLineNo">153</span><a id="line.153">        return n &gt; epsilon ? Math.cbrt(n) : (kappa * n + 16) / 116;</a>
+<span class="sourceLineNo">154</span><a id="line.154">    }</a>
+<span class="sourceLineNo">155</span><a id="line.155"></a>
+<span class="sourceLineNo">156</span><a id="line.156">    private static double sqr(double n) {</a>
+<span class="sourceLineNo">157</span><a id="line.157">        return n * n;</a>
+<span class="sourceLineNo">158</span><a id="line.158">    }</a>
+<span class="sourceLineNo">159</span><a id="line.159"></a>
+<span class="sourceLineNo">160</span><a id="line.160">}</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>
