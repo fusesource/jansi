@@ -99,6 +99,11 @@ public class AnsiRenderer {
                 return target;
             }
             j += BEGIN_TOKEN_LEN;
+
+            // Check for invalid string with END_TOKEN before BEGIN_TOKEN
+            if (k < j) {
+                throw new IllegalArgumentException("Invalid input string found.");
+            }
             String spec = input.substring(j, k);
 
             String[] items = spec.split(CODE_TEXT_SEPARATOR, 2);
