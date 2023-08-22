@@ -24,6 +24,7 @@ import static org.fusesource.jansi.Ansi.Color.*;
 import static org.fusesource.jansi.AnsiRenderer.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -32,7 +33,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author <a href="mailto:jason@planet57.com">Jason Dillon</a>
  */
 public class AnsiRendererTest {
-
     @BeforeAll
     static void setUp() {
         Ansi.setEnabled(true);
@@ -95,7 +95,6 @@ public class AnsiRendererTest {
         assertEquals(ansi().a(INTENSITY_BOLD).a("Hello").reset().toString(), str);
     }
 
-
     @Test
     public void testRenderNothing() {
         assertEquals("foo", render("foo"));
@@ -105,6 +104,11 @@ public class AnsiRendererTest {
     public void testRenderInvalidMissingEnd() {
         String str = render("@|bold foo");
         assertEquals("@|bold foo", str);
+    }
+
+    @Test
+    public void testRenderInvalidEndBeforeStart() {
+        assertThrows(IllegalArgumentException.class, () -> render("@|@"));
     }
 
     @Test
