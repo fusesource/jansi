@@ -707,14 +707,14 @@ public class Ansi implements Appendable {
 
     public Ansi scrollUp(final int rows) {
         if (rows == Integer.MIN_VALUE) {
-            return sctollDown(Integer.MAX_VALUE);
+            return scrollDown(Integer.MAX_VALUE);
         }
         return rows > 0 ? appendEscapeSequence('S', rows) : rows < 0 ? scrollDown(-rows) : this;
     }
 
     public Ansi scrollDown(final int rows) {
         if (rows == Integer.MIN_VALUE) {
-            return sctollUp(Integer.MAX_VALUE);
+            return scrollUp(Integer.MAX_VALUE);
         }
         return rows > 0 ? appendEscapeSequence('T', rows) : rows < 0 ? scrollUp(-rows) : this;
     }
