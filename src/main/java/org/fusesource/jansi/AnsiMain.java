@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2017 the original author(s).
+ * Copyright (C) 2009-2023 the original author(s).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@
  */
 package org.fusesource.jansi;
 
-import static org.fusesource.jansi.Ansi.ansi;
-
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.File;
@@ -30,6 +28,8 @@ import java.util.Properties;
 import org.fusesource.jansi.Ansi.Attribute;
 import org.fusesource.jansi.internal.CLibrary;
 import org.fusesource.jansi.internal.JansiLoader;
+
+import static org.fusesource.jansi.Ansi.ansi;
 
 /**
  * Main class for the library, providing executable jar to diagnose Jansi setup.
@@ -82,12 +82,12 @@ public class AnsiMain {
         System.out.println();
 
         System.out.println("os.name= " + System.getProperty("os.name") + ", "
-                        + "os.version= " + System.getProperty("os.version") + ", "
-                        + "os.arch= " + System.getProperty("os.arch"));
+                + "os.version= " + System.getProperty("os.version") + ", "
+                + "os.arch= " + System.getProperty("os.arch"));
         System.out.println("file.encoding= " + System.getProperty("file.encoding"));
         System.out.println("java.version= " + System.getProperty("java.version") + ", "
-                        + "java.vendor= " + System.getProperty("java.vendor") + ","
-                        + " java.home= " + System.getProperty("java.home"));
+                + "java.vendor= " + System.getProperty("java.vendor") + ","
+                + " java.home= " + System.getProperty("java.home"));
 
         System.out.println();
 
@@ -98,7 +98,8 @@ public class AnsiMain {
         System.out.println(AnsiConsole.JANSI_COLORS + "= " + System.getProperty(AnsiConsole.JANSI_COLORS, ""));
         System.out.println(AnsiConsole.JANSI_OUT_COLORS + "= " + System.getProperty(AnsiConsole.JANSI_OUT_COLORS, ""));
         System.out.println(AnsiConsole.JANSI_ERR_COLORS + "= " + System.getProperty(AnsiConsole.JANSI_ERR_COLORS, ""));
-        System.out.println(AnsiConsole.JANSI_PASSTHROUGH + "= " + AnsiConsole.getBoolean(AnsiConsole.JANSI_PASSTHROUGH));
+        System.out.println(
+                AnsiConsole.JANSI_PASSTHROUGH + "= " + AnsiConsole.getBoolean(AnsiConsole.JANSI_PASSTHROUGH));
         System.out.println(AnsiConsole.JANSI_STRIP + "= " + AnsiConsole.getBoolean(AnsiConsole.JANSI_STRIP));
         System.out.println(AnsiConsole.JANSI_FORCE + "= " + AnsiConsole.getBoolean(AnsiConsole.JANSI_FORCE));
         System.out.println(AnsiConsole.JANSI_NORESET + "= " + AnsiConsole.getBoolean(AnsiConsole.JANSI_NORESET));
@@ -116,7 +117,7 @@ public class AnsiMain {
         System.out.println();
 
         diagnoseTty(false); // System.out
-        diagnoseTty(true);  // System.err
+        diagnoseTty(true); // System.err
 
         AnsiConsole.systemInstall();
 
@@ -153,10 +154,10 @@ public class AnsiMain {
 
             if (args.length == 1) {
                 File f = new File(args[0]);
-                if (f.exists())
-                {
+                if (f.exists()) {
                     // write file content
-                    System.out.println(ansi().bold().a("\"" + args[0] + "\" content:").reset());
+                    System.out.println(
+                            ansi().bold().a("\"" + args[0] + "\" content:").reset());
                     writeFileContent(f);
                     return;
                 }
@@ -165,14 +166,14 @@ public class AnsiMain {
             // write args without Jansi then with Jansi AnsiConsole
             System.out.println(ansi().bold().a("original args:").reset());
             int i = 1;
-            for (String arg: args) {
+            for (String arg : args) {
                 AnsiConsole.system_out.print(i++ + ": ");
                 AnsiConsole.system_out.println(arg);
             }
 
             System.out.println(ansi().bold().a("Jansi filtered args:").reset());
             i = 1;
-            for (String arg: args) {
+            for (String arg : args) {
                 System.out.print(i++ + ": ");
                 System.out.println(arg);
             }
@@ -183,7 +184,7 @@ public class AnsiMain {
 
     private static String getJansiVersion() {
         Package p = AnsiMain.class.getPackage();
-        return ( p == null ) ? null : p.getImplementationVersion();
+        return (p == null) ? null : p.getImplementationVersion();
     }
 
     private static void diagnoseTty(boolean stderr) {
@@ -191,40 +192,40 @@ public class AnsiMain {
         int isatty = CLibrary.LOADED ? CLibrary.isatty(fd) : 0;
 
         System.out.println("isatty(STD" + (stderr ? "ERR" : "OUT") + "_FILENO): " + isatty + ", System."
-            + (stderr ? "err" : "out") + " " + ((isatty == 0) ? "is *NOT*" : "is") + " a terminal");
+                + (stderr ? "err" : "out") + " " + ((isatty == 0) ? "is *NOT*" : "is") + " a terminal");
     }
 
     private static void testAnsi(boolean stderr) {
-        @SuppressWarnings( "resource" )
+        @SuppressWarnings("resource")
         PrintStream s = stderr ? System.err : System.out;
         s.print("test on System." + (stderr ? "err" : "out") + ":");
-        for(Ansi.Color c: Ansi.Color.values()) {
+        for (Ansi.Color c : Ansi.Color.values()) {
             s.print(" " + ansi().fg(c) + c + ansi().reset());
         }
         s.println();
         s.print("            bright:");
-        for(Ansi.Color c: Ansi.Color.values()) {
+        for (Ansi.Color c : Ansi.Color.values()) {
             s.print(" " + ansi().fgBright(c) + c + ansi().reset());
         }
         s.println();
         s.print("              bold:");
-        for(Ansi.Color c: Ansi.Color.values()) {
+        for (Ansi.Color c : Ansi.Color.values()) {
             s.print(" " + ansi().bold().fg(c) + c + ansi().reset());
         }
         s.println();
         s.print("             faint:");
-        for(Ansi.Color c: Ansi.Color.values()) {
+        for (Ansi.Color c : Ansi.Color.values()) {
             s.print(" " + ansi().a(Attribute.INTENSITY_FAINT).fg(c) + c + ansi().reset());
         }
         s.println();
         s.print("        bold+faint:");
-        for(Ansi.Color c: Ansi.Color.values()) {
+        for (Ansi.Color c : Ansi.Color.values()) {
             s.print(" " + ansi().bold().a(Attribute.INTENSITY_FAINT).fg(c) + c + ansi().reset());
         }
         s.println();
         Ansi ansi = ansi();
         ansi.a("        256 colors: ");
-        for (int i = 0; i < 6*6*6; i++) {
+        for (int i = 0; i < 6 * 6 * 6; i++) {
             if (i > 0 && i % 36 == 0) {
                 ansi.reset();
                 ansi.newline();
@@ -234,7 +235,7 @@ public class AnsiMain {
                 ansi.a("  ");
             }
             int a0 = i % 6;
-            int a1 = (i  / 6) % 6;
+            int a1 = (i / 6) % 6;
             int a2 = i / 36;
             ansi.bg(16 + a0 + a2 * 6 + a1 * 36).a(' ');
         }
@@ -272,7 +273,8 @@ public class AnsiMain {
     }
 
     private static void printJansiLogoDemo() throws IOException {
-        BufferedReader in = new BufferedReader(new InputStreamReader(AnsiMain.class.getResourceAsStream("jansi.txt"), "UTF-8"));
+        BufferedReader in =
+                new BufferedReader(new InputStreamReader(AnsiMain.class.getResourceAsStream("jansi.txt"), "UTF-8"));
         try {
             String l;
             while ((l = in.readLine()) != null) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2017 the original author(s).
+ * Copyright (C) 2009-2023 the original author(s).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ public class AnsiStringTest {
 
     @Test
     public void testCursorPosition() {
-        Ansi ansi = Ansi.ansi().cursor( 3, 6 ).reset();
+        Ansi ansi = Ansi.ansi().cursor(3, 6).reset();
         assertEquals("\u001B[3;6H\u001B[m", ansi.toString());
     }
 }

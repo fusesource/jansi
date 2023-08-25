@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2020 the original author(s).
+ * Copyright (C) 2009-2023 the original author(s).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,13 +21,11 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.junit.jupiter.api.Test;
-
 import org.fusesource.jansi.io.AnsiOutputStream;
 import org.fusesource.jansi.io.AnsiProcessor;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
 
 public class EncodingTest {
 
@@ -35,12 +33,25 @@ public class EncodingTest {
     public void testEncoding8859() throws UnsupportedEncodingException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         final AtomicReference<String> newLabel = new AtomicReference<String>();
-        PrintStream ansi = new AnsiPrintStream(new AnsiOutputStream(baos, null, AnsiMode.Default, new AnsiProcessor(baos) {
-            @Override
-            protected void processChangeWindowTitle(String label) {
-                newLabel.set(label);
-            }
-        }, AnsiType.Emulation, AnsiColors.TrueColor, Charset.forName("ISO-8859-1"), null, null, false), true, "ISO-8859-1");
+        PrintStream ansi = new AnsiPrintStream(
+                new AnsiOutputStream(
+                        baos,
+                        null,
+                        AnsiMode.Default,
+                        new AnsiProcessor(baos) {
+                            @Override
+                            protected void processChangeWindowTitle(String label) {
+                                newLabel.set(label);
+                            }
+                        },
+                        AnsiType.Emulation,
+                        AnsiColors.TrueColor,
+                        Charset.forName("ISO-8859-1"),
+                        null,
+                        null,
+                        false),
+                true,
+                "ISO-8859-1");
 
         ansi.print("\033]0;un bon café\007");
         ansi.flush();
@@ -51,16 +62,28 @@ public class EncodingTest {
     public void testEncodingUtf8() throws UnsupportedEncodingException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         final AtomicReference<String> newLabel = new AtomicReference<String>();
-        PrintStream ansi = new PrintStream(new AnsiOutputStream(baos, null, AnsiMode.Default, new AnsiProcessor(baos) {
-            @Override
-            protected void processChangeWindowTitle(String label) {
-                newLabel.set(label);
-            }
-        }, AnsiType.Emulation, AnsiColors.TrueColor, Charset.forName("UTF-8"), null, null, false), true, "UTF-8");
+        PrintStream ansi = new PrintStream(
+                new AnsiOutputStream(
+                        baos,
+                        null,
+                        AnsiMode.Default,
+                        new AnsiProcessor(baos) {
+                            @Override
+                            protected void processChangeWindowTitle(String label) {
+                                newLabel.set(label);
+                            }
+                        },
+                        AnsiType.Emulation,
+                        AnsiColors.TrueColor,
+                        Charset.forName("UTF-8"),
+                        null,
+                        null,
+                        false),
+                true,
+                "UTF-8");
 
         ansi.print("\033]0;ひらがな\007");
         ansi.flush();
         assertEquals("ひらがな", newLabel.get());
     }
-
 }

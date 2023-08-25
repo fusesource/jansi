@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2009-2017 the original author(s).
+ * Copyright (C) 2009-2023 the original author(s).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -58,7 +58,6 @@ public class Kernel32 {
     public static int STD_ERROR_HANDLE;
     public static int INVALID_HANDLE_VALUE;
 
-
     public static native long malloc(long size);
 
     public static native void free(long ptr);
@@ -66,7 +65,7 @@ public class Kernel32 {
     /**
      * http://msdn.microsoft.com/en-us/library/ms686311%28VS.85%29.aspx
      */
-    static public class SMALL_RECT {
+    public static class SMALL_RECT {
         static {
             JansiLoader.initialize();
             init();
@@ -102,9 +101,7 @@ public class Kernel32 {
     /**
      * see http://msdn.microsoft.com/en-us/library/ms686047%28VS.85%29.aspx
      */
-    public static native int SetConsoleTextAttribute(
-            long consoleOutput,
-            short attributes);
+    public static native int SetConsoleTextAttribute(long consoleOutput, short attributes);
 
     public static class COORD {
 
@@ -157,7 +154,6 @@ public class Kernel32 {
         }
     }
 
-
     // DWORD WINAPI WaitForSingleObject(
     //  _In_ HANDLE hHandle,
     //  _In_ DWORD  dwMilliseconds
@@ -169,29 +165,19 @@ public class Kernel32 {
      */
     public static native int CloseHandle(long handle);
 
-
     /**
      * see: http://msdn.microsoft.com/en-us/library/ms679360(VS.85).aspx
      */
     public static native int GetLastError();
 
     public static native int FormatMessageW(
-            int flags,
-            long source,
-            int messageId,
-            int languageId,
-            byte[] buffer,
-            int size,
-            long[] args
-    );
-
+            int flags, long source, int messageId, int languageId, byte[] buffer, int size, long[] args);
 
     /**
      * See: http://msdn.microsoft.com/en-us/library/ms683171%28VS.85%29.aspx
      */
     public static native int GetConsoleScreenBufferInfo(
-            long consoleOutput,
-            CONSOLE_SCREEN_BUFFER_INFO consoleScreenBufferInfo);
+            long consoleOutput, CONSOLE_SCREEN_BUFFER_INFO consoleScreenBufferInfo);
 
     /**
      * see: http://msdn.microsoft.com/en-us/library/ms683231%28VS.85%29.aspx
@@ -201,68 +187,47 @@ public class Kernel32 {
     /**
      * http://msdn.microsoft.com/en-us/library/ms686025%28VS.85%29.aspx
      */
-    public static native int SetConsoleCursorPosition(
-            long consoleOutput,
-            COORD cursorPosition);
+    public static native int SetConsoleCursorPosition(long consoleOutput, COORD cursorPosition);
 
     /**
      * see: http://msdn.microsoft.com/en-us/library/ms682663%28VS.85%29.aspx
      */
     public static native int FillConsoleOutputCharacterW(
-            long consoleOutput,
-            char character,
-            int length,
-            COORD writeCoord,
-            int[] numberOfCharsWritten);
+            long consoleOutput, char character, int length, COORD writeCoord, int[] numberOfCharsWritten);
 
     /**
      * see: https://msdn.microsoft.com/en-us/library/ms682662%28VS.85%29.aspx
      */
     public static native int FillConsoleOutputAttribute(
-            long consoleOutput,
-            short attribute,
-            int length,
-            COORD writeCoord,
-            int[] numberOfAttrsWritten);
+            long consoleOutput, short attribute, int length, COORD writeCoord, int[] numberOfAttrsWritten);
 
     /**
      * see: http://msdn.microsoft.com/en-us/library/ms687401(v=VS.85).aspx
      */
     public static native int WriteConsoleW(
-            long consoleOutput,
-            char[] buffer,
-            int numberOfCharsToWrite,
-            int[] numberOfCharsWritten,
-            long reserved);
+            long consoleOutput, char[] buffer, int numberOfCharsToWrite, int[] numberOfCharsWritten, long reserved);
 
     /**
      * see: http://msdn.microsoft.com/en-us/library/ms683167%28VS.85%29.aspx
      */
-    public static native int GetConsoleMode(
-            long handle,
-            int[] mode);
+    public static native int GetConsoleMode(long handle, int[] mode);
 
     /**
      * see: http://msdn.microsoft.com/en-us/library/ms686033%28VS.85%29.aspx
      */
-    public static native int SetConsoleMode(
-            long handle,
-            int mode);
+    public static native int SetConsoleMode(long handle, int mode);
 
     /**
      * see: http://msdn.microsoft.com/en-us/library/078sfkak(VS.80).aspx
      */
     public static native int _getch();
 
-
     /**
      * see: http://msdn.microsoft.com/en-us/library/ms686050%28VS.85%29.aspx
      *
      * @return 0 if title was set successfully
      */
-    public static native int SetConsoleTitle(
-            String title);
-
+    public static native int SetConsoleTitle(String title);
 
     /**
      * see: http://msdn.microsoft.com/en-us/library/ms683169(v=VS.85).aspx
@@ -337,14 +302,13 @@ public class Kernel32 {
         public int controlKeyState;
 
         public String toString() {
-            return "KEY_EVENT_RECORD{" +
-                    "keyDown=" + keyDown +
-                    ", repeatCount=" + repeatCount +
-                    ", keyCode=" + keyCode +
-                    ", scanCode=" + scanCode +
-                    ", uchar=" + uchar +
-                    ", controlKeyState=" + controlKeyState +
-                    '}';
+            return "KEY_EVENT_RECORD{" + "keyDown="
+                    + keyDown + ", repeatCount="
+                    + repeatCount + ", keyCode="
+                    + keyCode + ", scanCode="
+                    + scanCode + ", uchar="
+                    + uchar + ", controlKeyState="
+                    + controlKeyState + '}';
         }
     }
 
@@ -388,12 +352,11 @@ public class Kernel32 {
         public int eventFlags;
 
         public String toString() {
-            return "MOUSE_EVENT_RECORD{" +
-                    "mousePosition=" + mousePosition +
-                    ", buttonState=" + buttonState +
-                    ", controlKeyState=" + controlKeyState +
-                    ", eventFlags=" + eventFlags +
-                    '}';
+            return "MOUSE_EVENT_RECORD{" + "mousePosition="
+                    + mousePosition + ", buttonState="
+                    + buttonState + ", controlKeyState="
+                    + controlKeyState + ", eventFlags="
+                    + eventFlags + '}';
         }
     }
 
@@ -473,49 +436,33 @@ public class Kernel32 {
         public MENU_EVENT_RECORD menuEvent = new MENU_EVENT_RECORD();
         public FOCUS_EVENT_RECORD focusEvent = new FOCUS_EVENT_RECORD();
 
-        public static native void memmove(
-                INPUT_RECORD dest,
-                long src,
-                long size);
-
+        public static native void memmove(INPUT_RECORD dest, long src, long size);
     }
 
     /**
      * see: http://msdn.microsoft.com/en-us/library/ms684961(v=VS.85).aspx
      */
-    private static native int ReadConsoleInputW(
-            long handle,
-            long inputRecord,
-            int length,
-            int[] eventsCount);
+    private static native int ReadConsoleInputW(long handle, long inputRecord, int length, int[] eventsCount);
 
     /**
      * see: http://msdn.microsoft.com/en-us/library/ms684344(v=VS.85).aspx
      */
-    private static native int PeekConsoleInputW(
-            long handle,
-            long inputRecord,
-            int length,
-            int[] eventsCount);
+    private static native int PeekConsoleInputW(long handle, long inputRecord, int length, int[] eventsCount);
 
     /**
      * see: http://msdn.microsoft.com/en-us/library/ms683207(v=VS.85).aspx
      */
-    public static native int GetNumberOfConsoleInputEvents(
-            long handle,
-            int[] numberOfEvents);
+    public static native int GetNumberOfConsoleInputEvents(long handle, int[] numberOfEvents);
 
     /**
      * see: http://msdn.microsoft.com/en-us/library/ms683147(v=VS.85).aspx
      */
-    public static native int FlushConsoleInputBuffer(
-            long handle);
+    public static native int FlushConsoleInputBuffer(long handle);
 
     /**
      * Return console input events.
      */
-    public static INPUT_RECORD[] readConsoleInputHelper(
-            long handle, int count, boolean peek) throws IOException {
+    public static INPUT_RECORD[] readConsoleInputHelper(long handle, int count, boolean peek) throws IOException {
         int[] length = new int[1];
         int res;
         long inputRecordPtr = 0;
@@ -524,8 +471,8 @@ public class Kernel32 {
             if (inputRecordPtr == 0) {
                 throw new IOException("cannot allocate memory with JNI");
             }
-            res = peek ?
-                    PeekConsoleInputW(handle, inputRecordPtr, count, length)
+            res = peek
+                    ? PeekConsoleInputW(handle, inputRecordPtr, count, length)
                     : ReadConsoleInputW(handle, inputRecordPtr, count, length);
             if (res == 0) {
                 throw new IOException("ReadConsoleInputW failed: " + WindowsSupport.getLastErrorMessage());
@@ -552,8 +499,7 @@ public class Kernel32 {
      * @param count requested number of events
      * @return array possibly of size smaller then count
      */
-    public static INPUT_RECORD[] readConsoleKeyInput(long handle, int count, boolean peek)
-            throws IOException {
+    public static INPUT_RECORD[] readConsoleKeyInput(long handle, int count, boolean peek) throws IOException {
         while (true) {
             // read events until we have keyboard events, the queue could be full
             // of mouse events.
@@ -574,6 +520,4 @@ public class Kernel32 {
             }
         }
     }
-
-
 }
