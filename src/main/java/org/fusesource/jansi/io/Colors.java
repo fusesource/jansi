@@ -1,10 +1,17 @@
 /*
- * Copyright (c) 2002-2018, the original author or authors.
+ * Copyright (C) 2009-2023 the original author(s).
  *
- * This software is distributable under the BSD license. See the terms of the
- * BSD license in the documentation provided with this software.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * https://opensource.org/licenses/BSD-3-Clause
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.fusesource.jansi.io;
 
@@ -18,6 +25,7 @@ public class Colors {
     /**
      * Default 256 colors palette
      */
+    // spotless:off
     public static final int[] DEFAULT_COLORS_256 = {
             // 16 ansi
             0x000000, 0x800000, 0x008000, 0x808000, 0x000080, 0x800080, 0x008080, 0xc0c0c0,
@@ -71,6 +79,7 @@ public class Colors {
             0x585858, 0x626262, 0x6c6c6c, 0x767676, 0x808080, 0x8a8a8a, 0x949494, 0x9e9e9e,
             0xa8a8a8, 0xb2b2b2, 0xbcbcbc, 0xc6c6c6, 0xd0d0d0, 0xdadada, 0xe4e4e4, 0xeeeeee,
     };
+    // spotless:on
 
     public static int roundColor(int col, int max) {
         if (col >= max) {
@@ -102,16 +111,14 @@ public class Colors {
     }
 
     private static double scalar(double[] c1, double[] c2) {
-        return sqr(c1[0] - c2[0])
-             + sqr(c1[1] - c2[1])
-             + sqr(c1[2] - c2[2]);
+        return sqr(c1[0] - c2[0]) + sqr(c1[1] - c2[1]) + sqr(c1[2] - c2[2]);
     }
 
     private static double[] rgb(int color) {
         int r = (color >> 16) & 0xFF;
-        int g = (color >>  8) & 0xFF;
-        int b = (color >>  0) & 0xFF;
-        return new double[] { r / 255.0, g / 255.0, b / 255.0 };
+        int g = (color >> 8) & 0xFF;
+        int b = (color >> 0) & 0xFF;
+        return new double[] {r / 255.0, g / 255.0, b / 255.0};
     }
 
     private static double[] rgb2cielab(int color) {
@@ -130,7 +137,7 @@ public class Colors {
         double x = vr * 0.4124564 + vg * 0.3575761 + vb * 0.1804375;
         double y = vr * 0.2126729 + vg * 0.7151522 + vb * 0.0721750;
         double z = vr * 0.0193339 + vg * 0.1191920 + vb * 0.9503041;
-        return new double[] { x, y, z };
+        return new double[] {x, y, z};
     }
 
     private static double pivotRgb(double n) {
@@ -144,11 +151,12 @@ public class Colors {
         double l = 116.0 * fy - 16.0;
         double a = 500.0 * (fx - fy);
         double b = 200.0 * (fy - fz);
-        return new double[] { l, a, b };
+        return new double[] {l, a, b};
     }
 
     private static final double epsilon = 216.0 / 24389.0;
     private static final double kappa = 24389.0 / 27.0;
+
     private static double pivotXyz(double n) {
         return n > epsilon ? Math.cbrt(n) : (kappa * n + 16) / 116;
     }
@@ -156,5 +164,4 @@ public class Colors {
     private static double sqr(double n) {
         return n * n;
     }
-
 }

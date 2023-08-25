@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2021 the original author(s).
+ * Copyright (C) 2009-2023 the original author(s).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,11 +80,18 @@ public class AnsiRendererTest {
     public void testRender4() {
         String str = render("@|bold,red foo bar baz|@ ick @|bold,red foo bar baz|@");
         System.out.println(str);
-        assertEquals(ansi()
-                .a(INTENSITY_BOLD).fg(RED).a("foo bar baz").reset()
-                .a(" ick ")
-                .a(INTENSITY_BOLD).fg(RED).a("foo bar baz").reset()
-                .toString(), str);
+        assertEquals(
+                ansi().a(INTENSITY_BOLD)
+                        .fg(RED)
+                        .a("foo bar baz")
+                        .reset()
+                        .a(" ick ")
+                        .a(INTENSITY_BOLD)
+                        .fg(RED)
+                        .a("foo bar baz")
+                        .reset()
+                        .toString(),
+                str);
     }
 
     @Test
@@ -94,7 +101,6 @@ public class AnsiRendererTest {
         System.out.println(str);
         assertEquals(ansi().a(INTENSITY_BOLD).a("Hello").reset().toString(), str);
     }
-
 
     @Test
     public void testRenderNothing() {

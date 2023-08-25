@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2009-2023 the original author(s).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.fusesource.jansi.internal;
+
 /*--------------------------------------------------------------------------
  *  Copyright 2008 Taro L. Saito
  *
@@ -13,7 +30,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  *--------------------------------------------------------------------------*/
-package org.fusesource.jansi.internal;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -37,6 +53,7 @@ public class OSInfo {
     public static final String ARM64 = "arm64";
 
     private static final HashMap<String, String> archMapping = new HashMap<String, String>();
+
     static {
         // x86 mappings
         archMapping.put(X86, X86);
@@ -77,7 +94,6 @@ public class OSInfo {
         // aarch64 mappings
         archMapping.put("aarch64", ARM64);
     }
-
 
     public static void main(String[] args) {
         if (args.length >= 1) {
@@ -120,7 +136,6 @@ public class OSInfo {
         } catch (Throwable e) {
             return false;
         }
-
     }
 
     static String getHardwareName() {
@@ -190,8 +205,7 @@ public class OSInfo {
             osArch = resolveArmArchType();
         } else {
             String lc = osArch.toLowerCase(Locale.US);
-            if (archMapping.containsKey(lc))
-                return archMapping.get(lc);
+            if (archMapping.containsKey(lc)) return archMapping.get(lc);
         }
         return translateArchNameToFolderName(osArch);
     }
@@ -201,8 +215,8 @@ public class OSInfo {
             return "Windows";
         } else if (osName.contains("Mac") || osName.contains("Darwin")) {
             return "Mac";
-//        } else if (isAlpine()) {
-//            return "Linux-Alpine";
+            //        } else if (isAlpine()) {
+            //            return "Linux-Alpine";
         } else if (osName.contains("Linux")) {
             return "Linux";
         } else if (osName.contains("AIX")) {

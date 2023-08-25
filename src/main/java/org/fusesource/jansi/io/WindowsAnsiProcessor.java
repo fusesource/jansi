@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2017 the original author(s).
+ * Copyright (C) 2009-2023 the original author(s).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,13 @@
  */
 package org.fusesource.jansi.io;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
+import org.fusesource.jansi.WindowsSupport;
+import org.fusesource.jansi.internal.Kernel32.CONSOLE_SCREEN_BUFFER_INFO;
+import org.fusesource.jansi.internal.Kernel32.COORD;
+
 import static org.fusesource.jansi.internal.Kernel32.BACKGROUND_BLUE;
 import static org.fusesource.jansi.internal.Kernel32.BACKGROUND_GREEN;
 import static org.fusesource.jansi.internal.Kernel32.BACKGROUND_INTENSITY;
@@ -29,23 +36,16 @@ import static org.fusesource.jansi.internal.Kernel32.FillConsoleOutputCharacterW
 import static org.fusesource.jansi.internal.Kernel32.GetConsoleScreenBufferInfo;
 import static org.fusesource.jansi.internal.Kernel32.GetStdHandle;
 import static org.fusesource.jansi.internal.Kernel32.SMALL_RECT;
-import static org.fusesource.jansi.internal.Kernel32.STD_OUTPUT_HANDLE;
 import static org.fusesource.jansi.internal.Kernel32.STD_ERROR_HANDLE;
+import static org.fusesource.jansi.internal.Kernel32.STD_OUTPUT_HANDLE;
 import static org.fusesource.jansi.internal.Kernel32.ScrollConsoleScreenBuffer;
 import static org.fusesource.jansi.internal.Kernel32.SetConsoleCursorPosition;
 import static org.fusesource.jansi.internal.Kernel32.SetConsoleTextAttribute;
 import static org.fusesource.jansi.internal.Kernel32.SetConsoleTitle;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
-import org.fusesource.jansi.internal.Kernel32.CONSOLE_SCREEN_BUFFER_INFO;
-import org.fusesource.jansi.internal.Kernel32.COORD;
-import org.fusesource.jansi.WindowsSupport;
-
 /**
  * A Windows ANSI escape processor, that uses JNA to access native platform
- * API's to change the console attributes (see 
+ * API's to change the console attributes (see
  * <a href="http://fusesource.github.io/jansi/documentation/native-api/index.html?org/fusesource/jansi/internal/Kernel32.html">Jansi native Kernel32</a>).
  * <p>The native library used is named <code>jansi</code> and is loaded using <a href="http://fusesource.github.io/hawtjni/">HawtJNI</a> Runtime
  * <a href="http://fusesource.github.io/hawtjni/documentation/api/index.html?org/fusesource/hawtjni/runtime/Library.html"><code>Library</code></a>
@@ -71,25 +71,25 @@ public final class WindowsAnsiProcessor extends AnsiProcessor {
     private static final short BACKGROUND_WHITE = (short) (BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE);
 
     private static final short[] ANSI_FOREGROUND_COLOR_MAP = {
-            FOREGROUND_BLACK,
-            FOREGROUND_RED,
-            FOREGROUND_GREEN,
-            FOREGROUND_YELLOW,
-            FOREGROUND_BLUE,
-            FOREGROUND_MAGENTA,
-            FOREGROUND_CYAN,
-            FOREGROUND_WHITE,
+        FOREGROUND_BLACK,
+        FOREGROUND_RED,
+        FOREGROUND_GREEN,
+        FOREGROUND_YELLOW,
+        FOREGROUND_BLUE,
+        FOREGROUND_MAGENTA,
+        FOREGROUND_CYAN,
+        FOREGROUND_WHITE,
     };
 
     private static final short[] ANSI_BACKGROUND_COLOR_MAP = {
-            BACKGROUND_BLACK,
-            BACKGROUND_RED,
-            BACKGROUND_GREEN,
-            BACKGROUND_YELLOW,
-            BACKGROUND_BLUE,
-            BACKGROUND_MAGENTA,
-            BACKGROUND_CYAN,
-            BACKGROUND_WHITE,
+        BACKGROUND_BLACK,
+        BACKGROUND_RED,
+        BACKGROUND_GREEN,
+        BACKGROUND_YELLOW,
+        BACKGROUND_BLUE,
+        BACKGROUND_MAGENTA,
+        BACKGROUND_CYAN,
+        BACKGROUND_WHITE,
     };
 
     private final CONSOLE_SCREEN_BUFFER_INFO info = new CONSOLE_SCREEN_BUFFER_INFO();
@@ -168,14 +168,13 @@ public final class WindowsAnsiProcessor extends AnsiProcessor {
                 COORD topLeft2 = new COORD();
                 topLeft2.x = 0;
                 topLeft2.y = info.window.top;
-                int lengthToCursor = (info.cursorPosition.y - info.window.top) * info.size.x
-                        + info.cursorPosition.x;
+                int lengthToCursor = (info.cursorPosition.y - info.window.top) * info.size.x + info.cursorPosition.x;
                 FillConsoleOutputAttribute(console, info.attributes, lengthToCursor, topLeft2, written);
                 FillConsoleOutputCharacterW(console, ' ', lengthToCursor, topLeft2, written);
                 break;
             case ERASE_SCREEN_TO_END:
-                int lengthToEnd = (info.window.bottom - info.cursorPosition.y) * info.size.x +
-                        (info.size.x - info.cursorPosition.x);
+                int lengthToEnd = (info.window.bottom - info.cursorPosition.y) * info.size.x
+                        + (info.size.x - info.cursorPosition.x);
                 FillConsoleOutputAttribute(console, info.attributes, lengthToEnd, info.cursorPosition.copy(), written);
                 FillConsoleOutputCharacterW(console, ' ', lengthToEnd, info.cursorPosition.copy(), written);
                 break;
@@ -203,7 +202,8 @@ public final class WindowsAnsiProcessor extends AnsiProcessor {
                 break;
             case ERASE_LINE_TO_END:
                 int lengthToLastCol = info.size.x - info.cursorPosition.x;
-                FillConsoleOutputAttribute(console, info.attributes, lengthToLastCol, info.cursorPosition.copy(), written);
+                FillConsoleOutputAttribute(
+                        console, info.attributes, lengthToLastCol, info.cursorPosition.copy(), written);
                 FillConsoleOutputCharacterW(console, ' ', lengthToLastCol, info.cursorPosition.copy(), written);
                 break;
             default:
@@ -345,8 +345,8 @@ public final class WindowsAnsiProcessor extends AnsiProcessor {
                 applyAttribute();
                 break;
 
-            // Yeah, setting the background intensity is not underlining.. but it's best we can do
-            // using the Windows console API
+                // Yeah, setting the background intensity is not underlining.. but it's best we can do
+                // using the Windows console API
             case ATTRIBUTE_UNDERLINE:
                 info.attributes = (short) (info.attributes | BACKGROUND_INTENSITY);
                 applyAttribute();
@@ -394,7 +394,7 @@ public final class WindowsAnsiProcessor extends AnsiProcessor {
         scroll.top = info.cursorPosition.y;
         COORD org = new COORD();
         org.x = 0;
-        org.y = (short)(info.cursorPosition.y + optionInt);
+        org.y = (short) (info.cursorPosition.y + optionInt);
         CHAR_INFO info = new CHAR_INFO();
         info.attributes = originalColors;
         info.unicodeChar = ' ';
@@ -410,7 +410,7 @@ public final class WindowsAnsiProcessor extends AnsiProcessor {
         scroll.top = info.cursorPosition.y;
         COORD org = new COORD();
         org.x = 0;
-        org.y = (short)(info.cursorPosition.y - optionInt);
+        org.y = (short) (info.cursorPosition.y - optionInt);
         CHAR_INFO info = new CHAR_INFO();
         info.attributes = originalColors;
         info.unicodeChar = ' ';

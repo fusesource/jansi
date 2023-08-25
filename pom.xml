@@ -31,38 +31,8 @@
     <name>Jansi</name>
     <description>Jansi is a java library for generating and interpreting ANSI escape sequences.</description>
 
-    <properties>
-        <javadocSource>7</javadocSource>
-        <jdkTarget>1.7</jdkTarget>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <slf4j-version>1.6.1</slf4j-version>
-        <project.build.outputTimestamp>2021-10-14T05:42:06Z</project.build.outputTimestamp>
-    </properties>
-
     <url>http://fusesource.github.io/jansi</url>
     <inceptionYear>2009</inceptionYear>
-
-    <issueManagement>
-        <system>jira</system>
-        <url>https://github.com/fusesource/jansi/issues</url>
-    </issueManagement>
-
-    <mailingLists>
-        <mailingList>
-            <name>Discussion List</name>
-            <archive>http://groups.google.com/group/jansi</archive>
-            <post>jansi-dev@googlegroups.com</post>
-            <subscribe>jansi-dev+subscribe@googlegroups.com</subscribe>
-            <unsubscribe>jansi-dev+unsubscribe@googlegroups.com</unsubscribe>
-        </mailingList>
-        <mailingList>
-            <name>Commits and Issue Tracker List</name>
-            <archive>http://groups.google.com/group/jansi-commits</archive>
-            <post>jansi-commits@googlegroups.com</post>
-            <subscribe>jansi-commits+subscribe@googlegroups.com</subscribe>
-            <unsubscribe>jansi-commisots+unsubscribe@googlegroups.com</unsubscribe>
-        </mailingList>
-    </mailingLists>
 
     <licenses>
         <license>
@@ -71,37 +41,6 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
-
-    <scm>
-        <url>https://github.com/fusesource/jansi</url>
-        <connection>scm:git:git://github.com/fusesource/jansi.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/fusesource/jansi.git</developerConnection>
-      <tag>HEAD</tag>
-  </scm>
-
-    <distributionManagement>
-        <repository>
-            <id>sonatype-nexus-staging</id>
-            <name>Sonatype Staging Repository</name>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
-        </repository>
-        <snapshotRepository>
-            <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Snapshot Repository</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
-
-    <repositories>
-        <repository>
-            <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Snapshot Repository</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
 
     <developers>
         <developer>
@@ -119,26 +58,101 @@
         </developer>
     </developers>
 
+    <mailingLists>
+        <mailingList>
+            <name>Discussion List</name>
+            <subscribe>jansi-dev+subscribe@googlegroups.com</subscribe>
+            <unsubscribe>jansi-dev+unsubscribe@googlegroups.com</unsubscribe>
+            <post>jansi-dev@googlegroups.com</post>
+            <archive>http://groups.google.com/group/jansi</archive>
+        </mailingList>
+        <mailingList>
+            <name>Commits and Issue Tracker List</name>
+            <subscribe>jansi-commits+subscribe@googlegroups.com</subscribe>
+            <unsubscribe>jansi-commisots+unsubscribe@googlegroups.com</unsubscribe>
+            <post>jansi-commits@googlegroups.com</post>
+            <archive>http://groups.google.com/group/jansi-commits</archive>
+        </mailingList>
+    </mailingLists>
+
+    <scm>
+        <connection>scm:git:git://github.com/fusesource/jansi.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/fusesource/jansi.git</developerConnection>
+        <tag>HEAD</tag>
+        <url>https://github.com/fusesource/jansi</url>
+    </scm>
+
+    <issueManagement>
+        <system>jira</system>
+        <url>https://github.com/fusesource/jansi/issues</url>
+    </issueManagement>
+
+    <distributionManagement>
+        <repository>
+            <id>sonatype-nexus-staging</id>
+            <name>Sonatype Staging Repository</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+        </repository>
+        <snapshotRepository>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Snapshot Repository</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <properties>
+        <javadocSource>7</javadocSource>
+        <jdkTarget>1.7</jdkTarget>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <slf4j-version>1.6.1</slf4j-version>
+        <project.build.outputTimestamp>2021-10-14T05:42:06Z</project.build.outputTimestamp>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.7.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>5.7.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>info.picocli</groupId>
+            <artifactId>picocli-codegen</artifactId>
+            <version>4.5.2</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <repositories>
+        <repository>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Snapshot Repository</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
+    </repositories>
+
     <build>
-        <extensions>
-            <extension>
-                <groupId>org.fusesource.mvnplugins</groupId>
-                <artifactId>fuse-jxr-skin</artifactId>
-                <version>1.9</version>
-            </extension>
-        </extensions>
 
         <resources>
             <resource>
-                <directory>src/main/resources</directory>
                 <filtering>true</filtering>
+                <directory>src/main/resources</directory>
                 <includes>
                     <include>**/*.properties</include>
                 </includes>
             </resource>
             <resource>
-                <directory>src/main/resources</directory>
                 <filtering>false</filtering>
+                <directory>src/main/resources</directory>
                 <excludes>
                     <exclude>**/*.properties</exclude>
                 </excludes>
@@ -178,18 +192,16 @@
                 <executions>
                     <execution>
                         <id>bundle-manifest</id>
-                        <phase>process-classes</phase>
                         <goals>
                             <goal>manifest</goal>
                         </goals>
+                        <phase>process-classes</phase>
                         <configuration>
                             <instructions>
                                 <Main-Class>org.fusesource.jansi.AnsiMain</Main-Class>
-                                <Export-Package>
-                                    !org.fusesource.jansi.internal.native.*;
+                                <Export-Package>!org.fusesource.jansi.internal.native.*;
                                     org.fusesource.jansi.*;
-                                    -noimport:=true
-                                </Export-Package>
+                                    -noimport:=true</Export-Package>
                                 <_removeheaders>Bnd-LastModified,Include-Resource,Private-Package,Originally-Created-By</_removeheaders>
                                 <_reproducible>true</_reproducible>
                             </instructions>
@@ -204,19 +216,17 @@
                 <executions>
                     <execution>
                         <id>add-module-infos</id>
-                        <phase>package</phase>
                         <goals>
                             <goal>add-module-info</goal>
                         </goals>
+                        <phase>package</phase>
                         <configuration>
                             <jvmVersion>9</jvmVersion>
                             <module>
                                 <moduleInfo>
                                     <name>org.fusesource.jansi</name>
-                                    <exports>
-                                        org.fusesource.jansi;
-                                        org.fusesource.jansi.io;
-                                    </exports>
+                                    <exports>org.fusesource.jansi;
+                                        org.fusesource.jansi.io;</exports>
                                 </moduleInfo>
                             </module>
                         </configuration>
@@ -228,13 +238,20 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.0.0</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>info.picocli</groupId>
+                        <artifactId>picocli-codegen</artifactId>
+                        <version>4.5.2</version>
+                    </dependency>
+                </dependencies>
                 <executions>
                     <execution>
                         <id>generate-graalvm-info</id>
-                        <phase>process-classes</phase>
                         <goals>
                             <goal>java</goal>
                         </goals>
+                        <phase>process-classes</phase>
                         <configuration>
                             <includeProjectDependencies>true</includeProjectDependencies>
                             <classpathScope>test</classpathScope>
@@ -251,13 +268,6 @@
                         </configuration>
                     </execution>
                 </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>info.picocli</groupId>
-                        <artifactId>picocli-codegen</artifactId>
-                        <version>4.5.2</version>
-                    </dependency>
-                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -338,10 +348,10 @@
                 <executions>
                     <execution>
                         <id>sign-artifacts</id>
-                        <phase>verify</phase>
                         <goals>
                             <goal>sign</goal>
                         </goals>
+                        <phase>verify</phase>
                     </execution>
                 </executions>
             </plugin>
@@ -408,27 +418,13 @@
                 </executions>
             </plugin>
         </plugins>
+        <extensions>
+            <extension>
+                <groupId>org.fusesource.mvnplugins</groupId>
+                <artifactId>fuse-jxr-skin</artifactId>
+                <version>1.9</version>
+            </extension>
+        </extensions>
     </build>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>5.7.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-params</artifactId>
-            <version>5.7.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>info.picocli</groupId>
-            <artifactId>picocli-codegen</artifactId>
-            <version>4.5.2</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
 
 </project>

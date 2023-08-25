@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2017 the original author(s).
+ * Copyright (C) 2009-2023 the original author(s).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- * ANSI processor providing <code>process*</code> corresponding to ANSI escape codes. 
+ * ANSI processor providing <code>process*</code> corresponding to ANSI escape codes.
  * This class methods implementations are empty: subclasses should actually perform the
  * ANSI escape behaviors by implementing active code in <code>process*</code> methods.
- * 
+ *
  * <p>For more information about ANSI escape codes, see
  * <a href="http://en.wikipedia.org/wiki/ANSI_escape_code">Wikipedia article</a>
  *
@@ -44,12 +44,10 @@ public class AnsiProcessor {
      * @throws IOException      if no more non-null values left
      */
     protected int getNextOptionInt(Iterator<Object> optionsIterator) throws IOException {
-        for (;;) {
-            if (!optionsIterator.hasNext())
-                throw new IllegalArgumentException();
+        for (; ; ) {
+            if (!optionsIterator.hasNext()) throw new IllegalArgumentException();
             Object arg = optionsIterator.next();
-            if (arg != null)
-                return (Integer) arg;
+            if (arg != null) return (Integer) arg;
         }
     }
 
@@ -137,27 +135,21 @@ public class AnsiProcessor {
                                     int g = getNextOptionInt(optionsIterator);
                                     int b = getNextOptionInt(optionsIterator);
                                     if (r >= 0 && r <= 255 && g >= 0 && g <= 255 && b >= 0 && b <= 255) {
-                                        if (value == 38)
-                                            processSetForegroundColorExt(r, g, b);
-                                        else
-                                            processSetBackgroundColorExt(r, g, b);
+                                        if (value == 38) processSetForegroundColorExt(r, g, b);
+                                        else processSetBackgroundColorExt(r, g, b);
                                     } else {
                                         throw new IllegalArgumentException();
                                     }
-                                }
-                                else if (arg2or5 == 5) {
+                                } else if (arg2or5 == 5) {
                                     // 256 color style like `esc[38;5;<index>m`
                                     int paletteIndex = getNextOptionInt(optionsIterator);
                                     if (paletteIndex >= 0 && paletteIndex <= 255) {
-                                        if (value == 38)
-                                            processSetForegroundColorExt(paletteIndex);
-                                        else
-                                            processSetBackgroundColorExt(paletteIndex);
+                                        if (value == 38) processSetForegroundColorExt(paletteIndex);
+                                        else processSetBackgroundColorExt(paletteIndex);
                                     } else {
                                         throw new IllegalArgumentException();
                                     }
-                                }
-                                else {
+                                } else {
                                     throw new IllegalArgumentException();
                                 }
                             } else {
@@ -247,13 +239,10 @@ public class AnsiProcessor {
     }
 
     private int optionInt(ArrayList<Object> options, int index) {
-        if (options.size() <= index)
-            throw new IllegalArgumentException();
+        if (options.size() <= index) throw new IllegalArgumentException();
         Object value = options.get(index);
-        if (value == null)
-            throw new IllegalArgumentException();
-        if (!value.getClass().equals(Integer.class))
-            throw new IllegalArgumentException();
+        if (value == null) throw new IllegalArgumentException();
+        if (!value.getClass().equals(Integer.class)) throw new IllegalArgumentException();
         return (Integer) value;
     }
 
@@ -272,15 +261,13 @@ public class AnsiProcessor {
      * Process <code>CSI u</code> ANSI code, corresponding to <code>RCP – Restore Cursor Position</code>
      * @throws IOException IOException
      */
-    protected void processRestoreCursorPosition() throws IOException {
-    }
+    protected void processRestoreCursorPosition() throws IOException {}
 
     /**
      * Process <code>CSI s</code> ANSI code, corresponding to <code>SCP – Save Cursor Position</code>
      * @throws IOException IOException
      */
-    protected void processSaveCursorPosition() throws IOException {
-    }
+    protected void processSaveCursorPosition() throws IOException {}
 
     /**
      * Process <code>CSI L</code> ANSI code, corresponding to <code>IL – Insert Line</code>
@@ -288,8 +275,7 @@ public class AnsiProcessor {
      * @throws IOException IOException
      * @since 1.16
      */
-    protected void processInsertLine(int optionInt) throws IOException {
-    }
+    protected void processInsertLine(int optionInt) throws IOException {}
 
     /**
      * Process <code>CSI M</code> ANSI code, corresponding to <code>DL – Delete Line</code>
@@ -297,24 +283,21 @@ public class AnsiProcessor {
      * @throws IOException IOException
      * @since 1.16
      */
-    protected void processDeleteLine(int optionInt) throws IOException {
-    }
+    protected void processDeleteLine(int optionInt) throws IOException {}
 
     /**
      * Process <code>CSI n T</code> ANSI code, corresponding to <code>SD – Scroll Down</code>
      * @param optionInt option
      * @throws IOException IOException
      */
-    protected void processScrollDown(int optionInt) throws IOException {
-    }
+    protected void processScrollDown(int optionInt) throws IOException {}
 
     /**
      * Process <code>CSI n U</code> ANSI code, corresponding to <code>SU – Scroll Up</code>
      * @param optionInt option
      * @throws IOException IOException
      */
-    protected void processScrollUp(int optionInt) throws IOException {
-    }
+    protected void processScrollUp(int optionInt) throws IOException {}
 
     protected static final int ERASE_SCREEN_TO_END = 0;
     protected static final int ERASE_SCREEN_TO_BEGINING = 1;
@@ -325,8 +308,7 @@ public class AnsiProcessor {
      * @param eraseOption eraseOption
      * @throws IOException IOException
      */
-    protected void processEraseScreen(int eraseOption) throws IOException {
-    }
+    protected void processEraseScreen(int eraseOption) throws IOException {}
 
     protected static final int ERASE_LINE_TO_END = 0;
     protected static final int ERASE_LINE_TO_BEGINING = 1;
@@ -337,8 +319,7 @@ public class AnsiProcessor {
      * @param eraseOption eraseOption
      * @throws IOException IOException
      */
-    protected void processEraseLine(int eraseOption) throws IOException {
-    }
+    protected void processEraseLine(int eraseOption) throws IOException {}
 
     protected static final int ATTRIBUTE_INTENSITY_BOLD = 1; // 	Intensity: Bold
     protected static final int ATTRIBUTE_INTENSITY_FAINT = 2; // 	Intensity; Faint 	not widely supported
@@ -346,7 +327,8 @@ public class AnsiProcessor {
     protected static final int ATTRIBUTE_UNDERLINE = 4; // 	Underline; Single
     protected static final int ATTRIBUTE_BLINK_SLOW = 5; // 	Blink; Slow 	less than 150 per minute
     protected static final int ATTRIBUTE_BLINK_FAST = 6; // 	Blink; Rapid 	MS-DOS ANSI.SYS; 150 per minute or more
-    protected static final int ATTRIBUTE_NEGATIVE_ON = 7; // 	Image; Negative 	inverse or reverse; swap foreground and background
+    protected static final int ATTRIBUTE_NEGATIVE_ON =
+            7; // 	Image; Negative 	inverse or reverse; swap foreground and background
     protected static final int ATTRIBUTE_CONCEAL_ON = 8; // 	Conceal on
     protected static final int ATTRIBUTE_UNDERLINE_DOUBLE = 21; // 	Underline; Double 	not widely supported
     protected static final int ATTRIBUTE_INTENSITY_NORMAL = 22; // 	Intensity; Normal 	not bold and not faint
@@ -369,8 +351,7 @@ public class AnsiProcessor {
      * @see #processDefaultTextColor()
      * @see #processDefaultBackgroundColor()
      */
-    protected void processSetAttribute(int attribute) throws IOException {
-    }
+    protected void processSetAttribute(int attribute) throws IOException {}
 
     protected static final int BLACK = 0;
     protected static final int RED = 1;
@@ -397,8 +378,7 @@ public class AnsiProcessor {
      * @param bright is high intensity?
      * @throws IOException IOException
      */
-    protected void processSetForegroundColor(int color, boolean bright) throws IOException {
-    }
+    protected void processSetForegroundColor(int color, boolean bright) throws IOException {}
 
     /**
      * process <code>SGR 38</code> corresponding to <code>extended set text color (foreground)</code>
@@ -406,8 +386,7 @@ public class AnsiProcessor {
      * @param paletteIndex the text color in the palette
      * @throws IOException IOException
      */
-    protected void processSetForegroundColorExt(int paletteIndex) throws IOException {
-    }
+    protected void processSetForegroundColorExt(int paletteIndex) throws IOException {}
 
     /**
      * process <code>SGR 38</code> corresponding to <code>extended set text color (foreground)</code>
@@ -417,8 +396,7 @@ public class AnsiProcessor {
      * @param b blue
      * @throws IOException IOException
      */
-    protected void processSetForegroundColorExt(int r, int g, int b) throws IOException {
-    }
+    protected void processSetForegroundColorExt(int r, int g, int b) throws IOException {}
 
     /**
      * process <code>SGR 40-47</code> corresponding to <code>Set background color</code>.
@@ -436,8 +414,7 @@ public class AnsiProcessor {
      * @param bright is high intensity?
      * @throws IOException IOException
      */
-    protected void processSetBackgroundColor(int color, boolean bright) throws IOException {
-    }
+    protected void processSetBackgroundColor(int color, boolean bright) throws IOException {}
 
     /**
      * process <code>SGR 48</code> corresponding to <code>extended set background color</code>
@@ -445,8 +422,7 @@ public class AnsiProcessor {
      * @param paletteIndex the background color in the palette
      * @throws IOException IOException
      */
-    protected void processSetBackgroundColorExt(int paletteIndex) throws IOException {
-    }
+    protected void processSetBackgroundColorExt(int paletteIndex) throws IOException {}
 
     /**
      * process <code>SGR 48</code> corresponding to <code>extended set background color</code>
@@ -456,29 +432,25 @@ public class AnsiProcessor {
      * @param b blue
      * @throws IOException IOException
      */
-    protected void processSetBackgroundColorExt(int r, int g, int b) throws IOException {
-    }
+    protected void processSetBackgroundColorExt(int r, int g, int b) throws IOException {}
 
     /**
      * process <code>SGR 39</code> corresponding to <code>Default text color (foreground)</code>
      * @throws IOException IOException
      */
-    protected void processDefaultTextColor() throws IOException {
-    }
+    protected void processDefaultTextColor() throws IOException {}
 
     /**
      * process <code>SGR 49</code> corresponding to <code>Default background color</code>
      * @throws IOException IOException
      */
-    protected void processDefaultBackgroundColor() throws IOException {
-    }
+    protected void processDefaultBackgroundColor() throws IOException {}
 
     /**
      * process <code>SGR 0</code> corresponding to <code>Reset / Normal</code>
      * @throws IOException IOException
      */
-    protected void processAttributeReset() throws IOException {
-    }
+    protected void processAttributeReset() throws IOException {}
 
     /**
      * process <code>CSI n ; m H</code> corresponding to <code>CUP – Cursor Position</code> or
@@ -487,24 +459,21 @@ public class AnsiProcessor {
      * @param col col
      * @throws IOException IOException
      */
-    protected void processCursorTo(int row, int col) throws IOException {
-    }
+    protected void processCursorTo(int row, int col) throws IOException {}
 
     /**
      * process <code>CSI n G</code> corresponding to <code>CHA – Cursor Horizontal Absolute</code>
      * @param x the column
      * @throws IOException IOException
      */
-    protected void processCursorToColumn(int x) throws IOException {
-    }
+    protected void processCursorToColumn(int x) throws IOException {}
 
     /**
      * process <code>CSI n F</code> corresponding to <code>CPL – Cursor Previous Line</code>
      * @param count line count
      * @throws IOException IOException
      */
-    protected void processCursorUpLine(int count) throws IOException {
-    }
+    protected void processCursorUpLine(int count) throws IOException {}
 
     /**
      * process <code>CSI n E</code> corresponding to <code>CNL – Cursor Next Line</code>
@@ -523,8 +492,7 @@ public class AnsiProcessor {
      * @param count count
      * @throws IOException IOException
      */
-    protected void processCursorLeft(int count) throws IOException {
-    }
+    protected void processCursorLeft(int count) throws IOException {}
 
     /**
      * process <code>CSI n C</code> corresponding to <code>CUF – Cursor Forward</code>
@@ -543,24 +511,21 @@ public class AnsiProcessor {
      * @param count count
      * @throws IOException IOException
      */
-    protected void processCursorDown(int count) throws IOException {
-    }
+    protected void processCursorDown(int count) throws IOException {}
 
     /**
      * process <code>CSI n A</code> corresponding to <code>CUU – Cursor Up</code>
      * @param count count
      * @throws IOException IOException
      */
-    protected void processCursorUp(int count) throws IOException {
-    }
+    protected void processCursorUp(int count) throws IOException {}
 
     /**
      * Process Unknown Extension
      * @param options options
      * @param command command
      */
-    protected void processUnknownExtension(ArrayList<Object> options, int command) {
-    }
+    protected void processUnknownExtension(ArrayList<Object> options, int command) {}
 
     /**
      * process <code>OSC 0;text BEL</code> corresponding to <code>Change Window and Icon label</code>
@@ -575,24 +540,20 @@ public class AnsiProcessor {
      * process <code>OSC 1;text BEL</code> corresponding to <code>Change Icon label</code>
      * @param label icon label
      */
-    protected void processChangeIconName(String label) {
-    }
+    protected void processChangeIconName(String label) {}
 
     /**
      * process <code>OSC 2;text BEL</code> corresponding to <code>Change Window title</code>
      * @param label window title text
      */
-    protected void processChangeWindowTitle(String label) {
-    }
+    protected void processChangeWindowTitle(String label) {}
 
     /**
      * Process unknown <code>OSC</code> command.
      * @param command command
      * @param param param
      */
-    protected void processUnknownOperatingSystemCommand(int command, String param) {
-    }
+    protected void processUnknownOperatingSystemCommand(int command, String param) {}
 
-    protected void processCharsetSelect(int set, char seq) {
-    }
+    protected void processCharsetSelect(int set, char seq) {}
 }

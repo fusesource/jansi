@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2009-2017 the original author(s).
+ * Copyright (C) 2009-2023 the original author(s).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -89,36 +89,20 @@ public class CLibrary {
      * @return 0 on success
      * @see <a href="http://man7.org/linux/man-pages/man3/openpty.3.html">OPENPTY(3) man-page</a>
      */
-    public static native int openpty(
-            int[] amaster,
-            int[] aslave,
-            byte[] name,
-            Termios termios,
-            WinSize winsize);
+    public static native int openpty(int[] amaster, int[] aslave, byte[] name, Termios termios, WinSize winsize);
 
-    public static native int tcgetattr(
-            int filedes,
-            Termios termios);
+    public static native int tcgetattr(int filedes, Termios termios);
 
-    public static native int tcsetattr(
-            int filedes,
-            int optional_actions,
-            Termios termios);
+    public static native int tcsetattr(int filedes, int optional_actions, Termios termios);
 
     /**
      * Control a STREAMS device.
      *
      * @see <a href="http://man7.org/linux/man-pages/man3/ioctl.3p.html">IOCTL(3P) man-page</a>
      */
-    public static native int ioctl(
-            int filedes,
-            long request,
-            int[] params);
+    public static native int ioctl(int filedes, long request, int[] params);
 
-    public static native int ioctl(
-            int filedes,
-            long request,
-            WinSize params);
+    public static native int ioctl(int filedes, long request, WinSize params);
 
     /**
      * Window sizes.
@@ -141,8 +125,7 @@ public class CLibrary {
         public short ws_xpixel;
         public short ws_ypixel;
 
-        public WinSize() {
-        }
+        public WinSize() {}
 
         public WinSize(short ws_row, short ws_col) {
             this.ws_row = ws_row;
@@ -175,5 +158,4 @@ public class CLibrary {
         public long c_ispeed;
         public long c_ospeed;
     }
-
 }
