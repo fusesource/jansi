@@ -22,7 +22,6 @@ import java.util.concurrent.Callable;
  * Provides a fluent API for generating
  * <a href="https://en.wikipedia.org/wiki/ANSI_escape_code#CSI_sequences">ANSI escape sequences</a>.
  *
- * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  * @since 1.0
  */
 public class Ansi implements Appendable {

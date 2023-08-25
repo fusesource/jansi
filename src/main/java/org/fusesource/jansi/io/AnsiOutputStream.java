@@ -33,7 +33,6 @@ import org.fusesource.jansi.AnsiType;
  * <p>For more information about ANSI escape codes, see
  * <a href="http://en.wikipedia.org/wiki/ANSI_escape_code">Wikipedia article</a>
  *
- * @author Guillaume Nodet
  * @since 1.0
  * @see AnsiProcessor
  */

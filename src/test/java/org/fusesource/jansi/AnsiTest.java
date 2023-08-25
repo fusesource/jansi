@@ -25,7 +25,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Tests for the {@link Ansi} class.
  *
- * @author <a href="mailto:jason@planet57.com">Jason Dillon</a>
  */
 public class AnsiTest {
     @Test

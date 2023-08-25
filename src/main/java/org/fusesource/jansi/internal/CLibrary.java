@@ -20,7 +20,6 @@ package org.fusesource.jansi.internal;
  * <a href="http://fusesource.github.io/hawtjni/">HawtJNI</a> Runtime
  * as <code>jansi</code> library.
  *
- * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  * @see JansiLoader
  */
 @SuppressWarnings("unused")
