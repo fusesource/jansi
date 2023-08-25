@@ -355,6 +355,58 @@
                     <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>2.38.0</version>
+                <configuration>
+                    <java>
+                        <toggleOffOn />
+                        <palantirJavaFormat>
+                            <version>2.35.0</version>
+                        </palantirJavaFormat>
+                        <importOrder>
+                            <order>java|javax,org,,\#</order>
+                        </importOrder>
+                        <removeUnusedImports />
+                        <licenseHeader>
+                            <content>/*
+ * Copyright (C) 2009-2023 the original author(s).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</content>
+                        </licenseHeader>
+                    </java>
+                    <pom>
+                        <sortPom>
+                            <expandEmptyElements>false</expandEmptyElements>
+                            <nrOfIndentSpace>4</nrOfIndentSpace>
+                            <spaceBeforeCloseEmptyElement>true</spaceBeforeCloseEmptyElement>
+                        </sortPom>
+                    </pom>
+                    <upToDateChecking>
+                        <enabled>true</enabled>
+                    </upToDateChecking>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>apply</goal>
+                        </goals>
+                        <phase>process-sources</phase>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
