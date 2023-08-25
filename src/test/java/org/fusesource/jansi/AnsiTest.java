@@ -21,7 +21,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Tests for the {@link Ansi} class.
@@ -71,11 +70,7 @@ public class AnsiTest {
         "-100000,ESC[100000T", "100000,ESC[100000S"
     })
     public void testScrollUp(int x, String expected) {
-        try {
-          assertAnsi(expected, Ansi.ansi().scrollUp(x));
-        } catch (StackOverflowError e) {
-          fail("Infinite loop detected.");
-        }
+        assertAnsi(expected, Ansi.ansi().scrollUp(x));
     }
 
     @ParameterizedTest
@@ -84,11 +79,7 @@ public class AnsiTest {
         "-100000,ESC[100000S", "100000,ESC[100000T"
     })
     public void testScrollDown(int x, String expected) {
-        try {
-          assertAnsi(expected, Ansi.ansi().scrollDown(x));
-        } catch (StackOverflowError e) {
-          fail("Infinite loop detected.");
-        }
+        assertAnsi(expected, Ansi.ansi().scrollDown(x));
     }
 
     @ParameterizedTest
