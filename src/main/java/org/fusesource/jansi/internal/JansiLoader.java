@@ -72,7 +72,10 @@ public class JansiLoader {
     public static synchronized boolean initialize() {
         // only cleanup before the first extract
         if (!loaded) {
-            cleanup();
+            Thread cleanup = new Thread(JansiLoader::cleanup, "cleanup");
+            cleanup.setPriority(Thread.MIN_PRIORITY);
+            cleanup.setDaemon(true);
+            cleanup.start();
         }
         try {
             loadJansiNativeLibrary();
