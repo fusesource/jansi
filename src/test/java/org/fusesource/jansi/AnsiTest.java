@@ -69,6 +69,24 @@ public class AnsiTest {
 
     @ParameterizedTest
     @CsvSource({
+        "-2147483648,ESC[2147483647T", "2147483647,ESC[2147483647S",
+        "-100000,ESC[100000T", "100000,ESC[100000S"
+    })
+    public void testScrollUp(int x, String expected) {
+        assertAnsi(expected, Ansi.ansi().scrollUp(x));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "-2147483648,ESC[2147483647S", "2147483647,ESC[2147483647T",
+        "-100000,ESC[100000S", "100000,ESC[100000T"
+    })
+    public void testScrollDown(int x, String expected) {
+        assertAnsi(expected, Ansi.ansi().scrollDown(x));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
         "-1,-1,ESC[1;1H", "-1,0,ESC[1;1H", "-1,1,ESC[1;1H", "-1,2,ESC[1;2H",
         "0,-1,ESC[1;1H", "0,0,ESC[1;1H", "0,1,ESC[1;1H", "0,2,ESC[1;2H",
         "1,-1,ESC[1;1H", "1,0,ESC[1;1H", "1,1,ESC[1;1H", "1,2,ESC[1;2H",
