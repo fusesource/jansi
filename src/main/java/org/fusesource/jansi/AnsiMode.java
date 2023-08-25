@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2017 the original author(s).
+ * Copyright (C) 2009-2023 the original author(s).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ package org.fusesource.jansi;
  * @since 2.1
  */
 public enum AnsiMode {
-
     Strip("Strip all ansi sequences"),
     Default("Print ansi sequences if the stream is a terminal"),
     Force("Always print ansi sequences, even if the stream is redirected");

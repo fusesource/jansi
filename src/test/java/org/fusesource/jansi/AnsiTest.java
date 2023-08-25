@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2017 the original author(s).
+ * Copyright (C) 2009-2023 the original author(s).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Tests for the {@link Ansi} class.
  *
- * @author <a href="mailto:jason@planet57.com">Jason Dillon</a>
  */
 public class AnsiTest {
     @Test
@@ -57,11 +56,15 @@ public class AnsiTest {
 
     @Test
     public void testApply() {
-        assertEquals("test", Ansi.ansi().apply(new Ansi.Consumer() {
-            public void apply(Ansi ansi) {
-                ansi.a("test");
-            }
-        }).toString());
+        assertEquals(
+                "test",
+                Ansi.ansi()
+                        .apply(new Ansi.Consumer() {
+                            public void apply(Ansi ansi) {
+                                ansi.a("test");
+                            }
+                        })
+                        .toString());
     }
 
     @ParameterizedTest
@@ -161,7 +164,18 @@ public class AnsiTest {
     public void testColorDisabled() {
         Ansi.setEnabled(false);
         try {
-            assertEquals("test", Ansi.ansi().fg(32).a("t").fgRgb(0).a("e").bg(24).a("s").bgRgb(100).a("t").toString());
+            assertEquals(
+                    "test",
+                    Ansi.ansi()
+                            .fg(32)
+                            .a("t")
+                            .fgRgb(0)
+                            .a("e")
+                            .bg(24)
+                            .a("s")
+                            .bgRgb(100)
+                            .a("t")
+                            .toString());
         } finally {
             Ansi.setEnabled(true);
         }

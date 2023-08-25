@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2017 the original author(s).
+ * Copyright (C) 2009-2023 the original author(s).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,19 +22,16 @@ import static org.fusesource.jansi.Ansi.*;
 
 /**
  *
- * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  */
 public class AnsiConsoleExample2 {
 
-    private AnsiConsoleExample2() {
-    }
+    private AnsiConsoleExample2() {}
 
     public static void main(String[] args) throws IOException {
         String file = "src/test/resources/jansi.ans";
-        if (args.length > 0)
-            file = args[0];
+        if (args.length > 0) file = args[0];
 
-        // Allows us to disable ANSI processing. 
+        // Allows us to disable ANSI processing.
         if ("true".equals(System.getProperty("jansi", "true"))) {
             AnsiConsole.systemInstall();
         }
@@ -49,5 +46,4 @@ public class AnsiConsoleExample2 {
         f.close();
         System.out.println("=======================================================================");
     }
-
 }

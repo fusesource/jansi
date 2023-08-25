@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2017 the original author(s).
+ * Copyright (C) 2009-2023 the original author(s).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -83,10 +83,12 @@ public class ColorsAnsiProcessor extends AnsiProcessor {
                                     sb.append(';');
                                 }
                                 first = false;
-                                sb.append(value == 38 ? col >= 8 ? 90 + col - 8 : 30 + col : col >= 8 ? 100 + col - 8 : 40 + col);
+                                sb.append(
+                                        value == 38
+                                                ? col >= 8 ? 90 + col - 8 : 30 + col
+                                                : col >= 8 ? 100 + col - 8 : 40 + col);
                             }
-                        }
-                        else if (arg2or5 == 5) {
+                        } else if (arg2or5 == 5) {
                             // 256 color style like `esc[38;5;<index>m`
                             int paletteIndex = getNextOptionInt(optionsIterator);
                             if (colors == AnsiColors.Colors256) {
@@ -105,10 +107,12 @@ public class ColorsAnsiProcessor extends AnsiProcessor {
                                     sb.append(';');
                                 }
                                 first = false;
-                                sb.append(value == 38 ? col >= 8 ? 90 + col - 8 : 30 + col : col >= 8 ? 100 + col - 8 : 40 + col);
+                                sb.append(
+                                        value == 38
+                                                ? col >= 8 ? 90 + col - 8 : 30 + col
+                                                : col >= 8 ? 100 + col - 8 : 40 + col);
                             }
-                        }
-                        else {
+                        } else {
                             throw new IllegalArgumentException();
                         }
                     } else {
@@ -138,5 +142,4 @@ public class ColorsAnsiProcessor extends AnsiProcessor {
     protected boolean processCharsetSelect(ArrayList<Object> options) {
         return false;
     }
-
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2020 the original author(s).
+ * Copyright (C) 2009-2023 the original author(s).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,5 +65,4 @@ public class FastBufferedOutputStream extends FilterOutputStream {
         flushBuffer();
         out.flush();
     }
-
 }
