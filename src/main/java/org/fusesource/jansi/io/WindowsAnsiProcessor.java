@@ -51,8 +51,6 @@ import static org.fusesource.jansi.internal.Kernel32.SetConsoleTitle;
  * <a href="http://fusesource.github.io/hawtjni/documentation/api/index.html?org/fusesource/hawtjni/runtime/Library.html"><code>Library</code></a>
  *
  * @since 1.19
- * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
- * @author Joris Kuipers
  */
 public final class WindowsAnsiProcessor extends AnsiProcessor {
 

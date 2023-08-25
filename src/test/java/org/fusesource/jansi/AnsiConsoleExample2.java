@@ -22,7 +22,6 @@ import static org.fusesource.jansi.Ansi.*;
 
 /**
  *
- * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  */
 public class AnsiConsoleExample2 {
 

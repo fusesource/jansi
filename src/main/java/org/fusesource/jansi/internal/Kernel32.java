@@ -22,8 +22,6 @@ import org.fusesource.jansi.WindowsSupport;
 /**
  * Interface to access Win32 base APIs.
  *
- * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
- * @author Guillaume Nodet
  * @see JansiLoader
  */
 @SuppressWarnings("unused")

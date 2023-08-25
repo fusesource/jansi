@@ -40,7 +40,6 @@ import java.util.Locale;
 /**
  * Provides OS name and architecture name.
  *
- * @author leo
  */
 public class OSInfo {
 

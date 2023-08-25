@@ -20,7 +20,6 @@ import java.io.IOException;
 
 /**
  *
- * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  */
 public class AnsiConsoleExample {
 
