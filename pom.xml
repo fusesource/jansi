@@ -101,8 +101,8 @@
     </distributionManagement>
 
     <properties>
-        <javadocSource>7</javadocSource>
-        <jdkTarget>1.7</jdkTarget>
+        <javadocSource>8</javadocSource>
+        <jdkTarget>8</jdkTarget>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j-version>1.6.1</slf4j-version>
         <project.build.outputTimestamp>2021-10-14T05:42:06Z</project.build.outputTimestamp>
@@ -165,25 +165,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>8</source>
-                    <target>8</target>
+                    <release>${jdkTarget}</release>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>default-compile</id>
-                        <configuration>
-                            <source>${jdkTarget}</source>
-                            <target>${jdkTarget}</target>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>default-testCompile</id>
-                        <configuration>
-                            <source>1.8</source>
-                            <target>1.8</target>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.felix</groupId>
