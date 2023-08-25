@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2017 the original author(s).
+ * Copyright (C) 2009-2023 the original author(s).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import java.util.concurrent.Callable;
  * Provides a fluent API for generating
  * <a href="https://en.wikipedia.org/wiki/ANSI_escape_code#CSI_sequences">ANSI escape sequences</a>.
  *
- * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  * @since 1.0
  */
 public class Ansi implements Appendable {
@@ -119,7 +118,6 @@ public class Ansi implements Appendable {
         public int value() {
             return value;
         }
-
     }
 
     /**
@@ -215,8 +213,7 @@ public class Ansi implements Appendable {
         }
     }
 
-    private static class NoAnsi
-            extends Ansi {
+    private static class NoAnsi extends Ansi {
         public NoAnsi() {
             super();
         }
@@ -900,8 +897,7 @@ public class Ansi implements Appendable {
     }
 
     private void flushAttributes() {
-        if (attributeOptions.isEmpty())
-            return;
+        if (attributeOptions.isEmpty()) return;
         if (attributeOptions.size() == 1 && attributeOptions.get(0) == 0) {
             builder.append(FIRST_ESC_CHAR);
             builder.append(SECOND_ESC_CHAR);
