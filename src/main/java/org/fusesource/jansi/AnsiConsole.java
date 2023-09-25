@@ -237,7 +237,10 @@ public class AnsiConsole {
         FileDescriptor descriptor = stdout ? FileDescriptor.out : FileDescriptor.err;
         final OutputStream out = new FastBufferedOutputStream(new FileOutputStream(descriptor));
 
-        String enc = System.getProperty(stdout ? "sun.stdout.encoding" : "sun.stderr.encoding");
+        String enc = System.getProperty(stdout ? "stdout.encoding" : "stderr.encoding");
+        if (enc == null) {
+            enc = System.getProperty(stdout ? "sun.stdout.encoding" : "sun.stderr.encoding");
+        }
 
         final boolean isatty;
         boolean isAtty;
