@@ -80,6 +80,13 @@ Linux-ppc64_LINKFLAGS := -shared -static-libgcc
 Linux-ppc64_LIBNAME   := libjansi.so
 Linux-ppc64_JANSI_FLAGS  :=
 
+Linux-riscv64_CC        := $(CROSS_PREFIX)gcc
+Linux-riscv64_STRIP     := $(CROSS_PREFIX)strip
+Linux-riscv64_CCFLAGS   := -I$(JAVA_HOME)/include -Itarget/inc -Itarget/inc/unix -Os -fPIC -fvisibility=hidden
+Linux-riscv64_LINKFLAGS := -shared -static-libgcc
+Linux-riscv64_LIBNAME   := libjansi.so
+Linux-riscv64_JANSI_FLAGS  :=
+
 DragonFly-x86_64_CC        := $(CROSS_PREFIX)cc
 DragonFly-x86_64_STRIP     := $(CROSS_PREFIX)strip
 DragonFly-x86_64_CCFLAGS   := -I$(JAVA_HOME)/include -Itarget/inc -Itarget/inc/unix -O2 -fPIC -fvisibility=hidden

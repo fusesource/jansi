@@ -121,6 +121,12 @@ linux-ppc64: download-includes
 	docker run -it --rm -v $$PWD:/workdir --user $$(id -u):$$(id -g) \
 		-e CROSS_TRIPLE=powerpc64le-linux-gnu multiarch/crossbuild$(cross-build-digest) make clean-native native OS_NAME=Linux OS_ARCH=ppc64
 
+target/dockcross/dockcross-linux-riscv64: dockcross
+	docker run --rm dockcross/linux-riscv64$(linux-riscv64-digest) > target/dockcross/dockcross-linux-riscv64
+	chmod +x target/dockcross/dockcross-linux-riscv64
+linux-riscv64: download-includes target/dockcross/dockcross-linux-riscv64
+	target/dockcross/dockcross-linux-riscv64 bash -c 'make clean-native native CROSS_PREFIX=riscv64-linux-gnu- OS_NAME=Linux OS_ARCH=riscv64'
+
 target/dockcross/dockcross-windows-static-x86: dockcross
 	docker run --rm dockcross/windows-static-x86$(windows-static-x86-digest) > target/dockcross/dockcross-windows-static-x86
 	chmod +x target/dockcross/dockcross-windows-static-x86
