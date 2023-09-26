@@ -17,7 +17,6 @@ package org.fusesource.jansi.internal;
 
 import java.io.IOException;
 
-import org.fusesource.jansi.AnsiConsoleSupport;
 import org.fusesource.jansi.WindowsSupport;
 
 /**

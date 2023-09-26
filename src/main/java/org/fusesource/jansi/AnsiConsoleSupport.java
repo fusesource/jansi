@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 the original author(s).
+ * Copyright (C) 2009-2023 the original author(s).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
  */
 package org.fusesource.jansi;
 
-import org.fusesource.jansi.io.AnsiProcessor;
-
 import java.io.IOException;
 import java.io.OutputStream;
+
+import org.fusesource.jansi.io.AnsiProcessor;
 
 public interface AnsiConsoleSupport {
 
@@ -30,7 +30,6 @@ public interface AnsiConsoleSupport {
         short getTerminalWidth(int fd);
 
         int isTty(int fd);
-
     }
 
     interface Kernel32 {
@@ -61,5 +60,4 @@ public interface AnsiConsoleSupport {
     static AnsiConsoleSupport getInstance() {
         return AnsiConsoleSupportHolder.get();
     }
-
 }

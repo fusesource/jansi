@@ -53,8 +53,8 @@ public class AnsiMain {
 
         System.out.println();
 
-
-        System.out.println("jansi.providers= " + System.getProperty(AnsiConsole.JANSI_PROVIDERS, AnsiConsole.JANSI_PROVIDERS_DEFAULT));
+        System.out.println("jansi.providers= "
+                + System.getProperty(AnsiConsole.JANSI_PROVIDERS, AnsiConsole.JANSI_PROVIDERS_DEFAULT));
         String provider = AnsiConsoleSupport.getInstance().getProviderName();
         System.out.println("Selected provider: " + provider);
 
@@ -208,8 +208,7 @@ public class AnsiMain {
 
         System.out.println("isatty(STD" + (stderr ? "ERR" : "OUT") + "_FILENO): " + isatty + ", System."
                 + (stderr ? "err" : "out") + " " + ((isatty == 0) ? "is *NOT*" : "is") + " a terminal");
-        System.out.println("width(STD" + (stderr ? "ERR" : "OUT") + "_FILENO): "
-            + width);
+        System.out.println("width(STD" + (stderr ? "ERR" : "OUT") + "_FILENO): " + width);
     }
 
     private static void testAnsi(boolean stderr) {

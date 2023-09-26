@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 the original author(s).
+ * Copyright (C) 2009-2023 the original author(s).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,13 @@
  */
 package org.fusesource.jansi.internal;
 
-import org.fusesource.jansi.AnsiConsoleSupport;
-import org.fusesource.jansi.io.AnsiProcessor;
-import org.fusesource.jansi.io.WindowsAnsiProcessor;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Locale;
+
+import org.fusesource.jansi.AnsiConsoleSupport;
+import org.fusesource.jansi.io.AnsiProcessor;
+import org.fusesource.jansi.io.WindowsAnsiProcessor;
 
 import static org.fusesource.jansi.internal.Kernel32.FORMAT_MESSAGE_FROM_SYSTEM;
 import static org.fusesource.jansi.internal.Kernel32.FormatMessageW;
@@ -67,7 +66,8 @@ public class AnsiConsoleSupportJni implements AnsiConsoleSupport {
 
             @Override
             public int getTerminalWidth(long console) {
-                org.fusesource.jansi.internal.Kernel32.CONSOLE_SCREEN_BUFFER_INFO info = new org.fusesource.jansi.internal.Kernel32.CONSOLE_SCREEN_BUFFER_INFO();
+                org.fusesource.jansi.internal.Kernel32.CONSOLE_SCREEN_BUFFER_INFO info =
+                        new org.fusesource.jansi.internal.Kernel32.CONSOLE_SCREEN_BUFFER_INFO();
                 GetConsoleScreenBufferInfo(console, info);
                 return info.windowWidth();
             }

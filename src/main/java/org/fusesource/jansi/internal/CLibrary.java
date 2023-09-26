@@ -101,7 +101,7 @@ public class CLibrary {
 
     public static short getTerminalWidth(int fd) {
         WinSize sz = new WinSize();
-        ioctl( fd, TIOCGWINSZ, sz);
+        ioctl(fd, TIOCGWINSZ, sz);
         return sz.ws_col;
     }
 

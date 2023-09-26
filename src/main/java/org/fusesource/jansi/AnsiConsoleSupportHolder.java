@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 the original author(s).
+ * Copyright (C) 2009-2023 the original author(s).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,8 @@ class AnsiConsoleSupportHolder {
 
     static AnsiConsoleSupport doGet() {
         RuntimeException error = new RuntimeException("Unable to create AnsiConsoleSupport provider");
-        String[] providers = System.getProperty(JANSI_PROVIDERS, JANSI_PROVIDERS_DEFAULT).split(",");
+        String[] providers =
+                System.getProperty(JANSI_PROVIDERS, JANSI_PROVIDERS_DEFAULT).split(",");
         for (String provider : providers) {
             try {
                 if (JANSI_PROVIDER_FFM.equals(provider)) {
