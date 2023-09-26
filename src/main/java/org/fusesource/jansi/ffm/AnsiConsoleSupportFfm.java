@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2023 the original author(s).
+ * Copyright (C) 2023 the original author(s).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fusesource.jansi;
+package org.fusesource.jansi.ffm;
 
-public class WindowsSupport {
+import org.fusesource.jansi.AnsiConsoleSupport;
 
-    public static String getLastErrorMessage() {
-        int errorCode = getKernel32().getLastError();
-        return getErrorMessage(errorCode);
+public class AnsiConsoleSupportFfm implements AnsiConsoleSupport {
+    @Override
+    public String getProviderName() {
+        return "ffm";
     }
 
-    public static String getErrorMessage(int errorCode) {
-        return getKernel32().getErrorMessage(errorCode);
+    @Override
+    public CLibrary getCLibrary() {
+        throw new UnsupportedOperationException("ffm provider is only supported on java >= 21");
     }
 
-    private static AnsiConsoleSupport.Kernel32 getKernel32() {
-        return AnsiConsoleSupport.getInstance().getKernel32();
+    @Override
+    public Kernel32 getKernel32() {
+        throw new UnsupportedOperationException("ffm provider is only supported on java >= 21");
     }
+
 }
