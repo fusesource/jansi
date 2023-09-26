@@ -50,6 +50,7 @@ public class OSInfo {
     public static final String PPC = "ppc";
     public static final String PPC64 = "ppc64";
     public static final String ARM64 = "arm64";
+    public static final String RISCV64 = "riscv64";
 
     private static final HashMap<String, String> archMapping = new HashMap<String, String>();
 
@@ -92,6 +93,9 @@ public class OSInfo {
 
         // aarch64 mappings
         archMapping.put("aarch64", ARM64);
+
+        // riscv64 mappings
+        archMapping.put(RISCV64, RISCV64);
     }
 
     public static void main(String[] args) {
