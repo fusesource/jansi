@@ -17,7 +17,7 @@ include Makefile.common
 
 linux-armv6-digest:=@sha256:7bad6ab302af34bdf6634c8c2b02c8dc6ac932c67da9ecc199c549ab405e971e
 linux-x86-digest:=@sha256:7a8fda5ff1bb436ac1f2e7d40043deb630800fce33d123d04779d48f85702dcd
-linux-riscv64-digest:=@sha256:7eb149bcaba1d7dcab06b3f9a0615ca459e9cb28459a0864f92b0037f270ba66
+linux-riscv64-digest:=@sha256:e10e1d3588cffffaf4d0721825e4f952710ad29d4b6630ea76d353914ffdc415
 windows-static-x86-digest:=@sha256:896bd4a43bbc89502904afdc8d00e6f2422f8f35852cc59777d6426bfc8491e8
 windows-static-x64-digest:=@sha256:f159861bc80b29e5dafb223477167bec53ecec6cdacb051d31e90c5823542100
 windows-arm64-digest:=@sha256:f4b3c1a49ec8b53418cef1499dc3f9a54a5570b7a3ecdf42fc8c83eb94b01b7d
