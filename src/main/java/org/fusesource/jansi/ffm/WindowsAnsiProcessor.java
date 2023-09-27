@@ -15,21 +15,21 @@
  */
 package org.fusesource.jansi.ffm;
 
-import org.fusesource.jansi.WindowsSupport;
-import org.fusesource.jansi.io.AnsiProcessor;
-import org.fusesource.jansi.io.Colors;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
 
+import org.fusesource.jansi.WindowsSupport;
+import org.fusesource.jansi.io.AnsiProcessor;
+import org.fusesource.jansi.io.Colors;
+
 import static org.fusesource.jansi.ffm.Kernel32.*;
 
 /**
  * A Windows ANSI escape processor, that uses JNA to access native platform
- * API's to change the console attributes (see 
+ * API's to change the console attributes (see
  * <a href="http://fusesource.github.io/jansi/documentation/native-api/index.html?org/fusesource/jansi/internal/Kernel32.html">Jansi native Kernel32</a>).
  * <p>The native library used is named <code>jansi</code> and is loaded using <a href="http://fusesource.github.io/hawtjni/">HawtJNI</a> Runtime
  * <a href="http://fusesource.github.io/hawtjni/documentation/api/index.html?org/fusesource/hawtjni/runtime/Library.html"><code>Library</code></a>
@@ -55,25 +55,25 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
     private static final short BACKGROUND_WHITE = (short) (BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE);
 
     private static final short[] ANSI_FOREGROUND_COLOR_MAP = {
-            FOREGROUND_BLACK,
-            FOREGROUND_RED,
-            FOREGROUND_GREEN,
-            FOREGROUND_YELLOW,
-            FOREGROUND_BLUE,
-            FOREGROUND_MAGENTA,
-            FOREGROUND_CYAN,
-            FOREGROUND_WHITE,
+        FOREGROUND_BLACK,
+        FOREGROUND_RED,
+        FOREGROUND_GREEN,
+        FOREGROUND_YELLOW,
+        FOREGROUND_BLUE,
+        FOREGROUND_MAGENTA,
+        FOREGROUND_CYAN,
+        FOREGROUND_WHITE,
     };
 
     private static final short[] ANSI_BACKGROUND_COLOR_MAP = {
-            BACKGROUND_BLACK,
-            BACKGROUND_RED,
-            BACKGROUND_GREEN,
-            BACKGROUND_YELLOW,
-            BACKGROUND_BLUE,
-            BACKGROUND_MAGENTA,
-            BACKGROUND_CYAN,
-            BACKGROUND_WHITE,
+        BACKGROUND_BLACK,
+        BACKGROUND_RED,
+        BACKGROUND_GREEN,
+        BACKGROUND_YELLOW,
+        BACKGROUND_BLUE,
+        BACKGROUND_MAGENTA,
+        BACKGROUND_CYAN,
+        BACKGROUND_WHITE,
     };
 
     private final CONSOLE_SCREEN_BUFFER_INFO info = new CONSOLE_SCREEN_BUFFER_INFO();
@@ -153,16 +153,26 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
                     COORD topLeft2 = new COORD();
                     topLeft2.x((short) 0);
                     topLeft2.y(info.window().top());
-                    int lengthToCursor = (info.cursorPosition().y() - info.window().top()) * info.size().x()
-                        + info.cursorPosition().x();
+                    int lengthToCursor =
+                            (info.cursorPosition().y() - info.window().top())
+                                            * info.size().x()
+                                    + info.cursorPosition().x();
                     FillConsoleOutputAttribute(console, info.attributes(), lengthToCursor, topLeft2, written);
                     FillConsoleOutputCharacterW(console, ' ', lengthToCursor, topLeft2, written);
                     break;
                 case ERASE_SCREEN_TO_END:
-                    int lengthToEnd = (info.window().bottom() - info.cursorPosition().y()) * info.size().x() +
-                        (info.size().x() - info.cursorPosition().x());
-                    FillConsoleOutputAttribute(console, info.attributes(), lengthToEnd, info.cursorPosition().copy(), written);
-                    FillConsoleOutputCharacterW(console, ' ', lengthToEnd, info.cursorPosition().copy(), written);
+                    int lengthToEnd =
+                            (info.window().bottom() - info.cursorPosition().y())
+                                            * info.size().x()
+                                    + (info.size().x() - info.cursorPosition().x());
+                    FillConsoleOutputAttribute(
+                            console,
+                            info.attributes(),
+                            lengthToEnd,
+                            info.cursorPosition().copy(),
+                            written);
+                    FillConsoleOutputCharacterW(
+                            console, ' ', lengthToEnd, info.cursorPosition().copy(), written);
                     break;
                 default:
                     break;
@@ -179,19 +189,29 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
                 case ERASE_LINE:
                     COORD leftColCurrRow = info.cursorPosition().copy();
                     leftColCurrRow.x((short) 0);
-                    FillConsoleOutputAttribute(console, info.attributes(), info.size().x(), leftColCurrRow, written);
+                    FillConsoleOutputAttribute(
+                            console, info.attributes(), info.size().x(), leftColCurrRow, written);
                     FillConsoleOutputCharacterW(console, ' ', info.size().x(), leftColCurrRow, written);
                     break;
                 case ERASE_LINE_TO_BEGINING:
                     COORD leftColCurrRow2 = info.cursorPosition().copy();
                     leftColCurrRow2.x((short) 0);
-                    FillConsoleOutputAttribute(console, info.attributes(), info.cursorPosition().x(), leftColCurrRow2, written);
-                    FillConsoleOutputCharacterW(console, ' ', info.cursorPosition().x(), leftColCurrRow2, written);
+                    FillConsoleOutputAttribute(
+                            console, info.attributes(), info.cursorPosition().x(), leftColCurrRow2, written);
+                    FillConsoleOutputCharacterW(
+                            console, ' ', info.cursorPosition().x(), leftColCurrRow2, written);
                     break;
                 case ERASE_LINE_TO_END:
-                    int lengthToLastCol = info.size().x() - info.cursorPosition().x();
-                    FillConsoleOutputAttribute(console, info.attributes(), lengthToLastCol, info.cursorPosition().copy(), written);
-                    FillConsoleOutputCharacterW(console, ' ', lengthToLastCol, info.cursorPosition().copy(), written);
+                    int lengthToLastCol =
+                            info.size().x() - info.cursorPosition().x();
+                    FillConsoleOutputAttribute(
+                            console,
+                            info.attributes(),
+                            lengthToLastCol,
+                            info.cursorPosition().copy(),
+                            written);
+                    FillConsoleOutputCharacterW(
+                            console, ' ', lengthToLastCol, info.cursorPosition().copy(), written);
                     break;
                 default:
                     break;
@@ -209,28 +229,32 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
     @Override
     protected void processCursorRight(int count) throws IOException {
         getConsoleInfo();
-        info.cursorPosition().x((short) Math.min(info.window().width(), info.cursorPosition().x() + count));
+        info.cursorPosition()
+                .x((short) Math.min(info.window().width(), info.cursorPosition().x() + count));
         applyCursorPosition();
     }
 
     @Override
     protected void processCursorDown(int count) throws IOException {
         getConsoleInfo();
-        info.cursorPosition().y((short) Math.min(Math.max(0, info.size().y() - 1), info.cursorPosition().y() + count));
+        info.cursorPosition().y((short)
+                Math.min(Math.max(0, info.size().y() - 1), info.cursorPosition().y() + count));
         applyCursorPosition();
     }
 
     @Override
     protected void processCursorUp(int count) throws IOException {
         getConsoleInfo();
-        info.cursorPosition().y((short) Math.max(info.window().top(), info.cursorPosition().y() - count));
+        info.cursorPosition()
+                .y((short) Math.max(info.window().top(), info.cursorPosition().y() - count));
         applyCursorPosition();
     }
 
     @Override
     protected void processCursorTo(int row, int col) throws IOException {
         getConsoleInfo();
-        info.cursorPosition().y((short) Math.max(info.window().top(), Math.min(info.size().y(), info.window().top() + row - 1)));
+        info.cursorPosition().y((short) Math.max(
+                info.window().top(), Math.min(info.size().y(), info.window().top() + row - 1)));
         info.cursorPosition().x((short) Math.max(0, Math.min(info.window().width(), col - 1)));
         applyCursorPosition();
     }
@@ -246,7 +270,8 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
     protected void processCursorUpLine(int count) throws IOException {
         getConsoleInfo();
         info.cursorPosition().x((short) 0);
-        info.cursorPosition().y((short) Math.max(info.window().top(), info.cursorPosition().y() - count));
+        info.cursorPosition()
+                .y((short) Math.max(info.window().top(), info.cursorPosition().y() - count));
         applyCursorPosition();
     }
 
@@ -254,7 +279,8 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
     protected void processCursorDownLine(int count) throws IOException {
         getConsoleInfo();
         info.cursorPosition().x((short) 0);
-        info.cursorPosition().y((short) Math.max(info.window().top(), info.cursorPosition().y() + count));
+        info.cursorPosition()
+                .y((short) Math.max(info.window().top(), info.cursorPosition().y() + count));
         applyCursorPosition();
     }
 
@@ -333,8 +359,8 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
                 applyAttribute();
                 break;
 
-            // Yeah, setting the background intensity is not underlining.. but it's best we can do
-            // using the Windows console API
+                // Yeah, setting the background intensity is not underlining.. but it's best we can do
+                // using the Windows console API
             case ATTRIBUTE_UNDERLINE:
                 info.attributes((short) (info.attributes() | BACKGROUND_INTENSITY));
                 applyAttribute();
@@ -382,7 +408,7 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
         scroll.top(info.cursorPosition().y());
         COORD org = new COORD();
         org.x((short) 0);
-        org.y((short)(info.cursorPosition().y() + optionInt));
+        org.y((short) (info.cursorPosition().y() + optionInt));
         CHAR_INFO info = new CHAR_INFO(' ', originalColors);
         if (ScrollConsoleScreenBuffer(console, scroll, scroll, org, info) == 0) {
             throw new IOException(WindowsSupport.getLastErrorMessage());
@@ -396,7 +422,7 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
         scroll.top(info.cursorPosition().y());
         COORD org = new COORD();
         org.x((short) 0);
-        org.y((short)(info.cursorPosition().y() - optionInt));
+        org.y((short) (info.cursorPosition().y() - optionInt));
         CHAR_INFO info = new CHAR_INFO(' ', originalColors);
         if (ScrollConsoleScreenBuffer(console, scroll, scroll, org, info) == 0) {
             throw new IOException(WindowsSupport.getLastErrorMessage());
@@ -410,5 +436,4 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
             SetConsoleTitleW(str);
         }
     }
-
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2023 the original author(s).
+ * Copyright (C) 2009-2023 the original author(s).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -94,7 +94,7 @@ class Kernel32 {
     public static final short FOCUS_EVENT = 0x0010;
 
     public static int WaitForSingleObject(MemorySegment hHandle, int dwMilliseconds) {
-        var mh$ = requireNonNull(WaitForSingleObject$MH, "WaitForSingleObject");
+        MethodHandle mh$ = requireNonNull(WaitForSingleObject$MH, "WaitForSingleObject");
         try {
             return (int) mh$.invokeExact(hHandle, dwMilliseconds);
         } catch (Throwable ex$) {
@@ -103,7 +103,7 @@ class Kernel32 {
     }
 
     public static MemorySegment GetStdHandle(int nStdHandle) {
-        var mh$ = requireNonNull(GetStdHandle$MH, "GetStdHandle");
+        MethodHandle mh$ = requireNonNull(GetStdHandle$MH, "GetStdHandle");
         try {
             return MemorySegment.ofAddress((long) mh$.invokeExact(nStdHandle));
         } catch (Throwable ex$) {
@@ -119,7 +119,7 @@ class Kernel32 {
             MemorySegment lpBuffer,
             int nSize,
             MemorySegment Arguments) {
-        var mh$ = requireNonNull(FormatMessageW$MH, "FormatMessageW");
+        MethodHandle mh$ = requireNonNull(FormatMessageW$MH, "FormatMessageW");
         try {
             return (int) mh$.invokeExact(
                     dwFlags,
@@ -135,7 +135,7 @@ class Kernel32 {
     }
 
     public static int SetConsoleTextAttribute(MemorySegment hConsoleOutput, short wAttributes) {
-        var mh$ = requireNonNull(SetConsoleTextAttribute$MH, "SetConsoleTextAttribute");
+        MethodHandle mh$ = requireNonNull(SetConsoleTextAttribute$MH, "SetConsoleTextAttribute");
         try {
             return (int) mh$.invokeExact(hConsoleOutput, wAttributes);
         } catch (Throwable ex$) {
@@ -144,7 +144,7 @@ class Kernel32 {
     }
 
     public static int SetConsoleMode(MemorySegment hConsoleHandle, int dwMode) {
-        var mh$ = requireNonNull(SetConsoleMode$MH, "SetConsoleMode");
+        MethodHandle mh$ = requireNonNull(SetConsoleMode$MH, "SetConsoleMode");
         try {
             return (int) mh$.invokeExact(hConsoleHandle.address(), dwMode);
         } catch (Throwable ex$) {
@@ -153,7 +153,7 @@ class Kernel32 {
     }
 
     public static int GetConsoleMode(MemorySegment hConsoleHandle, MemorySegment lpMode) {
-        var mh$ = requireNonNull(GetConsoleMode$MH, "GetConsoleMode");
+        MethodHandle mh$ = requireNonNull(GetConsoleMode$MH, "GetConsoleMode");
         try {
             return (int) mh$.invokeExact(hConsoleHandle.address(), lpMode.address());
         } catch (Throwable ex$) {
@@ -162,7 +162,7 @@ class Kernel32 {
     }
 
     public static int SetConsoleTitleW(MemorySegment lpConsoleTitle) {
-        var mh$ = requireNonNull(SetConsoleTitleW$MH, "SetConsoleTitleW");
+        MethodHandle mh$ = requireNonNull(SetConsoleTitleW$MH, "SetConsoleTitleW");
         try {
             return (int) mh$.invokeExact(lpConsoleTitle.address());
         } catch (Throwable ex$) {
@@ -171,7 +171,7 @@ class Kernel32 {
     }
 
     public static int SetConsoleCursorPosition(MemorySegment hConsoleOutput, COORD dwCursorPosition) {
-        var mh$ = requireNonNull(SetConsoleCursorPosition$MH, "SetConsoleCursorPosition");
+        MethodHandle mh$ = requireNonNull(SetConsoleCursorPosition$MH, "SetConsoleCursorPosition");
         try {
             return (int) mh$.invokeExact(hConsoleOutput, dwCursorPosition.seg);
         } catch (Throwable ex$) {
@@ -185,7 +185,7 @@ class Kernel32 {
             int nLength,
             COORD dwWriteCoord,
             MemorySegment lpNumberOfCharsWritten) {
-        var mh$ = requireNonNull(FillConsoleOutputCharacterW$MH, "FillConsoleOutputCharacterW");
+        MethodHandle mh$ = requireNonNull(FillConsoleOutputCharacterW$MH, "FillConsoleOutputCharacterW");
         try {
             return (int) mh$.invokeExact(
                     hConsoleOutput.address(), cCharacter, nLength, dwWriteCoord.seg, lpNumberOfCharsWritten.address());
@@ -200,7 +200,7 @@ class Kernel32 {
             int nLength,
             COORD dwWriteCoord,
             MemorySegment lpNumberOfAttrsWritten) {
-        var mh$ = requireNonNull(FillConsoleOutputAttribute$MH, "FillConsoleOutputAttribute");
+        MethodHandle mh$ = requireNonNull(FillConsoleOutputAttribute$MH, "FillConsoleOutputAttribute");
         try {
             return (int) mh$.invokeExact(
                     hConsoleOutput, wAttribute, nLength, dwWriteCoord.seg, lpNumberOfAttrsWritten.address());
@@ -215,7 +215,7 @@ class Kernel32 {
             int nNumberOfCharsToWrite,
             MemorySegment lpNumberOfCharsWritten,
             MemorySegment lpReserved) {
-        var mh$ = requireNonNull(WriteConsoleW$MH, "WriteConsoleW");
+        MethodHandle mh$ = requireNonNull(WriteConsoleW$MH, "WriteConsoleW");
         try {
             return (int) mh$.invokeExact(
                     hConsoleOutput, lpBuffer, nNumberOfCharsToWrite, lpNumberOfCharsWritten, lpReserved);
@@ -226,7 +226,7 @@ class Kernel32 {
 
     public static int ReadConsoleInputW(
             MemorySegment hConsoleInput, MemorySegment lpBuffer, int nLength, MemorySegment lpNumberOfEventsRead) {
-        var mh$ = requireNonNull(ReadConsoleInputW$MH, "ReadConsoleInputW");
+        MethodHandle mh$ = requireNonNull(ReadConsoleInputW$MH, "ReadConsoleInputW");
         try {
             return (int) mh$.invokeExact(
                     hConsoleInput.address(), lpBuffer.address(), nLength, lpNumberOfEventsRead.address());
@@ -237,7 +237,7 @@ class Kernel32 {
 
     public static int PeekConsoleInputW(
             MemorySegment hConsoleInput, MemorySegment lpBuffer, int nLength, MemorySegment lpNumberOfEventsRead) {
-        var mh$ = requireNonNull(PeekConsoleInputW$MH, "PeekConsoleInputW");
+        MethodHandle mh$ = requireNonNull(PeekConsoleInputW$MH, "PeekConsoleInputW");
         try {
             return (int) mh$.invokeExact(
                     hConsoleInput.address(), lpBuffer.address(), nLength, lpNumberOfEventsRead.address());
@@ -248,7 +248,7 @@ class Kernel32 {
 
     public static int GetConsoleScreenBufferInfo(
             MemorySegment hConsoleOutput, CONSOLE_SCREEN_BUFFER_INFO lpConsoleScreenBufferInfo) {
-        var mh$ = requireNonNull(GetConsoleScreenBufferInfo$MH, "GetConsoleScreenBufferInfo");
+        MethodHandle mh$ = requireNonNull(GetConsoleScreenBufferInfo$MH, "GetConsoleScreenBufferInfo");
         try {
             return (int) mh$.invokeExact(hConsoleOutput.address(), lpConsoleScreenBufferInfo.seg);
         } catch (Throwable ex$) {
@@ -262,7 +262,7 @@ class Kernel32 {
             SMALL_RECT lpClipRectangle,
             COORD dwDestinationOrigin,
             CHAR_INFO lpFill) {
-        var mh$ = requireNonNull(ScrollConsoleScreenBuffer$MH, "ScrollConsoleScreenBuffer");
+        MethodHandle mh$ = requireNonNull(ScrollConsoleScreenBuffer$MH, "ScrollConsoleScreenBuffer");
         try {
             return (int)
                     mh$.invokeExact(hConsoleOutput, lpScrollRectangle, lpClipRectangle, dwDestinationOrigin, lpFill);
@@ -272,7 +272,7 @@ class Kernel32 {
     }
 
     public static int GetLastError(Object... x0) {
-        var mh$ = requireNonNull(GetLastError$MH, "GetLastError");
+        MethodHandle mh$ = requireNonNull(GetLastError$MH, "GetLastError");
         try {
             return (int) mh$.invokeExact(x0);
         } catch (Throwable ex$) {

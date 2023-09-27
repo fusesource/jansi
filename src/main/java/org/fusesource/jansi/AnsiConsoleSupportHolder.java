@@ -15,7 +15,6 @@
  */
 package org.fusesource.jansi;
 
-import org.fusesource.jansi.ffm.AnsiConsoleSupportFfm;
 import org.fusesource.jansi.internal.AnsiConsoleSupportJni;
 
 import static org.fusesource.jansi.AnsiConsole.JANSI_PROVIDERS;
@@ -44,7 +43,11 @@ class AnsiConsoleSupportHolder {
         for (String provider : providers) {
             try {
                 if (JANSI_PROVIDER_FFM.equals(provider)) {
-                    return new AnsiConsoleSupportFfm();
+                    return (AnsiConsoleSupport) AnsiConsoleSupport.class
+                            .getClassLoader()
+                            .loadClass("org.fusesource.jansi.ffm.AnsiConsoleSupportFfm")
+                            .getConstructor()
+                            .newInstance();
                 } else if (JANSI_PROVIDER_JNI.equals(provider)) {
                     return new AnsiConsoleSupportJni();
                 }
