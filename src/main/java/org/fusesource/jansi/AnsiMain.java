@@ -85,6 +85,10 @@ public class AnsiMain {
                 + "os.version= " + System.getProperty("os.version") + ", "
                 + "os.arch= " + System.getProperty("os.arch"));
         System.out.println("file.encoding= " + System.getProperty("file.encoding"));
+        System.out.println("sun.stdout.encoding= " + System.getProperty("sun.stdout.encoding") + ", "
+                + "sun.stderr.encoding= " + System.getProperty("sun.stderr.encoding"));
+        System.out.println("stdout.encoding= " + System.getProperty("stdout.encoding") + ", " + "stderr.encoding= "
+                + System.getProperty("stderr.encoding"));
         System.out.println("java.version= " + System.getProperty("java.version") + ", "
                 + "java.vendor= " + System.getProperty("java.vendor") + ","
                 + " java.home= " + System.getProperty("java.home"));
