@@ -15,27 +15,18 @@
  */
 package org.fusesource.jansi;
 
-import java.io.UnsupportedEncodingException;
-
-import static org.fusesource.jansi.internal.Kernel32.FORMAT_MESSAGE_FROM_SYSTEM;
-import static org.fusesource.jansi.internal.Kernel32.FormatMessageW;
-import static org.fusesource.jansi.internal.Kernel32.GetLastError;
-
 public class WindowsSupport {
 
     public static String getLastErrorMessage() {
-        int errorCode = GetLastError();
+        int errorCode = getKernel32().getLastError();
         return getErrorMessage(errorCode);
     }
 
     public static String getErrorMessage(int errorCode) {
-        int bufferSize = 160;
-        byte data[] = new byte[bufferSize];
-        FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, 0, errorCode, 0, data, bufferSize, null);
-        try {
-            return new String(data, "UTF-16LE").trim();
-        } catch (UnsupportedEncodingException e) {
-            throw new IllegalStateException(e);
-        }
+        return getKernel32().getErrorMessage(errorCode);
+    }
+
+    private static AnsiConsoleSupport.Kernel32 getKernel32() {
+        return AnsiConsoleSupport.getInstance().getKernel32();
     }
 }

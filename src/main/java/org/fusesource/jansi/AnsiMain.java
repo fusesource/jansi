@@ -26,7 +26,6 @@ import java.io.PrintStream;
 import java.util.Properties;
 
 import org.fusesource.jansi.Ansi.Attribute;
-import org.fusesource.jansi.internal.CLibrary;
 import org.fusesource.jansi.internal.JansiLoader;
 
 import static org.fusesource.jansi.Ansi.ansi;
@@ -54,27 +53,34 @@ public class AnsiMain {
 
         System.out.println();
 
-        // info on native library
-        System.out.println("library.jansi.path= " + System.getProperty("library.jansi.path", ""));
-        System.out.println("library.jansi.version= " + System.getProperty("library.jansi.version", ""));
-        boolean loaded = JansiLoader.initialize();
-        if (loaded) {
-            System.out.println("Jansi native library loaded from " + JansiLoader.getNativeLibraryPath());
-            if (JansiLoader.getNativeLibrarySourceUrl() != null) {
-                System.out.println("   which was auto-extracted from " + JansiLoader.getNativeLibrarySourceUrl());
-            }
-        } else {
-            String prev = System.getProperty(AnsiConsole.JANSI_GRACEFUL);
-            try {
-                System.setProperty(AnsiConsole.JANSI_GRACEFUL, "false");
-                JansiLoader.initialize();
-            } catch (Throwable e) {
-                e.printStackTrace(System.out);
-            } finally {
-                if (prev != null) {
-                    System.setProperty(AnsiConsole.JANSI_GRACEFUL, prev);
-                } else {
-                    System.clearProperty(AnsiConsole.JANSI_GRACEFUL);
+        System.out.println("jansi.providers= "
+                + System.getProperty(AnsiConsole.JANSI_PROVIDERS, AnsiConsole.JANSI_PROVIDERS_DEFAULT));
+        String provider = AnsiConsoleSupport.getInstance().getProviderName();
+        System.out.println("Selected provider: " + provider);
+
+        if (AnsiConsole.JANSI_PROVIDER_JNI.equals(provider)) {
+            // info on native library
+            System.out.println("library.jansi.path= " + System.getProperty("library.jansi.path", ""));
+            System.out.println("library.jansi.version= " + System.getProperty("library.jansi.version", ""));
+            boolean loaded = JansiLoader.initialize();
+            if (loaded) {
+                System.out.println("Jansi native library loaded from " + JansiLoader.getNativeLibraryPath());
+                if (JansiLoader.getNativeLibrarySourceUrl() != null) {
+                    System.out.println("   which was auto-extracted from " + JansiLoader.getNativeLibrarySourceUrl());
+                }
+            } else {
+                String prev = System.getProperty(AnsiConsole.JANSI_GRACEFUL);
+                try {
+                    System.setProperty(AnsiConsole.JANSI_GRACEFUL, "false");
+                    JansiLoader.initialize();
+                } catch (Throwable e) {
+                    e.printStackTrace(System.out);
+                } finally {
+                    if (prev != null) {
+                        System.setProperty(AnsiConsole.JANSI_GRACEFUL, prev);
+                    } else {
+                        System.clearProperty(AnsiConsole.JANSI_GRACEFUL);
+                    }
                 }
             }
         }
@@ -192,11 +198,21 @@ public class AnsiMain {
     }
 
     private static void diagnoseTty(boolean stderr) {
-        int fd = stderr ? CLibrary.STDERR_FILENO : CLibrary.STDOUT_FILENO;
-        int isatty = CLibrary.LOADED ? CLibrary.isatty(fd) : 0;
+        int isatty;
+        int width;
+        if (AnsiConsole.IS_WINDOWS) {
+            long console = AnsiConsoleSupport.getInstance().getKernel32().getStdHandle(!stderr);
+            isatty = AnsiConsoleSupport.getInstance().getKernel32().isTty(console);
+            width = AnsiConsoleSupport.getInstance().getKernel32().getTerminalWidth(console);
+        } else {
+            int fd = stderr ? AnsiConsoleSupport.CLibrary.STDERR_FILENO : AnsiConsoleSupport.CLibrary.STDOUT_FILENO;
+            isatty = AnsiConsoleSupport.getInstance().getCLibrary().isTty(fd);
+            width = AnsiConsoleSupport.getInstance().getCLibrary().getTerminalWidth(fd);
+        }
 
         System.out.println("isatty(STD" + (stderr ? "ERR" : "OUT") + "_FILENO): " + isatty + ", System."
                 + (stderr ? "err" : "out") + " " + ((isatty == 0) ? "is *NOT*" : "is") + " a terminal");
+        System.out.println("width(STD" + (stderr ? "ERR" : "OUT") + "_FILENO): " + width);
     }
 
     private static void testAnsi(boolean stderr) {

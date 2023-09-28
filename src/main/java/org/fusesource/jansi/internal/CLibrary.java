@@ -44,10 +44,6 @@ public class CLibrary {
     // Constants
     //
 
-    public static int STDOUT_FILENO = 1;
-
-    public static int STDERR_FILENO = 2;
-
     public static boolean HAVE_ISATTY;
 
     public static boolean HAVE_TTYNAME;
@@ -102,6 +98,12 @@ public class CLibrary {
     public static native int ioctl(int filedes, long request, int[] params);
 
     public static native int ioctl(int filedes, long request, WinSize params);
+
+    public static short getTerminalWidth(int fd) {
+        WinSize sz = new WinSize();
+        ioctl(fd, TIOCGWINSZ, sz);
+        return sz.ws_col;
+    }
 
     /**
      * Window sizes.
