@@ -131,10 +131,8 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
     }
 
     private void applyCursorPosition() throws IOException {
-        try (Arena arena = Arena.ofConfined()) {
-            if (SetConsoleCursorPosition(console, info.cursorPosition().copy(arena)) == 0) {
-                throw new IOException(WindowsSupport.getLastErrorMessage());
-            }
+        if (SetConsoleCursorPosition(console, info.cursorPosition()) == 0) {
+            throw new IOException(WindowsSupport.getLastErrorMessage());
         }
     }
 
@@ -172,10 +170,10 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
                             console,
                             info.attributes(),
                             lengthToEnd,
-                            info.cursorPosition().copy(arena),
+                            info.cursorPosition(),
                             written);
                     FillConsoleOutputCharacterW(
-                            console, ' ', lengthToEnd, info.cursorPosition().copy(arena), written);
+                            console, ' ', lengthToEnd, info.cursorPosition(), written);
                     break;
                 default:
                     break;
@@ -211,10 +209,10 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
                             console,
                             info.attributes(),
                             lengthToLastCol,
-                            info.cursorPosition().copy(arena),
+                            info.cursorPosition(),
                             written);
                     FillConsoleOutputCharacterW(
-                            console, ' ', lengthToLastCol, info.cursorPosition().copy(arena), written);
+                            console, ' ', lengthToLastCol, info.cursorPosition(), written);
                     break;
                 default:
                     break;
