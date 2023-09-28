@@ -27,12 +27,13 @@ import java.lang.foreign.SymbolLookup;
 import java.lang.foreign.ValueLayout;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.VarHandle;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 import static java.lang.foreign.ValueLayout.*;
 
 @SuppressWarnings("unused")
-final class Kernel32 {
+public final class Kernel32 {
 
     public static final int FORMAT_MESSAGE_FROM_SYSTEM = 0x00001000;
 
@@ -309,7 +310,7 @@ final class Kernel32 {
         try (Arena session = Arena.ofConfined()) {
             MemorySegment data = session.allocate(bufferSize);
             FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, null, errorCode, 0, data, bufferSize, null);
-            return data.getUtf8String(0).trim();
+            return new String(data.toArray(JAVA_BYTE), StandardCharsets.UTF_16LE).trim();
         }
     }
 

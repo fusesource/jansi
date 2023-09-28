@@ -18,7 +18,6 @@ package org.fusesource.jansi.ffm;
 import java.lang.foreign.*;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.VarHandle;
-import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 
 import org.fusesource.jansi.AnsiConsoleSupport;
@@ -104,15 +103,7 @@ final class WindowsCLibrary implements AnsiConsoleSupport.CLibrary {
             int stringLength = Short.toUnsignedInt((Short) UNICODE_STRING_LENGTH.get(buffer));
             MemorySegment stringBuffer = ((MemorySegment) UNICODE_STRING_BUFFER.get(buffer)).reinterpret(stringLength);
 
-            byte[] array = new byte[stringLength];
-            MemorySegment.copy(stringBuffer, JAVA_BYTE, 0, array, 0, stringLength);
-
-            String str = new String(
-                    array,
-                    ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN
-                            ? StandardCharsets.UTF_16LE
-                            : StandardCharsets.UTF_16BE);
-
+            String str = new String(stringBuffer.toArray(JAVA_BYTE), StandardCharsets.UTF_16LE).trim();
             if (str.startsWith("msys-") || str.startsWith("cygwin-") || str.startsWith("-pty")) {
                 return 1;
             }

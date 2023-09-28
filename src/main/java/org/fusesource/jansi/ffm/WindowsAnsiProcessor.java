@@ -20,6 +20,7 @@ import java.io.OutputStream;
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
+import java.nio.charset.StandardCharsets;
 
 import org.fusesource.jansi.WindowsSupport;
 import org.fusesource.jansi.io.AnsiProcessor;
@@ -432,7 +433,9 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
     @Override
     protected void processChangeWindowTitle(String title) {
         try (Arena session = Arena.ofConfined()) {
-            MemorySegment str = session.allocateUtf8String(title);
+            byte[] bytes = title.getBytes(StandardCharsets.UTF_16LE);
+            MemorySegment str = session.allocate(bytes.length + 2);
+            MemorySegment.copy(bytes, 0, str, ValueLayout.JAVA_BYTE, 0, bytes.length);
             SetConsoleTitleW(str);
         }
     }
