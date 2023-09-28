@@ -425,10 +425,6 @@ final class Kernel32 {
 
         private final MemorySegment seg;
 
-        public INPUT_RECORD() {
-            this(Arena.ofAuto().allocate(LAYOUT));
-        }
-
         INPUT_RECORD(MemorySegment seg) {
             this.seg = seg;
         }
@@ -457,10 +453,6 @@ final class Kernel32 {
 
         private final MemorySegment seg;
 
-        public MENU_EVENT_RECORD() {
-            this(Arena.ofAuto().allocate(LAYOUT));
-        }
-
         MENU_EVENT_RECORD(MemorySegment seg) {
             this.seg = seg;
         }
@@ -480,10 +472,6 @@ final class Kernel32 {
         static final VarHandle SET_FOCUS = varHandle(LAYOUT, "bSetFocus");
 
         private final MemorySegment seg;
-
-        public FOCUS_EVENT_RECORD() {
-            this(Arena.ofAuto().allocate(LAYOUT));
-        }
 
         FOCUS_EVENT_RECORD(MemorySegment seg) {
             this.seg = Objects.requireNonNull(seg);
@@ -508,10 +496,6 @@ final class Kernel32 {
         static final long SIZE_OFFSET = byteOffset(LAYOUT, "size");
 
         private final MemorySegment seg;
-
-        public WINDOW_BUFFER_SIZE_RECORD() {
-            this(Arena.ofAuto().allocate(LAYOUT));
-        }
 
         WINDOW_BUFFER_SIZE_RECORD(MemorySegment seg) {
             this.seg = seg;
@@ -539,10 +523,6 @@ final class Kernel32 {
         private static final VarHandle EVENT_FLAGS = varHandle(LAYOUT, "dwEventFlags");
 
         private final MemorySegment seg;
-
-        public MOUSE_EVENT_RECORD() {
-            this(Arena.ofAuto().allocate(LAYOUT));
-        }
 
         MOUSE_EVENT_RECORD(MemorySegment seg) {
             this.seg = Objects.requireNonNull(seg);
@@ -596,10 +576,6 @@ final class Kernel32 {
 
         final MemorySegment seg;
 
-        public KEY_EVENT_RECORD() {
-            this(Arena.ofAuto().allocate(LAYOUT));
-        }
-
         KEY_EVENT_RECORD(MemorySegment seg) {
             this.seg = seg;
         }
@@ -651,12 +627,12 @@ final class Kernel32 {
 
         final MemorySegment seg;
 
-        public CHAR_INFO() {
-            this(Arena.ofAuto().allocate(LAYOUT));
+        public CHAR_INFO(Arena session) {
+            this(session.allocate(LAYOUT));
         }
 
-        public CHAR_INFO(char c, short a) {
-            this();
+        public CHAR_INFO(Arena session, char c, short a) {
+            this(session);
             UnicodeChar$VH.set(seg, c);
             Attributes$VH.set(seg, a);
         }
@@ -684,8 +660,8 @@ final class Kernel32 {
 
         private final MemorySegment seg;
 
-        public CONSOLE_SCREEN_BUFFER_INFO() {
-            this(Arena.ofAuto().allocate(LAYOUT));
+        public CONSOLE_SCREEN_BUFFER_INFO(Arena session) {
+            this(session.allocate(LAYOUT));
         }
 
         CONSOLE_SCREEN_BUFFER_INFO(MemorySegment seg) {
@@ -730,18 +706,14 @@ final class Kernel32 {
 
         private final MemorySegment seg;
 
-        public COORD() {
-            this(Arena.ofAuto().allocate(LAYOUT));
+        public COORD(Arena session) {
+            this(session.allocate(LAYOUT));
         }
 
-        public COORD(short x, short y) {
-            this(Arena.ofAuto().allocate(LAYOUT));
+        public COORD(Arena session, short x, short y) {
+            this(session.allocate(LAYOUT));
             x(x);
             y(y);
-        }
-
-        public COORD(COORD from) {
-            this(Arena.ofAuto().allocate(LAYOUT).copyFrom(Objects.requireNonNull(from).seg));
         }
 
         COORD(MemorySegment seg) {
@@ -768,8 +740,8 @@ final class Kernel32 {
             COORD.y$VH.set(seg, y);
         }
 
-        public COORD copy() {
-            return new COORD(this);
+        public COORD copy(Arena session) {
+            return new COORD(session.allocate(LAYOUT).copyFrom(seg));
         }
     }
 
@@ -786,14 +758,6 @@ final class Kernel32 {
         static final VarHandle Bottom$VH = varHandle(LAYOUT, "Bottom");
 
         private final MemorySegment seg;
-
-        public SMALL_RECT() {
-            this(Arena.ofAuto().allocate(LAYOUT));
-        }
-
-        public SMALL_RECT(SMALL_RECT from) {
-            this(Arena.ofAuto().allocate(LAYOUT).copyFrom(from.seg));
-        }
 
         SMALL_RECT(MemorySegment seg, long offset) {
             this(seg.asSlice(offset, LAYOUT.byteSize()));
@@ -835,8 +799,8 @@ final class Kernel32 {
             Top$VH.set(seg, t);
         }
 
-        public SMALL_RECT copy() {
-            return new SMALL_RECT(this);
+        public SMALL_RECT copy(Arena session) {
+            return new SMALL_RECT(session.allocate(LAYOUT).copyFrom(seg));
         }
     }
 

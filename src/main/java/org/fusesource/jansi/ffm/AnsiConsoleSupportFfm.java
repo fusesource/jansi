@@ -53,9 +53,11 @@ public class AnsiConsoleSupportFfm implements AnsiConsoleSupport {
 
             @Override
             public int getTerminalWidth(long console) {
-                CONSOLE_SCREEN_BUFFER_INFO info = new CONSOLE_SCREEN_BUFFER_INFO();
-                GetConsoleScreenBufferInfo(MemorySegment.ofAddress(console), info);
-                return info.windowWidth();
+                try (Arena session = Arena.ofConfined()) {
+                    CONSOLE_SCREEN_BUFFER_INFO info = new CONSOLE_SCREEN_BUFFER_INFO(session);
+                    GetConsoleScreenBufferInfo(MemorySegment.ofAddress(console), info);
+                    return info.windowWidth();
+                }
             }
 
             @Override
