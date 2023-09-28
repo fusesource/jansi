@@ -120,6 +120,10 @@ public class OSInfo {
         return translateOSNameToFolderName(System.getProperty("os.name"));
     }
 
+    public static boolean isWindows() {
+        return System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("win");
+    }
+
     public static boolean isAndroid() {
         return System.getProperty("java.runtime.name", "").toLowerCase().contains("android");
     }
