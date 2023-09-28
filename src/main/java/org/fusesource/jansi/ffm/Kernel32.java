@@ -260,10 +260,10 @@ class Kernel32 {
         }
     }
 
-    public static int GetLastError(Object... x0) {
+    public static int GetLastError() {
         MethodHandle mh$ = requireNonNull(GetLastError$MH, "GetLastError");
         try {
-            return (int) mh$.invokeExact(x0);
+            return (int) mh$.invokeExact();
         } catch (Throwable ex$) {
             throw new AssertionError("should not reach here", ex$);
         }
