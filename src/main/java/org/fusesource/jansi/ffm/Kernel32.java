@@ -33,7 +33,7 @@ import java.util.Objects;
 import static java.lang.foreign.ValueLayout.*;
 
 @SuppressWarnings("unused")
-public final class Kernel32 {
+final class Kernel32 {
 
     public static final int FORMAT_MESSAGE_FROM_SYSTEM = 0x00001000;
 
@@ -330,18 +330,18 @@ public final class Kernel32 {
                 .orElse(null);
     }
 
-    static final OfBoolean C_BOOL$LAYOUT = ValueLayout.JAVA_BOOLEAN;
-    static final OfByte C_CHAR$LAYOUT = ValueLayout.JAVA_BYTE;
-    static final OfChar C_WCHAR$LAYOUT = ValueLayout.JAVA_CHAR;
-    static final OfShort C_SHORT$LAYOUT = ValueLayout.JAVA_SHORT;
-    static final OfShort C_WORD$LAYOUT = ValueLayout.JAVA_SHORT;
-    static final OfInt C_DWORD$LAYOUT = ValueLayout.JAVA_INT;
+    static final OfBoolean C_BOOL$LAYOUT = JAVA_BOOLEAN;
+    static final OfByte C_CHAR$LAYOUT = JAVA_BYTE;
+    static final OfChar C_WCHAR$LAYOUT = JAVA_CHAR;
+    static final OfShort C_SHORT$LAYOUT = JAVA_SHORT;
+    static final OfShort C_WORD$LAYOUT = JAVA_SHORT;
+    static final OfInt C_DWORD$LAYOUT = JAVA_INT;
     static final OfInt C_INT$LAYOUT = JAVA_INT;
-    static final OfLong C_LONG$LAYOUT = ValueLayout.JAVA_LONG;
-    static final OfLong C_LONG_LONG$LAYOUT = ValueLayout.JAVA_LONG;
-    static final OfFloat C_FLOAT$LAYOUT = ValueLayout.JAVA_FLOAT;
-    static final OfDouble C_DOUBLE$LAYOUT = ValueLayout.JAVA_DOUBLE;
-    static final AddressLayout C_POINTER$LAYOUT = ValueLayout.ADDRESS;
+    static final OfLong C_LONG$LAYOUT = JAVA_LONG;
+    static final OfLong C_LONG_LONG$LAYOUT = JAVA_LONG;
+    static final OfFloat C_FLOAT$LAYOUT = JAVA_FLOAT;
+    static final OfDouble C_DOUBLE$LAYOUT = JAVA_DOUBLE;
+    static final AddressLayout C_POINTER$LAYOUT = ADDRESS;
 
     static final MethodHandle WaitForSingleObject$MH =
             downcallHandle("WaitForSingleObject", FunctionDescriptor.of(C_INT$LAYOUT, C_POINTER$LAYOUT, C_INT$LAYOUT));
