@@ -93,14 +93,14 @@ class Kernel32 {
     public static final short MENU_EVENT = 0x0008;
     public static final short FOCUS_EVENT = 0x0010;
 
-    public static int WaitForSingleObject(MemorySegment hHandle, int dwMilliseconds) {
-        MethodHandle mh$ = requireNonNull(WaitForSingleObject$MH, "WaitForSingleObject");
-        try {
-            return (int) mh$.invokeExact(hHandle, dwMilliseconds);
-        } catch (Throwable ex$) {
-            throw new AssertionError("should not reach here", ex$);
-        }
-    }
+    //    public static int WaitForSingleObject(MemorySegment hHandle, int dwMilliseconds) {
+    //        MethodHandle mh$ = requireNonNull(WaitForSingleObject$MH, "WaitForSingleObject");
+    //        try {
+    //            return (int) mh$.invokeExact(hHandle, dwMilliseconds);
+    //        } catch (Throwable ex$) {
+    //            throw new AssertionError("should not reach here", ex$);
+    //        }
+    //    }
 
     public static MemorySegment GetStdHandle(int nStdHandle) {
         MethodHandle mh$ = requireNonNull(GetStdHandle$MH, "GetStdHandle");
@@ -312,6 +312,23 @@ class Kernel32 {
         return data.getUtf8String(0).trim();
     }
 
+    private static final Linker LINKER = Linker.nativeLinker();
+
+    private static final SymbolLookup SYMBOL_LOOKUP;
+
+    static {
+        SymbolLookup loaderLookup = SymbolLookup.loaderLookup();
+        SYMBOL_LOOKUP =
+                name -> loaderLookup.find(name).or(() -> LINKER.defaultLookup().find(name));
+    }
+
+    static MethodHandle downcallHandle(String name, FunctionDescriptor fdesc) {
+        return SYMBOL_LOOKUP
+                .find(name)
+                .map(addr -> LINKER.downcallHandle(addr, fdesc))
+                .orElse(null);
+    }
+
     static final OfBoolean C_BOOL$LAYOUT = ValueLayout.JAVA_BOOLEAN;
     static final OfByte C_CHAR$LAYOUT = ValueLayout.JAVA_BYTE;
     static final OfChar C_WCHAR$LAYOUT = ValueLayout.JAVA_CHAR.withByteAlignment(16);
@@ -325,8 +342,9 @@ class Kernel32 {
     static final OfDouble C_DOUBLE$LAYOUT = ValueLayout.JAVA_DOUBLE.withByteAlignment(64);
     static final AddressLayout C_POINTER$LAYOUT = ValueLayout.ADDRESS.withByteAlignment(64);
 
-    static final MethodHandle WaitForSingleObject$MH =
-            downcallHandle("WaitForSingleObject", FunctionDescriptor.of(C_INT$LAYOUT, C_POINTER$LAYOUT, C_INT$LAYOUT));
+    //    static final MethodHandle WaitForSingleObject$MH =
+    //            downcallHandle("WaitForSingleObject", FunctionDescriptor.of(C_INT$LAYOUT, C_POINTER$LAYOUT,
+    // C_INT$LAYOUT));
     static final MethodHandle GetStdHandle$MH =
             downcallHandle("GetStdHandle", FunctionDescriptor.of(C_POINTER$LAYOUT, C_INT$LAYOUT));
     static final MethodHandle FormatMessageW$MH = downcallHandle(
@@ -818,23 +836,6 @@ class Kernel32 {
         public SMALL_RECT copy() {
             return new SMALL_RECT(this);
         }
-    }
-
-    private static final Linker LINKER = Linker.nativeLinker();
-
-    private static final SymbolLookup SYMBOL_LOOKUP;
-
-    static {
-        SymbolLookup loaderLookup = SymbolLookup.loaderLookup();
-        SYMBOL_LOOKUP =
-                name -> loaderLookup.find(name).or(() -> LINKER.defaultLookup().find(name));
-    }
-
-    static MethodHandle downcallHandle(String name, FunctionDescriptor fdesc) {
-        return SYMBOL_LOOKUP
-                .find(name)
-                .map(addr -> LINKER.downcallHandle(addr, fdesc))
-                .orElse(null);
     }
 
     static <T> T requireNonNull(T obj, String symbolName) {
