@@ -33,29 +33,6 @@ import org.fusesource.jansi.io.AnsiProcessor;
 import static org.fusesource.jansi.ffm.Kernel32.*;
 
 public class AnsiConsoleSupportFfm implements AnsiConsoleSupport {
-    static GroupLayout wsLayout;
-    static MethodHandle ioctl;
-    static VarHandle ws_col;
-    static MethodHandle isatty;
-
-    static {
-        wsLayout = MemoryLayout.structLayout(
-                ValueLayout.JAVA_SHORT.withName("ws_row"),
-                ValueLayout.JAVA_SHORT.withName("ws_col"),
-                ValueLayout.JAVA_SHORT,
-                ValueLayout.JAVA_SHORT);
-        ws_col = wsLayout.varHandle(MemoryLayout.PathElement.groupElement("ws_col"));
-        Linker linker = Linker.nativeLinker();
-        ioctl = linker.downcallHandle(
-                linker.defaultLookup().find("ioctl").get(),
-                FunctionDescriptor.of(
-                        ValueLayout.JAVA_INT, ValueLayout.JAVA_INT, ValueLayout.JAVA_LONG, ValueLayout.ADDRESS),
-                Linker.Option.firstVariadicArg(2));
-        isatty = linker.downcallHandle(
-                linker.defaultLookup().find("isatty").get(),
-                FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.JAVA_INT));
-    }
-
     @Override
     public String getProviderName() {
         return "ffm";
@@ -65,6 +42,10 @@ public class AnsiConsoleSupportFfm implements AnsiConsoleSupport {
     public CLibrary getCLibrary() {
         return new CLibrary() {
             static final int TIOCGWINSZ;
+            static final GroupLayout wsLayout;
+            static final MethodHandle ioctl;
+            static final VarHandle ws_col;
+            static final MethodHandle isatty;
 
             static {
                 String osName = System.getProperty("os.name");
@@ -83,12 +64,28 @@ public class AnsiConsoleSupportFfm implements AnsiConsoleSupport {
                 } else {
                     throw new UnsupportedOperationException();
                 }
+
+                wsLayout = MemoryLayout.structLayout(
+                        ValueLayout.JAVA_SHORT.withName("ws_row"),
+                        ValueLayout.JAVA_SHORT.withName("ws_col"),
+                        ValueLayout.JAVA_SHORT,
+                        ValueLayout.JAVA_SHORT);
+                ws_col = wsLayout.varHandle(MemoryLayout.PathElement.groupElement("ws_col"));
+                Linker linker = Linker.nativeLinker();
+                ioctl = linker.downcallHandle(
+                        linker.defaultLookup().find("ioctl").get(),
+                        FunctionDescriptor.of(
+                                ValueLayout.JAVA_INT, ValueLayout.JAVA_INT, ValueLayout.JAVA_LONG, ValueLayout.ADDRESS),
+                        Linker.Option.firstVariadicArg(2));
+                isatty = linker.downcallHandle(
+                        linker.defaultLookup().find("isatty").get(),
+                        FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.JAVA_INT));
             }
 
             @Override
             public short getTerminalWidth(int fd) {
-                MemorySegment segment = Arena.ofAuto().allocate(wsLayout);
-                try {
+                try (Arena session = Arena.ofConfined()) {
+                    MemorySegment segment = session.allocate(wsLayout);
                     int res = (int) ioctl.invoke(fd, (long) TIOCGWINSZ, segment);
                     return (short) ws_col.get(segment);
                 } catch (Throwable e) {
