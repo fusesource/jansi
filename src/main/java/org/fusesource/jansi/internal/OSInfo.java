@@ -125,7 +125,7 @@ public class OSInfo {
     }
 
     public static boolean isAndroid() {
-        return System.getProperty("java.runtime.name", "").toLowerCase().contains("android");
+        return System.getProperty("java.runtime.name", "").toLowerCase(Locale.ROOT).contains("android");
     }
 
     public static boolean isAlpine() {
@@ -135,7 +135,7 @@ public class OSInfo {
 
             InputStream in = p.getInputStream();
             try {
-                return readFully(in).toLowerCase().contains("alpine");
+                return readFully(in).toLowerCase(Locale.ROOT).contains("alpine");
             } finally {
                 in.close();
             }
