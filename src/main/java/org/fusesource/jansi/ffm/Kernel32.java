@@ -307,9 +307,11 @@ class Kernel32 {
 
     public static String getErrorMessage(int errorCode) {
         int bufferSize = 160;
-        MemorySegment data = Arena.ofAuto().allocate(bufferSize);
-        FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, null, errorCode, 0, data, bufferSize, null);
-        return data.getUtf8String(0).trim();
+        try (Arena session = Arena.ofConfined()) {
+            MemorySegment data = session.allocate(bufferSize);
+            FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, null, errorCode, 0, data, bufferSize, null);
+            return data.getUtf8String(0).trim();
+        }
     }
 
     private static final Linker LINKER = Linker.nativeLinker();

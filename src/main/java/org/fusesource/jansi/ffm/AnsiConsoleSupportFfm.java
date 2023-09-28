@@ -41,11 +41,11 @@ public class AnsiConsoleSupportFfm implements AnsiConsoleSupport {
     @Override
     public CLibrary getCLibrary() {
         return new CLibrary() {
-            static final int TIOCGWINSZ;
-            static final GroupLayout wsLayout;
-            static final MethodHandle ioctl;
-            static final VarHandle ws_col;
-            static final MethodHandle isatty;
+            private static final int TIOCGWINSZ;
+            private static final GroupLayout wsLayout;
+            private static final MethodHandle ioctl;
+            private static final VarHandle ws_col;
+            private static final MethodHandle isatty;
 
             static {
                 String osName = System.getProperty("os.name");
@@ -148,10 +148,7 @@ public class AnsiConsoleSupportFfm implements AnsiConsoleSupport {
 
             @Override
             public String getErrorMessage(int errorCode) {
-                int bufferSize = 160;
-                MemorySegment data = Arena.ofAuto().allocate(bufferSize);
-                FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, null, errorCode, 0, data, bufferSize, null);
-                return data.getUtf8String(0).trim();
+                return org.fusesource.jansi.ffm.Kernel32.getErrorMessage(errorCode);
             }
 
             @Override
