@@ -314,19 +314,17 @@ final class Kernel32 {
         }
     }
 
-    private static final Linker LINKER = Linker.nativeLinker();
-
     private static final SymbolLookup SYMBOL_LOOKUP;
 
     static {
         System.loadLibrary("Kernel32");
-        SYMBOL_LOOKUP = SymbolLookup.loaderLookup().or(LINKER.defaultLookup());
+        SYMBOL_LOOKUP = SymbolLookup.loaderLookup().or(Linker.nativeLinker().defaultLookup());
     }
 
     static MethodHandle downcallHandle(String name, FunctionDescriptor fdesc) {
         return SYMBOL_LOOKUP
                 .find(name)
-                .map(addr -> LINKER.downcallHandle(addr, fdesc))
+                .map(addr -> Linker.nativeLinker().downcallHandle(addr, fdesc))
                 .orElse(null);
     }
 
