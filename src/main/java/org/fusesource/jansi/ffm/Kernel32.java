@@ -319,6 +319,7 @@ class Kernel32 {
     private static final SymbolLookup SYMBOL_LOOKUP;
 
     static {
+        System.loadLibrary("Kernel32");
         SymbolLookup loaderLookup = SymbolLookup.loaderLookup();
         SYMBOL_LOOKUP =
                 name -> loaderLookup.find(name).or(() -> LINKER.defaultLookup().find(name));
