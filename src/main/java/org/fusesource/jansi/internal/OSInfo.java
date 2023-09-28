@@ -211,7 +211,7 @@ public class OSInfo {
         if (osArch.startsWith("arm")) {
             osArch = resolveArmArchType();
         } else {
-            String lc = osArch.toLowerCase(Locale.US);
+            String lc = osArch.toLowerCase(Locale.ROOT);
             if (archMapping.containsKey(lc)) return archMapping.get(lc);
         }
         return translateArchNameToFolderName(osArch);
