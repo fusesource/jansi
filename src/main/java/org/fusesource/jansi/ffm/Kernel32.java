@@ -105,7 +105,7 @@ class Kernel32 {
     public static MemorySegment GetStdHandle(int nStdHandle) {
         MethodHandle mh$ = requireNonNull(GetStdHandle$MH, "GetStdHandle");
         try {
-            return MemorySegment.ofAddress((long) mh$.invokeExact(nStdHandle));
+            return (MemorySegment) mh$.invokeExact(nStdHandle);
         } catch (Throwable ex$) {
             throw new AssertionError("should not reach here", ex$);
         }
@@ -121,14 +121,7 @@ class Kernel32 {
             MemorySegment Arguments) {
         MethodHandle mh$ = requireNonNull(FormatMessageW$MH, "FormatMessageW");
         try {
-            return (int) mh$.invokeExact(
-                    dwFlags,
-                    lpSource.address(),
-                    dwMessageId,
-                    dwLanguageId,
-                    lpBuffer.address(),
-                    nSize,
-                    Arguments.address());
+            return (int) mh$.invokeExact(dwFlags, lpSource, dwMessageId, dwLanguageId, lpBuffer, nSize, Arguments);
         } catch (Throwable ex$) {
             throw new AssertionError("should not reach here", ex$);
         }
@@ -155,7 +148,7 @@ class Kernel32 {
     public static int GetConsoleMode(MemorySegment hConsoleHandle, MemorySegment lpMode) {
         MethodHandle mh$ = requireNonNull(GetConsoleMode$MH, "GetConsoleMode");
         try {
-            return (int) mh$.invokeExact(hConsoleHandle.address(), lpMode.address());
+            return (int) mh$.invokeExact(hConsoleHandle, lpMode);
         } catch (Throwable ex$) {
             throw new AssertionError("should not reach here", ex$);
         }
@@ -164,7 +157,7 @@ class Kernel32 {
     public static int SetConsoleTitleW(MemorySegment lpConsoleTitle) {
         MethodHandle mh$ = requireNonNull(SetConsoleTitleW$MH, "SetConsoleTitleW");
         try {
-            return (int) mh$.invokeExact(lpConsoleTitle.address());
+            return (int) mh$.invokeExact(lpConsoleTitle);
         } catch (Throwable ex$) {
             throw new AssertionError("should not reach here", ex$);
         }
@@ -187,8 +180,7 @@ class Kernel32 {
             MemorySegment lpNumberOfCharsWritten) {
         MethodHandle mh$ = requireNonNull(FillConsoleOutputCharacterW$MH, "FillConsoleOutputCharacterW");
         try {
-            return (int) mh$.invokeExact(
-                    hConsoleOutput.address(), cCharacter, nLength, dwWriteCoord.seg, lpNumberOfCharsWritten.address());
+            return (int) mh$.invokeExact(hConsoleOutput, cCharacter, nLength, dwWriteCoord.seg, lpNumberOfCharsWritten);
         } catch (Throwable ex$) {
             throw new AssertionError("should not reach here", ex$);
         }
@@ -202,8 +194,7 @@ class Kernel32 {
             MemorySegment lpNumberOfAttrsWritten) {
         MethodHandle mh$ = requireNonNull(FillConsoleOutputAttribute$MH, "FillConsoleOutputAttribute");
         try {
-            return (int) mh$.invokeExact(
-                    hConsoleOutput, wAttribute, nLength, dwWriteCoord.seg, lpNumberOfAttrsWritten.address());
+            return (int) mh$.invokeExact(hConsoleOutput, wAttribute, nLength, dwWriteCoord.seg, lpNumberOfAttrsWritten);
         } catch (Throwable ex$) {
             throw new AssertionError("should not reach here", ex$);
         }
@@ -228,8 +219,7 @@ class Kernel32 {
             MemorySegment hConsoleInput, MemorySegment lpBuffer, int nLength, MemorySegment lpNumberOfEventsRead) {
         MethodHandle mh$ = requireNonNull(ReadConsoleInputW$MH, "ReadConsoleInputW");
         try {
-            return (int) mh$.invokeExact(
-                    hConsoleInput.address(), lpBuffer.address(), nLength, lpNumberOfEventsRead.address());
+            return (int) mh$.invokeExact(hConsoleInput, lpBuffer, nLength, lpNumberOfEventsRead);
         } catch (Throwable ex$) {
             throw new AssertionError("should not reach here", ex$);
         }
@@ -239,8 +229,7 @@ class Kernel32 {
             MemorySegment hConsoleInput, MemorySegment lpBuffer, int nLength, MemorySegment lpNumberOfEventsRead) {
         MethodHandle mh$ = requireNonNull(PeekConsoleInputW$MH, "PeekConsoleInputW");
         try {
-            return (int) mh$.invokeExact(
-                    hConsoleInput.address(), lpBuffer.address(), nLength, lpNumberOfEventsRead.address());
+            return (int) mh$.invokeExact(hConsoleInput, lpBuffer, nLength, lpNumberOfEventsRead);
         } catch (Throwable ex$) {
             throw new AssertionError("should not reach here", ex$);
         }
@@ -250,7 +239,7 @@ class Kernel32 {
             MemorySegment hConsoleOutput, CONSOLE_SCREEN_BUFFER_INFO lpConsoleScreenBufferInfo) {
         MethodHandle mh$ = requireNonNull(GetConsoleScreenBufferInfo$MH, "GetConsoleScreenBufferInfo");
         try {
-            return (int) mh$.invokeExact(hConsoleOutput.address(), lpConsoleScreenBufferInfo.seg);
+            return (int) mh$.invokeExact(hConsoleOutput, lpConsoleScreenBufferInfo.seg);
         } catch (Throwable ex$) {
             throw new AssertionError("should not reach here", ex$);
         }
