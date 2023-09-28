@@ -333,16 +333,16 @@ class Kernel32 {
 
     static final OfBoolean C_BOOL$LAYOUT = ValueLayout.JAVA_BOOLEAN;
     static final OfByte C_CHAR$LAYOUT = ValueLayout.JAVA_BYTE;
-    static final OfChar C_WCHAR$LAYOUT = ValueLayout.JAVA_CHAR.withByteAlignment(16);
-    static final OfShort C_SHORT$LAYOUT = ValueLayout.JAVA_SHORT.withByteAlignment(16);
-    static final OfShort C_WORD$LAYOUT = ValueLayout.JAVA_SHORT.withByteAlignment(16);
-    static final OfInt C_DWORD$LAYOUT = ValueLayout.JAVA_INT.withByteAlignment(32);
-    static final OfInt C_INT$LAYOUT = JAVA_INT.withByteAlignment(32);
-    static final OfLong C_LONG$LAYOUT = ValueLayout.JAVA_LONG.withByteAlignment(64);
-    static final OfLong C_LONG_LONG$LAYOUT = ValueLayout.JAVA_LONG.withByteAlignment(64);
-    static final OfFloat C_FLOAT$LAYOUT = ValueLayout.JAVA_FLOAT.withByteAlignment(32);
-    static final OfDouble C_DOUBLE$LAYOUT = ValueLayout.JAVA_DOUBLE.withByteAlignment(64);
-    static final AddressLayout C_POINTER$LAYOUT = ValueLayout.ADDRESS.withByteAlignment(64);
+    static final OfChar C_WCHAR$LAYOUT = ValueLayout.JAVA_CHAR;
+    static final OfShort C_SHORT$LAYOUT = ValueLayout.JAVA_SHORT;
+    static final OfShort C_WORD$LAYOUT = ValueLayout.JAVA_SHORT;
+    static final OfInt C_DWORD$LAYOUT = ValueLayout.JAVA_INT;
+    static final OfInt C_INT$LAYOUT = JAVA_INT;
+    static final OfLong C_LONG$LAYOUT = ValueLayout.JAVA_LONG;
+    static final OfLong C_LONG_LONG$LAYOUT = ValueLayout.JAVA_LONG;
+    static final OfFloat C_FLOAT$LAYOUT = ValueLayout.JAVA_FLOAT;
+    static final OfDouble C_DOUBLE$LAYOUT = ValueLayout.JAVA_DOUBLE;
+    static final AddressLayout C_POINTER$LAYOUT = ValueLayout.ADDRESS;
 
     //    static final MethodHandle WaitForSingleObject$MH =
     //            downcallHandle("WaitForSingleObject", FunctionDescriptor.of(C_INT$LAYOUT, C_POINTER$LAYOUT,
