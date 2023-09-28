@@ -282,9 +282,9 @@ final class Kernel32 {
 
     public static INPUT_RECORD[] readConsoleInputHelper(MemorySegment handle, int count, boolean peek)
             throws IOException {
-        try (Arena session = Arena.ofConfined()) {
-            MemorySegment inputRecordPtr = session.allocateArray(INPUT_RECORD.LAYOUT, count);
-            MemorySegment length = session.allocate(JAVA_INT, 0);
+        try (Arena arena = Arena.ofConfined()) {
+            MemorySegment inputRecordPtr = arena.allocateArray(INPUT_RECORD.LAYOUT, count);
+            MemorySegment length = arena.allocate(JAVA_INT, 0);
             int res = peek
                     ? PeekConsoleInputW(handle, inputRecordPtr, count, length)
                     : ReadConsoleInputW(handle, inputRecordPtr, count, length);
@@ -307,8 +307,8 @@ final class Kernel32 {
 
     public static String getErrorMessage(int errorCode) {
         int bufferSize = 160;
-        try (Arena session = Arena.ofConfined()) {
-            MemorySegment data = session.allocate(bufferSize);
+        try (Arena arena = Arena.ofConfined()) {
+            MemorySegment data = arena.allocate(bufferSize);
             FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, null, errorCode, 0, data, bufferSize, null);
             return new String(data.toArray(JAVA_BYTE), StandardCharsets.UTF_16LE).trim();
         }
@@ -627,12 +627,12 @@ final class Kernel32 {
 
         final MemorySegment seg;
 
-        public CHAR_INFO(Arena session) {
-            this(session.allocate(LAYOUT));
+        public CHAR_INFO(Arena arena) {
+            this(arena.allocate(LAYOUT));
         }
 
-        public CHAR_INFO(Arena session, char c, short a) {
-            this(session);
+        public CHAR_INFO(Arena arena, char c, short a) {
+            this(arena);
             UnicodeChar$VH.set(seg, c);
             Attributes$VH.set(seg, a);
         }
@@ -660,8 +660,8 @@ final class Kernel32 {
 
         private final MemorySegment seg;
 
-        public CONSOLE_SCREEN_BUFFER_INFO(Arena session) {
-            this(session.allocate(LAYOUT));
+        public CONSOLE_SCREEN_BUFFER_INFO(Arena arena) {
+            this(arena.allocate(LAYOUT));
         }
 
         CONSOLE_SCREEN_BUFFER_INFO(MemorySegment seg) {
@@ -706,12 +706,12 @@ final class Kernel32 {
 
         private final MemorySegment seg;
 
-        public COORD(Arena session) {
-            this(session.allocate(LAYOUT));
+        public COORD(Arena arena) {
+            this(arena.allocate(LAYOUT));
         }
 
-        public COORD(Arena session, short x, short y) {
-            this(session.allocate(LAYOUT));
+        public COORD(Arena arena, short x, short y) {
+            this(arena.allocate(LAYOUT));
             x(x);
             y(y);
         }
@@ -740,8 +740,8 @@ final class Kernel32 {
             COORD.y$VH.set(seg, y);
         }
 
-        public COORD copy(Arena session) {
-            return new COORD(session.allocate(LAYOUT).copyFrom(seg));
+        public COORD copy(Arena arena) {
+            return new COORD(arena.allocate(LAYOUT).copyFrom(seg));
         }
     }
 
@@ -799,8 +799,8 @@ final class Kernel32 {
             Top$VH.set(seg, t);
         }
 
-        public SMALL_RECT copy(Arena session) {
-            return new SMALL_RECT(session.allocate(LAYOUT).copyFrom(seg));
+        public SMALL_RECT copy(Arena arena) {
+            return new SMALL_RECT(arena.allocate(LAYOUT).copyFrom(seg));
         }
     }
 

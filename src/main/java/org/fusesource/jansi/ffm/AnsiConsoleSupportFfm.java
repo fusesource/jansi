@@ -53,8 +53,8 @@ public class AnsiConsoleSupportFfm implements AnsiConsoleSupport {
 
             @Override
             public int getTerminalWidth(long console) {
-                try (Arena session = Arena.ofConfined()) {
-                    CONSOLE_SCREEN_BUFFER_INFO info = new CONSOLE_SCREEN_BUFFER_INFO(session);
+                try (Arena arena = Arena.ofConfined()) {
+                    CONSOLE_SCREEN_BUFFER_INFO info = new CONSOLE_SCREEN_BUFFER_INFO(arena);
                     GetConsoleScreenBufferInfo(MemorySegment.ofAddress(console), info);
                     return info.windowWidth();
                 }
@@ -68,8 +68,8 @@ public class AnsiConsoleSupportFfm implements AnsiConsoleSupport {
 
             @Override
             public int getConsoleMode(long console, int[] mode) {
-                try (Arena session = Arena.ofConfined()) {
-                    MemorySegment written = session.allocate(ValueLayout.JAVA_INT);
+                try (Arena arena = Arena.ofConfined()) {
+                    MemorySegment written = arena.allocate(ValueLayout.JAVA_INT);
                     int res = GetConsoleMode(MemorySegment.ofAddress(console), written);
                     mode[0] = written.getAtIndex(ValueLayout.JAVA_INT, 0);
                     return res;

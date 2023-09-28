@@ -64,8 +64,8 @@ final class PosixCLibrary implements AnsiConsoleSupport.CLibrary {
 
     @Override
     public short getTerminalWidth(int fd) {
-        try (Arena session = Arena.ofConfined()) {
-            MemorySegment segment = session.allocate(wsLayout);
+        try (Arena arena = Arena.ofConfined()) {
+            MemorySegment segment = arena.allocate(wsLayout);
             int res = (int) ioctl.invoke(fd, (long) TIOCGWINSZ, segment);
             return (short) ws_col.get(segment);
         } catch (Throwable e) {

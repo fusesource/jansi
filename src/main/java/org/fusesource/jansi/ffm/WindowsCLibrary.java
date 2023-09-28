@@ -76,14 +76,14 @@ final class WindowsCLibrary implements AnsiConsoleSupport.CLibrary {
 
     @Override
     public int isTty(int fd) {
-        try (Arena session = Arena.ofConfined()) {
+        try (Arena arena = Arena.ofConfined()) {
             // check if fd is a pipe
             MemorySegment h = Kernel32._get_osfhandle(fd);
             int t = Kernel32.GetFileType(h);
             if (t == FILE_TYPE_CHAR) {
                 // check that this is a real tty because the /dev/null
                 // and /dev/zero streams are also of type FILE_TYPE_CHAR
-                return Kernel32.GetConsoleMode(h, session.allocate(JAVA_INT));
+                return Kernel32.GetConsoleMode(h, arena.allocate(JAVA_INT));
             }
 
             if (NtQueryObject == null) {
@@ -92,8 +92,8 @@ final class WindowsCLibrary implements AnsiConsoleSupport.CLibrary {
 
             final int BUFFER_SIZE = 1024;
 
-            MemorySegment buffer = session.allocate(BUFFER_SIZE);
-            MemorySegment result = session.allocate(JAVA_LONG);
+            MemorySegment buffer = arena.allocate(BUFFER_SIZE);
+            MemorySegment result = arena.allocate(JAVA_LONG);
 
             int res = (int) NtQueryObject.invokeExact(h, ObjectNameInformation, buffer, BUFFER_SIZE - 2, result);
             if (res != 0) {
