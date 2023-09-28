@@ -15,13 +15,13 @@
  */
 package org.fusesource.jansi.ffm;
 
-import org.fusesource.jansi.AnsiConsoleSupport;
-
 import java.lang.foreign.*;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.VarHandle;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
+
+import org.fusesource.jansi.AnsiConsoleSupport;
 
 import static java.lang.foreign.ValueLayout.*;
 
@@ -38,18 +38,18 @@ final class WindowsCLibrary implements AnsiConsoleSupport.CLibrary {
     private static final VarHandle UNICODE_STRING_BUFFER;
 
     static {
-        _get_osfhandle = Kernel32.downcallHandle("_get_osfhandle",
-                FunctionDescriptor.of(ADDRESS, JAVA_INT));
-        GetFileType = Kernel32.downcallHandle("GetFileType",
-                FunctionDescriptor.of(JAVA_INT, ADDRESS));
+        _get_osfhandle = Kernel32.downcallHandle("_get_osfhandle", FunctionDescriptor.of(ADDRESS, JAVA_INT));
+        GetFileType = Kernel32.downcallHandle("GetFileType", FunctionDescriptor.of(JAVA_INT, ADDRESS));
 
         MethodHandle ntQueryObjectHandle = null;
         try {
             SymbolLookup ntDll = SymbolLookup.libraryLookup("ntdll", Arena.ofAuto());
 
             ntQueryObjectHandle = ntDll.find("NtQueryObject")
-                    .map(addr -> Linker.nativeLinker().downcallHandle(addr,
-                            FunctionDescriptor.of(JAVA_INT, ADDRESS, JAVA_INT, ADDRESS, JAVA_LONG, ADDRESS)))
+                    .map(addr -> Linker.nativeLinker()
+                            .downcallHandle(
+                                    addr,
+                                    FunctionDescriptor.of(JAVA_INT, ADDRESS, JAVA_INT, ADDRESS, JAVA_LONG, ADDRESS)))
                     .orElse(null);
         } catch (Throwable ignored) {
         }
@@ -57,10 +57,7 @@ final class WindowsCLibrary implements AnsiConsoleSupport.CLibrary {
         NtQueryObject = ntQueryObjectHandle;
 
         StructLayout unicodeStringLayout = MemoryLayout.structLayout(
-                JAVA_SHORT.withName("Length"),
-                JAVA_SHORT.withName("MaximumLength"),
-                ADDRESS.withName("Buffer")
-        );
+                JAVA_SHORT.withName("Length"), JAVA_SHORT.withName("MaximumLength"), ADDRESS.withName("Buffer"));
 
         UNICODE_STRING_LENGTH = unicodeStringLayout.varHandle(PathElement.groupElement("Length"));
         UNICODE_STRING_BUFFER = unicodeStringLayout.varHandle(PathElement.groupElement("Buffer"));
@@ -103,8 +100,11 @@ final class WindowsCLibrary implements AnsiConsoleSupport.CLibrary {
             byte[] array = new byte[stringLength];
             MemorySegment.copy(stringBuffer, JAVA_BYTE, 0, array, 0, stringLength);
 
-            String str = new String(array,
-                    ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN ? StandardCharsets.UTF_16LE : StandardCharsets.UTF_16BE);
+            String str = new String(
+                    array,
+                    ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN
+                            ? StandardCharsets.UTF_16LE
+                            : StandardCharsets.UTF_16BE);
 
             if (str.startsWith("msys-") || str.startsWith("cygwin-") || str.startsWith("-pty")) {
                 return 1;

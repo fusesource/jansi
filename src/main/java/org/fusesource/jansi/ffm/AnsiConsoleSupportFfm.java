@@ -95,5 +95,4 @@ public class AnsiConsoleSupportFfm implements AnsiConsoleSupport {
             }
         };
     }
-
 }

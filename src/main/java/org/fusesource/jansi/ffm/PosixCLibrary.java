@@ -15,11 +15,11 @@
  */
 package org.fusesource.jansi.ffm;
 
-import org.fusesource.jansi.AnsiConsoleSupport;
-
 import java.lang.foreign.*;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.VarHandle;
+
+import org.fusesource.jansi.AnsiConsoleSupport;
 
 final class PosixCLibrary implements AnsiConsoleSupport.CLibrary {
     private static final int TIOCGWINSZ;

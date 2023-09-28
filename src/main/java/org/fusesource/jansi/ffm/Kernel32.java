@@ -333,8 +333,7 @@ class Kernel32 {
     static final AddressLayout C_POINTER$LAYOUT = ValueLayout.ADDRESS;
 
     static final MethodHandle WaitForSingleObject$MH =
-            downcallHandle("WaitForSingleObject", FunctionDescriptor.of(C_INT$LAYOUT, C_POINTER$LAYOUT,
-                    C_INT$LAYOUT));
+            downcallHandle("WaitForSingleObject", FunctionDescriptor.of(C_INT$LAYOUT, C_POINTER$LAYOUT, C_INT$LAYOUT));
     static final MethodHandle GetStdHandle$MH =
             downcallHandle("GetStdHandle", FunctionDescriptor.of(C_POINTER$LAYOUT, C_INT$LAYOUT));
     static final MethodHandle FormatMessageW$MH = downcallHandle(
