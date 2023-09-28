@@ -56,8 +56,20 @@ final class WindowsCLibrary implements AnsiConsoleSupport.CLibrary {
 
         NtQueryObject = ntQueryObjectHandle;
 
-        StructLayout unicodeStringLayout = MemoryLayout.structLayout(
-                JAVA_SHORT.withName("Length"), JAVA_SHORT.withName("MaximumLength"), ADDRESS.withName("Buffer"));
+        StructLayout unicodeStringLayout;
+        if (ADDRESS.byteSize() == 8) {
+            unicodeStringLayout = MemoryLayout.structLayout(
+                    JAVA_SHORT.withName("Length"),
+                    JAVA_SHORT.withName("MaximumLength"),
+                    MemoryLayout.paddingLayout(4),
+                    ADDRESS.withTargetLayout(JAVA_BYTE).withName("Buffer"));
+        } else {
+            // 32 Bit
+            unicodeStringLayout = MemoryLayout.structLayout(
+                    JAVA_SHORT.withName("Length"),
+                    JAVA_SHORT.withName("MaximumLength"),
+                    ADDRESS.withTargetLayout(JAVA_BYTE).withName("Buffer"));
+        }
 
         UNICODE_STRING_LENGTH = unicodeStringLayout.varHandle(PathElement.groupElement("Length"));
         UNICODE_STRING_BUFFER = unicodeStringLayout.varHandle(PathElement.groupElement("Buffer"));
@@ -77,7 +89,7 @@ final class WindowsCLibrary implements AnsiConsoleSupport.CLibrary {
             if (t == FILE_TYPE_CHAR) {
                 // check that this is a real tty because the /dev/null
                 // and /dev/zero streams are also of type FILE_TYPE_CHAR
-                return Kernel32.GetConsoleMode(h, MemorySegment.NULL);
+                return Kernel32.GetConsoleMode(h, session.allocate(JAVA_INT));
             }
 
             if (NtQueryObject == null) {

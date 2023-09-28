@@ -32,8 +32,7 @@ final class PosixCLibrary implements AnsiConsoleSupport.CLibrary {
         String osName = System.getProperty("os.name");
         if (osName.startsWith("Linux")) {
             String arch = System.getProperty("os.arch");
-            boolean isMipsPpcOrSparc =
-                    arch.startsWith("mips") || arch.startsWith("ppc") || arch.startsWith("sparc");
+            boolean isMipsPpcOrSparc = arch.startsWith("mips") || arch.startsWith("ppc") || arch.startsWith("sparc");
             TIOCGWINSZ = isMipsPpcOrSparc ? 0x40087468 : 0x00005413;
         } else if (osName.startsWith("Solaris") || osName.startsWith("SunOS")) {
             int _TIOC = ('T' << 8);

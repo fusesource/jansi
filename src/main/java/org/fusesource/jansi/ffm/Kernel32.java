@@ -139,7 +139,7 @@ class Kernel32 {
     public static int SetConsoleMode(MemorySegment hConsoleHandle, int dwMode) {
         MethodHandle mh$ = requireNonNull(SetConsoleMode$MH, "SetConsoleMode");
         try {
-            return (int) mh$.invokeExact(hConsoleHandle.address(), dwMode);
+            return (int) mh$.invokeExact(hConsoleHandle, dwMode);
         } catch (Throwable ex$) {
             throw new AssertionError("should not reach here", ex$);
         }
