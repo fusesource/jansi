@@ -31,16 +31,11 @@ final class WindowsCLibrary implements AnsiConsoleSupport.CLibrary {
 
     private static final int ObjectNameInformation = 1;
 
-    private static final MethodHandle _get_osfhandle;
-    private static final MethodHandle GetFileType;
     private static final MethodHandle NtQueryObject;
     private static final VarHandle UNICODE_STRING_LENGTH;
     private static final VarHandle UNICODE_STRING_BUFFER;
 
     static {
-        _get_osfhandle = Kernel32.downcallHandle("_get_osfhandle", FunctionDescriptor.of(ADDRESS, JAVA_INT));
-        GetFileType = Kernel32.downcallHandle("GetFileType", FunctionDescriptor.of(JAVA_INT, ADDRESS));
-
         MethodHandle ntQueryObjectHandle = null;
         try {
             SymbolLookup ntDll = SymbolLookup.libraryLookup("ntdll", Arena.ofAuto());
@@ -84,8 +79,8 @@ final class WindowsCLibrary implements AnsiConsoleSupport.CLibrary {
     public int isTty(int fd) {
         try (Arena session = Arena.ofConfined()) {
             // check if fd is a pipe
-            MemorySegment h = (MemorySegment) _get_osfhandle.invokeExact(fd);
-            int t = (int) GetFileType.invokeExact(h);
+            MemorySegment h = Kernel32._get_osfhandle(fd);
+            int t = Kernel32.GetFileType(h);
             if (t == FILE_TYPE_CHAR) {
                 // check that this is a real tty because the /dev/null
                 // and /dev/zero streams are also of type FILE_TYPE_CHAR

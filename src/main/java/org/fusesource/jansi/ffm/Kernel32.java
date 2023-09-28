@@ -29,18 +29,10 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.VarHandle;
 import java.util.Objects;
 
-import static java.lang.foreign.ValueLayout.JAVA_INT;
-import static java.lang.foreign.ValueLayout.OfBoolean;
-import static java.lang.foreign.ValueLayout.OfByte;
-import static java.lang.foreign.ValueLayout.OfChar;
-import static java.lang.foreign.ValueLayout.OfDouble;
-import static java.lang.foreign.ValueLayout.OfFloat;
-import static java.lang.foreign.ValueLayout.OfInt;
-import static java.lang.foreign.ValueLayout.OfLong;
-import static java.lang.foreign.ValueLayout.OfShort;
+import static java.lang.foreign.ValueLayout.*;
 
 @SuppressWarnings("unused")
-class Kernel32 {
+final class Kernel32 {
 
     public static final int FORMAT_MESSAGE_FROM_SYSTEM = 0x00001000;
 
@@ -269,6 +261,24 @@ class Kernel32 {
         }
     }
 
+    public static int GetFileType(MemorySegment hFile) {
+        MethodHandle mh$ = requireNonNull(GetFileType$MH, "GetFileType");
+        try {
+            return (int) mh$.invokeExact(hFile);
+        } catch (Throwable ex$) {
+            throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    public static MemorySegment _get_osfhandle(int fd) {
+        MethodHandle mh$ = requireNonNull(_get_osfhandle$MH, "_get_osfhandle");
+        try {
+            return (MemorySegment) mh$.invokeExact(fd);
+        } catch (Throwable ex$) {
+            throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
     public static INPUT_RECORD[] readConsoleInputHelper(MemorySegment handle, int count, boolean peek)
             throws IOException {
         try (Arena session = Arena.ofConfined()) {
@@ -396,6 +406,10 @@ class Kernel32 {
                     COORD.LAYOUT,
                     C_POINTER$LAYOUT));
     static final MethodHandle GetLastError$MH = downcallHandle("GetLastError", FunctionDescriptor.of(C_INT$LAYOUT));
+    static final MethodHandle GetFileType$MH =
+            downcallHandle("GetFileType", FunctionDescriptor.of(C_INT$LAYOUT, C_POINTER$LAYOUT));
+    static final MethodHandle _get_osfhandle$MH =
+            downcallHandle("_get_osfhandle", FunctionDescriptor.of(C_POINTER$LAYOUT, C_INT$LAYOUT));
 
     public static class INPUT_RECORD {
         static final MemoryLayout LAYOUT = MemoryLayout.structLayout(
