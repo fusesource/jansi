@@ -39,7 +39,7 @@ import static java.lang.foreign.ValueLayout.OfInt;
 import static java.lang.foreign.ValueLayout.OfLong;
 import static java.lang.foreign.ValueLayout.OfShort;
 
-@SuppressWarnings({"unused", "CopyConstructorMissesField"})
+@SuppressWarnings("unused")
 class Kernel32 {
 
     public static final int FORMAT_MESSAGE_FROM_SYSTEM = 0x00001000;
@@ -93,14 +93,14 @@ class Kernel32 {
     public static final short MENU_EVENT = 0x0008;
     public static final short FOCUS_EVENT = 0x0010;
 
-    //    public static int WaitForSingleObject(MemorySegment hHandle, int dwMilliseconds) {
-    //        MethodHandle mh$ = requireNonNull(WaitForSingleObject$MH, "WaitForSingleObject");
-    //        try {
-    //            return (int) mh$.invokeExact(hHandle, dwMilliseconds);
-    //        } catch (Throwable ex$) {
-    //            throw new AssertionError("should not reach here", ex$);
-    //        }
-    //    }
+    public static int WaitForSingleObject(MemorySegment hHandle, int dwMilliseconds) {
+        MethodHandle mh$ = requireNonNull(WaitForSingleObject$MH, "WaitForSingleObject");
+        try {
+            return (int) mh$.invokeExact(hHandle, dwMilliseconds);
+        } catch (Throwable ex$) {
+            throw new AssertionError("should not reach here", ex$);
+        }
+    }
 
     public static MemorySegment GetStdHandle(int nStdHandle) {
         MethodHandle mh$ = requireNonNull(GetStdHandle$MH, "GetStdHandle");
@@ -309,9 +309,7 @@ class Kernel32 {
 
     static {
         System.loadLibrary("Kernel32");
-        SymbolLookup loaderLookup = SymbolLookup.loaderLookup();
-        SYMBOL_LOOKUP =
-                name -> loaderLookup.find(name).or(() -> LINKER.defaultLookup().find(name));
+        SYMBOL_LOOKUP = SymbolLookup.loaderLookup().or(LINKER.defaultLookup());
     }
 
     static MethodHandle downcallHandle(String name, FunctionDescriptor fdesc) {
@@ -334,9 +332,9 @@ class Kernel32 {
     static final OfDouble C_DOUBLE$LAYOUT = ValueLayout.JAVA_DOUBLE;
     static final AddressLayout C_POINTER$LAYOUT = ValueLayout.ADDRESS;
 
-    //    static final MethodHandle WaitForSingleObject$MH =
-    //            downcallHandle("WaitForSingleObject", FunctionDescriptor.of(C_INT$LAYOUT, C_POINTER$LAYOUT,
-    // C_INT$LAYOUT));
+    static final MethodHandle WaitForSingleObject$MH =
+            downcallHandle("WaitForSingleObject", FunctionDescriptor.of(C_INT$LAYOUT, C_POINTER$LAYOUT,
+                    C_INT$LAYOUT));
     static final MethodHandle GetStdHandle$MH =
             downcallHandle("GetStdHandle", FunctionDescriptor.of(C_POINTER$LAYOUT, C_INT$LAYOUT));
     static final MethodHandle FormatMessageW$MH = downcallHandle(
