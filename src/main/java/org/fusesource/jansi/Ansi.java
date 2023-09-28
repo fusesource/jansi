@@ -717,16 +717,26 @@ public class Ansi implements Appendable {
     }
 
     public Ansi saveCursorPosition() {
-        return appendEscapeSequence('s');
+        // SCO command
+        appendEscapeSequence('s');
+        // DEC command
+        builder.append(FIRST_ESC_CHAR);
+        builder.append('7');
+        return this;
     }
 
     @Deprecated
     public Ansi restorCursorPosition() {
-        return appendEscapeSequence('u');
+        return restoreCursorPosition();
     }
 
     public Ansi restoreCursorPosition() {
-        return appendEscapeSequence('u');
+        // SCO command
+        appendEscapeSequence('u');
+        // DEC command
+        builder.append(FIRST_ESC_CHAR);
+        builder.append('8');
+        return this;
     }
 
     public Ansi reset() {
