@@ -716,24 +716,40 @@ public class Ansi implements Appendable {
         return rows > 0 ? appendEscapeSequence('T', rows) : rows < 0 ? scrollUp(-rows) : this;
     }
 
-    public Ansi saveCursorPosition() {
-        // SCO command
-        appendEscapeSequence('s');
-        // DEC command
-        builder.append(FIRST_ESC_CHAR);
-        builder.append('7');
-        return this;
-    }
-
     @Deprecated
     public Ansi restorCursorPosition() {
         return restoreCursorPosition();
     }
 
+    public Ansi saveCursorPosition() {
+        saveCursorPositionSCO();
+        return saveCursorPositionDEC();
+    }
+
+    // SCO command
+    public Ansi saveCursorPositionSCO() {
+        return appendEscapeSequence('s');
+    }
+
+    // DEC command
+    public Ansi saveCursorPositionDEC() {
+        builder.append(FIRST_ESC_CHAR);
+        builder.append('7');
+        return this;
+    }
+
     public Ansi restoreCursorPosition() {
-        // SCO command
-        appendEscapeSequence('u');
-        // DEC command
+        restoreCursorPositionSCO();
+        return restoreCursorPositionDEC();
+    }
+
+    // SCO command
+    public Ansi restoreCursorPositionSCO() {
+        return appendEscapeSequence('u');
+    }
+
+    // DEC command
+    public Ansi restoreCursorPositionDEC() {
         builder.append(FIRST_ESC_CHAR);
         builder.append('8');
         return this;
