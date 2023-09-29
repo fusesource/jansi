@@ -27,7 +27,16 @@ import org.fusesource.jansi.io.AnsiProcessor;
 
 import static org.fusesource.jansi.internal.ffm.Kernel32.*;
 
-public class AnsiConsoleSupportImpl implements AnsiConsoleSupport {
+public final class AnsiConsoleSupportImpl implements AnsiConsoleSupport {
+
+    public AnsiConsoleSupportImpl() {}
+
+    public AnsiConsoleSupportImpl(boolean checkNativeAccess) {
+        if (checkNativeAccess && !AnsiConsoleSupportImpl.class.getModule().isNativeAccessEnabled()) {
+            throw new UnsupportedOperationException("Native access is not enabled for the current module");
+        }
+    }
+
     @Override
     public String getProviderName() {
         return "ffm";

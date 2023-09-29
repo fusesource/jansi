@@ -24,16 +24,13 @@ public final class AnsiConsoleSupportHolder {
     private static final AnsiConsoleSupport.Kernel32 KERNEL32;
     private static final Throwable ERR;
 
-    private static Class<?> findProviderClass(String provider) throws ClassNotFoundException {
-        return Class.forName("org.fusesource.jansi.internal." + provider + ".AnsiConsoleSupportImpl");
-    }
-
     private static AnsiConsoleSupport getDefaultProvider() {
         try {
             // Call the specialized constructor to check whether the module has native access enabled
             // If not, fallback to JNI to avoid the JDK printing warnings in stderr
-            return (AnsiConsoleSupport)
-                    findProviderClass("ffm").getConstructor(boolean.class).newInstance(true);
+            return (AnsiConsoleSupport) Class.forName("org.fusesource.jansi.internal.ffm.AnsiConsoleSupportImpl")
+                    .getConstructor(boolean.class)
+                    .newInstance(true);
         } catch (Throwable ignored) {
         }
 
@@ -48,7 +45,9 @@ public final class AnsiConsoleSupportHolder {
         for (String provider : providers) {
             try {
                 return (AnsiConsoleSupport)
-                        findProviderClass(provider).getConstructor().newInstance();
+                        Class.forName("org.fusesource.jansi.internal." + provider + ".AnsiConsoleSupportImpl")
+                                .getConstructor()
+                                .newInstance();
             } catch (Throwable t) {
                 if (error == null) {
                     error = new RuntimeException("Unable to create AnsiConsoleSupport provider");
