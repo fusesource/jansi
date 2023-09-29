@@ -26,6 +26,8 @@ import org.fusesource.jansi.WindowsSupport;
 import org.fusesource.jansi.io.AnsiProcessor;
 import org.fusesource.jansi.io.Colors;
 
+import static org.fusesource.jansi.internal.ffm.Kernel32.*;
+
 /**
  * A Windows ANSI escape processor, that uses JNA to access native platform
  * API's to change the console attributes (see
@@ -42,42 +44,40 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
     private final MemorySegment console;
 
     private static final short FOREGROUND_BLACK = 0;
-    private static final short FOREGROUND_YELLOW = (short) (Kernel32.FOREGROUND_RED | Kernel32.FOREGROUND_GREEN);
-    private static final short FOREGROUND_MAGENTA = (short) (Kernel32.FOREGROUND_BLUE | Kernel32.FOREGROUND_RED);
-    private static final short FOREGROUND_CYAN = (short) (Kernel32.FOREGROUND_BLUE | Kernel32.FOREGROUND_GREEN);
-    private static final short FOREGROUND_WHITE =
-            (short) (Kernel32.FOREGROUND_RED | Kernel32.FOREGROUND_GREEN | Kernel32.FOREGROUND_BLUE);
+    private static final short FOREGROUND_YELLOW = (short) (FOREGROUND_RED | FOREGROUND_GREEN);
+    private static final short FOREGROUND_MAGENTA = (short) (FOREGROUND_BLUE | FOREGROUND_RED);
+    private static final short FOREGROUND_CYAN = (short) (FOREGROUND_BLUE | FOREGROUND_GREEN);
+    private static final short FOREGROUND_WHITE = (short) (FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 
     private static final short BACKGROUND_BLACK = 0;
-    private static final short BACKGROUND_YELLOW = (short) (Kernel32.BACKGROUND_RED | Kernel32.BACKGROUND_GREEN);
-    private static final short BACKGROUND_MAGENTA = (short) (Kernel32.BACKGROUND_BLUE | Kernel32.BACKGROUND_RED);
-    private static final short BACKGROUND_CYAN = (short) (Kernel32.BACKGROUND_BLUE | Kernel32.BACKGROUND_GREEN);
-    private static final short BACKGROUND_WHITE =
-            (short) (Kernel32.BACKGROUND_RED | Kernel32.BACKGROUND_GREEN | Kernel32.BACKGROUND_BLUE);
+    private static final short BACKGROUND_YELLOW = (short) (BACKGROUND_RED | BACKGROUND_GREEN);
+    private static final short BACKGROUND_MAGENTA = (short) (BACKGROUND_BLUE | BACKGROUND_RED);
+    private static final short BACKGROUND_CYAN = (short) (BACKGROUND_BLUE | BACKGROUND_GREEN);
+    private static final short BACKGROUND_WHITE = (short) (BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE);
 
     private static final short[] ANSI_FOREGROUND_COLOR_MAP = {
-        FOREGROUND_BLACK,
-        Kernel32.FOREGROUND_RED,
-        Kernel32.FOREGROUND_GREEN,
-        FOREGROUND_YELLOW,
-        Kernel32.FOREGROUND_BLUE,
-        FOREGROUND_MAGENTA,
-        FOREGROUND_CYAN,
-        FOREGROUND_WHITE,
+            FOREGROUND_BLACK,
+            FOREGROUND_RED,
+            FOREGROUND_GREEN,
+            FOREGROUND_YELLOW,
+            FOREGROUND_BLUE,
+            FOREGROUND_MAGENTA,
+            FOREGROUND_CYAN,
+            FOREGROUND_WHITE,
     };
 
     private static final short[] ANSI_BACKGROUND_COLOR_MAP = {
-        BACKGROUND_BLACK,
-        Kernel32.BACKGROUND_RED,
-        Kernel32.BACKGROUND_GREEN,
-        BACKGROUND_YELLOW,
-        Kernel32.BACKGROUND_BLUE,
-        BACKGROUND_MAGENTA,
-        BACKGROUND_CYAN,
-        BACKGROUND_WHITE,
+            BACKGROUND_BLACK,
+            BACKGROUND_RED,
+            BACKGROUND_GREEN,
+            BACKGROUND_YELLOW,
+            BACKGROUND_BLUE,
+            BACKGROUND_MAGENTA,
+            BACKGROUND_CYAN,
+            BACKGROUND_WHITE,
     };
 
-    private final Kernel32.CONSOLE_SCREEN_BUFFER_INFO info = new Kernel32.CONSOLE_SCREEN_BUFFER_INFO(Arena.ofAuto());
+    private final CONSOLE_SCREEN_BUFFER_INFO info = new CONSOLE_SCREEN_BUFFER_INFO(Arena.ofAuto());
     private final short originalColors;
 
     private boolean negative;
@@ -92,7 +92,7 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
     }
 
     public WindowsAnsiProcessor(OutputStream ps, boolean stdout) throws IOException {
-        this(ps, Kernel32.GetStdHandle(stdout ? Kernel32.STD_OUTPUT_HANDLE : Kernel32.STD_ERROR_HANDLE));
+        this(ps, GetStdHandle(stdout ? STD_OUTPUT_HANDLE : STD_ERROR_HANDLE));
     }
 
     public WindowsAnsiProcessor(OutputStream ps) throws IOException {
@@ -101,7 +101,7 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
 
     private void getConsoleInfo() throws IOException {
         os.flush();
-        if (Kernel32.GetConsoleScreenBufferInfo(console, info) == 0) {
+        if (GetConsoleScreenBufferInfo(console, info) == 0) {
             throw new IOException("Could not get the screen info: " + WindowsSupport.getLastErrorMessage());
         }
         if (negative) {
@@ -115,7 +115,7 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
         if (negative) {
             attributes = invertAttributeColors(attributes);
         }
-        if (Kernel32.SetConsoleTextAttribute(console, attributes) == 0) {
+        if (SetConsoleTextAttribute(console, attributes) == 0) {
             throw new IOException(WindowsSupport.getLastErrorMessage());
         }
     }
@@ -131,7 +131,7 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
     }
 
     private void applyCursorPosition() throws IOException {
-        if (Kernel32.SetConsoleCursorPosition(console, info.cursorPosition()) == 0) {
+        if (SetConsoleCursorPosition(console, info.cursorPosition()) == 0) {
             throw new IOException(WindowsSupport.getLastErrorMessage());
         }
     }
@@ -143,32 +143,31 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
             MemorySegment written = arena.allocate(ValueLayout.JAVA_INT);
             switch (eraseOption) {
                 case ERASE_SCREEN:
-                    Kernel32.COORD topLeft = new Kernel32.COORD(arena);
+                    COORD topLeft = new COORD(arena);
                     topLeft.x((short) 0);
                     topLeft.y(info.window().top());
                     int screenLength = info.window().height() * info.size().x();
-                    Kernel32.FillConsoleOutputAttribute(console, info.attributes(), screenLength, topLeft, written);
-                    Kernel32.FillConsoleOutputCharacterW(console, ' ', screenLength, topLeft, written);
+                    FillConsoleOutputAttribute(console, info.attributes(), screenLength, topLeft, written);
+                    FillConsoleOutputCharacterW(console, ' ', screenLength, topLeft, written);
                     break;
                 case ERASE_SCREEN_TO_BEGINING:
-                    Kernel32.COORD topLeft2 = new Kernel32.COORD(arena);
+                    COORD topLeft2 = new COORD(arena);
                     topLeft2.x((short) 0);
                     topLeft2.y(info.window().top());
                     int lengthToCursor =
                             (info.cursorPosition().y() - info.window().top())
-                                            * info.size().x()
-                                    + info.cursorPosition().x();
-                    Kernel32.FillConsoleOutputAttribute(console, info.attributes(), lengthToCursor, topLeft2, written);
-                    Kernel32.FillConsoleOutputCharacterW(console, ' ', lengthToCursor, topLeft2, written);
+                            * info.size().x()
+                            + info.cursorPosition().x();
+                    FillConsoleOutputAttribute(console, info.attributes(), lengthToCursor, topLeft2, written);
+                    FillConsoleOutputCharacterW(console, ' ', lengthToCursor, topLeft2, written);
                     break;
                 case ERASE_SCREEN_TO_END:
                     int lengthToEnd =
                             (info.window().bottom() - info.cursorPosition().y())
-                                            * info.size().x()
-                                    + (info.size().x() - info.cursorPosition().x());
-                    Kernel32.FillConsoleOutputAttribute(
-                            console, info.attributes(), lengthToEnd, info.cursorPosition(), written);
-                    Kernel32.FillConsoleOutputCharacterW(console, ' ', lengthToEnd, info.cursorPosition(), written);
+                            * info.size().x()
+                            + (info.size().x() - info.cursorPosition().x());
+                    FillConsoleOutputAttribute(console, info.attributes(), lengthToEnd, info.cursorPosition(), written);
+                    FillConsoleOutputCharacterW(console, ' ', lengthToEnd, info.cursorPosition(), written);
                     break;
                 default:
                     break;
@@ -183,27 +182,26 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
             MemorySegment written = arena.allocate(ValueLayout.JAVA_INT);
             switch (eraseOption) {
                 case ERASE_LINE:
-                    Kernel32.COORD leftColCurrRow = info.cursorPosition().copy(arena);
+                    COORD leftColCurrRow = info.cursorPosition().copy(arena);
                     leftColCurrRow.x((short) 0);
-                    Kernel32.FillConsoleOutputAttribute(
+                    FillConsoleOutputAttribute(
                             console, info.attributes(), info.size().x(), leftColCurrRow, written);
-                    Kernel32.FillConsoleOutputCharacterW(
-                            console, ' ', info.size().x(), leftColCurrRow, written);
+                    FillConsoleOutputCharacterW(console, ' ', info.size().x(), leftColCurrRow, written);
                     break;
                 case ERASE_LINE_TO_BEGINING:
-                    Kernel32.COORD leftColCurrRow2 = info.cursorPosition().copy(arena);
+                    COORD leftColCurrRow2 = info.cursorPosition().copy(arena);
                     leftColCurrRow2.x((short) 0);
-                    Kernel32.FillConsoleOutputAttribute(
+                    FillConsoleOutputAttribute(
                             console, info.attributes(), info.cursorPosition().x(), leftColCurrRow2, written);
-                    Kernel32.FillConsoleOutputCharacterW(
+                    FillConsoleOutputCharacterW(
                             console, ' ', info.cursorPosition().x(), leftColCurrRow2, written);
                     break;
                 case ERASE_LINE_TO_END:
                     int lengthToLastCol =
                             info.size().x() - info.cursorPosition().x();
-                    Kernel32.FillConsoleOutputAttribute(
+                    FillConsoleOutputAttribute(
                             console, info.attributes(), lengthToLastCol, info.cursorPosition(), written);
-                    Kernel32.FillConsoleOutputCharacterW(console, ' ', lengthToLastCol, info.cursorPosition(), written);
+                    FillConsoleOutputCharacterW(console, ' ', lengthToLastCol, info.cursorPosition(), written);
                     break;
                 default:
                     break;
@@ -280,7 +278,7 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
     protected void processSetForegroundColor(int color, boolean bright) throws IOException {
         info.attributes((short) ((info.attributes() & ~0x0007) | ANSI_FOREGROUND_COLOR_MAP[color]));
         if (bright) {
-            info.attributes((short) (info.attributes() | Kernel32.FOREGROUND_INTENSITY));
+            info.attributes((short) (info.attributes() | FOREGROUND_INTENSITY));
         }
         applyAttribute();
     }
@@ -301,7 +299,7 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
     protected void processSetBackgroundColor(int color, boolean bright) throws IOException {
         info.attributes((short) ((info.attributes() & ~0x0070) | ANSI_BACKGROUND_COLOR_MAP[color]));
         if (bright) {
-            info.attributes((short) (info.attributes() | Kernel32.BACKGROUND_INTENSITY));
+            info.attributes((short) (info.attributes() | BACKGROUND_INTENSITY));
         }
         applyAttribute();
     }
@@ -321,14 +319,14 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
     @Override
     protected void processDefaultTextColor() throws IOException {
         info.attributes((short) ((info.attributes() & ~0x000F) | (originalColors & 0xF)));
-        info.attributes((short) (info.attributes() & ~Kernel32.FOREGROUND_INTENSITY));
+        info.attributes((short) (info.attributes() & ~FOREGROUND_INTENSITY));
         applyAttribute();
     }
 
     @Override
     protected void processDefaultBackgroundColor() throws IOException {
         info.attributes((short) ((info.attributes() & ~0x00F0) | (originalColors & 0xF0)));
-        info.attributes((short) (info.attributes() & ~Kernel32.BACKGROUND_INTENSITY));
+        info.attributes((short) (info.attributes() & ~BACKGROUND_INTENSITY));
         applyAttribute();
     }
 
@@ -343,22 +341,22 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
     protected void processSetAttribute(int attribute) throws IOException {
         switch (attribute) {
             case ATTRIBUTE_INTENSITY_BOLD:
-                info.attributes((short) (info.attributes() | Kernel32.FOREGROUND_INTENSITY));
+                info.attributes((short) (info.attributes() | FOREGROUND_INTENSITY));
                 applyAttribute();
                 break;
             case ATTRIBUTE_INTENSITY_NORMAL:
-                info.attributes((short) (info.attributes() & ~Kernel32.FOREGROUND_INTENSITY));
+                info.attributes((short) (info.attributes() & ~FOREGROUND_INTENSITY));
                 applyAttribute();
                 break;
 
-                // Yeah, setting the background intensity is not underlining.. but it's best we can do
-                // using the Windows console API
+            // Yeah, setting the background intensity is not underlining.. but it's best we can do
+            // using the Windows console API
             case ATTRIBUTE_UNDERLINE:
-                info.attributes((short) (info.attributes() | Kernel32.BACKGROUND_INTENSITY));
+                info.attributes((short) (info.attributes() | BACKGROUND_INTENSITY));
                 applyAttribute();
                 break;
             case ATTRIBUTE_UNDERLINE_OFF:
-                info.attributes((short) (info.attributes() & ~Kernel32.BACKGROUND_INTENSITY));
+                info.attributes((short) (info.attributes() & ~BACKGROUND_INTENSITY));
                 applyAttribute();
                 break;
 
@@ -397,13 +395,13 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
     protected void processInsertLine(int optionInt) throws IOException {
         getConsoleInfo();
         try (Arena arena = Arena.ofConfined()) {
-            Kernel32.SMALL_RECT scroll = info.window().copy(arena);
+            SMALL_RECT scroll = info.window().copy(arena);
             scroll.top(info.cursorPosition().y());
-            Kernel32.COORD org = new Kernel32.COORD(arena);
+            COORD org = new COORD(arena);
             org.x((short) 0);
             org.y((short) (info.cursorPosition().y() + optionInt));
-            Kernel32.CHAR_INFO info = new Kernel32.CHAR_INFO(arena, ' ', originalColors);
-            if (Kernel32.ScrollConsoleScreenBuffer(console, scroll, scroll, org, info) == 0) {
+            CHAR_INFO info = new CHAR_INFO(arena, ' ', originalColors);
+            if (ScrollConsoleScreenBuffer(console, scroll, scroll, org, info) == 0) {
                 throw new IOException(WindowsSupport.getLastErrorMessage());
             }
         }
@@ -413,13 +411,13 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
     protected void processDeleteLine(int optionInt) throws IOException {
         getConsoleInfo();
         try (Arena arena = Arena.ofConfined()) {
-            Kernel32.SMALL_RECT scroll = info.window().copy(arena);
+            SMALL_RECT scroll = info.window().copy(arena);
             scroll.top(info.cursorPosition().y());
-            Kernel32.COORD org = new Kernel32.COORD(arena);
+            COORD org = new COORD(arena);
             org.x((short) 0);
             org.y((short) (info.cursorPosition().y() - optionInt));
-            Kernel32.CHAR_INFO info = new Kernel32.CHAR_INFO(arena, ' ', originalColors);
-            if (Kernel32.ScrollConsoleScreenBuffer(console, scroll, scroll, org, info) == 0) {
+            CHAR_INFO info = new CHAR_INFO(arena, ' ', originalColors);
+            if (ScrollConsoleScreenBuffer(console, scroll, scroll, org, info) == 0) {
                 throw new IOException(WindowsSupport.getLastErrorMessage());
             }
         }
@@ -431,7 +429,7 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
             byte[] bytes = title.getBytes(StandardCharsets.UTF_16LE);
             MemorySegment str = arena.allocate(bytes.length + 2);
             MemorySegment.copy(bytes, 0, str, ValueLayout.JAVA_BYTE, 0, bytes.length);
-            Kernel32.SetConsoleTitleW(str);
+            SetConsoleTitleW(str);
         }
     }
 }
