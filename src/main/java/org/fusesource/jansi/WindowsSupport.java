@@ -15,6 +15,8 @@
  */
 package org.fusesource.jansi;
 
+import org.fusesource.jansi.internal.AnsiConsoleSupport;
+
 public class WindowsSupport {
 
     public static String getLastErrorMessage() {

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fusesource.jansi.ffm;
+package org.fusesource.jansi.internal.ffm;
 
 import java.io.IOException;
 import java.lang.foreign.AddressLayout;

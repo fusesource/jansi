@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fusesource.jansi.internal;
+package org.fusesource.jansi.internal.jni;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
-import org.fusesource.jansi.AnsiConsoleSupport;
+import org.fusesource.jansi.internal.AnsiConsoleSupport;
 import org.fusesource.jansi.io.AnsiProcessor;
 import org.fusesource.jansi.io.WindowsAnsiProcessor;
 

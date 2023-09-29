@@ -25,6 +25,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 
+import org.fusesource.jansi.internal.AnsiConsoleSupport;
 import org.fusesource.jansi.internal.OSInfo;
 import org.fusesource.jansi.io.AnsiOutputStream;
 import org.fusesource.jansi.io.AnsiProcessor;

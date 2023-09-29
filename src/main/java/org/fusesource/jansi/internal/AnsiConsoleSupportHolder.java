@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fusesource.jansi;
+package org.fusesource.jansi.internal;
 
-import org.fusesource.jansi.internal.AnsiConsoleSupportJni;
+import org.fusesource.jansi.internal.jni.AnsiConsoleSupportJni;
 
 import static org.fusesource.jansi.AnsiConsole.JANSI_PROVIDERS;
 import static org.fusesource.jansi.AnsiConsole.JANSI_PROVIDERS_DEFAULT;
@@ -45,7 +45,7 @@ class AnsiConsoleSupportHolder {
                 if (JANSI_PROVIDER_FFM.equals(provider)) {
                     return (AnsiConsoleSupport) AnsiConsoleSupport.class
                             .getClassLoader()
-                            .loadClass("org.fusesource.jansi.ffm.AnsiConsoleSupportFfm")
+                            .loadClass("org.fusesource.jansi.internal.ffm.AnsiConsoleSupportFfm")
                             .getConstructor()
                             .newInstance();
                 } else if (JANSI_PROVIDER_JNI.equals(provider)) {

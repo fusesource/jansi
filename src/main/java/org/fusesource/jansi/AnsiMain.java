@@ -26,6 +26,7 @@ import java.io.PrintStream;
 import java.util.Properties;
 
 import org.fusesource.jansi.Ansi.Attribute;
+import org.fusesource.jansi.internal.AnsiConsoleSupport;
 import org.fusesource.jansi.internal.JansiLoader;
 
 import static org.fusesource.jansi.Ansi.ansi;
