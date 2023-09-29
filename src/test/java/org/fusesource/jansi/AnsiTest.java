@@ -15,6 +15,12 @@
  */
 package org.fusesource.jansi;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Locale;
+
 import org.fusesource.jansi.Ansi.Color;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -179,6 +185,34 @@ public class AnsiTest {
         } finally {
             Ansi.setEnabled(true);
         }
+    }
+
+    @Test
+    public void testAnsiMainWithNoConsole() throws Exception {
+        boolean win = System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("win");
+        Path javaHome = Paths.get(System.getProperty("java.home"));
+        Path java = javaHome.resolve(win ? "bin\\java.exe" : "bin/java");
+        String cp = System.getProperty("java.class.path");
+
+        Process process = new ProcessBuilder()
+                .command(java.toString(), "-cp", cp, AnsiMain.class.getName())
+                .start();
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (InputStream in = process.getInputStream();
+                InputStream err = process.getErrorStream(); ) {
+            byte[] buffer = new byte[8192];
+            while (true) {
+                int nb = in.read(buffer);
+                if (nb > 0) {
+                    baos.write(buffer, 0, nb);
+                } else {
+                    break;
+                }
+            }
+        }
+
+        System.out.println(baos);
     }
 
     private static void assertAnsi(String expected, Ansi actual) {
