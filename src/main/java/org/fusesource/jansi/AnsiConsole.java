@@ -24,9 +24,9 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
-import java.util.Locale;
 
 import org.fusesource.jansi.internal.MingwSupport;
+import org.fusesource.jansi.internal.OSInfo;
 import org.fusesource.jansi.io.AnsiOutputStream;
 import org.fusesource.jansi.io.AnsiProcessor;
 import org.fusesource.jansi.io.FastBufferedOutputStream;
@@ -195,8 +195,7 @@ public class AnsiConsole {
         return w;
     }
 
-    static final boolean IS_WINDOWS =
-            System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("win");
+    static final boolean IS_WINDOWS = OSInfo.isWindows();
 
     static final boolean IS_CYGWIN =
             IS_WINDOWS && System.getenv("PWD") != null && System.getenv("PWD").startsWith("/");

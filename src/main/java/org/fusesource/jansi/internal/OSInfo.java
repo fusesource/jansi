@@ -120,8 +120,14 @@ public class OSInfo {
         return translateOSNameToFolderName(System.getProperty("os.name"));
     }
 
+    public static boolean isWindows() {
+        return System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("win");
+    }
+
     public static boolean isAndroid() {
-        return System.getProperty("java.runtime.name", "").toLowerCase().contains("android");
+        return System.getProperty("java.runtime.name", "")
+                .toLowerCase(Locale.ROOT)
+                .contains("android");
     }
 
     public static boolean isAlpine() {
@@ -131,7 +137,7 @@ public class OSInfo {
 
             InputStream in = p.getInputStream();
             try {
-                return readFully(in).toLowerCase().contains("alpine");
+                return readFully(in).toLowerCase(Locale.ROOT).contains("alpine");
             } finally {
                 in.close();
             }
@@ -207,7 +213,7 @@ public class OSInfo {
         if (osArch.startsWith("arm")) {
             osArch = resolveArmArchType();
         } else {
-            String lc = osArch.toLowerCase(Locale.US);
+            String lc = osArch.toLowerCase(Locale.ROOT);
             if (archMapping.containsKey(lc)) return archMapping.get(lc);
         }
         return translateArchNameToFolderName(osArch);

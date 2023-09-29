@@ -20,6 +20,7 @@ import java.io.OutputStream;
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
+import java.nio.charset.StandardCharsets;
 
 import org.fusesource.jansi.WindowsSupport;
 import org.fusesource.jansi.io.AnsiProcessor;
@@ -76,7 +77,7 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
         BACKGROUND_WHITE,
     };
 
-    private final CONSOLE_SCREEN_BUFFER_INFO info = new CONSOLE_SCREEN_BUFFER_INFO();
+    private final CONSOLE_SCREEN_BUFFER_INFO info = new CONSOLE_SCREEN_BUFFER_INFO(Arena.ofAuto());
     private final short originalColors;
 
     private boolean negative;
@@ -130,7 +131,7 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
     }
 
     private void applyCursorPosition() throws IOException {
-        if (SetConsoleCursorPosition(console, info.cursorPosition().copy()) == 0) {
+        if (SetConsoleCursorPosition(console, info.cursorPosition()) == 0) {
             throw new IOException(WindowsSupport.getLastErrorMessage());
         }
     }
@@ -138,11 +139,11 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
     @Override
     protected void processEraseScreen(int eraseOption) throws IOException {
         getConsoleInfo();
-        try (Arena session = Arena.ofConfined()) {
-            MemorySegment written = session.allocate(ValueLayout.JAVA_INT);
+        try (Arena arena = Arena.ofConfined()) {
+            MemorySegment written = arena.allocate(ValueLayout.JAVA_INT);
             switch (eraseOption) {
                 case ERASE_SCREEN:
-                    COORD topLeft = new COORD();
+                    COORD topLeft = new COORD(arena);
                     topLeft.x((short) 0);
                     topLeft.y(info.window().top());
                     int screenLength = info.window().height() * info.size().x();
@@ -150,7 +151,7 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
                     FillConsoleOutputCharacterW(console, ' ', screenLength, topLeft, written);
                     break;
                 case ERASE_SCREEN_TO_BEGINING:
-                    COORD topLeft2 = new COORD();
+                    COORD topLeft2 = new COORD(arena);
                     topLeft2.x((short) 0);
                     topLeft2.y(info.window().top());
                     int lengthToCursor =
@@ -165,14 +166,8 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
                             (info.window().bottom() - info.cursorPosition().y())
                                             * info.size().x()
                                     + (info.size().x() - info.cursorPosition().x());
-                    FillConsoleOutputAttribute(
-                            console,
-                            info.attributes(),
-                            lengthToEnd,
-                            info.cursorPosition().copy(),
-                            written);
-                    FillConsoleOutputCharacterW(
-                            console, ' ', lengthToEnd, info.cursorPosition().copy(), written);
+                    FillConsoleOutputAttribute(console, info.attributes(), lengthToEnd, info.cursorPosition(), written);
+                    FillConsoleOutputCharacterW(console, ' ', lengthToEnd, info.cursorPosition(), written);
                     break;
                 default:
                     break;
@@ -183,18 +178,18 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
     @Override
     protected void processEraseLine(int eraseOption) throws IOException {
         getConsoleInfo();
-        try (Arena session = Arena.ofConfined()) {
-            MemorySegment written = session.allocate(ValueLayout.JAVA_INT);
+        try (Arena arena = Arena.ofConfined()) {
+            MemorySegment written = arena.allocate(ValueLayout.JAVA_INT);
             switch (eraseOption) {
                 case ERASE_LINE:
-                    COORD leftColCurrRow = info.cursorPosition().copy();
+                    COORD leftColCurrRow = info.cursorPosition().copy(arena);
                     leftColCurrRow.x((short) 0);
                     FillConsoleOutputAttribute(
                             console, info.attributes(), info.size().x(), leftColCurrRow, written);
                     FillConsoleOutputCharacterW(console, ' ', info.size().x(), leftColCurrRow, written);
                     break;
                 case ERASE_LINE_TO_BEGINING:
-                    COORD leftColCurrRow2 = info.cursorPosition().copy();
+                    COORD leftColCurrRow2 = info.cursorPosition().copy(arena);
                     leftColCurrRow2.x((short) 0);
                     FillConsoleOutputAttribute(
                             console, info.attributes(), info.cursorPosition().x(), leftColCurrRow2, written);
@@ -205,13 +200,8 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
                     int lengthToLastCol =
                             info.size().x() - info.cursorPosition().x();
                     FillConsoleOutputAttribute(
-                            console,
-                            info.attributes(),
-                            lengthToLastCol,
-                            info.cursorPosition().copy(),
-                            written);
-                    FillConsoleOutputCharacterW(
-                            console, ' ', lengthToLastCol, info.cursorPosition().copy(), written);
+                            console, info.attributes(), lengthToLastCol, info.cursorPosition(), written);
+                    FillConsoleOutputCharacterW(console, ' ', lengthToLastCol, info.cursorPosition(), written);
                     break;
                 default:
                     break;
@@ -404,35 +394,41 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
     @Override
     protected void processInsertLine(int optionInt) throws IOException {
         getConsoleInfo();
-        SMALL_RECT scroll = info.window().copy();
-        scroll.top(info.cursorPosition().y());
-        COORD org = new COORD();
-        org.x((short) 0);
-        org.y((short) (info.cursorPosition().y() + optionInt));
-        CHAR_INFO info = new CHAR_INFO(' ', originalColors);
-        if (ScrollConsoleScreenBuffer(console, scroll, scroll, org, info) == 0) {
-            throw new IOException(WindowsSupport.getLastErrorMessage());
+        try (Arena arena = Arena.ofConfined()) {
+            SMALL_RECT scroll = info.window().copy(arena);
+            scroll.top(info.cursorPosition().y());
+            COORD org = new COORD(arena);
+            org.x((short) 0);
+            org.y((short) (info.cursorPosition().y() + optionInt));
+            CHAR_INFO info = new CHAR_INFO(arena, ' ', originalColors);
+            if (ScrollConsoleScreenBuffer(console, scroll, scroll, org, info) == 0) {
+                throw new IOException(WindowsSupport.getLastErrorMessage());
+            }
         }
     }
 
     @Override
     protected void processDeleteLine(int optionInt) throws IOException {
         getConsoleInfo();
-        SMALL_RECT scroll = info.window().copy();
-        scroll.top(info.cursorPosition().y());
-        COORD org = new COORD();
-        org.x((short) 0);
-        org.y((short) (info.cursorPosition().y() - optionInt));
-        CHAR_INFO info = new CHAR_INFO(' ', originalColors);
-        if (ScrollConsoleScreenBuffer(console, scroll, scroll, org, info) == 0) {
-            throw new IOException(WindowsSupport.getLastErrorMessage());
+        try (Arena arena = Arena.ofConfined()) {
+            SMALL_RECT scroll = info.window().copy(arena);
+            scroll.top(info.cursorPosition().y());
+            COORD org = new COORD(arena);
+            org.x((short) 0);
+            org.y((short) (info.cursorPosition().y() - optionInt));
+            CHAR_INFO info = new CHAR_INFO(arena, ' ', originalColors);
+            if (ScrollConsoleScreenBuffer(console, scroll, scroll, org, info) == 0) {
+                throw new IOException(WindowsSupport.getLastErrorMessage());
+            }
         }
     }
 
     @Override
     protected void processChangeWindowTitle(String title) {
-        try (Arena session = Arena.ofConfined()) {
-            MemorySegment str = session.allocateUtf8String(title);
+        try (Arena arena = Arena.ofConfined()) {
+            byte[] bytes = title.getBytes(StandardCharsets.UTF_16LE);
+            MemorySegment str = arena.allocate(bytes.length + 2);
+            MemorySegment.copy(bytes, 0, str, ValueLayout.JAVA_BYTE, 0, bytes.length);
             SetConsoleTitleW(str);
         }
     }
