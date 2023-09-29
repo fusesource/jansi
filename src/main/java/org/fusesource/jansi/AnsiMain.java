@@ -27,6 +27,7 @@ import java.util.Properties;
 
 import org.fusesource.jansi.Ansi.Attribute;
 import org.fusesource.jansi.internal.AnsiConsoleSupport;
+import org.fusesource.jansi.internal.AnsiConsoleSupportHolder;
 import org.fusesource.jansi.internal.JansiLoader;
 
 import static org.fusesource.jansi.Ansi.ansi;
@@ -54,9 +55,8 @@ public class AnsiMain {
 
         System.out.println();
 
-        System.out.println("jansi.providers= "
-                + System.getProperty(AnsiConsole.JANSI_PROVIDERS, AnsiConsole.JANSI_PROVIDERS_DEFAULT));
-        String provider = AnsiConsoleSupport.getInstance().getProviderName();
+        System.out.println("jansi.providers= " + System.getProperty(AnsiConsole.JANSI_PROVIDERS, ""));
+        String provider = AnsiConsoleSupportHolder.getProviderName();
         System.out.println("Selected provider: " + provider);
 
         if (AnsiConsole.JANSI_PROVIDER_JNI.equals(provider)) {
@@ -202,13 +202,13 @@ public class AnsiMain {
         int isatty;
         int width;
         if (AnsiConsole.IS_WINDOWS) {
-            long console = AnsiConsoleSupport.getInstance().getKernel32().getStdHandle(!stderr);
-            isatty = AnsiConsoleSupport.getInstance().getKernel32().isTty(console);
-            width = AnsiConsoleSupport.getInstance().getKernel32().getTerminalWidth(console);
+            long console = AnsiConsoleSupportHolder.getKernel32().getStdHandle(!stderr);
+            isatty = AnsiConsoleSupportHolder.getKernel32().isTty(console);
+            width = AnsiConsoleSupportHolder.getKernel32().getTerminalWidth(console);
         } else {
             int fd = stderr ? AnsiConsoleSupport.CLibrary.STDERR_FILENO : AnsiConsoleSupport.CLibrary.STDOUT_FILENO;
-            isatty = AnsiConsoleSupport.getInstance().getCLibrary().isTty(fd);
-            width = AnsiConsoleSupport.getInstance().getCLibrary().getTerminalWidth(fd);
+            isatty = AnsiConsoleSupportHolder.getCLibrary().isTty(fd);
+            width = AnsiConsoleSupportHolder.getCLibrary().getTerminalWidth(fd);
         }
 
         System.out.println("isatty(STD" + (stderr ? "ERR" : "OUT") + "_FILENO): " + isatty + ", System."

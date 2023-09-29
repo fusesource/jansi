@@ -25,7 +25,17 @@ import org.fusesource.jansi.internal.AnsiConsoleSupport;
 import org.fusesource.jansi.internal.OSInfo;
 import org.fusesource.jansi.io.AnsiProcessor;
 
-public class AnsiConsoleSupportFfm implements AnsiConsoleSupport {
+@SuppressWarnings("unused") // Load using reflection
+public final class AnsiConsoleSupportImpl implements AnsiConsoleSupport {
+
+    public AnsiConsoleSupportImpl() {}
+
+    public AnsiConsoleSupportImpl(boolean checkNativeAccess) {
+        if (checkNativeAccess && !AnsiConsoleSupportImpl.class.getModule().isNativeAccessEnabled()) {
+            throw new UnsupportedOperationException("Native access is not enabled for the current module");
+        }
+    }
+
     @Override
     public String getProviderName() {
         return "ffm";
@@ -52,15 +62,20 @@ public class AnsiConsoleSupportFfm implements AnsiConsoleSupport {
             @Override
             public int getTerminalWidth(long console) {
                 try (Arena arena = Arena.ofConfined()) {
-                    org.fusesource.jansi.internal.ffm.Kernel32.CONSOLE_SCREEN_BUFFER_INFO info = new org.fusesource.jansi.internal.ffm.Kernel32.CONSOLE_SCREEN_BUFFER_INFO(arena);
-                    org.fusesource.jansi.internal.ffm.Kernel32.GetConsoleScreenBufferInfo(MemorySegment.ofAddress(console), info);
+                    org.fusesource.jansi.internal.ffm.Kernel32.CONSOLE_SCREEN_BUFFER_INFO info =
+                            new org.fusesource.jansi.internal.ffm.Kernel32.CONSOLE_SCREEN_BUFFER_INFO(arena);
+                    org.fusesource.jansi.internal.ffm.Kernel32.GetConsoleScreenBufferInfo(
+                            MemorySegment.ofAddress(console), info);
                     return info.windowWidth();
                 }
             }
 
             @Override
             public long getStdHandle(boolean stdout) {
-                return org.fusesource.jansi.internal.ffm.Kernel32.GetStdHandle(stdout ? org.fusesource.jansi.internal.ffm.Kernel32.STD_OUTPUT_HANDLE : org.fusesource.jansi.internal.ffm.Kernel32.STD_ERROR_HANDLE)
+                return org.fusesource.jansi.internal.ffm.Kernel32.GetStdHandle(
+                                stdout
+                                        ? org.fusesource.jansi.internal.ffm.Kernel32.STD_OUTPUT_HANDLE
+                                        : org.fusesource.jansi.internal.ffm.Kernel32.STD_ERROR_HANDLE)
                         .address();
             }
 
@@ -68,7 +83,8 @@ public class AnsiConsoleSupportFfm implements AnsiConsoleSupport {
             public int getConsoleMode(long console, int[] mode) {
                 try (Arena arena = Arena.ofConfined()) {
                     MemorySegment written = arena.allocate(ValueLayout.JAVA_INT);
-                    int res = org.fusesource.jansi.internal.ffm.Kernel32.GetConsoleMode(MemorySegment.ofAddress(console), written);
+                    int res = org.fusesource.jansi.internal.ffm.Kernel32.GetConsoleMode(
+                            MemorySegment.ofAddress(console), written);
                     mode[0] = written.getAtIndex(ValueLayout.JAVA_INT, 0);
                     return res;
                 }
@@ -76,7 +92,8 @@ public class AnsiConsoleSupportFfm implements AnsiConsoleSupport {
 
             @Override
             public int setConsoleMode(long console, int mode) {
-                return org.fusesource.jansi.internal.ffm.Kernel32.SetConsoleMode(MemorySegment.ofAddress(console), mode);
+                return org.fusesource.jansi.internal.ffm.Kernel32.SetConsoleMode(
+                        MemorySegment.ofAddress(console), mode);
             }
 
             @Override

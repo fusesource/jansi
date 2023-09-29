@@ -33,7 +33,7 @@ import static org.fusesource.jansi.internal.Kernel32.STD_ERROR_HANDLE;
 import static org.fusesource.jansi.internal.Kernel32.STD_OUTPUT_HANDLE;
 import static org.fusesource.jansi.internal.Kernel32.SetConsoleMode;
 
-public class AnsiConsoleSupportJni implements AnsiConsoleSupport {
+public final class AnsiConsoleSupportImpl implements AnsiConsoleSupport {
 
     @Override
     public String getProviderName() {

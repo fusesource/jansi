@@ -56,8 +56,4 @@ public interface AnsiConsoleSupport {
     CLibrary getCLibrary();
 
     Kernel32 getKernel32();
-
-    static AnsiConsoleSupport getInstance() {
-        return AnsiConsoleSupportHolder.get();
-    }
 }

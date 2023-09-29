@@ -15,20 +15,16 @@
  */
 package org.fusesource.jansi;
 
-import org.fusesource.jansi.internal.AnsiConsoleSupport;
+import org.fusesource.jansi.internal.AnsiConsoleSupportHolder;
 
 public class WindowsSupport {
 
     public static String getLastErrorMessage() {
-        int errorCode = getKernel32().getLastError();
+        int errorCode = AnsiConsoleSupportHolder.getKernel32().getLastError();
         return getErrorMessage(errorCode);
     }
 
     public static String getErrorMessage(int errorCode) {
-        return getKernel32().getErrorMessage(errorCode);
-    }
-
-    private static AnsiConsoleSupport.Kernel32 getKernel32() {
-        return AnsiConsoleSupport.getInstance().getKernel32();
+        return AnsiConsoleSupportHolder.getKernel32().getErrorMessage(errorCode);
     }
 }

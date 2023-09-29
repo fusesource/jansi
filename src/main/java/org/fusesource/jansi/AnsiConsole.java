@@ -25,7 +25,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 
-import org.fusesource.jansi.internal.AnsiConsoleSupport;
+import org.fusesource.jansi.internal.AnsiConsoleSupportHolder;
 import org.fusesource.jansi.internal.OSInfo;
 import org.fusesource.jansi.io.AnsiOutputStream;
 import org.fusesource.jansi.io.AnsiProcessor;
@@ -158,7 +158,6 @@ public class AnsiConsole {
     public static final String JANSI_PROVIDERS = "jansi.providers";
     public static final String JANSI_PROVIDER_JNI = "jni";
     public static final String JANSI_PROVIDER_FFM = "ffm";
-    public static final String JANSI_PROVIDERS_DEFAULT = JANSI_PROVIDER_FFM + "," + JANSI_PROVIDER_JNI;
 
     /**
      * @deprecated this field will be made private in a future release, use {@link #sysOut()} instead
@@ -243,7 +242,7 @@ public class AnsiConsole {
         try {
             // If we can detect that stdout is not a tty, then setup
             // to strip the ANSI sequences...
-            isAtty = getCLibrary().isTty(fd) != 0;
+            isAtty = AnsiConsoleSupportHolder.getCLibrary().isTty(fd) != 0;
             String term = System.getenv("TERM");
             String emacs = System.getenv("INSIDE_EMACS");
             if (isAtty && "dumb".equals(term) && emacs != null && !emacs.contains("comint")) {
@@ -269,26 +268,30 @@ public class AnsiConsole {
             installer = uninstaller = null;
             width = new AnsiOutputStream.ZeroWidthSupplier();
         } else if (IS_WINDOWS) {
-            final long console = getKernel32().getStdHandle(stdout);
+            final long console = AnsiConsoleSupportHolder.getKernel32().getStdHandle(stdout);
             final int[] mode = new int[1];
-            final boolean isConsole = getKernel32().getConsoleMode(console, mode) != 0;
-            if (isConsole && getKernel32().setConsoleMode(console, mode[0] | ENABLE_VIRTUAL_TERMINAL_PROCESSING) != 0) {
+            final boolean isConsole = AnsiConsoleSupportHolder.getKernel32().getConsoleMode(console, mode) != 0;
+            if (isConsole
+                    && AnsiConsoleSupportHolder.getKernel32()
+                                    .setConsoleMode(console, mode[0] | ENABLE_VIRTUAL_TERMINAL_PROCESSING)
+                            != 0) {
                 // set it back for now, but we know it works
-                getKernel32().setConsoleMode(console, mode[0]);
+                AnsiConsoleSupportHolder.getKernel32().setConsoleMode(console, mode[0]);
                 processor = null;
                 type = AnsiType.VirtualTerminal;
                 installer = new AnsiOutputStream.IoRunnable() {
                     @Override
                     public void run() throws IOException {
                         virtualProcessing++;
-                        getKernel32().setConsoleMode(console, mode[0] | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+                        AnsiConsoleSupportHolder.getKernel32()
+                                .setConsoleMode(console, mode[0] | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
                     }
                 };
                 uninstaller = new AnsiOutputStream.IoRunnable() {
                     @Override
                     public void run() throws IOException {
                         if (--virtualProcessing == 0) {
-                            getKernel32().setConsoleMode(console, mode[0]);
+                            AnsiConsoleSupportHolder.getKernel32().setConsoleMode(console, mode[0]);
                         }
                     }
                 };
@@ -304,7 +307,7 @@ public class AnsiConsole {
                 AnsiProcessor proc;
                 AnsiType ttype;
                 try {
-                    proc = getKernel32().newProcessor(out, console);
+                    proc = AnsiConsoleSupportHolder.getKernel32().newProcessor(out, console);
                     ttype = AnsiType.Emulation;
                 } catch (Throwable ignore) {
                     // this happens when the stdout is being redirected to a file.
@@ -316,7 +319,7 @@ public class AnsiConsole {
                 type = ttype;
                 installer = uninstaller = null;
             }
-            width = () -> getKernel32().getTerminalWidth(console);
+            width = () -> AnsiConsoleSupportHolder.getKernel32().getTerminalWidth(console);
         }
 
         // We must be on some Unix variant...
@@ -325,7 +328,7 @@ public class AnsiConsole {
             processor = null;
             type = AnsiType.Native;
             installer = uninstaller = null;
-            width = () -> getCLibrary().getTerminalWidth(fd);
+            width = () -> AnsiConsoleSupportHolder.getCLibrary().getTerminalWidth(fd);
         }
 
         AnsiMode mode;
@@ -534,13 +537,5 @@ public class AnsiConsole {
             err = ansiStream(false);
             initialized = true;
         }
-    }
-
-    private static AnsiConsoleSupport.Kernel32 getKernel32() {
-        return AnsiConsoleSupport.getInstance().getKernel32();
-    }
-
-    private static AnsiConsoleSupport.CLibrary getCLibrary() {
-        return AnsiConsoleSupport.getInstance().getCLibrary();
     }
 }

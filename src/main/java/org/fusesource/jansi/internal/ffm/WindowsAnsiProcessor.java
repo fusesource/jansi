@@ -45,13 +45,15 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
     private static final short FOREGROUND_YELLOW = (short) (Kernel32.FOREGROUND_RED | Kernel32.FOREGROUND_GREEN);
     private static final short FOREGROUND_MAGENTA = (short) (Kernel32.FOREGROUND_BLUE | Kernel32.FOREGROUND_RED);
     private static final short FOREGROUND_CYAN = (short) (Kernel32.FOREGROUND_BLUE | Kernel32.FOREGROUND_GREEN);
-    private static final short FOREGROUND_WHITE = (short) (Kernel32.FOREGROUND_RED | Kernel32.FOREGROUND_GREEN | Kernel32.FOREGROUND_BLUE);
+    private static final short FOREGROUND_WHITE =
+            (short) (Kernel32.FOREGROUND_RED | Kernel32.FOREGROUND_GREEN | Kernel32.FOREGROUND_BLUE);
 
     private static final short BACKGROUND_BLACK = 0;
     private static final short BACKGROUND_YELLOW = (short) (Kernel32.BACKGROUND_RED | Kernel32.BACKGROUND_GREEN);
     private static final short BACKGROUND_MAGENTA = (short) (Kernel32.BACKGROUND_BLUE | Kernel32.BACKGROUND_RED);
     private static final short BACKGROUND_CYAN = (short) (Kernel32.BACKGROUND_BLUE | Kernel32.BACKGROUND_GREEN);
-    private static final short BACKGROUND_WHITE = (short) (Kernel32.BACKGROUND_RED | Kernel32.BACKGROUND_GREEN | Kernel32.BACKGROUND_BLUE);
+    private static final short BACKGROUND_WHITE =
+            (short) (Kernel32.BACKGROUND_RED | Kernel32.BACKGROUND_GREEN | Kernel32.BACKGROUND_BLUE);
 
     private static final short[] ANSI_FOREGROUND_COLOR_MAP = {
         FOREGROUND_BLACK,
@@ -164,7 +166,8 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
                             (info.window().bottom() - info.cursorPosition().y())
                                             * info.size().x()
                                     + (info.size().x() - info.cursorPosition().x());
-                    Kernel32.FillConsoleOutputAttribute(console, info.attributes(), lengthToEnd, info.cursorPosition(), written);
+                    Kernel32.FillConsoleOutputAttribute(
+                            console, info.attributes(), lengthToEnd, info.cursorPosition(), written);
                     Kernel32.FillConsoleOutputCharacterW(console, ' ', lengthToEnd, info.cursorPosition(), written);
                     break;
                 default:
@@ -184,7 +187,8 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
                     leftColCurrRow.x((short) 0);
                     Kernel32.FillConsoleOutputAttribute(
                             console, info.attributes(), info.size().x(), leftColCurrRow, written);
-                    Kernel32.FillConsoleOutputCharacterW(console, ' ', info.size().x(), leftColCurrRow, written);
+                    Kernel32.FillConsoleOutputCharacterW(
+                            console, ' ', info.size().x(), leftColCurrRow, written);
                     break;
                 case ERASE_LINE_TO_BEGINING:
                     Kernel32.COORD leftColCurrRow2 = info.cursorPosition().copy(arena);
