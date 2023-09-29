@@ -23,11 +23,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 import org.fusesource.jansi.Ansi.Attribute;
 import org.fusesource.jansi.internal.JansiLoader;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.fusesource.jansi.Ansi.ansi;
 
 /**
@@ -294,7 +296,7 @@ public class AnsiMain {
 
     private static void printJansiLogoDemo() throws IOException {
         BufferedReader in =
-                new BufferedReader(new InputStreamReader(AnsiMain.class.getResourceAsStream("jansi.txt"), "UTF-8"));
+                new BufferedReader(new InputStreamReader(AnsiMain.class.getResourceAsStream("jansi.txt"), UTF_8));
         try {
             String l;
             while ((l = in.readLine()) != null) {

@@ -18,7 +18,7 @@ package org.fusesource.jansi;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.fusesource.jansi.io.AnsiOutputStream;
@@ -32,7 +32,7 @@ public class EncodingTest {
     @Test
     public void testEncoding8859() throws UnsupportedEncodingException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        final AtomicReference<String> newLabel = new AtomicReference<String>();
+        final AtomicReference<String> newLabel = new AtomicReference<>();
         PrintStream ansi = new AnsiPrintStream(
                 new AnsiOutputStream(
                         baos,
@@ -46,7 +46,7 @@ public class EncodingTest {
                         },
                         AnsiType.Emulation,
                         AnsiColors.TrueColor,
-                        Charset.forName("ISO-8859-1"),
+                        StandardCharsets.ISO_8859_1,
                         null,
                         null,
                         false),
@@ -61,7 +61,7 @@ public class EncodingTest {
     @Test
     public void testEncodingUtf8() throws UnsupportedEncodingException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        final AtomicReference<String> newLabel = new AtomicReference<String>();
+        final AtomicReference<String> newLabel = new AtomicReference<>();
         PrintStream ansi = new PrintStream(
                 new AnsiOutputStream(
                         baos,
@@ -75,7 +75,7 @@ public class EncodingTest {
                         },
                         AnsiType.Emulation,
                         AnsiColors.TrueColor,
-                        Charset.forName("UTF-8"),
+                        StandardCharsets.UTF_8,
                         null,
                         null,
                         false),
