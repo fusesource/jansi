@@ -56,25 +56,25 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
     private static final short BACKGROUND_WHITE = (short) (BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE);
 
     private static final short[] ANSI_FOREGROUND_COLOR_MAP = {
-            FOREGROUND_BLACK,
-            FOREGROUND_RED,
-            FOREGROUND_GREEN,
-            FOREGROUND_YELLOW,
-            FOREGROUND_BLUE,
-            FOREGROUND_MAGENTA,
-            FOREGROUND_CYAN,
-            FOREGROUND_WHITE,
+        FOREGROUND_BLACK,
+        FOREGROUND_RED,
+        FOREGROUND_GREEN,
+        FOREGROUND_YELLOW,
+        FOREGROUND_BLUE,
+        FOREGROUND_MAGENTA,
+        FOREGROUND_CYAN,
+        FOREGROUND_WHITE,
     };
 
     private static final short[] ANSI_BACKGROUND_COLOR_MAP = {
-            BACKGROUND_BLACK,
-            BACKGROUND_RED,
-            BACKGROUND_GREEN,
-            BACKGROUND_YELLOW,
-            BACKGROUND_BLUE,
-            BACKGROUND_MAGENTA,
-            BACKGROUND_CYAN,
-            BACKGROUND_WHITE,
+        BACKGROUND_BLACK,
+        BACKGROUND_RED,
+        BACKGROUND_GREEN,
+        BACKGROUND_YELLOW,
+        BACKGROUND_BLUE,
+        BACKGROUND_MAGENTA,
+        BACKGROUND_CYAN,
+        BACKGROUND_WHITE,
     };
 
     private final CONSOLE_SCREEN_BUFFER_INFO info = new CONSOLE_SCREEN_BUFFER_INFO(Arena.ofAuto());
@@ -156,16 +156,16 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
                     topLeft2.y(info.window().top());
                     int lengthToCursor =
                             (info.cursorPosition().y() - info.window().top())
-                            * info.size().x()
-                            + info.cursorPosition().x();
+                                            * info.size().x()
+                                    + info.cursorPosition().x();
                     FillConsoleOutputAttribute(console, info.attributes(), lengthToCursor, topLeft2, written);
                     FillConsoleOutputCharacterW(console, ' ', lengthToCursor, topLeft2, written);
                     break;
                 case ERASE_SCREEN_TO_END:
                     int lengthToEnd =
                             (info.window().bottom() - info.cursorPosition().y())
-                            * info.size().x()
-                            + (info.size().x() - info.cursorPosition().x());
+                                            * info.size().x()
+                                    + (info.size().x() - info.cursorPosition().x());
                     FillConsoleOutputAttribute(console, info.attributes(), lengthToEnd, info.cursorPosition(), written);
                     FillConsoleOutputCharacterW(console, ' ', lengthToEnd, info.cursorPosition(), written);
                     break;
@@ -349,8 +349,8 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
                 applyAttribute();
                 break;
 
-            // Yeah, setting the background intensity is not underlining.. but it's best we can do
-            // using the Windows console API
+                // Yeah, setting the background intensity is not underlining.. but it's best we can do
+                // using the Windows console API
             case ATTRIBUTE_UNDERLINE:
                 info.attributes((short) (info.attributes() | BACKGROUND_INTENSITY));
                 applyAttribute();
