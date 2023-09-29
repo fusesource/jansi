@@ -27,6 +27,7 @@ import java.util.Properties;
 
 import org.fusesource.jansi.Ansi.Attribute;
 import org.fusesource.jansi.internal.JansiLoader;
+import org.fusesource.jansi.internal.MingwSupport;
 
 import static org.fusesource.jansi.Ansi.ansi;
 
@@ -203,7 +204,19 @@ public class AnsiMain {
         if (AnsiConsole.IS_WINDOWS) {
             long console = AnsiConsoleSupport.getInstance().getKernel32().getStdHandle(!stderr);
             isatty = AnsiConsoleSupport.getInstance().getKernel32().isTty(console);
-            width = AnsiConsoleSupport.getInstance().getKernel32().getTerminalWidth(console);
+            if ((AnsiConsole.IS_CONEMU || AnsiConsole.IS_CYGWIN || AnsiConsole.IS_MSYSTEM) && isatty == 0) {
+                MingwSupport mingw = new MingwSupport();
+                String name = mingw.getConsoleName(!stderr);
+                if (name != null && !name.isEmpty()) {
+                    isatty = 1;
+                    width = mingw.getTerminalWidth(name);
+                } else {
+                    isatty = 0;
+                    width = 0;
+                }
+            } else {
+                width = AnsiConsoleSupport.getInstance().getKernel32().getTerminalWidth(console);
+            }
         } else {
             int fd = stderr ? AnsiConsoleSupport.CLibrary.STDERR_FILENO : AnsiConsoleSupport.CLibrary.STDOUT_FILENO;
             isatty = AnsiConsoleSupport.getInstance().getCLibrary().isTty(fd);

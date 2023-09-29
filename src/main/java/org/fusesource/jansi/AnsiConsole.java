@@ -26,6 +26,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.Locale;
 
+import org.fusesource.jansi.internal.MingwSupport;
 import org.fusesource.jansi.io.AnsiOutputStream;
 import org.fusesource.jansi.io.AnsiProcessor;
 import org.fusesource.jansi.io.FastBufferedOutputStream;
@@ -292,11 +293,19 @@ public class AnsiConsole {
                         }
                     }
                 };
+                width = () -> getKernel32().getTerminalWidth(console);
             } else if ((IS_CONEMU || IS_CYGWIN || IS_MSYSTEM) && !isConsole) {
                 // ANSI-enabled ConEmu, Cygwin or MSYS(2) on Windows...
                 processor = null;
                 type = AnsiType.Native;
                 installer = uninstaller = null;
+                MingwSupport mingw = new MingwSupport();
+                String name = mingw.getConsoleName(stdout);
+                if (name != null && !name.isEmpty()) {
+                    width = () -> mingw.getTerminalWidth(name);
+                } else {
+                    width = () -> -1;
+                }
             } else {
                 // On Windows, when no ANSI-capable terminal is used, we know the console does not natively interpret
                 // ANSI
@@ -315,8 +324,8 @@ public class AnsiConsole {
                 processor = proc;
                 type = ttype;
                 installer = uninstaller = null;
+                width = () -> getKernel32().getTerminalWidth(console);
             }
-            width = () -> getKernel32().getTerminalWidth(console);
         }
 
         // We must be on some Unix variant...
