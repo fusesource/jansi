@@ -410,7 +410,7 @@ final class Kernel32 {
     static final MethodHandle _get_osfhandle$MH =
             downcallHandle("_get_osfhandle", FunctionDescriptor.of(C_POINTER$LAYOUT, C_INT$LAYOUT));
 
-    public static class INPUT_RECORD {
+    public static final class INPUT_RECORD {
         static final MemoryLayout LAYOUT = MemoryLayout.structLayout(
                 ValueLayout.JAVA_SHORT.withName("EventType"),
                 MemoryLayout.unionLayout(
@@ -446,7 +446,7 @@ final class Kernel32 {
         }
     }
 
-    public static class MENU_EVENT_RECORD {
+    public static final class MENU_EVENT_RECORD {
 
         static final GroupLayout LAYOUT = MemoryLayout.structLayout(C_DWORD$LAYOUT.withName("dwCommandId"));
         static final VarHandle COMMAND_ID = varHandle(LAYOUT, "dwCommandId");
@@ -466,7 +466,7 @@ final class Kernel32 {
         }
     }
 
-    public static class FOCUS_EVENT_RECORD {
+    public static final class FOCUS_EVENT_RECORD {
 
         static final GroupLayout LAYOUT = MemoryLayout.structLayout(C_BOOL$LAYOUT.withName("bSetFocus"));
         static final VarHandle SET_FOCUS = varHandle(LAYOUT, "bSetFocus");
@@ -490,7 +490,7 @@ final class Kernel32 {
         }
     }
 
-    public static class WINDOW_BUFFER_SIZE_RECORD {
+    public static final class WINDOW_BUFFER_SIZE_RECORD {
 
         static final GroupLayout LAYOUT = MemoryLayout.structLayout(COORD.LAYOUT.withName("size"));
         static final long SIZE_OFFSET = byteOffset(LAYOUT, "size");
@@ -510,7 +510,7 @@ final class Kernel32 {
         }
     }
 
-    public static class MOUSE_EVENT_RECORD {
+    public static final class MOUSE_EVENT_RECORD {
 
         private static final MemoryLayout LAYOUT = MemoryLayout.structLayout(
                 COORD.LAYOUT.withName("dwMousePosition"),
@@ -554,7 +554,7 @@ final class Kernel32 {
         }
     }
 
-    public static class KEY_EVENT_RECORD {
+    public static final class KEY_EVENT_RECORD {
 
         static final MemoryLayout LAYOUT = MemoryLayout.structLayout(
                 JAVA_INT.withName("bKeyDown"),
@@ -616,7 +616,7 @@ final class Kernel32 {
         }
     }
 
-    public static class CHAR_INFO {
+    public static final class CHAR_INFO {
 
         static final GroupLayout LAYOUT = MemoryLayout.structLayout(
                 MemoryLayout.unionLayout(C_WCHAR$LAYOUT.withName("UnicodeChar"), C_CHAR$LAYOUT.withName("AsciiChar"))
@@ -646,7 +646,7 @@ final class Kernel32 {
         }
     }
 
-    public static class CONSOLE_SCREEN_BUFFER_INFO {
+    public static final class CONSOLE_SCREEN_BUFFER_INFO {
         static final GroupLayout LAYOUT = MemoryLayout.structLayout(
                 COORD.LAYOUT.withName("dwSize"),
                 COORD.LAYOUT.withName("dwCursorPosition"),
@@ -697,7 +697,7 @@ final class Kernel32 {
         }
     }
 
-    public static class COORD {
+    public static final class COORD {
 
         static final GroupLayout LAYOUT =
                 MemoryLayout.structLayout(C_SHORT$LAYOUT.withName("x"), C_SHORT$LAYOUT.withName("y"));
@@ -745,7 +745,7 @@ final class Kernel32 {
         }
     }
 
-    public static class SMALL_RECT {
+    public static final class SMALL_RECT {
 
         static final GroupLayout LAYOUT = MemoryLayout.structLayout(
                 C_SHORT$LAYOUT.withName("Left"),

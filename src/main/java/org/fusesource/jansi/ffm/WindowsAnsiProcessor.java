@@ -166,14 +166,8 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
                             (info.window().bottom() - info.cursorPosition().y())
                                             * info.size().x()
                                     + (info.size().x() - info.cursorPosition().x());
-                    FillConsoleOutputAttribute(
-                            console,
-                            info.attributes(),
-                            lengthToEnd,
-                            info.cursorPosition(),
-                            written);
-                    FillConsoleOutputCharacterW(
-                            console, ' ', lengthToEnd, info.cursorPosition(), written);
+                    FillConsoleOutputAttribute(console, info.attributes(), lengthToEnd, info.cursorPosition(), written);
+                    FillConsoleOutputCharacterW(console, ' ', lengthToEnd, info.cursorPosition(), written);
                     break;
                 default:
                     break;
@@ -206,13 +200,8 @@ public class WindowsAnsiProcessor extends AnsiProcessor {
                     int lengthToLastCol =
                             info.size().x() - info.cursorPosition().x();
                     FillConsoleOutputAttribute(
-                            console,
-                            info.attributes(),
-                            lengthToLastCol,
-                            info.cursorPosition(),
-                            written);
-                    FillConsoleOutputCharacterW(
-                            console, ' ', lengthToLastCol, info.cursorPosition(), written);
+                            console, info.attributes(), lengthToLastCol, info.cursorPosition(), written);
+                    FillConsoleOutputCharacterW(console, ' ', lengthToLastCol, info.cursorPosition(), written);
                     break;
                 default:
                     break;
