@@ -212,6 +212,7 @@
                                         org.fusesource.jansi.io;</exports>
                                 </moduleInfo>
                             </module>
+                            <overwriteExistingFiles>true</overwriteExistingFiles>
                         </configuration>
                     </execution>
                 </executions>
