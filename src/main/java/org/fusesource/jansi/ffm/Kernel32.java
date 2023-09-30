@@ -27,20 +27,13 @@ import java.lang.foreign.SymbolLookup;
 import java.lang.foreign.ValueLayout;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.VarHandle;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
-import static java.lang.foreign.ValueLayout.JAVA_INT;
-import static java.lang.foreign.ValueLayout.OfBoolean;
-import static java.lang.foreign.ValueLayout.OfByte;
-import static java.lang.foreign.ValueLayout.OfChar;
-import static java.lang.foreign.ValueLayout.OfDouble;
-import static java.lang.foreign.ValueLayout.OfFloat;
-import static java.lang.foreign.ValueLayout.OfInt;
-import static java.lang.foreign.ValueLayout.OfLong;
-import static java.lang.foreign.ValueLayout.OfShort;
+import static java.lang.foreign.ValueLayout.*;
 
-@SuppressWarnings({"unused", "CopyConstructorMissesField"})
-class Kernel32 {
+@SuppressWarnings("unused")
+final class Kernel32 {
 
     public static final int FORMAT_MESSAGE_FROM_SYSTEM = 0x00001000;
 
@@ -105,7 +98,7 @@ class Kernel32 {
     public static MemorySegment GetStdHandle(int nStdHandle) {
         MethodHandle mh$ = requireNonNull(GetStdHandle$MH, "GetStdHandle");
         try {
-            return MemorySegment.ofAddress((long) mh$.invokeExact(nStdHandle));
+            return (MemorySegment) mh$.invokeExact(nStdHandle);
         } catch (Throwable ex$) {
             throw new AssertionError("should not reach here", ex$);
         }
@@ -121,14 +114,7 @@ class Kernel32 {
             MemorySegment Arguments) {
         MethodHandle mh$ = requireNonNull(FormatMessageW$MH, "FormatMessageW");
         try {
-            return (int) mh$.invokeExact(
-                    dwFlags,
-                    lpSource.address(),
-                    dwMessageId,
-                    dwLanguageId,
-                    lpBuffer.address(),
-                    nSize,
-                    Arguments.address());
+            return (int) mh$.invokeExact(dwFlags, lpSource, dwMessageId, dwLanguageId, lpBuffer, nSize, Arguments);
         } catch (Throwable ex$) {
             throw new AssertionError("should not reach here", ex$);
         }
@@ -146,7 +132,7 @@ class Kernel32 {
     public static int SetConsoleMode(MemorySegment hConsoleHandle, int dwMode) {
         MethodHandle mh$ = requireNonNull(SetConsoleMode$MH, "SetConsoleMode");
         try {
-            return (int) mh$.invokeExact(hConsoleHandle.address(), dwMode);
+            return (int) mh$.invokeExact(hConsoleHandle, dwMode);
         } catch (Throwable ex$) {
             throw new AssertionError("should not reach here", ex$);
         }
@@ -155,7 +141,7 @@ class Kernel32 {
     public static int GetConsoleMode(MemorySegment hConsoleHandle, MemorySegment lpMode) {
         MethodHandle mh$ = requireNonNull(GetConsoleMode$MH, "GetConsoleMode");
         try {
-            return (int) mh$.invokeExact(hConsoleHandle.address(), lpMode.address());
+            return (int) mh$.invokeExact(hConsoleHandle, lpMode);
         } catch (Throwable ex$) {
             throw new AssertionError("should not reach here", ex$);
         }
@@ -164,7 +150,7 @@ class Kernel32 {
     public static int SetConsoleTitleW(MemorySegment lpConsoleTitle) {
         MethodHandle mh$ = requireNonNull(SetConsoleTitleW$MH, "SetConsoleTitleW");
         try {
-            return (int) mh$.invokeExact(lpConsoleTitle.address());
+            return (int) mh$.invokeExact(lpConsoleTitle);
         } catch (Throwable ex$) {
             throw new AssertionError("should not reach here", ex$);
         }
@@ -187,8 +173,7 @@ class Kernel32 {
             MemorySegment lpNumberOfCharsWritten) {
         MethodHandle mh$ = requireNonNull(FillConsoleOutputCharacterW$MH, "FillConsoleOutputCharacterW");
         try {
-            return (int) mh$.invokeExact(
-                    hConsoleOutput.address(), cCharacter, nLength, dwWriteCoord.seg, lpNumberOfCharsWritten.address());
+            return (int) mh$.invokeExact(hConsoleOutput, cCharacter, nLength, dwWriteCoord.seg, lpNumberOfCharsWritten);
         } catch (Throwable ex$) {
             throw new AssertionError("should not reach here", ex$);
         }
@@ -202,8 +187,7 @@ class Kernel32 {
             MemorySegment lpNumberOfAttrsWritten) {
         MethodHandle mh$ = requireNonNull(FillConsoleOutputAttribute$MH, "FillConsoleOutputAttribute");
         try {
-            return (int) mh$.invokeExact(
-                    hConsoleOutput, wAttribute, nLength, dwWriteCoord.seg, lpNumberOfAttrsWritten.address());
+            return (int) mh$.invokeExact(hConsoleOutput, wAttribute, nLength, dwWriteCoord.seg, lpNumberOfAttrsWritten);
         } catch (Throwable ex$) {
             throw new AssertionError("should not reach here", ex$);
         }
@@ -228,8 +212,7 @@ class Kernel32 {
             MemorySegment hConsoleInput, MemorySegment lpBuffer, int nLength, MemorySegment lpNumberOfEventsRead) {
         MethodHandle mh$ = requireNonNull(ReadConsoleInputW$MH, "ReadConsoleInputW");
         try {
-            return (int) mh$.invokeExact(
-                    hConsoleInput.address(), lpBuffer.address(), nLength, lpNumberOfEventsRead.address());
+            return (int) mh$.invokeExact(hConsoleInput, lpBuffer, nLength, lpNumberOfEventsRead);
         } catch (Throwable ex$) {
             throw new AssertionError("should not reach here", ex$);
         }
@@ -239,8 +222,7 @@ class Kernel32 {
             MemorySegment hConsoleInput, MemorySegment lpBuffer, int nLength, MemorySegment lpNumberOfEventsRead) {
         MethodHandle mh$ = requireNonNull(PeekConsoleInputW$MH, "PeekConsoleInputW");
         try {
-            return (int) mh$.invokeExact(
-                    hConsoleInput.address(), lpBuffer.address(), nLength, lpNumberOfEventsRead.address());
+            return (int) mh$.invokeExact(hConsoleInput, lpBuffer, nLength, lpNumberOfEventsRead);
         } catch (Throwable ex$) {
             throw new AssertionError("should not reach here", ex$);
         }
@@ -250,7 +232,7 @@ class Kernel32 {
             MemorySegment hConsoleOutput, CONSOLE_SCREEN_BUFFER_INFO lpConsoleScreenBufferInfo) {
         MethodHandle mh$ = requireNonNull(GetConsoleScreenBufferInfo$MH, "GetConsoleScreenBufferInfo");
         try {
-            return (int) mh$.invokeExact(hConsoleOutput.address(), lpConsoleScreenBufferInfo.seg);
+            return (int) mh$.invokeExact(hConsoleOutput, lpConsoleScreenBufferInfo.seg);
         } catch (Throwable ex$) {
             throw new AssertionError("should not reach here", ex$);
         }
@@ -271,10 +253,28 @@ class Kernel32 {
         }
     }
 
-    public static int GetLastError(Object... x0) {
+    public static int GetLastError() {
         MethodHandle mh$ = requireNonNull(GetLastError$MH, "GetLastError");
         try {
-            return (int) mh$.invokeExact(x0);
+            return (int) mh$.invokeExact();
+        } catch (Throwable ex$) {
+            throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    public static int GetFileType(MemorySegment hFile) {
+        MethodHandle mh$ = requireNonNull(GetFileType$MH, "GetFileType");
+        try {
+            return (int) mh$.invokeExact(hFile);
+        } catch (Throwable ex$) {
+            throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    public static MemorySegment _get_osfhandle(int fd) {
+        MethodHandle mh$ = requireNonNull(_get_osfhandle$MH, "_get_osfhandle");
+        try {
+            return (MemorySegment) mh$.invokeExact(fd);
         } catch (Throwable ex$) {
             throw new AssertionError("should not reach here", ex$);
         }
@@ -282,9 +282,9 @@ class Kernel32 {
 
     public static INPUT_RECORD[] readConsoleInputHelper(MemorySegment handle, int count, boolean peek)
             throws IOException {
-        try (Arena session = Arena.ofConfined()) {
-            MemorySegment inputRecordPtr = session.allocateArray(INPUT_RECORD.LAYOUT, count);
-            MemorySegment length = session.allocate(JAVA_INT, 0);
+        try (Arena arena = Arena.ofConfined()) {
+            MemorySegment inputRecordPtr = arena.allocateArray(INPUT_RECORD.LAYOUT, count);
+            MemorySegment length = arena.allocate(JAVA_INT, 0);
             int res = peek
                     ? PeekConsoleInputW(handle, inputRecordPtr, count, length)
                     : ReadConsoleInputW(handle, inputRecordPtr, count, length);
@@ -307,23 +307,39 @@ class Kernel32 {
 
     public static String getErrorMessage(int errorCode) {
         int bufferSize = 160;
-        MemorySegment data = Arena.ofAuto().allocate(bufferSize);
-        FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, null, errorCode, 0, data, bufferSize, null);
-        return data.getUtf8String(0).trim();
+        try (Arena arena = Arena.ofConfined()) {
+            MemorySegment data = arena.allocate(bufferSize);
+            FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, null, errorCode, 0, data, bufferSize, null);
+            return new String(data.toArray(JAVA_BYTE), StandardCharsets.UTF_16LE).trim();
+        }
     }
 
-    static final OfBoolean C_BOOL$LAYOUT = ValueLayout.JAVA_BOOLEAN;
-    static final OfByte C_CHAR$LAYOUT = ValueLayout.JAVA_BYTE;
-    static final OfChar C_WCHAR$LAYOUT = ValueLayout.JAVA_CHAR.withByteAlignment(16);
-    static final OfShort C_SHORT$LAYOUT = ValueLayout.JAVA_SHORT.withByteAlignment(16);
-    static final OfShort C_WORD$LAYOUT = ValueLayout.JAVA_SHORT.withByteAlignment(16);
-    static final OfInt C_DWORD$LAYOUT = ValueLayout.JAVA_INT.withByteAlignment(32);
-    static final OfInt C_INT$LAYOUT = JAVA_INT.withByteAlignment(32);
-    static final OfLong C_LONG$LAYOUT = ValueLayout.JAVA_LONG.withByteAlignment(64);
-    static final OfLong C_LONG_LONG$LAYOUT = ValueLayout.JAVA_LONG.withByteAlignment(64);
-    static final OfFloat C_FLOAT$LAYOUT = ValueLayout.JAVA_FLOAT.withByteAlignment(32);
-    static final OfDouble C_DOUBLE$LAYOUT = ValueLayout.JAVA_DOUBLE.withByteAlignment(64);
-    static final AddressLayout C_POINTER$LAYOUT = ValueLayout.ADDRESS.withByteAlignment(64);
+    private static final SymbolLookup SYMBOL_LOOKUP;
+
+    static {
+        System.loadLibrary("Kernel32");
+        SYMBOL_LOOKUP = SymbolLookup.loaderLookup().or(Linker.nativeLinker().defaultLookup());
+    }
+
+    static MethodHandle downcallHandle(String name, FunctionDescriptor fdesc) {
+        return SYMBOL_LOOKUP
+                .find(name)
+                .map(addr -> Linker.nativeLinker().downcallHandle(addr, fdesc))
+                .orElse(null);
+    }
+
+    static final OfBoolean C_BOOL$LAYOUT = JAVA_BOOLEAN;
+    static final OfByte C_CHAR$LAYOUT = JAVA_BYTE;
+    static final OfChar C_WCHAR$LAYOUT = JAVA_CHAR;
+    static final OfShort C_SHORT$LAYOUT = JAVA_SHORT;
+    static final OfShort C_WORD$LAYOUT = JAVA_SHORT;
+    static final OfInt C_DWORD$LAYOUT = JAVA_INT;
+    static final OfInt C_INT$LAYOUT = JAVA_INT;
+    static final OfLong C_LONG$LAYOUT = JAVA_LONG;
+    static final OfLong C_LONG_LONG$LAYOUT = JAVA_LONG;
+    static final OfFloat C_FLOAT$LAYOUT = JAVA_FLOAT;
+    static final OfDouble C_DOUBLE$LAYOUT = JAVA_DOUBLE;
+    static final AddressLayout C_POINTER$LAYOUT = ADDRESS;
 
     static final MethodHandle WaitForSingleObject$MH =
             downcallHandle("WaitForSingleObject", FunctionDescriptor.of(C_INT$LAYOUT, C_POINTER$LAYOUT, C_INT$LAYOUT));
@@ -389,8 +405,12 @@ class Kernel32 {
                     COORD.LAYOUT,
                     C_POINTER$LAYOUT));
     static final MethodHandle GetLastError$MH = downcallHandle("GetLastError", FunctionDescriptor.of(C_INT$LAYOUT));
+    static final MethodHandle GetFileType$MH =
+            downcallHandle("GetFileType", FunctionDescriptor.of(C_INT$LAYOUT, C_POINTER$LAYOUT));
+    static final MethodHandle _get_osfhandle$MH =
+            downcallHandle("_get_osfhandle", FunctionDescriptor.of(C_POINTER$LAYOUT, C_INT$LAYOUT));
 
-    public static class INPUT_RECORD {
+    public static final class INPUT_RECORD {
         static final MemoryLayout LAYOUT = MemoryLayout.structLayout(
                 ValueLayout.JAVA_SHORT.withName("EventType"),
                 MemoryLayout.unionLayout(
@@ -404,10 +424,6 @@ class Kernel32 {
         static final long Event$OFFSET = byteOffset(LAYOUT, "Event");
 
         private final MemorySegment seg;
-
-        public INPUT_RECORD() {
-            this(Arena.ofAuto().allocate(LAYOUT));
-        }
 
         INPUT_RECORD(MemorySegment seg) {
             this.seg = seg;
@@ -430,16 +446,12 @@ class Kernel32 {
         }
     }
 
-    public static class MENU_EVENT_RECORD {
+    public static final class MENU_EVENT_RECORD {
 
         static final GroupLayout LAYOUT = MemoryLayout.structLayout(C_DWORD$LAYOUT.withName("dwCommandId"));
         static final VarHandle COMMAND_ID = varHandle(LAYOUT, "dwCommandId");
 
         private final MemorySegment seg;
-
-        public MENU_EVENT_RECORD() {
-            this(Arena.ofAuto().allocate(LAYOUT));
-        }
 
         MENU_EVENT_RECORD(MemorySegment seg) {
             this.seg = seg;
@@ -454,16 +466,12 @@ class Kernel32 {
         }
     }
 
-    public static class FOCUS_EVENT_RECORD {
+    public static final class FOCUS_EVENT_RECORD {
 
         static final GroupLayout LAYOUT = MemoryLayout.structLayout(C_BOOL$LAYOUT.withName("bSetFocus"));
         static final VarHandle SET_FOCUS = varHandle(LAYOUT, "bSetFocus");
 
         private final MemorySegment seg;
-
-        public FOCUS_EVENT_RECORD() {
-            this(Arena.ofAuto().allocate(LAYOUT));
-        }
 
         FOCUS_EVENT_RECORD(MemorySegment seg) {
             this.seg = Objects.requireNonNull(seg);
@@ -482,16 +490,12 @@ class Kernel32 {
         }
     }
 
-    public static class WINDOW_BUFFER_SIZE_RECORD {
+    public static final class WINDOW_BUFFER_SIZE_RECORD {
 
         static final GroupLayout LAYOUT = MemoryLayout.structLayout(COORD.LAYOUT.withName("size"));
         static final long SIZE_OFFSET = byteOffset(LAYOUT, "size");
 
         private final MemorySegment seg;
-
-        public WINDOW_BUFFER_SIZE_RECORD() {
-            this(Arena.ofAuto().allocate(LAYOUT));
-        }
 
         WINDOW_BUFFER_SIZE_RECORD(MemorySegment seg) {
             this.seg = seg;
@@ -506,7 +510,7 @@ class Kernel32 {
         }
     }
 
-    public static class MOUSE_EVENT_RECORD {
+    public static final class MOUSE_EVENT_RECORD {
 
         private static final MemoryLayout LAYOUT = MemoryLayout.structLayout(
                 COORD.LAYOUT.withName("dwMousePosition"),
@@ -519,10 +523,6 @@ class Kernel32 {
         private static final VarHandle EVENT_FLAGS = varHandle(LAYOUT, "dwEventFlags");
 
         private final MemorySegment seg;
-
-        public MOUSE_EVENT_RECORD() {
-            this(Arena.ofAuto().allocate(LAYOUT));
-        }
 
         MOUSE_EVENT_RECORD(MemorySegment seg) {
             this.seg = Objects.requireNonNull(seg);
@@ -554,7 +554,7 @@ class Kernel32 {
         }
     }
 
-    public static class KEY_EVENT_RECORD {
+    public static final class KEY_EVENT_RECORD {
 
         static final MemoryLayout LAYOUT = MemoryLayout.structLayout(
                 JAVA_INT.withName("bKeyDown"),
@@ -575,10 +575,6 @@ class Kernel32 {
         static final VarHandle dwControlKeyState$VH = varHandle(LAYOUT, "dwControlKeyState");
 
         final MemorySegment seg;
-
-        public KEY_EVENT_RECORD() {
-            this(Arena.ofAuto().allocate(LAYOUT));
-        }
 
         KEY_EVENT_RECORD(MemorySegment seg) {
             this.seg = seg;
@@ -620,7 +616,7 @@ class Kernel32 {
         }
     }
 
-    public static class CHAR_INFO {
+    public static final class CHAR_INFO {
 
         static final GroupLayout LAYOUT = MemoryLayout.structLayout(
                 MemoryLayout.unionLayout(C_WCHAR$LAYOUT.withName("UnicodeChar"), C_CHAR$LAYOUT.withName("AsciiChar"))
@@ -631,12 +627,12 @@ class Kernel32 {
 
         final MemorySegment seg;
 
-        public CHAR_INFO() {
-            this(Arena.ofAuto().allocate(LAYOUT));
+        public CHAR_INFO(Arena arena) {
+            this(arena.allocate(LAYOUT));
         }
 
-        public CHAR_INFO(char c, short a) {
-            this();
+        public CHAR_INFO(Arena arena, char c, short a) {
+            this(arena);
             UnicodeChar$VH.set(seg, c);
             Attributes$VH.set(seg, a);
         }
@@ -650,7 +646,7 @@ class Kernel32 {
         }
     }
 
-    public static class CONSOLE_SCREEN_BUFFER_INFO {
+    public static final class CONSOLE_SCREEN_BUFFER_INFO {
         static final GroupLayout LAYOUT = MemoryLayout.structLayout(
                 COORD.LAYOUT.withName("dwSize"),
                 COORD.LAYOUT.withName("dwCursorPosition"),
@@ -664,8 +660,8 @@ class Kernel32 {
 
         private final MemorySegment seg;
 
-        public CONSOLE_SCREEN_BUFFER_INFO() {
-            this(Arena.ofAuto().allocate(LAYOUT));
+        public CONSOLE_SCREEN_BUFFER_INFO(Arena arena) {
+            this(arena.allocate(LAYOUT));
         }
 
         CONSOLE_SCREEN_BUFFER_INFO(MemorySegment seg) {
@@ -701,7 +697,7 @@ class Kernel32 {
         }
     }
 
-    public static class COORD {
+    public static final class COORD {
 
         static final GroupLayout LAYOUT =
                 MemoryLayout.structLayout(C_SHORT$LAYOUT.withName("x"), C_SHORT$LAYOUT.withName("y"));
@@ -710,18 +706,14 @@ class Kernel32 {
 
         private final MemorySegment seg;
 
-        public COORD() {
-            this(Arena.ofAuto().allocate(LAYOUT));
+        public COORD(Arena arena) {
+            this(arena.allocate(LAYOUT));
         }
 
-        public COORD(short x, short y) {
-            this(Arena.ofAuto().allocate(LAYOUT));
+        public COORD(Arena arena, short x, short y) {
+            this(arena.allocate(LAYOUT));
             x(x);
             y(y);
-        }
-
-        public COORD(COORD from) {
-            this(Arena.ofAuto().allocate(LAYOUT).copyFrom(Objects.requireNonNull(from).seg));
         }
 
         COORD(MemorySegment seg) {
@@ -748,12 +740,12 @@ class Kernel32 {
             COORD.y$VH.set(seg, y);
         }
 
-        public COORD copy() {
-            return new COORD(this);
+        public COORD copy(Arena arena) {
+            return new COORD(arena.allocate(LAYOUT).copyFrom(seg));
         }
     }
 
-    public static class SMALL_RECT {
+    public static final class SMALL_RECT {
 
         static final GroupLayout LAYOUT = MemoryLayout.structLayout(
                 C_SHORT$LAYOUT.withName("Left"),
@@ -766,14 +758,6 @@ class Kernel32 {
         static final VarHandle Bottom$VH = varHandle(LAYOUT, "Bottom");
 
         private final MemorySegment seg;
-
-        public SMALL_RECT() {
-            this(Arena.ofAuto().allocate(LAYOUT));
-        }
-
-        public SMALL_RECT(SMALL_RECT from) {
-            this(Arena.ofAuto().allocate(LAYOUT).copyFrom(from.seg));
-        }
 
         SMALL_RECT(MemorySegment seg, long offset) {
             this(seg.asSlice(offset, LAYOUT.byteSize()));
@@ -815,26 +799,9 @@ class Kernel32 {
             Top$VH.set(seg, t);
         }
 
-        public SMALL_RECT copy() {
-            return new SMALL_RECT(this);
+        public SMALL_RECT copy(Arena arena) {
+            return new SMALL_RECT(arena.allocate(LAYOUT).copyFrom(seg));
         }
-    }
-
-    private static final Linker LINKER = Linker.nativeLinker();
-
-    private static final SymbolLookup SYMBOL_LOOKUP;
-
-    static {
-        SymbolLookup loaderLookup = SymbolLookup.loaderLookup();
-        SYMBOL_LOOKUP =
-                name -> loaderLookup.find(name).or(() -> LINKER.defaultLookup().find(name));
-    }
-
-    static MethodHandle downcallHandle(String name, FunctionDescriptor fdesc) {
-        return SYMBOL_LOOKUP
-                .find(name)
-                .map(addr -> LINKER.downcallHandle(addr, fdesc))
-                .orElse(null);
     }
 
     static <T> T requireNonNull(T obj, String symbolName) {
