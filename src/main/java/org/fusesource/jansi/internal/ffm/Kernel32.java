@@ -309,7 +309,8 @@ final class Kernel32 {
         int bufferSize = 160;
         try (Arena arena = Arena.ofConfined()) {
             MemorySegment data = arena.allocate(bufferSize);
-            FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, null, errorCode, 0, data, bufferSize, null);
+            FormatMessageW(
+                    FORMAT_MESSAGE_FROM_SYSTEM, MemorySegment.NULL, errorCode, 0, data, bufferSize, MemorySegment.NULL);
             return new String(data.toArray(JAVA_BYTE), StandardCharsets.UTF_16LE).trim();
         }
     }
