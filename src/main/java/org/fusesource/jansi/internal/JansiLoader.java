@@ -37,8 +37,9 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -198,9 +199,7 @@ public class JansiLoader {
                 if (!extractedLckFile.exists()) {
                     new FileOutputStream(extractedLckFile).close();
                 }
-                try (OutputStream out = new FileOutputStream(extractedLibFile)) {
-                    copy(in, out);
-                }
+                Files.copy(in, extractedLibFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             } finally {
                 // Delete the extracted lib file on JVM exit.
                 extractedLibFile.deleteOnExit();
@@ -237,14 +236,6 @@ public class JansiLoader {
 
     private static String randomUUID() {
         return Long.toHexString(new Random().nextLong());
-    }
-
-    private static void copy(InputStream in, OutputStream out) throws IOException {
-        byte[] buf = new byte[8192];
-        int n;
-        while ((n = in.read(buf)) > 0) {
-            out.write(buf, 0, n);
-        }
     }
 
     /**
@@ -358,7 +349,7 @@ public class JansiLoader {
 
         throw new Exception(String.format(
                 "No native library found for os.name=%s, os.arch=%s, paths=[%s]",
-                OSInfo.getOSName(), OSInfo.getArchName(), join(triedPaths, File.pathSeparator)));
+                OSInfo.getOSName(), OSInfo.getArchName(), String.join(File.pathSeparator, triedPaths)));
     }
 
     private static boolean hasResource(String path) {
@@ -400,17 +391,5 @@ public class JansiLoader {
             System.err.println(e);
         }
         return version;
-    }
-
-    private static String join(List<String> list, String separator) {
-        StringBuilder sb = new StringBuilder();
-        boolean first = true;
-        for (String item : list) {
-            if (first) first = false;
-            else sb.append(separator);
-
-            sb.append(item);
-        }
-        return sb.toString();
     }
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fusesource.jansi.ffm;
+package org.fusesource.jansi.internal.ffm;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -26,7 +26,7 @@ import org.fusesource.jansi.WindowsSupport;
 import org.fusesource.jansi.io.AnsiProcessor;
 import org.fusesource.jansi.io.Colors;
 
-import static org.fusesource.jansi.ffm.Kernel32.*;
+import static org.fusesource.jansi.internal.ffm.Kernel32.*;
 
 /**
  * A Windows ANSI escape processor, that uses JNA to access native platform

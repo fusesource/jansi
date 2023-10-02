@@ -25,6 +25,8 @@ import org.fusesource.jansi.AnsiColors;
 import org.fusesource.jansi.AnsiMode;
 import org.fusesource.jansi.AnsiType;
 
+import static java.nio.charset.StandardCharsets.US_ASCII;
+
 /**
  * A ANSI print stream extracts ANSI escape codes written to
  * an output stream and calls corresponding <code>AnsiProcessor.process*</code> methods.
@@ -38,12 +40,14 @@ import org.fusesource.jansi.AnsiType;
  */
 public class AnsiOutputStream extends FilterOutputStream {
 
-    public static final byte[] RESET_CODE = "\033[0m".getBytes();
+    public static final byte[] RESET_CODE = "\033[0m".getBytes(US_ASCII);
 
+    @FunctionalInterface
     public interface IoRunnable {
         void run() throws IOException;
     }
 
+    @FunctionalInterface
     public interface WidthSupplier {
         int getTerminalWidth();
     }
@@ -79,7 +83,7 @@ public class AnsiOutputStream extends FilterOutputStream {
     private final byte[] buffer = new byte[MAX_ESCAPE_SEQUENCE_LENGTH];
     private int pos = 0;
     private int startOfValue;
-    private final ArrayList<Object> options = new ArrayList<Object>();
+    private final ArrayList<Object> options = new ArrayList<>();
     private int state = LOOKING_FOR_FIRST_ESC_CHAR;
     private final Charset cs;
 

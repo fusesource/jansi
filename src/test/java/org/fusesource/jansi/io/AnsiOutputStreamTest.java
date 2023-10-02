@@ -17,7 +17,7 @@ package org.fusesource.jansi.io;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.fusesource.jansi.AnsiColors;
 import org.fusesource.jansi.AnsiMode;
@@ -38,7 +38,7 @@ class AnsiOutputStreamTest {
                 null,
                 AnsiType.Emulation,
                 AnsiColors.TrueColor,
-                Charset.forName("UTF-8"),
+                StandardCharsets.UTF_8,
                 null,
                 null,
                 false);
