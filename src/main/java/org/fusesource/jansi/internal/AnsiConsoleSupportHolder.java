@@ -24,6 +24,17 @@ public final class AnsiConsoleSupportHolder {
     private static final AnsiConsoleSupport.Kernel32 KERNEL32;
     private static final Throwable ERR;
 
+    private static AnsiConsoleSupport getNativeImageProvider() {
+        try {
+            return (AnsiConsoleSupport)
+                    Class.forName("org.fusesource.jansi.internal.nativeimage.AnsiConsoleSupportImpl")
+                            .getConstructor()
+                            .newInstance();
+        } catch (Throwable e) {
+            throw new AssertionError("should not reach here", e);
+        }
+    }
+
     private static AnsiConsoleSupport getDefaultProvider() {
         try {
             // Call the specialized constructor to check whether the module has native access enabled
@@ -72,7 +83,9 @@ public final class AnsiConsoleSupportHolder {
         Throwable err = null;
 
         try {
-            if (providerList == null) {
+            if ("nativeimage".equals(providerList) && System.getProperty("org.graalvm.nativeimage.imagecode") != null) {
+                ansiConsoleSupport = getNativeImageProvider();
+            } else if (providerList == null) {
                 ansiConsoleSupport = getDefaultProvider();
             } else {
                 ansiConsoleSupport = findProvider(providerList);
