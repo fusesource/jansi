@@ -19,14 +19,17 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Locale;
 
 import org.fusesource.jansi.Ansi.Color;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests for the {@link Ansi} class.
@@ -188,10 +191,11 @@ public class AnsiTest {
     }
 
     @Test
+    @EnabledOnOs(OS.WINDOWS)
+    @Disabled("Does not really fail: launch `javaw -jar jansi-xxx.jar` directly instead")
     public void testAnsiMainWithNoConsole() throws Exception {
-        boolean win = System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("win");
         Path javaHome = Paths.get(System.getProperty("java.home"));
-        Path java = javaHome.resolve(win ? "bin\\java.exe" : "bin/java");
+        Path java = javaHome.resolve("bin\\javaw.exe");
         String cp = System.getProperty("java.class.path");
 
         Process process = new ProcessBuilder()
@@ -199,8 +203,7 @@ public class AnsiTest {
                 .start();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try (InputStream in = process.getInputStream();
-                InputStream err = process.getErrorStream(); ) {
+        try (InputStream in = process.getInputStream()) {
             byte[] buffer = new byte[8192];
             while (true) {
                 int nb = in.read(buffer);
@@ -212,7 +215,7 @@ public class AnsiTest {
             }
         }
 
-        System.out.println(baos);
+        assertTrue(baos.toString().contains("test on System.out"), baos.toString());
     }
 
     private static void assertAnsi(String expected, Ansi actual) {
