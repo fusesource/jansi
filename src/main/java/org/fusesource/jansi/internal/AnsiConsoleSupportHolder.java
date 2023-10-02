@@ -32,6 +32,7 @@ public final class AnsiConsoleSupportHolder {
                     .getConstructor(boolean.class)
                     .newInstance(true);
         } catch (Throwable ignored) {
+            ignored.printStackTrace();
         }
 
         return new org.fusesource.jansi.internal.jni.AnsiConsoleSupportImpl();
