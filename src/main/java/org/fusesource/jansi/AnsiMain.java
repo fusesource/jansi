@@ -31,6 +31,7 @@ import org.fusesource.jansi.internal.JansiLoader;
 import org.fusesource.jansi.internal.Kernel32;
 import org.fusesource.jansi.internal.MingwSupport;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.fusesource.jansi.Ansi.ansi;
 import static org.fusesource.jansi.internal.Kernel32.GetConsoleScreenBufferInfo;
 
@@ -309,7 +310,7 @@ public class AnsiMain {
 
     private static void printJansiLogoDemo() throws IOException {
         BufferedReader in =
-                new BufferedReader(new InputStreamReader(AnsiMain.class.getResourceAsStream("jansi.txt"), "UTF-8"));
+                new BufferedReader(new InputStreamReader(AnsiMain.class.getResourceAsStream("jansi.txt"), UTF_8));
         try {
             String l;
             while ((l = in.readLine()) != null) {

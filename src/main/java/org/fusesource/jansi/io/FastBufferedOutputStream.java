@@ -24,7 +24,7 @@ import java.io.OutputStream;
  */
 public class FastBufferedOutputStream extends FilterOutputStream {
 
-    protected final byte buf[] = new byte[8192];
+    protected final byte[] buf = new byte[8192];
     protected int count;
 
     public FastBufferedOutputStream(OutputStream out) {

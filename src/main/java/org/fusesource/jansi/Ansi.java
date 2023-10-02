@@ -149,17 +149,14 @@ public class Ansi implements Appendable {
         }
     }
 
+    @FunctionalInterface
     public interface Consumer {
         void apply(Ansi ansi);
     }
 
     public static final String DISABLE = Ansi.class.getName() + ".disable";
 
-    private static Callable<Boolean> detector = new Callable<Boolean>() {
-        public Boolean call() throws Exception {
-            return !Boolean.getBoolean(DISABLE);
-        }
-    };
+    private static Callable<Boolean> detector = () -> !Boolean.getBoolean(DISABLE);
 
     public static void setDetector(final Callable<Boolean> detector) {
         if (detector == null) throw new IllegalArgumentException();
@@ -374,7 +371,7 @@ public class Ansi implements Appendable {
     }
 
     private final StringBuilder builder;
-    private final ArrayList<Integer> attributeOptions = new ArrayList<Integer>(5);
+    private final ArrayList<Integer> attributeOptions = new ArrayList<>(5);
 
     public Ansi() {
         this(new StringBuilder(80));

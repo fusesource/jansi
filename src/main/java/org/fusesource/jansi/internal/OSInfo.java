@@ -34,6 +34,8 @@ package org.fusesource.jansi.internal;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -122,19 +124,15 @@ public class OSInfo {
 
     public static boolean isAlpine() {
         try {
-            Process p = Runtime.getRuntime().exec("cat /etc/os-release | grep ^ID");
-            p.waitFor();
-
-            InputStream in = p.getInputStream();
-            try {
-                return readFully(in).toLowerCase().contains("alpine");
-            } finally {
-                in.close();
+            for (String line : Files.readAllLines(Paths.get("/etc/os-release"))) {
+                if (line.startsWith("ID") && line.toLowerCase(Locale.ROOT).contains("alpine")) {
+                    return true;
+                }
             }
-
-        } catch (Throwable e) {
-            return false;
+        } catch (Throwable ignored) {
         }
+
+        return false;
     }
 
     static String getHardwareName() {

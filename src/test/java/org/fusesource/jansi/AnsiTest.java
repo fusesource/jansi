@@ -29,6 +29,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests for the {@link Ansi} class.
@@ -38,20 +40,10 @@ public class AnsiTest {
     @Test
     public void testSetEnabled() throws Exception {
         Ansi.setEnabled(false);
-        new Thread() {
-            @Override
-            public void run() {
-                assertEquals(false, Ansi.isEnabled());
-            }
-        }.run();
+        new Thread(() -> assertFalse(Ansi.isEnabled())).run();
 
         Ansi.setEnabled(true);
-        new Thread() {
-            @Override
-            public void run() {
-                assertEquals(true, Ansi.isEnabled());
-            }
-        }.run();
+        new Thread(() -> assertTrue(Ansi.isEnabled())).run();
     }
 
     @Test
@@ -64,15 +56,7 @@ public class AnsiTest {
 
     @Test
     public void testApply() {
-        assertEquals(
-                "test",
-                Ansi.ansi()
-                        .apply(new Ansi.Consumer() {
-                            public void apply(Ansi ansi) {
-                                ansi.a("test");
-                            }
-                        })
-                        .toString());
+        assertEquals("test", Ansi.ansi().apply(ansi -> ansi.a("test")).toString());
     }
 
     @ParameterizedTest
