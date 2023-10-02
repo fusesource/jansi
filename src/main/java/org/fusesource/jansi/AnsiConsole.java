@@ -157,8 +157,20 @@ public class AnsiConsole {
      */
     public static final String JANSI_GRACEFUL = "jansi.graceful";
 
+    /**
+     * The {@code jansi.providers} system property can be set to control which internal provider
+     * will be used.  If this property is not set, the {@code ffm} provider will be used if available,
+     * else the {@code jni} one will be used.  If set, this property is interpreted as a comma
+     * separated list of provider names to try in order.
+     */
     public static final String JANSI_PROVIDERS = "jansi.providers";
+    /**
+     * The name of the {@code jni} provider.
+     */
     public static final String JANSI_PROVIDER_JNI = "jni";
+    /**
+     * The name of the {@code ffm} provider.
+     */
     public static final String JANSI_PROVIDER_FFM = "ffm";
 
     /**
