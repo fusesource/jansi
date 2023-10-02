@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fusesource.jansi.ffm;
+package org.fusesource.jansi.internal.ffm;
 
 import java.io.IOException;
 import java.lang.foreign.AddressLayout;
@@ -309,7 +309,8 @@ final class Kernel32 {
         int bufferSize = 160;
         try (Arena arena = Arena.ofConfined()) {
             MemorySegment data = arena.allocate(bufferSize);
-            FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, null, errorCode, 0, data, bufferSize, null);
+            FormatMessageW(
+                    FORMAT_MESSAGE_FROM_SYSTEM, MemorySegment.NULL, errorCode, 0, data, bufferSize, MemorySegment.NULL);
             return new String(data.toArray(JAVA_BYTE), StandardCharsets.UTF_16LE).trim();
         }
     }

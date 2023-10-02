@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fusesource.jansi.ffm;
+package org.fusesource.jansi.internal.ffm;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -21,13 +21,22 @@ import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
 
-import org.fusesource.jansi.AnsiConsoleSupport;
+import org.fusesource.jansi.internal.AnsiConsoleSupport;
 import org.fusesource.jansi.internal.OSInfo;
 import org.fusesource.jansi.io.AnsiProcessor;
 
-import static org.fusesource.jansi.ffm.Kernel32.*;
+import static org.fusesource.jansi.internal.ffm.Kernel32.*;
 
-public class AnsiConsoleSupportFfm implements AnsiConsoleSupport {
+public final class AnsiConsoleSupportImpl implements AnsiConsoleSupport {
+
+    public AnsiConsoleSupportImpl() {}
+
+    public AnsiConsoleSupportImpl(boolean checkNativeAccess) {
+        if (checkNativeAccess && !AnsiConsoleSupportImpl.class.getModule().isNativeAccessEnabled()) {
+            throw new UnsupportedOperationException("Native access is not enabled for the current module");
+        }
+    }
+
     @Override
     public String getProviderName() {
         return "ffm";
@@ -88,7 +97,7 @@ public class AnsiConsoleSupportFfm implements AnsiConsoleSupport {
 
             @Override
             public String getErrorMessage(int errorCode) {
-                return org.fusesource.jansi.ffm.Kernel32.getErrorMessage(errorCode);
+                return org.fusesource.jansi.internal.ffm.Kernel32.getErrorMessage(errorCode);
             }
 
             @Override

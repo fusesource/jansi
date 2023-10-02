@@ -31,6 +31,9 @@ import org.fusesource.jansi.io.AnsiOutputStream;
 import org.fusesource.jansi.io.AnsiProcessor;
 import org.fusesource.jansi.io.FastBufferedOutputStream;
 
+import static org.fusesource.jansi.internal.AnsiConsoleSupportHolder.getCLibrary;
+import static org.fusesource.jansi.internal.AnsiConsoleSupportHolder.getKernel32;
+
 /**
  * Provides consistent access to an ANSI aware console PrintStream or an ANSI codes stripping PrintStream
  * if not on a terminal (see
@@ -155,10 +158,21 @@ public class AnsiConsole {
      */
     public static final String JANSI_GRACEFUL = "jansi.graceful";
 
+    /**
+     * The {@code jansi.providers} system property can be set to control which internal provider
+     * will be used.  If this property is not set, the {@code ffm} provider will be used if available,
+     * else the {@code jni} one will be used.  If set, this property is interpreted as a comma
+     * separated list of provider names to try in order.
+     */
     public static final String JANSI_PROVIDERS = "jansi.providers";
+    /**
+     * The name of the {@code jni} provider.
+     */
     public static final String JANSI_PROVIDER_JNI = "jni";
+    /**
+     * The name of the {@code ffm} provider.
+     */
     public static final String JANSI_PROVIDER_FFM = "ffm";
-    public static final String JANSI_PROVIDERS_DEFAULT = JANSI_PROVIDER_FFM + "," + JANSI_PROVIDER_JNI;
 
     /**
      * @deprecated this field will be made private in a future release, use {@link #sysOut()} instead
@@ -535,13 +549,5 @@ public class AnsiConsole {
             err = ansiStream(false);
             initialized = true;
         }
-    }
-
-    private static AnsiConsoleSupport.Kernel32 getKernel32() {
-        return AnsiConsoleSupport.getInstance().getKernel32();
-    }
-
-    private static AnsiConsoleSupport.CLibrary getCLibrary() {
-        return AnsiConsoleSupport.getInstance().getCLibrary();
     }
 }

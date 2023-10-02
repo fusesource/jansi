@@ -48,11 +48,7 @@ public class AnsiTest {
 
     @Test
     public void testApply() {
-        assertEquals(
-                "test",
-                Ansi.ansi()
-                        .apply(ansi -> ansi.a("test"))
-                        .toString());
+        assertEquals("test", Ansi.ansi().apply(ansi -> ansi.a("test")).toString());
     }
 
     @ParameterizedTest

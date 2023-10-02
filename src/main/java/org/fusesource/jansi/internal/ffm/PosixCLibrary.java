@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fusesource.jansi.ffm;
+package org.fusesource.jansi.internal.ffm;
 
 import java.lang.foreign.*;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.VarHandle;
 
-import org.fusesource.jansi.AnsiConsoleSupport;
+import org.fusesource.jansi.internal.AnsiConsoleSupport;
 
 final class PosixCLibrary implements AnsiConsoleSupport.CLibrary {
     private static final int TIOCGWINSZ;
