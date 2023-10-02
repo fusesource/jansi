@@ -20,17 +20,22 @@ import java.io.File;
 import java.io.FileDescriptor;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Support for MINGW terminals.
+ * Those terminals do not use the underlying windows terminal and there's no CLibrary available
+ * in these environments.  We have to rely on calling {@code stty.exe} and {@code tty.exe} to
+ * obtain the terminal name and width.
+ */
 public class MingwSupport {
 
-    private final String STTY_COMMAND;
-    private final String TTY_COMMAND;
-    private final Pattern[] columnsPatterns;
+    private final String sttyCommand;
+    private final String ttyCommand;
+    private final Pattern columnsPatterns;
 
     public MingwSupport() {
         String tty = null;
@@ -55,15 +60,15 @@ public class MingwSupport {
         if (stty == null) {
             stty = "stty.exe";
         }
-        TTY_COMMAND = tty;
-        STTY_COMMAND = stty;
+        ttyCommand = tty;
+        sttyCommand = stty;
         // Compute patterns
-        columnsPatterns = getPatterns("columns");
+        columnsPatterns = Pattern.compile("\\b" + "columns" + "\\s+(\\d+)\\b");
     }
 
     public String getConsoleName(boolean stdout) {
         try {
-            Process p = new ProcessBuilder(TTY_COMMAND)
+            Process p = new ProcessBuilder(ttyCommand)
                     .redirectInput(getRedirect(stdout ? FileDescriptor.out : FileDescriptor.err))
                     .start();
             String result = waitAndCapture(p);
@@ -82,16 +87,14 @@ public class MingwSupport {
 
     public int getTerminalWidth(String name) {
         try {
-            Process p = new ProcessBuilder(STTY_COMMAND, "-F", name, "-a").start();
+            Process p = new ProcessBuilder(sttyCommand, "-F", name, "-a").start();
             String result = waitAndCapture(p);
             if (p.exitValue() != 0) {
-                throw new IOException("Error executing '" + STTY_COMMAND + "': " + result);
+                throw new IOException("Error executing '" + sttyCommand + "': " + result);
             }
-            for (Pattern pattern : columnsPatterns) {
-                Matcher matcher = pattern.matcher(result);
-                if (matcher.find()) {
-                    return Integer.parseInt(matcher.group(1));
-                }
+            Matcher matcher = columnsPatterns.matcher(result);
+            if (matcher.find()) {
+                return Integer.parseInt(matcher.group(1));
             }
             throw new IOException("Unable to parse columns");
         } catch (Exception e) {
@@ -99,19 +102,10 @@ public class MingwSupport {
         }
     }
 
-    private static Pattern[] getPatterns(String name) {
-        return new Pattern[] {
-            Pattern.compile("\\b(\\d+)\\s+" + name + "\\b"),
-            Pattern.compile("\\b" + name + "\\s+(\\d+)\\b"),
-            Pattern.compile("\\b" + name + "\\s*=\\s*(\\d+)\\b")
-        };
-    }
-
     private static String waitAndCapture(Process p) throws IOException, InterruptedException {
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         try (InputStream in = p.getInputStream();
-                InputStream err = p.getErrorStream();
-                OutputStream out = p.getOutputStream()) {
+                InputStream err = p.getErrorStream()) {
             int c;
             while ((c = in.read()) != -1) {
                 bout.write(c);
@@ -121,7 +115,6 @@ public class MingwSupport {
             }
             p.waitFor();
         }
-
         return bout.toString();
     }
 
