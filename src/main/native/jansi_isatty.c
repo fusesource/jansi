@@ -57,8 +57,8 @@ JNIEXPORT jint JNICALL CLibrary_NATIVE(isatty)
 
 	/* check if fd is a pipe */
 	HANDLE h = (HANDLE) _get_osfhandle(arg0);
-	DWORD t = GetFileType(h);
-	if (t == FILE_TYPE_CHAR) {
+	DWORD t = h != NULL ? GetFileType(h) : 0;
+	if (h != NULL && t == FILE_TYPE_CHAR) {
 	    // check that this is a real tty because the /dev/null
 	    // and /dev/zero streams are also of type FILE_TYPE_CHAR
 		rc = GetConsoleMode(h, &mode) != 0;
