@@ -29,6 +29,7 @@ import java.util.Locale;
 import org.fusesource.jansi.internal.CLibrary;
 import org.fusesource.jansi.internal.CLibrary.WinSize;
 import org.fusesource.jansi.internal.Kernel32.CONSOLE_SCREEN_BUFFER_INFO;
+import org.fusesource.jansi.internal.MingwSupport;
 import org.fusesource.jansi.io.AnsiOutputStream;
 import org.fusesource.jansi.io.AnsiProcessor;
 import org.fusesource.jansi.io.FastBufferedOutputStream;
@@ -280,6 +281,15 @@ public class AnsiConsole {
             final long console = GetStdHandle(stdout ? STD_OUTPUT_HANDLE : STD_ERROR_HANDLE);
             final int[] mode = new int[1];
             final boolean isConsole = GetConsoleMode(console, mode) != 0;
+            final AnsiOutputStream.WidthSupplier kernel32Width = new AnsiOutputStream.WidthSupplier() {
+                @Override
+                public int getTerminalWidth() {
+                    CONSOLE_SCREEN_BUFFER_INFO info = new CONSOLE_SCREEN_BUFFER_INFO();
+                    GetConsoleScreenBufferInfo(console, info);
+                    return info.windowWidth();
+                }
+            };
+
             if (isConsole && SetConsoleMode(console, mode[0] | ENABLE_VIRTUAL_TERMINAL_PROCESSING) != 0) {
                 SetConsoleMode(console, mode[0]); // set it back for now, but we know it works
                 processor = null;
@@ -299,11 +309,19 @@ public class AnsiConsole {
                         }
                     }
                 };
+                width = kernel32Width;
             } else if ((IS_CONEMU || IS_CYGWIN || IS_MSYSTEM) && !isConsole) {
                 // ANSI-enabled ConEmu, Cygwin or MSYS(2) on Windows...
                 processor = null;
                 type = AnsiType.Native;
                 installer = uninstaller = null;
+                MingwSupport mingw = new MingwSupport();
+                String name = mingw.getConsoleName(stdout);
+                if (name != null && !name.isEmpty()) {
+                    width = () -> mingw.getTerminalWidth(name);
+                } else {
+                    width = () -> -1;
+                }
             } else {
                 // On Windows, when no ANSI-capable terminal is used, we know the console does not natively interpret
                 // ANSI
@@ -322,15 +340,8 @@ public class AnsiConsole {
                 processor = proc;
                 type = ttype;
                 installer = uninstaller = null;
+                width = kernel32Width;
             }
-            width = new AnsiOutputStream.WidthSupplier() {
-                @Override
-                public int getTerminalWidth() {
-                    CONSOLE_SCREEN_BUFFER_INFO info = new CONSOLE_SCREEN_BUFFER_INFO();
-                    GetConsoleScreenBufferInfo(console, info);
-                    return info.windowWidth();
-                }
-            };
         }
 
         // We must be on some Unix variant...

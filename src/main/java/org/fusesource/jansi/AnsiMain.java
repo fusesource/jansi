@@ -28,8 +28,11 @@ import java.util.Properties;
 import org.fusesource.jansi.Ansi.Attribute;
 import org.fusesource.jansi.internal.CLibrary;
 import org.fusesource.jansi.internal.JansiLoader;
+import org.fusesource.jansi.internal.Kernel32;
+import org.fusesource.jansi.internal.MingwSupport;
 
 import static org.fusesource.jansi.Ansi.ansi;
+import static org.fusesource.jansi.internal.Kernel32.GetConsoleScreenBufferInfo;
 
 /**
  * Main class for the library, providing executable jar to diagnose Jansi setup.
@@ -192,11 +195,38 @@ public class AnsiMain {
     }
 
     private static void diagnoseTty(boolean stderr) {
-        int fd = stderr ? CLibrary.STDERR_FILENO : CLibrary.STDOUT_FILENO;
-        int isatty = CLibrary.LOADED ? CLibrary.isatty(fd) : 0;
+        int isatty;
+        int width;
+        if (AnsiConsole.IS_WINDOWS) {
+            long console = Kernel32.GetStdHandle(stderr ? Kernel32.STD_ERROR_HANDLE : Kernel32.STD_OUTPUT_HANDLE);
+            int[] mode = new int[1];
+            isatty = Kernel32.GetConsoleMode(console, mode);
+            if ((AnsiConsole.IS_CONEMU || AnsiConsole.IS_CYGWIN || AnsiConsole.IS_MSYSTEM) && isatty == 0) {
+                MingwSupport mingw = new MingwSupport();
+                String name = mingw.getConsoleName(!stderr);
+                if (name != null && !name.isEmpty()) {
+                    isatty = 1;
+                    width = mingw.getTerminalWidth(name);
+                } else {
+                    isatty = 0;
+                    width = 0;
+                }
+            } else {
+                Kernel32.CONSOLE_SCREEN_BUFFER_INFO info = new Kernel32.CONSOLE_SCREEN_BUFFER_INFO();
+                GetConsoleScreenBufferInfo(console, info);
+                width = info.windowWidth();
+            }
+        } else {
+            int fd = stderr ? CLibrary.STDERR_FILENO : CLibrary.STDOUT_FILENO;
+            isatty = CLibrary.LOADED ? CLibrary.isatty(fd) : 0;
+            CLibrary.WinSize ws = new CLibrary.WinSize();
+            CLibrary.ioctl(fd, CLibrary.TIOCGWINSZ, ws);
+            width = ws.ws_col;
+        }
 
         System.out.println("isatty(STD" + (stderr ? "ERR" : "OUT") + "_FILENO): " + isatty + ", System."
                 + (stderr ? "err" : "out") + " " + ((isatty == 0) ? "is *NOT*" : "is") + " a terminal");
+        System.out.println("width(STD" + (stderr ? "ERR" : "OUT") + "_FILENO): " + width);
     }
 
     private static void testAnsi(boolean stderr) {
