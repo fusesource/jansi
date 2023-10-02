@@ -276,19 +276,13 @@ public class AnsiConsole {
                 getKernel32().setConsoleMode(console, mode[0]);
                 processor = null;
                 type = AnsiType.VirtualTerminal;
-                installer = new AnsiOutputStream.IoRunnable() {
-                    @Override
-                    public void run() throws IOException {
-                        virtualProcessing++;
-                        getKernel32().setConsoleMode(console, mode[0] | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
-                    }
+                installer = () -> {
+                    virtualProcessing++;
+                    getKernel32().setConsoleMode(console, mode[0] | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
                 };
-                uninstaller = new AnsiOutputStream.IoRunnable() {
-                    @Override
-                    public void run() throws IOException {
-                        if (--virtualProcessing == 0) {
-                            getKernel32().setConsoleMode(console, mode[0]);
-                        }
+                uninstaller = () -> {
+                    if (--virtualProcessing == 0) {
+                        getKernel32().setConsoleMode(console, mode[0]);
                     }
                 };
             } else if ((IS_CONEMU || IS_CYGWIN || IS_MSYSTEM) && !isConsole) {
@@ -427,8 +421,7 @@ public class AnsiConsole {
         try {
             String val = System.getProperty(name);
             result = val.isEmpty() || Boolean.parseBoolean(val);
-        } catch (IllegalArgumentException e) {
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException | NullPointerException ignored) {
         }
         return result;
     }
