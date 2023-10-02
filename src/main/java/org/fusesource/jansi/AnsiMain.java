@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 import org.fusesource.jansi.Ansi.Attribute;
@@ -218,7 +217,7 @@ public class AnsiMain {
                     width = 0;
                 }
             } else {
-                width = AnsiConsoleSupport.getInstance().getKernel32().getTerminalWidth(console);
+                width = AnsiConsoleSupportHolder.getKernel32().getTerminalWidth(console);
             }
         } else {
             int fd = stderr ? AnsiConsoleSupport.CLibrary.STDERR_FILENO : AnsiConsoleSupport.CLibrary.STDOUT_FILENO;
