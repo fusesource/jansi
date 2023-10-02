@@ -23,13 +23,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 import org.fusesource.jansi.Ansi.Attribute;
 import org.fusesource.jansi.internal.AnsiConsoleSupport;
 import org.fusesource.jansi.internal.AnsiConsoleSupportHolder;
 import org.fusesource.jansi.internal.JansiLoader;
+import org.fusesource.jansi.internal.MingwSupport;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.fusesource.jansi.Ansi.ansi;
 
 /**
@@ -204,7 +207,19 @@ public class AnsiMain {
         if (AnsiConsole.IS_WINDOWS) {
             long console = AnsiConsoleSupportHolder.getKernel32().getStdHandle(!stderr);
             isatty = AnsiConsoleSupportHolder.getKernel32().isTty(console);
-            width = AnsiConsoleSupportHolder.getKernel32().getTerminalWidth(console);
+            if ((AnsiConsole.IS_CONEMU || AnsiConsole.IS_CYGWIN || AnsiConsole.IS_MSYSTEM) && isatty == 0) {
+                MingwSupport mingw = new MingwSupport();
+                String name = mingw.getConsoleName(!stderr);
+                if (name != null && !name.isEmpty()) {
+                    isatty = 1;
+                    width = mingw.getTerminalWidth(name);
+                } else {
+                    isatty = 0;
+                    width = 0;
+                }
+            } else {
+                width = AnsiConsoleSupport.getInstance().getKernel32().getTerminalWidth(console);
+            }
         } else {
             int fd = stderr ? AnsiConsoleSupport.CLibrary.STDERR_FILENO : AnsiConsoleSupport.CLibrary.STDOUT_FILENO;
             isatty = AnsiConsoleSupportHolder.getCLibrary().isTty(fd);
@@ -295,7 +310,7 @@ public class AnsiMain {
 
     private static void printJansiLogoDemo() throws IOException {
         BufferedReader in =
-                new BufferedReader(new InputStreamReader(AnsiMain.class.getResourceAsStream("jansi.txt"), "UTF-8"));
+                new BufferedReader(new InputStreamReader(AnsiMain.class.getResourceAsStream("jansi.txt"), UTF_8));
         try {
             String l;
             while ((l = in.readLine()) != null) {

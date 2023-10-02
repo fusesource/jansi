@@ -25,6 +25,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 
+import org.fusesource.jansi.internal.MingwSupport;
 import org.fusesource.jansi.internal.OSInfo;
 import org.fusesource.jansi.io.AnsiOutputStream;
 import org.fusesource.jansi.io.AnsiProcessor;
@@ -290,26 +291,28 @@ public class AnsiConsole {
                 getKernel32().setConsoleMode(console, mode[0]);
                 processor = null;
                 type = AnsiType.VirtualTerminal;
-                installer = new AnsiOutputStream.IoRunnable() {
-                    @Override
-                    public void run() throws IOException {
-                        virtualProcessing++;
-                        getKernel32().setConsoleMode(console, mode[0] | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+                installer = () -> {
+                    virtualProcessing++;
+                    getKernel32().setConsoleMode(console, mode[0] | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+                };
+                uninstaller = () -> {
+                    if (--virtualProcessing == 0) {
+                        getKernel32().setConsoleMode(console, mode[0]);
                     }
                 };
-                uninstaller = new AnsiOutputStream.IoRunnable() {
-                    @Override
-                    public void run() throws IOException {
-                        if (--virtualProcessing == 0) {
-                            getKernel32().setConsoleMode(console, mode[0]);
-                        }
-                    }
-                };
+                width = () -> getKernel32().getTerminalWidth(console);
             } else if ((IS_CONEMU || IS_CYGWIN || IS_MSYSTEM) && !isConsole) {
                 // ANSI-enabled ConEmu, Cygwin or MSYS(2) on Windows...
                 processor = null;
                 type = AnsiType.Native;
                 installer = uninstaller = null;
+                MingwSupport mingw = new MingwSupport();
+                String name = mingw.getConsoleName(stdout);
+                if (name != null && !name.isEmpty()) {
+                    width = () -> mingw.getTerminalWidth(name);
+                } else {
+                    width = () -> -1;
+                }
             } else {
                 // On Windows, when no ANSI-capable terminal is used, we know the console does not natively interpret
                 // ANSI
@@ -328,8 +331,8 @@ public class AnsiConsole {
                 processor = proc;
                 type = ttype;
                 installer = uninstaller = null;
+                width = () -> getKernel32().getTerminalWidth(console);
             }
-            width = () -> getKernel32().getTerminalWidth(console);
         }
 
         // We must be on some Unix variant...
@@ -441,8 +444,7 @@ public class AnsiConsole {
         try {
             String val = System.getProperty(name);
             result = val.isEmpty() || Boolean.parseBoolean(val);
-        } catch (IllegalArgumentException e) {
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException | NullPointerException ignored) {
         }
         return result;
     }
