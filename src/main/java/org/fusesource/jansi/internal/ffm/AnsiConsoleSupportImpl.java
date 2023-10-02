@@ -33,7 +33,8 @@ public final class AnsiConsoleSupportImpl implements AnsiConsoleSupport {
 
     public AnsiConsoleSupportImpl(boolean checkNativeAccess) {
         if (checkNativeAccess && !AnsiConsoleSupportImpl.class.getModule().isNativeAccessEnabled()) {
-            throw new UnsupportedOperationException("Native access is not enabled for the current module");
+            throw new UnsupportedOperationException(
+                    "Native access is not enabled for the current module: " + AnsiConsoleSupportImpl.class.getModule());
         }
     }
 

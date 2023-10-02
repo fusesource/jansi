@@ -32,7 +32,7 @@ public final class AnsiConsoleSupportHolder {
                     .getConstructor(boolean.class)
                     .newInstance(true);
         } catch (Throwable ignored) {
-            ignored.printStackTrace();
+            ignored.printStackTrace(); // TODO: for debug, should be deleted before merging
         }
 
         return new org.fusesource.jansi.internal.jni.AnsiConsoleSupportImpl();
