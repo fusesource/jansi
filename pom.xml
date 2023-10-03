@@ -206,20 +206,7 @@
                         <configuration>
                             <excludes>
                                 <exclude>**/ffm/*.java</exclude>
-                                <exclude>**/NativeImageFeature.java</exclude>
                             </excludes>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>jdk-9</id>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                        <configuration>
-                            <release>9</release>
-                            <includes>
-                                <include>**/NativeImageFeature.java</include>
-                            </includes>
                         </configuration>
                     </execution>
                     <execution>

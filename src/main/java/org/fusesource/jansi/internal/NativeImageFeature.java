@@ -18,7 +18,6 @@ package org.fusesource.jansi.internal;
 import org.fusesource.jansi.AnsiConsole;
 import org.graalvm.nativeimage.hosted.Feature;
 import org.graalvm.nativeimage.hosted.RuntimeClassInitialization;
-import org.graalvm.nativeimage.hosted.RuntimeResourceAccess;
 import org.graalvm.nativeimage.hosted.RuntimeSystemProperties;
 
 public class NativeImageFeature implements Feature {
@@ -31,7 +30,11 @@ public class NativeImageFeature implements Feature {
     public void duringSetup(DuringSetupAccess access) {
         String providers = System.getProperty(AnsiConsole.JANSI_PROVIDERS);
         if (providers != null) {
-            RuntimeSystemProperties.register(AnsiConsole.JANSI_PROVIDERS, providers);
+            try {
+                RuntimeSystemProperties.register(AnsiConsole.JANSI_PROVIDERS, providers);
+            } catch (Throwable ignored) {
+                // GraalVM version < 23.0
+            }
         }
 
         if (providers != null && providers.contains(AnsiConsole.JANSI_PROVIDER_FFM)) {
@@ -52,11 +55,25 @@ public class NativeImageFeature implements Feature {
             }
 
             String packagePath = JansiLoader.class.getPackage().getName().replace('.', '/');
-            RuntimeResourceAccess.addResource(
-                    JansiLoader.class.getModule(),
-                    String.format(
-                            "%s/native/%s/%s",
-                            packagePath, OSInfo.getNativeLibFolderPathForCurrentOS(), jansiNativeLibraryName));
+
+            try {
+                Class<?> moduleClass = Class.forName("java.lang.Module");
+                Class<?> rraClass = Class.forName("org.graalvm.nativeimage.hosted.RuntimeResourceAccess");
+
+                Object module = Class.class.getMethod("getModule").invoke(JansiLoader.class);
+                rraClass.getMethod("addResource", moduleClass, String.class)
+                        .invoke(
+                                null,
+                                module,
+                                String.format(
+                                        "%s/native/%s/%s",
+                                        packagePath,
+                                        OSInfo.getNativeLibFolderPathForCurrentOS(),
+                                        jansiNativeLibraryName));
+
+            } catch (Throwable ignored) {
+                // GraalVM version < 22.3
+            }
         }
 
         RuntimeClassInitialization.initializeAtBuildTime(AnsiConsoleSupportHolder.class);
