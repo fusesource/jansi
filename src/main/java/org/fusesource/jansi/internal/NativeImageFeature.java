@@ -28,7 +28,7 @@ public class NativeImageFeature implements Feature {
     @Override
     public void duringSetup(DuringSetupAccess access) {
         String providers = System.getProperty(AnsiConsole.JANSI_PROVIDERS);
-        if (providers != null && providers.contains("ffm")) {
+        if (providers != null && providers.contains(AnsiConsole.JANSI_PROVIDER_FFM)) {
             try {
                 // FFM is only available in JDK 21+, so we need to compile it separately
                 Class.forName("org.fusesource.jansi.internal.ffm.NativeImageDowncallRegister")
@@ -37,7 +37,9 @@ public class NativeImageFeature implements Feature {
             } catch (Throwable e) {
                 throw new RuntimeException(e);
             }
-        } else {
+        }
+
+        if (providers == null || providers.contains(AnsiConsole.JANSI_PROVIDER_JNI)){
             String jansiNativeLibraryName = System.mapLibraryName("jansi");
             if (jansiNativeLibraryName.endsWith(".dylib")) {
                 jansiNativeLibraryName = jansiNativeLibraryName.replace(".dylib", ".jnilib");
