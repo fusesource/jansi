@@ -17,7 +17,9 @@ package org.fusesource.jansi.internal;
 
 import org.fusesource.jansi.AnsiConsole;
 import org.graalvm.nativeimage.hosted.Feature;
+import org.graalvm.nativeimage.hosted.RuntimeClassInitialization;
 import org.graalvm.nativeimage.hosted.RuntimeResourceAccess;
+import org.graalvm.nativeimage.hosted.RuntimeSystemProperties;
 
 public class NativeImageFeature implements Feature {
     @Override
@@ -28,6 +30,10 @@ public class NativeImageFeature implements Feature {
     @Override
     public void duringSetup(DuringSetupAccess access) {
         String providers = System.getProperty(AnsiConsole.JANSI_PROVIDERS);
+        if (providers != null) {
+            RuntimeSystemProperties.register(AnsiConsole.JANSI_PROVIDERS, providers);
+        }
+
         if (providers != null && providers.contains(AnsiConsole.JANSI_PROVIDER_FFM)) {
             try {
                 // FFM is only available in JDK 21+, so we need to compile it separately
@@ -52,5 +58,7 @@ public class NativeImageFeature implements Feature {
                             "%s/native/%s/%s",
                             packagePath, OSInfo.getNativeLibFolderPathForCurrentOS(), jansiNativeLibraryName));
         }
+
+        RuntimeClassInitialization.initializeAtBuildTime(AnsiConsoleSupportHolder.class);
     }
 }

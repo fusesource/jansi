@@ -19,10 +19,9 @@ import static org.fusesource.jansi.AnsiConsole.JANSI_PROVIDERS;
 
 public final class AnsiConsoleSupportHolder {
 
-    private static final String PROVIDER_NAME;
-    private static final AnsiConsoleSupport.CLibrary CLIBRARY;
-    private static final AnsiConsoleSupport.Kernel32 KERNEL32;
-    private static final Throwable ERR;
+    static final AnsiConsoleSupport PROVIDER;
+
+    static final Throwable ERR;
 
     private static AnsiConsoleSupport getDefaultProvider() {
         if (!OSInfo.isInImageCode()) {
@@ -84,40 +83,51 @@ public final class AnsiConsoleSupportHolder {
             err = e;
         }
 
-        String providerName = null;
-        AnsiConsoleSupport.CLibrary clib = null;
-        AnsiConsoleSupport.Kernel32 kernel32 = null;
-
-        if (ansiConsoleSupport != null) {
-            try {
-                providerName = ansiConsoleSupport.getProviderName();
-                clib = ansiConsoleSupport.getCLibrary();
-                kernel32 = OSInfo.isWindows() ? ansiConsoleSupport.getKernel32() : null;
-            } catch (Throwable e) {
-                err = e;
-            }
-        }
-
-        PROVIDER_NAME = providerName;
-        CLIBRARY = clib;
-        KERNEL32 = kernel32;
+        PROVIDER = ansiConsoleSupport;
         ERR = err;
     }
 
     public static String getProviderName() {
-        return PROVIDER_NAME;
+        return PROVIDER.getProviderName();
+    }
+
+    private static final class LibraryHolder {
+        static final AnsiConsoleSupport.CLibrary CLIBRARY;
+        static final AnsiConsoleSupport.Kernel32 KERNEL32;
+        static final Throwable ERR;
+
+        static {
+            AnsiConsoleSupport.CLibrary clib = null;
+            AnsiConsoleSupport.Kernel32 kernel32 = null;
+            Throwable err = null;
+
+            if (PROVIDER != null) {
+                try {
+                    clib = PROVIDER.getCLibrary();
+                    kernel32 = OSInfo.isWindows() ? PROVIDER.getKernel32() : null;
+                } catch (Throwable e) {
+                    err = e;
+                }
+            } else {
+                err = AnsiConsoleSupportHolder.ERR;
+            }
+
+            CLIBRARY = clib;
+            KERNEL32 = kernel32;
+            ERR = err;
+        }
     }
 
     public static AnsiConsoleSupport.CLibrary getCLibrary() {
-        if (CLIBRARY == null) {
-            throw new RuntimeException("Unable to get the instance of CLibrary", ERR);
+        if (LibraryHolder.CLIBRARY == null) {
+            throw new RuntimeException("Unable to get the instance of CLibrary", LibraryHolder.ERR);
         }
 
-        return CLIBRARY;
+        return LibraryHolder.CLIBRARY;
     }
 
     public static AnsiConsoleSupport.Kernel32 getKernel32() {
-        if (KERNEL32 == null) {
+        if (LibraryHolder.KERNEL32 == null) {
             if (OSInfo.isWindows()) {
                 throw new RuntimeException("Unable to get the instance of Kernel32", ERR);
             } else {
@@ -125,6 +135,6 @@ public final class AnsiConsoleSupportHolder {
             }
         }
 
-        return KERNEL32;
+        return LibraryHolder.KERNEL32;
     }
 }
