@@ -32,7 +32,6 @@ public final class AnsiConsoleSupportHolder {
                         .getConstructor(boolean.class)
                         .newInstance(true);
             } catch (Throwable ignored) {
-                ignored.printStackTrace(); // TODO: for debug, should be deleted before merging
             }
         }
 

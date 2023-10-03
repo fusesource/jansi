@@ -182,7 +182,7 @@ public class OSInfo {
         while ((readLen = in.read(buf, 0, buf.length)) >= 0) {
             b.write(buf, 0, readLen);
         }
-        return b.toString();
+        return b.toString("UTF-8");
     }
 
     static String resolveArmArchType() {
