@@ -34,6 +34,7 @@ public class NativeImageFeature implements Feature {
                 RuntimeSystemProperties.register(AnsiConsole.JANSI_PROVIDERS, providers);
             } catch (Throwable ignored) {
                 // GraalVM version < 23.0
+                // No need to worry as we select the provider at build time
             }
         }
 
@@ -73,6 +74,7 @@ public class NativeImageFeature implements Feature {
 
             } catch (Throwable ignored) {
                 // GraalVM version < 22.3
+                // Users need to manually add the JNI library as resources
             }
         }
 
