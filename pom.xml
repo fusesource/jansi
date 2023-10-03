@@ -267,6 +267,7 @@
                         <configuration>
                             <jvmVersion>9</jvmVersion>
                             <module>
+                                <mainClass>org.fusesource.jansi.AnsiMain</mainClass>
                                 <moduleInfo>
                                     <name>org.fusesource.jansi</name>
                                     <exports>org.fusesource.jansi;
