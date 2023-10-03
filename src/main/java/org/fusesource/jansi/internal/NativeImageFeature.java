@@ -39,7 +39,7 @@ public class NativeImageFeature implements Feature {
             }
         }
 
-        if (providers == null || providers.contains(AnsiConsole.JANSI_PROVIDER_JNI)){
+        if (providers == null || providers.contains(AnsiConsole.JANSI_PROVIDER_JNI)) {
             String jansiNativeLibraryName = System.mapLibraryName("jansi");
             if (jansiNativeLibraryName.endsWith(".dylib")) {
                 jansiNativeLibraryName = jansiNativeLibraryName.replace(".dylib", ".jnilib");
