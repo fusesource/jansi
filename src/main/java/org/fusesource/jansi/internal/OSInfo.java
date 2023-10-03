@@ -36,12 +36,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.Locale;
 
 /**
  * Provides OS name and architecture name.
- *
  */
 public class OSInfo {
 
@@ -53,52 +51,6 @@ public class OSInfo {
     public static final String PPC64 = "ppc64";
     public static final String ARM64 = "arm64";
     public static final String RISCV64 = "riscv64";
-
-    private static final HashMap<String, String> archMapping = new HashMap<String, String>();
-
-    static {
-        // x86 mappings
-        archMapping.put(X86, X86);
-        archMapping.put("i386", X86);
-        archMapping.put("i486", X86);
-        archMapping.put("i586", X86);
-        archMapping.put("i686", X86);
-        archMapping.put("pentium", X86);
-
-        // x86_64 mappings
-        archMapping.put(X86_64, X86_64);
-        archMapping.put("amd64", X86_64);
-        archMapping.put("em64t", X86_64);
-        archMapping.put("universal", X86_64); // Needed for openjdk7 in Mac
-
-        // Itenium 64-bit mappings
-        archMapping.put(IA64, IA64);
-        archMapping.put("ia64w", IA64);
-
-        // Itenium 32-bit mappings, usually an HP-UX construct
-        archMapping.put(IA64_32, IA64_32);
-        archMapping.put("ia64n", IA64_32);
-
-        // PowerPC mappings
-        archMapping.put(PPC, PPC);
-        archMapping.put("power", PPC);
-        archMapping.put("powerpc", PPC);
-        archMapping.put("power_pc", PPC);
-        archMapping.put("power_rs", PPC);
-
-        // TODO: PowerPC 64bit mappings
-        archMapping.put(PPC64, PPC64);
-        archMapping.put("power64", PPC64);
-        archMapping.put("powerpc64", PPC64);
-        archMapping.put("power_pc64", PPC64);
-        archMapping.put("power_rs64", PPC64);
-
-        // aarch64 mappings
-        archMapping.put("aarch64", ARM64);
-
-        // riscv64 mappings
-        archMapping.put(RISCV64, RISCV64);
-    }
 
     public static void main(String[] args) {
         if (args.length >= 1) {
@@ -112,6 +64,63 @@ public class OSInfo {
         }
 
         System.out.print(getNativeLibFolderPathForCurrentOS());
+    }
+
+    private static String mapArch(String arch) {
+        switch (arch.toLowerCase(Locale.ROOT)) {
+                // x86 mappings
+            case X86:
+            case "i386":
+            case "i486":
+            case "i586":
+            case "i686":
+            case "pentium":
+                return X86;
+
+                // x86_64 mappings
+            case X86_64:
+            case "amd64":
+            case "em64t":
+            case "universal": // Needed for openjdk7 in Mac
+                return X86_64;
+
+                // Itenium 64-bit mappings
+            case IA64:
+            case "ia64w":
+                return IA64;
+
+                // Itenium 32-bit mappings, usually an HP-UX construct
+            case IA64_32:
+            case "ia64n":
+                return IA64_32;
+
+                // PowerPC mappings
+            case PPC:
+            case "power":
+            case "powerpc":
+            case "power_pc":
+            case "power_rs":
+                return PPC;
+
+                // TODO: PowerPC 64bit mappings
+            case PPC64:
+            case "power64":
+            case "powerpc64":
+            case "power_pc64":
+            case "power_rs64":
+                return PPC64;
+
+                // aarch64 mappings
+            case "aarch64":
+                return ARM64;
+
+                // riscv64 mappings
+            case RISCV64:
+                return RISCV64;
+
+            default:
+                return null;
+        }
     }
 
     public static String getNativeLibFolderPathForCurrentOS() {
@@ -143,6 +152,10 @@ public class OSInfo {
         }
 
         return false;
+    }
+
+    public static boolean isInImageCode() {
+        return System.getProperty("org.graalvm.nativeimage.imagecode") != null;
     }
 
     static String getHardwareName() {
@@ -211,8 +224,10 @@ public class OSInfo {
         if (osArch.startsWith("arm")) {
             osArch = resolveArmArchType();
         } else {
-            String lc = osArch.toLowerCase(Locale.ROOT);
-            if (archMapping.containsKey(lc)) return archMapping.get(lc);
+            String arch = mapArch(osArch);
+            if (arch != null) {
+                return arch;
+            }
         }
         return translateArchNameToFolderName(osArch);
     }

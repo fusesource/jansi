@@ -20,6 +20,7 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.VarHandle;
 
 import org.fusesource.jansi.internal.AnsiConsoleSupport;
+import org.fusesource.jansi.internal.OSInfo;
 
 final class PosixCLibrary implements AnsiConsoleSupport.CLibrary {
     private static final int TIOCGWINSZ;
@@ -53,7 +54,7 @@ final class PosixCLibrary implements AnsiConsoleSupport.CLibrary {
         ws_col = wsLayout.varHandle(MemoryLayout.PathElement.groupElement("ws_col"));
         Linker linker = Linker.nativeLinker();
         SymbolLookup lookup;
-        if (System.getProperty("org.graalvm.nativeimage.imagecode") != null) {
+        if (OSInfo.isInImageCode()) {
             lookup = SymbolLookup.loaderLookup();
         } else {
             lookup = linker.defaultLookup();

@@ -25,14 +25,16 @@ public final class AnsiConsoleSupportHolder {
     private static final Throwable ERR;
 
     private static AnsiConsoleSupport getDefaultProvider() {
-        try {
-            // Call the specialized constructor to check whether the module has native access enabled
-            // If not, fallback to JNI to avoid the JDK printing warnings in stderr
-            return (AnsiConsoleSupport) Class.forName("org.fusesource.jansi.internal.ffm.AnsiConsoleSupportImpl")
-                    .getConstructor(boolean.class)
-                    .newInstance(true);
-        } catch (Throwable ignored) {
-            ignored.printStackTrace(); // TODO: for debug, should be deleted before merging
+        if (!OSInfo.isInImageCode()) {
+            try {
+                // Call the specialized constructor to check whether the module has native access enabled
+                // If not, fallback to JNI to avoid the JDK printing warnings in stderr
+                return (AnsiConsoleSupport) Class.forName("org.fusesource.jansi.internal.ffm.AnsiConsoleSupportImpl")
+                        .getConstructor(boolean.class)
+                        .newInstance(true);
+            } catch (Throwable ignored) {
+                ignored.printStackTrace(); // TODO: for debug, should be deleted before merging
+            }
         }
 
         return new org.fusesource.jansi.internal.jni.AnsiConsoleSupportImpl();

@@ -15,22 +15,24 @@
  */
 package org.fusesource.jansi.internal.ffm;
 
-import java.lang.foreign.*;
+import java.lang.foreign.AddressLayout;
+import java.lang.foreign.FunctionDescriptor;
+import java.lang.foreign.MemoryLayout;
+import java.lang.foreign.StructLayout;
+import java.lang.foreign.ValueLayout;
 
 import org.graalvm.nativeimage.Platform;
-import org.graalvm.nativeimage.hosted.Feature;
 import org.graalvm.nativeimage.hosted.RuntimeForeignAccess;
 
 import static java.lang.foreign.ValueLayout.*;
 
-public final class NativeImageFeatures implements Feature {
+public final class NativeImageDowncallRegister {
 
     private static void registerForDowncall(MemoryLayout resLayout, MemoryLayout... argLayouts) {
         RuntimeForeignAccess.registerForDowncall(FunctionDescriptor.of(resLayout, argLayouts));
     }
 
-    @Override
-    public void duringSetup(DuringSetupAccess access) {
+    public static void registerForDowncall() {
         if (Platform.includedIn(Platform.WINDOWS.class)) {
             final OfShort C_SHORT$LAYOUT = JAVA_SHORT;
             final OfInt C_INT$LAYOUT = JAVA_INT;
