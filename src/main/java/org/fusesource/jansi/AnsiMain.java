@@ -26,8 +26,12 @@ import java.io.PrintStream;
 import java.util.Properties;
 
 import org.fusesource.jansi.Ansi.Attribute;
+import org.fusesource.jansi.internal.AnsiConsoleSupport;
+import org.fusesource.jansi.internal.AnsiConsoleSupportHolder;
 import org.fusesource.jansi.internal.JansiLoader;
+import org.fusesource.jansi.internal.MingwSupport;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.fusesource.jansi.Ansi.ansi;
 
 /**
@@ -53,9 +57,8 @@ public class AnsiMain {
 
         System.out.println();
 
-        System.out.println("jansi.providers= "
-                + System.getProperty(AnsiConsole.JANSI_PROVIDERS, AnsiConsole.JANSI_PROVIDERS_DEFAULT));
-        String provider = AnsiConsoleSupport.getInstance().getProviderName();
+        System.out.println("jansi.providers= " + System.getProperty(AnsiConsole.JANSI_PROVIDERS, ""));
+        String provider = AnsiConsoleSupportHolder.getProviderName();
         System.out.println("Selected provider: " + provider);
 
         if (AnsiConsole.JANSI_PROVIDER_JNI.equals(provider)) {
@@ -202,13 +205,25 @@ public class AnsiMain {
         int isatty;
         int width;
         if (AnsiConsole.IS_WINDOWS) {
-            long console = AnsiConsoleSupport.getInstance().getKernel32().getStdHandle(!stderr);
-            isatty = AnsiConsoleSupport.getInstance().getKernel32().isTty(console);
-            width = AnsiConsoleSupport.getInstance().getKernel32().getTerminalWidth(console);
+            long console = AnsiConsoleSupportHolder.getKernel32().getStdHandle(!stderr);
+            isatty = AnsiConsoleSupportHolder.getKernel32().isTty(console);
+            if ((AnsiConsole.IS_CONEMU || AnsiConsole.IS_CYGWIN || AnsiConsole.IS_MSYSTEM) && isatty == 0) {
+                MingwSupport mingw = new MingwSupport();
+                String name = mingw.getConsoleName(!stderr);
+                if (name != null && !name.isEmpty()) {
+                    isatty = 1;
+                    width = mingw.getTerminalWidth(name);
+                } else {
+                    isatty = 0;
+                    width = 0;
+                }
+            } else {
+                width = AnsiConsoleSupportHolder.getKernel32().getTerminalWidth(console);
+            }
         } else {
             int fd = stderr ? AnsiConsoleSupport.CLibrary.STDERR_FILENO : AnsiConsoleSupport.CLibrary.STDOUT_FILENO;
-            isatty = AnsiConsoleSupport.getInstance().getCLibrary().isTty(fd);
-            width = AnsiConsoleSupport.getInstance().getCLibrary().getTerminalWidth(fd);
+            isatty = AnsiConsoleSupportHolder.getCLibrary().isTty(fd);
+            width = AnsiConsoleSupportHolder.getCLibrary().getTerminalWidth(fd);
         }
 
         System.out.println("isatty(STD" + (stderr ? "ERR" : "OUT") + "_FILENO): " + isatty + ", System."
@@ -295,7 +310,7 @@ public class AnsiMain {
 
     private static void printJansiLogoDemo() throws IOException {
         BufferedReader in =
-                new BufferedReader(new InputStreamReader(AnsiMain.class.getResourceAsStream("jansi.txt"), "UTF-8"));
+                new BufferedReader(new InputStreamReader(AnsiMain.class.getResourceAsStream("jansi.txt"), UTF_8));
         try {
             String l;
             while ((l = in.readLine()) != null) {
