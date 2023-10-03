@@ -47,7 +47,7 @@ public class NativeImageFeature implements Feature {
             RuntimeResourceAccess.addResource(
                     JansiLoader.class.getModule(),
                     String.format(
-                            "/%s/native/%s/%s",
+                            "%s/native/%s/%s",
                             packagePath, OSInfo.getNativeLibFolderPathForCurrentOS(), jansiNativeLibraryName));
         }
     }
