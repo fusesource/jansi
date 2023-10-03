@@ -66,7 +66,7 @@ public class OSInfo {
         System.out.print(getNativeLibFolderPathForCurrentOS());
     }
 
-    private static String mapArch(String arch) {
+    private static String mapArchName(String arch) {
         switch (arch.toLowerCase(Locale.ROOT)) {
                 // x86 mappings
             case X86:
@@ -224,7 +224,7 @@ public class OSInfo {
         if (osArch.startsWith("arm")) {
             osArch = resolveArmArchType();
         } else {
-            String arch = mapArch(osArch);
+            String arch = mapArchName(osArch);
             if (arch != null) {
                 return arch;
             }
