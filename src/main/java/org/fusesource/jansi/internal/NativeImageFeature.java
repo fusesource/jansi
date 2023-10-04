@@ -29,7 +29,6 @@ public class NativeImageFeature implements Feature {
     @Override
     public void duringSetup(DuringSetupAccess access) {
         RuntimeClassInitialization.initializeAtBuildTime(AnsiConsoleSupportHolder.class);
-        RuntimeClassInitialization.initializeAtBuildTime(OSInfo.class);
 
         String providers = System.getProperty(AnsiConsole.JANSI_PROVIDERS);
         if (providers != null) {
