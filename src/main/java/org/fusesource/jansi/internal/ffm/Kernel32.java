@@ -244,7 +244,7 @@ final class Kernel32 {
             SMALL_RECT lpClipRectangle,
             COORD dwDestinationOrigin,
             CHAR_INFO lpFill) {
-        MethodHandle mh$ = requireNonNull(ScrollConsoleScreenBuffer$MH, "ScrollConsoleScreenBuffer");
+        MethodHandle mh$ = requireNonNull(ScrollConsoleScreenBufferW$MH, "ScrollConsoleScreenBuffer");
         try {
             return (int)
                     mh$.invokeExact(hConsoleOutput, lpScrollRectangle, lpClipRectangle, dwDestinationOrigin, lpFill);
@@ -318,8 +318,9 @@ final class Kernel32 {
     private static final SymbolLookup SYMBOL_LOOKUP;
 
     static {
+        System.loadLibrary("msvcrt");
         System.loadLibrary("Kernel32");
-        SYMBOL_LOOKUP = SymbolLookup.loaderLookup().or(Linker.nativeLinker().defaultLookup());
+        SYMBOL_LOOKUP = SymbolLookup.loaderLookup();
     }
 
     static MethodHandle downcallHandle(String name, FunctionDescriptor fdesc) {
@@ -396,8 +397,8 @@ final class Kernel32 {
     static final MethodHandle GetConsoleScreenBufferInfo$MH = downcallHandle(
             "GetConsoleScreenBufferInfo", FunctionDescriptor.of(C_INT$LAYOUT, C_POINTER$LAYOUT, C_POINTER$LAYOUT));
 
-    static final MethodHandle ScrollConsoleScreenBuffer$MH = downcallHandle(
-            "ScrollConsoleScreenBuffer",
+    static final MethodHandle ScrollConsoleScreenBufferW$MH = downcallHandle(
+            "ScrollConsoleScreenBufferW",
             FunctionDescriptor.of(
                     C_INT$LAYOUT,
                     C_POINTER$LAYOUT,

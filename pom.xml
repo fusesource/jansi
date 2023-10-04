@@ -110,6 +110,13 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.graalvm.sdk</groupId>
+            <artifactId>nativeimage</artifactId>
+            <version>23.1.0</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>5.7.0</version>
@@ -260,6 +267,7 @@
                         <configuration>
                             <jvmVersion>9</jvmVersion>
                             <module>
+                                <mainClass>org.fusesource.jansi.AnsiMain</mainClass>
                                 <moduleInfo>
                                     <name>org.fusesource.jansi</name>
                                     <exports>org.fusesource.jansi;

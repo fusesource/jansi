@@ -19,19 +19,20 @@ import static org.fusesource.jansi.AnsiConsole.JANSI_PROVIDERS;
 
 public final class AnsiConsoleSupportHolder {
 
-    private static final String PROVIDER_NAME;
-    private static final AnsiConsoleSupport.CLibrary CLIBRARY;
-    private static final AnsiConsoleSupport.Kernel32 KERNEL32;
-    private static final Throwable ERR;
+    static final AnsiConsoleSupport PROVIDER;
+
+    static final Throwable ERR;
 
     private static AnsiConsoleSupport getDefaultProvider() {
-        try {
-            // Call the specialized constructor to check whether the module has native access enabled
-            // If not, fallback to JNI to avoid the JDK printing warnings in stderr
-            return (AnsiConsoleSupport) Class.forName("org.fusesource.jansi.internal.ffm.AnsiConsoleSupportImpl")
-                    .getConstructor(boolean.class)
-                    .newInstance(true);
-        } catch (Throwable ignored) {
+        if (!OSInfo.isInImageCode()) {
+            try {
+                // Call the specialized constructor to check whether the module has native access enabled
+                // If not, fallback to JNI to avoid the JDK printing warnings in stderr
+                return (AnsiConsoleSupport) Class.forName("org.fusesource.jansi.internal.ffm.AnsiConsoleSupportImpl")
+                        .getConstructor(boolean.class)
+                        .newInstance(true);
+            } catch (Throwable ignored) {
+            }
         }
 
         return new org.fusesource.jansi.internal.jni.AnsiConsoleSupportImpl();
@@ -81,47 +82,26 @@ public final class AnsiConsoleSupportHolder {
             err = e;
         }
 
-        String providerName = null;
-        AnsiConsoleSupport.CLibrary clib = null;
-        AnsiConsoleSupport.Kernel32 kernel32 = null;
-
-        if (ansiConsoleSupport != null) {
-            try {
-                providerName = ansiConsoleSupport.getProviderName();
-                clib = ansiConsoleSupport.getCLibrary();
-                kernel32 = OSInfo.isWindows() ? ansiConsoleSupport.getKernel32() : null;
-            } catch (Throwable e) {
-                err = e;
-            }
-        }
-
-        PROVIDER_NAME = providerName;
-        CLIBRARY = clib;
-        KERNEL32 = kernel32;
+        PROVIDER = ansiConsoleSupport;
         ERR = err;
     }
 
+    public static AnsiConsoleSupport getProvider() {
+        if (PROVIDER == null) {
+            throw new RuntimeException("No provider available", ERR);
+        }
+        return PROVIDER;
+    }
+
     public static String getProviderName() {
-        return PROVIDER_NAME;
+        return getProvider().getProviderName();
     }
 
     public static AnsiConsoleSupport.CLibrary getCLibrary() {
-        if (CLIBRARY == null) {
-            throw new RuntimeException("Unable to get the instance of CLibrary", ERR);
-        }
-
-        return CLIBRARY;
+        return getProvider().getCLibrary();
     }
 
     public static AnsiConsoleSupport.Kernel32 getKernel32() {
-        if (KERNEL32 == null) {
-            if (OSInfo.isWindows()) {
-                throw new RuntimeException("Unable to get the instance of Kernel32", ERR);
-            } else {
-                throw new UnsupportedOperationException("Not Windows");
-            }
-        }
-
-        return KERNEL32;
+        return getProvider().getKernel32();
     }
 }

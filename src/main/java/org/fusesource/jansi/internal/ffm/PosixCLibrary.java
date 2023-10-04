@@ -20,6 +20,7 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.VarHandle;
 
 import org.fusesource.jansi.internal.AnsiConsoleSupport;
+import org.fusesource.jansi.internal.OSInfo;
 
 final class PosixCLibrary implements AnsiConsoleSupport.CLibrary {
     private static final int TIOCGWINSZ;
@@ -52,14 +53,20 @@ final class PosixCLibrary implements AnsiConsoleSupport.CLibrary {
                 ValueLayout.JAVA_SHORT);
         ws_col = wsLayout.varHandle(MemoryLayout.PathElement.groupElement("ws_col"));
         Linker linker = Linker.nativeLinker();
+        SymbolLookup lookup;
+        if (OSInfo.isInImageCode()) {
+            lookup = SymbolLookup.loaderLookup();
+        } else {
+            lookup = linker.defaultLookup();
+        }
+
         ioctl = linker.downcallHandle(
-                linker.defaultLookup().find("ioctl").get(),
+                lookup.find("ioctl").get(),
                 FunctionDescriptor.of(
                         ValueLayout.JAVA_INT, ValueLayout.JAVA_INT, ValueLayout.JAVA_LONG, ValueLayout.ADDRESS),
                 Linker.Option.firstVariadicArg(2));
         isatty = linker.downcallHandle(
-                linker.defaultLookup().find("isatty").get(),
-                FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.JAVA_INT));
+                lookup.find("isatty").get(), FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.JAVA_INT));
     }
 
     @Override
