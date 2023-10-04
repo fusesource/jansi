@@ -20,9 +20,9 @@ import java.io.OutputStream;
 
 import org.fusesource.jansi.io.AnsiProcessor;
 
-public interface AnsiConsoleSupport {
+public abstract class AnsiConsoleSupport {
 
-    interface CLibrary {
+    public interface CLibrary {
 
         int STDOUT_FILENO = 1;
         int STDERR_FILENO = 2;
@@ -32,7 +32,7 @@ public interface AnsiConsoleSupport {
         int isTty(int fd);
     }
 
-    interface Kernel32 {
+    public interface Kernel32 {
 
         int isTty(long console);
 
@@ -51,9 +51,39 @@ public interface AnsiConsoleSupport {
         AnsiProcessor newProcessor(OutputStream os, long console) throws IOException;
     }
 
-    String getProviderName();
+    private final String providerName;
+    private CLibrary cLibrary;
+    private Kernel32 kernel32;
 
-    CLibrary getCLibrary();
+    protected AnsiConsoleSupport(String providerName) {
+        this.providerName = providerName;
+    }
 
-    Kernel32 getKernel32();
+    public final String getProviderName() {
+        return providerName;
+    }
+
+    protected abstract CLibrary createCLibrary();
+
+    protected abstract Kernel32 createKernel32();
+
+    public final CLibrary getCLibrary() {
+        if (cLibrary == null) {
+            cLibrary = createCLibrary();
+        }
+
+        return cLibrary;
+    }
+
+    public final Kernel32 getKernel32() {
+        if (kernel32 == null) {
+            if (!OSInfo.isWindows()) {
+                throw new RuntimeException("Kernel32 is not available on this platform");
+            }
+
+            kernel32 = createKernel32();
+        }
+
+        return kernel32;
+    }
 }

@@ -86,54 +86,22 @@ public final class AnsiConsoleSupportHolder {
         ERR = err;
     }
 
-    public static String getProviderName() {
-        return PROVIDER.getProviderName();
+    public static AnsiConsoleSupport getProvider() {
+        if (PROVIDER == null) {
+            throw new RuntimeException("No provider available", ERR);
+        }
+        return PROVIDER;
     }
 
-    private static final class LibraryHolder {
-        static final AnsiConsoleSupport.CLibrary CLIBRARY;
-        static final AnsiConsoleSupport.Kernel32 KERNEL32;
-        static final Throwable ERR;
-
-        static {
-            AnsiConsoleSupport.CLibrary clib = null;
-            AnsiConsoleSupport.Kernel32 kernel32 = null;
-            Throwable err = null;
-
-            if (PROVIDER != null) {
-                try {
-                    clib = PROVIDER.getCLibrary();
-                    kernel32 = OSInfo.isWindows() ? PROVIDER.getKernel32() : null;
-                } catch (Throwable e) {
-                    err = e;
-                }
-            } else {
-                err = AnsiConsoleSupportHolder.ERR;
-            }
-
-            CLIBRARY = clib;
-            KERNEL32 = kernel32;
-            ERR = err;
-        }
+    public static String getProviderName() {
+        return getProvider().getProviderName();
     }
 
     public static AnsiConsoleSupport.CLibrary getCLibrary() {
-        if (LibraryHolder.CLIBRARY == null) {
-            throw new RuntimeException("Unable to get the instance of CLibrary", LibraryHolder.ERR);
-        }
-
-        return LibraryHolder.CLIBRARY;
+        return getProvider().getCLibrary();
     }
 
     public static AnsiConsoleSupport.Kernel32 getKernel32() {
-        if (LibraryHolder.KERNEL32 == null) {
-            if (OSInfo.isWindows()) {
-                throw new RuntimeException("Unable to get the instance of Kernel32", ERR);
-            } else {
-                throw new UnsupportedOperationException("Not Windows");
-            }
-        }
-
-        return LibraryHolder.KERNEL32;
+        return getProvider().getKernel32();
     }
 }

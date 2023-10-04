@@ -28,6 +28,9 @@ public class NativeImageFeature implements Feature {
 
     @Override
     public void duringSetup(DuringSetupAccess access) {
+        RuntimeClassInitialization.initializeAtBuildTime(AnsiConsoleSupportHolder.class);
+        RuntimeClassInitialization.initializeAtBuildTime(OSInfo.class);
+
         String providers = System.getProperty(AnsiConsole.JANSI_PROVIDERS);
         if (providers != null) {
             try {
@@ -38,18 +41,9 @@ public class NativeImageFeature implements Feature {
             }
         }
 
-        if (providers != null && providers.contains(AnsiConsole.JANSI_PROVIDER_FFM)) {
-            try {
-                // FFM is only available in JDK 21+, so we need to compile it separately
-                Class.forName("org.fusesource.jansi.internal.ffm.NativeImageDowncallRegister")
-                        .getMethod("registerForDowncall")
-                        .invoke(null);
-            } catch (Throwable e) {
-                throw new RuntimeException(e);
-            }
-        }
+        String provider = AnsiConsoleSupportHolder.getProviderName();
 
-        if (providers == null || providers.contains(AnsiConsole.JANSI_PROVIDER_JNI)) {
+        if (provider == null || provider.equals(AnsiConsole.JANSI_PROVIDER_JNI)) {
             String jansiNativeLibraryName = System.mapLibraryName("jansi");
             if (jansiNativeLibraryName.endsWith(".dylib")) {
                 jansiNativeLibraryName = jansiNativeLibraryName.replace(".dylib", ".jnilib");
@@ -76,8 +70,15 @@ public class NativeImageFeature implements Feature {
                 // GraalVM version < 22.3
                 // Users need to manually add the JNI library as resources
             }
+        } else if (provider.equals(AnsiConsole.JANSI_PROVIDER_FFM)) {
+            try {
+                // FFM is only available in JDK 21+, so we need to compile it separately
+                Class.forName("org.fusesource.jansi.internal.ffm.NativeImageDowncallRegister")
+                        .getMethod("registerForDowncall")
+                        .invoke(null);
+            } catch (Throwable e) {
+                throw new RuntimeException(e);
+            }
         }
-
-        RuntimeClassInitialization.initializeAtBuildTime(AnsiConsoleSupportHolder.class);
     }
 }

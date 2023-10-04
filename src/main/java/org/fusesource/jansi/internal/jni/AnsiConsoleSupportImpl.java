@@ -33,15 +33,14 @@ import static org.fusesource.jansi.internal.Kernel32.STD_ERROR_HANDLE;
 import static org.fusesource.jansi.internal.Kernel32.STD_OUTPUT_HANDLE;
 import static org.fusesource.jansi.internal.Kernel32.SetConsoleMode;
 
-public final class AnsiConsoleSupportImpl implements AnsiConsoleSupport {
+public final class AnsiConsoleSupportImpl extends AnsiConsoleSupport {
 
-    @Override
-    public String getProviderName() {
-        return "jni";
+    public AnsiConsoleSupportImpl() {
+        super("jni");
     }
 
     @Override
-    public CLibrary getCLibrary() {
+    protected CLibrary createCLibrary() {
         return new CLibrary() {
             @Override
             public short getTerminalWidth(int fd) {
@@ -56,7 +55,7 @@ public final class AnsiConsoleSupportImpl implements AnsiConsoleSupport {
     }
 
     @Override
-    public Kernel32 getKernel32() {
+    protected Kernel32 createKernel32() {
         return new Kernel32() {
             @Override
             public int isTty(long console) {
