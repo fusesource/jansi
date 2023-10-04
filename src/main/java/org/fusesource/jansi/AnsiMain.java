@@ -95,6 +95,7 @@ public class AnsiMain {
         System.out.println("java.version= " + System.getProperty("java.version") + ", "
                 + "java.vendor= " + System.getProperty("java.vendor") + ","
                 + " java.home= " + System.getProperty("java.home"));
+        System.out.println("Console: " + System.console());
 
         System.out.println();
 
