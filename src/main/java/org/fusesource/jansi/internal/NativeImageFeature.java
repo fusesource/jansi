@@ -15,6 +15,8 @@
  */
 package org.fusesource.jansi.internal;
 
+import java.util.Objects;
+
 import org.fusesource.jansi.AnsiConsole;
 import org.graalvm.nativeimage.hosted.Feature;
 import org.graalvm.nativeimage.hosted.RuntimeClassInitialization;
@@ -40,9 +42,8 @@ public class NativeImageFeature implements Feature {
             }
         }
 
-        String provider = AnsiConsoleSupportHolder.getProviderName();
-
-        if (provider == null || provider.equals(AnsiConsole.JANSI_PROVIDER_JNI)) {
+        String provider = Objects.requireNonNull(AnsiConsoleSupportHolder.getProviderName(), "No provider available");
+        if (provider.equals(AnsiConsole.JANSI_PROVIDER_JNI)) {
             String jansiNativeLibraryName = System.mapLibraryName("jansi");
             if (jansiNativeLibraryName.endsWith(".dylib")) {
                 jansiNativeLibraryName = jansiNativeLibraryName.replace(".dylib", ".jnilib");
