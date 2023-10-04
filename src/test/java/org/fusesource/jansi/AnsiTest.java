@@ -15,8 +15,16 @@
  */
 package org.fusesource.jansi;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.fusesource.jansi.Ansi.Color;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -163,6 +171,34 @@ public class AnsiTest {
         } finally {
             Ansi.setEnabled(true);
         }
+    }
+
+    @Test
+    @EnabledOnOs(OS.WINDOWS)
+    @Disabled("Does not really fail: launch `javaw -jar jansi-xxx.jar` directly instead")
+    public void testAnsiMainWithNoConsole() throws Exception {
+        Path javaHome = Paths.get(System.getProperty("java.home"));
+        Path java = javaHome.resolve("bin\\javaw.exe");
+        String cp = System.getProperty("java.class.path");
+
+        Process process = new ProcessBuilder()
+                .command(java.toString(), "-cp", cp, AnsiMain.class.getName())
+                .start();
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (InputStream in = process.getInputStream()) {
+            byte[] buffer = new byte[8192];
+            while (true) {
+                int nb = in.read(buffer);
+                if (nb > 0) {
+                    baos.write(buffer, 0, nb);
+                } else {
+                    break;
+                }
+            }
+        }
+
+        assertTrue(baos.toString().contains("test on System.out"), baos.toString());
     }
 
     private static void assertAnsi(String expected, Ansi actual) {
