@@ -233,9 +233,9 @@ public class AnsiConsole {
         }
     }
 
-    private static boolean initialized;
-    private static int installed;
-    private static int virtualProcessing;
+    private static volatile boolean initialized;
+    private static volatile int installed;
+    private static volatile int virtualProcessing;
 
     private AnsiConsole() {}
 
@@ -292,12 +292,16 @@ public class AnsiConsole {
                 processor = null;
                 type = AnsiType.VirtualTerminal;
                 installer = () -> {
-                    virtualProcessing++;
-                    getKernel32().setConsoleMode(console, mode[0] | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+                    synchronized (AnsiConsole.class) {
+                        virtualProcessing++;
+                        getKernel32().setConsoleMode(console, mode[0] | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+                    }
                 };
                 uninstaller = () -> {
-                    if (--virtualProcessing == 0) {
-                        getKernel32().setConsoleMode(console, mode[0]);
+                    synchronized (AnsiConsole.class) {
+                        if (--virtualProcessing == 0) {
+                            getKernel32().setConsoleMode(console, mode[0]);
+                        }
                     }
                 };
                 width = () -> getKernel32().getTerminalWidth(console);
