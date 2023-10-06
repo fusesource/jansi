@@ -233,9 +233,9 @@ public class AnsiConsole {
         }
     }
 
-    private static boolean initialized;
-    private static int installed;
-    private static int virtualProcessing;
+    private static volatile boolean initialized;
+    private static volatile int installed;
+    private static volatile int virtualProcessing;
 
     private AnsiConsole() {}
 
