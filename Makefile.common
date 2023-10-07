@@ -82,7 +82,7 @@ Linux-ppc64_JANSI_FLAGS  :=
 
 Linux-riscv64_CC        := $(CROSS_PREFIX)gcc
 Linux-riscv64_STRIP     := $(CROSS_PREFIX)strip
-Linux-riscv64_CCFLAGS   := -I$(JAVA_HOME)/include -Itarget/inc -Itarget/inc/unix -Os -march=rv64g -fPIC -fvisibility=hidden
+Linux-riscv64_CCFLAGS   := -I$(JAVA_HOME)/include -Itarget/inc -Itarget/inc/unix -Os -march=rv64i -fPIC -fvisibility=hidden
 Linux-riscv64_LINKFLAGS := -shared -static-libgcc
 Linux-riscv64_LIBNAME   := libjansi.so
 Linux-riscv64_JANSI_FLAGS  :=
