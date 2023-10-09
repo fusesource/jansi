@@ -21,6 +21,7 @@ import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
 
+import org.fusesource.jansi.AnsiConsole;
 import org.fusesource.jansi.internal.AnsiConsoleSupport;
 import org.fusesource.jansi.internal.OSInfo;
 import org.fusesource.jansi.io.AnsiProcessor;
@@ -30,7 +31,7 @@ import static org.fusesource.jansi.internal.ffm.Kernel32.*;
 public final class AnsiConsoleSupportImpl extends AnsiConsoleSupport {
 
     public AnsiConsoleSupportImpl() {
-        super("ffm");
+        super(AnsiConsole.JANSI_PROVIDER_FFM);
     }
 
     public AnsiConsoleSupportImpl(boolean checkNativeAccess) {
