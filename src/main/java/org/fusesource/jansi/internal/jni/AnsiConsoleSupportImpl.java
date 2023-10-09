@@ -19,7 +19,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
+import org.fusesource.jansi.AnsiConsole;
 import org.fusesource.jansi.internal.AnsiConsoleSupport;
+import org.fusesource.jansi.internal.JansiLoader;
+import org.fusesource.jansi.internal.OSInfo;
 import org.fusesource.jansi.io.AnsiProcessor;
 import org.fusesource.jansi.io.WindowsAnsiProcessor;
 
@@ -36,7 +39,11 @@ import static org.fusesource.jansi.internal.Kernel32.SetConsoleMode;
 public final class AnsiConsoleSupportImpl extends AnsiConsoleSupport {
 
     public AnsiConsoleSupportImpl() {
-        super("jni");
+        super(AnsiConsole.JANSI_PROVIDER_JNI);
+
+        if (!OSInfo.isInImageCode()) {
+            JansiLoader.initialize(false);
+        }
     }
 
     @Override

@@ -86,4 +86,9 @@ public abstract class AnsiConsoleSupport {
 
         return kernel32;
     }
+
+    @Override
+    public String toString() {
+        return getProviderName();
+    }
 }

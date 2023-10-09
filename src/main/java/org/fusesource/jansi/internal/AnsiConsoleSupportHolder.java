@@ -15,12 +15,13 @@
  */
 package org.fusesource.jansi.internal;
 
+import org.fusesource.jansi.internal.stty.Stty;
+
 import static org.fusesource.jansi.AnsiConsole.JANSI_PROVIDERS;
 
 public final class AnsiConsoleSupportHolder {
 
     static final AnsiConsoleSupport PROVIDER;
-
     static final Throwable ERR;
 
     private static AnsiConsoleSupport getDefaultProvider() {
@@ -35,7 +36,14 @@ public final class AnsiConsoleSupportHolder {
             }
         }
 
-        return new org.fusesource.jansi.internal.jni.AnsiConsoleSupportImpl();
+        try {
+            return new org.fusesource.jansi.internal.jni.AnsiConsoleSupportImpl();
+        } catch (Throwable e) {
+            if (!OSInfo.isWindows() && !OSInfo.isMacOS() && Stty.isFoundStty()) {
+                return new org.fusesource.jansi.internal.stty.AnsiConsoleSupportImpl();
+            }
+            throw e;
+        }
     }
 
     private static AnsiConsoleSupport findProvider(String providerList) {
@@ -44,11 +52,10 @@ public final class AnsiConsoleSupportHolder {
         RuntimeException error = null;
 
         for (String provider : providers) {
+            String className = "org.fusesource.jansi.internal." + provider.replace("-", "") + ".AnsiConsoleSupportImpl";
             try {
                 return (AnsiConsoleSupport)
-                        Class.forName("org.fusesource.jansi.internal." + provider + ".AnsiConsoleSupportImpl")
-                                .getConstructor()
-                                .newInstance();
+                        Class.forName(className).getConstructor().newInstance();
             } catch (Throwable t) {
                 if (error == null) {
                     error = new RuntimeException("Unable to create AnsiConsoleSupport provider");
@@ -86,15 +93,12 @@ public final class AnsiConsoleSupportHolder {
         ERR = err;
     }
 
-    public static AnsiConsoleSupport getProvider() {
-        if (PROVIDER == null) {
-            throw new RuntimeException("No provider available", ERR);
-        }
-        return PROVIDER;
+    public static boolean isAvailable() {
+        return PROVIDER != null;
     }
 
-    public static String getProviderName() {
-        return getProvider().getProviderName();
+    public static AnsiConsoleSupport getProvider() {
+        return PROVIDER;
     }
 
     public static AnsiConsoleSupport.CLibrary getCLibrary() {

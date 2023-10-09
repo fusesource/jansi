@@ -25,12 +25,14 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 
-import org.fusesource.jansi.internal.MingwSupport;
 import org.fusesource.jansi.internal.OSInfo;
+import org.fusesource.jansi.internal.stty.Stty;
 import org.fusesource.jansi.io.AnsiOutputStream;
 import org.fusesource.jansi.io.AnsiProcessor;
 import org.fusesource.jansi.io.FastBufferedOutputStream;
 
+import static org.fusesource.jansi.internal.AnsiConsoleSupport.CLibrary.STDERR_FILENO;
+import static org.fusesource.jansi.internal.AnsiConsoleSupport.CLibrary.STDOUT_FILENO;
 import static org.fusesource.jansi.internal.AnsiConsoleSupportHolder.getCLibrary;
 import static org.fusesource.jansi.internal.AnsiConsoleSupportHolder.getKernel32;
 
@@ -173,6 +175,22 @@ public class AnsiConsole {
      * The name of the {@code ffm} provider.
      */
     public static final String JANSI_PROVIDER_FFM = "ffm";
+    /**
+     * The name of the {@code stty} provider.
+     */
+    public static final String JANSI_PROVIDER_STTY = "stty";
+
+    /**
+     * The name of the {@code native-image} provider.
+     * <p>This provider uses the
+     * <a href="https://www.graalvm.org/latest/reference-manual/native-image/native-code-interoperability/C-API/">Native Image C API</a>
+     * to call native functions, so it is only available when building to native image.
+     * Additionally, this provider currently does not support Windows.
+     * <p>Note: This is not the only provider available on Native Image,
+     * and it is usually recommended to use ffm or jni provider.
+     * This provider is mainly used when building static native images linked to musl libc.
+     */
+    public static final String JANSI_PROVIDER_NATIVE_IMAGE = "native-image";
 
     /**
      * @deprecated this field will be made private in a future release, use {@link #sysOut()} instead
@@ -223,10 +241,6 @@ public class AnsiConsole {
 
     static final int ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004;
 
-    static int STDOUT_FILENO = 1;
-
-    static int STDERR_FILENO = 2;
-
     static {
         if (getBoolean(JANSI_EAGER)) {
             initStreams();
@@ -251,8 +265,6 @@ public class AnsiConsole {
         final boolean isatty;
         boolean isAtty;
         boolean withException;
-        // Do not use the CLibrary.STDOUT_FILENO to avoid errors in case
-        // the library can not be loaded on unsupported platforms
         final int fd = stdout ? STDOUT_FILENO : STDERR_FILENO;
         try {
             // If we can detect that stdout is not a tty, then setup
@@ -264,11 +276,15 @@ public class AnsiConsole {
                 isAtty = false;
             }
             withException = false;
-        } catch (Throwable ignore) {
-            // These errors happen if the JNI lib is not available for your platform.
-            // But since we are on ANSI friendly platform, assume the user is on the console.
-            isAtty = false;
-            withException = true;
+        } catch (Throwable e) {
+            // These errors happen if there are no available providers.
+            // If the jansi.graceful system property is set to true, fall back to pure emulation.
+            if (Boolean.parseBoolean(System.getProperty(AnsiConsole.JANSI_GRACEFUL, "true"))) {
+                isAtty = false;
+                withException = true;
+            } else {
+                throw e;
+            }
         }
         isatty = isAtty;
 
@@ -306,10 +322,9 @@ public class AnsiConsole {
                 processor = null;
                 type = AnsiType.Native;
                 installer = uninstaller = null;
-                MingwSupport mingw = new MingwSupport();
-                String name = mingw.getConsoleName(stdout);
+                String name = Stty.getConsoleName(stdout);
                 if (name != null && !name.isEmpty()) {
-                    width = () -> mingw.getTerminalWidth(name);
+                    width = () -> Stty.getTerminalWidth(name);
                 } else {
                     width = () -> -1;
                 }
