@@ -42,7 +42,8 @@ public class NativeImageFeature implements Feature {
             }
         }
 
-        String provider = Objects.requireNonNull(AnsiConsoleSupportHolder.getProviderName(), "No provider available");
+        String provider = Objects.requireNonNull(AnsiConsoleSupportHolder.getProvider(), "No provider available")
+                .getProviderName();
         if (provider.equals(AnsiConsole.JANSI_PROVIDER_JNI)) {
             String jansiNativeLibraryName = System.mapLibraryName("jansi");
             if (jansiNativeLibraryName.endsWith(".dylib")) {

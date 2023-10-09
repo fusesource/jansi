@@ -58,33 +58,25 @@ public class AnsiMain {
         System.out.println();
 
         System.out.println("jansi.providers= " + System.getProperty(AnsiConsole.JANSI_PROVIDERS, ""));
-        String provider = AnsiConsoleSupportHolder.getProviderName();
+
+        String provider = AnsiConsoleSupportHolder.getProvider() != null
+                ? AnsiConsoleSupportHolder.getProvider().getProviderName()
+                : "No Provider Available";
         System.out.println("Selected provider: " + provider);
 
         if (AnsiConsole.JANSI_PROVIDER_JNI.equals(provider)) {
             // info on native library
             System.out.println("library.jansi.path= " + System.getProperty("library.jansi.path", ""));
             System.out.println("library.jansi.version= " + System.getProperty("library.jansi.version", ""));
-            boolean loaded = JansiLoader.initialize();
-            if (loaded) {
+
+            try {
+                JansiLoader.initialize(false);
                 System.out.println("Jansi native library loaded from " + JansiLoader.getNativeLibraryPath());
                 if (JansiLoader.getNativeLibrarySourceUrl() != null) {
                     System.out.println("   which was auto-extracted from " + JansiLoader.getNativeLibrarySourceUrl());
                 }
-            } else {
-                String prev = System.getProperty(AnsiConsole.JANSI_GRACEFUL);
-                try {
-                    System.setProperty(AnsiConsole.JANSI_GRACEFUL, "false");
-                    JansiLoader.initialize();
-                } catch (Throwable e) {
-                    e.printStackTrace(System.out);
-                } finally {
-                    if (prev != null) {
-                        System.setProperty(AnsiConsole.JANSI_GRACEFUL, prev);
-                    } else {
-                        System.clearProperty(AnsiConsole.JANSI_GRACEFUL);
-                    }
-                }
+            } catch (Throwable e) {
+                e.printStackTrace(System.out);
             }
         }
 
@@ -204,7 +196,11 @@ public class AnsiMain {
     private static void diagnoseTty(boolean stderr) {
         int isatty;
         int width;
-        if (AnsiConsole.IS_WINDOWS) {
+
+        if (AnsiConsoleSupportHolder.getProvider() == null) {
+            isatty = 0;
+            width = 0;
+        } else if (AnsiConsole.IS_WINDOWS) {
             long console = AnsiConsoleSupportHolder.getKernel32().getStdHandle(!stderr);
             isatty = AnsiConsoleSupportHolder.getKernel32().isTty(console);
             if ((AnsiConsole.IS_CONEMU || AnsiConsole.IS_CYGWIN || AnsiConsole.IS_MSYSTEM) && isatty == 0) {
