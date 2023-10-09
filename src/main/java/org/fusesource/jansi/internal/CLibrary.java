@@ -32,7 +32,7 @@ public class CLibrary {
     public static final boolean LOADED;
 
     static {
-        LOADED = JansiLoader.initialize();
+        LOADED = JansiLoader.initialize(true);
         if (LOADED) {
             init();
         }
@@ -113,8 +113,9 @@ public class CLibrary {
     public static class WinSize {
 
         static {
-            JansiLoader.initialize();
-            init();
+            if (JansiLoader.initialize(true)) {
+                init();
+            }
         }
 
         private static native void init();
@@ -143,8 +144,9 @@ public class CLibrary {
     public static class Termios {
 
         static {
-            JansiLoader.initialize();
-            init();
+            if (JansiLoader.initialize(true)) {
+                init();
+            }
         }
 
         private static native void init();

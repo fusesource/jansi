@@ -20,7 +20,6 @@ import static org.fusesource.jansi.AnsiConsole.JANSI_PROVIDERS;
 public final class AnsiConsoleSupportHolder {
 
     static final AnsiConsoleSupport PROVIDER;
-
     static final Throwable ERR;
 
     private static AnsiConsoleSupport getDefaultProvider() {
@@ -86,15 +85,12 @@ public final class AnsiConsoleSupportHolder {
         ERR = err;
     }
 
-    public static AnsiConsoleSupport getProvider() {
-        if (PROVIDER == null) {
-            throw new RuntimeException("No provider available", ERR);
-        }
-        return PROVIDER;
+    public static boolean isAvailable() {
+        return PROVIDER != null;
     }
 
-    public static String getProviderName() {
-        return getProvider().getProviderName();
+    public static AnsiConsoleSupport getProvider() {
+        return PROVIDER;
     }
 
     public static AnsiConsoleSupport.CLibrary getCLibrary() {

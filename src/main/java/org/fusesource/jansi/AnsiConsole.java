@@ -31,6 +31,8 @@ import org.fusesource.jansi.io.AnsiOutputStream;
 import org.fusesource.jansi.io.AnsiProcessor;
 import org.fusesource.jansi.io.FastBufferedOutputStream;
 
+import static org.fusesource.jansi.internal.AnsiConsoleSupport.CLibrary.STDERR_FILENO;
+import static org.fusesource.jansi.internal.AnsiConsoleSupport.CLibrary.STDOUT_FILENO;
 import static org.fusesource.jansi.internal.AnsiConsoleSupportHolder.getCLibrary;
 import static org.fusesource.jansi.internal.AnsiConsoleSupportHolder.getKernel32;
 
@@ -223,10 +225,6 @@ public class AnsiConsole {
 
     static final int ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004;
 
-    static int STDOUT_FILENO = 1;
-
-    static int STDERR_FILENO = 2;
-
     static {
         if (getBoolean(JANSI_EAGER)) {
             initStreams();
@@ -251,8 +249,6 @@ public class AnsiConsole {
         final boolean isatty;
         boolean isAtty;
         boolean withException;
-        // Do not use the CLibrary.STDOUT_FILENO to avoid errors in case
-        // the library can not be loaded on unsupported platforms
         final int fd = stdout ? STDOUT_FILENO : STDERR_FILENO;
         try {
             // If we can detect that stdout is not a tty, then setup
@@ -264,11 +260,15 @@ public class AnsiConsole {
                 isAtty = false;
             }
             withException = false;
-        } catch (Throwable ignore) {
-            // These errors happen if the JNI lib is not available for your platform.
-            // But since we are on ANSI friendly platform, assume the user is on the console.
-            isAtty = false;
-            withException = true;
+        } catch (Throwable e) {
+            // These errors happen if there are no available providers.
+            // If the jansi.graceful system property is set to true, fall back to pure emulation.
+            if (Boolean.parseBoolean(System.getProperty(AnsiConsole.JANSI_GRACEFUL, "true"))) {
+                isAtty = false;
+                withException = true;
+            } else {
+                throw e;
+            }
         }
         isatty = isAtty;
 
