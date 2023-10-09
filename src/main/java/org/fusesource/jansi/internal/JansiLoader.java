@@ -34,14 +34,12 @@ package org.fusesource.jansi.internal;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
@@ -60,9 +58,28 @@ import org.fusesource.jansi.AnsiConsole;
  */
 public class JansiLoader {
 
-    private static boolean loaded = false;
     private static String nativeLibraryPath;
     private static String nativeLibrarySourceUrl;
+
+    private static final class Holder {
+        static final Throwable ERROR;
+
+        static {
+            Thread cleanup = new Thread(JansiLoader::cleanup, "cleanup");
+            cleanup.setPriority(Thread.MIN_PRIORITY);
+            cleanup.setDaemon(true);
+            cleanup.start();
+
+            Throwable error = null;
+            try {
+                loadJansiNativeLibrary();
+            } catch (Exception e) {
+                error = e;
+            }
+
+            ERROR = error;
+        }
+    }
 
     /**
      * Loads Jansi native library.
@@ -70,24 +87,21 @@ public class JansiLoader {
      * @return True if jansi native library is successfully loaded; false
      * otherwise.
      */
-    public static synchronized boolean initialize() {
-        // only cleanup before the first extract
-        if (!loaded) {
-            Thread cleanup = new Thread(JansiLoader::cleanup, "cleanup");
-            cleanup.setPriority(Thread.MIN_PRIORITY);
-            cleanup.setDaemon(true);
-            cleanup.start();
-        }
-        try {
-            loadJansiNativeLibrary();
-        } catch (Exception e) {
-            if (!Boolean.parseBoolean(System.getProperty(AnsiConsole.JANSI_GRACEFUL, "true"))) {
+    public static boolean initialize() {
+        return initialize(Boolean.parseBoolean(System.getProperty(AnsiConsole.JANSI_GRACEFUL, "true")));
+    }
+
+    public static boolean initialize(boolean silent) {
+        if (Holder.ERROR != null) {
+            if (silent) {
+                return false;
+            } else {
                 throw new RuntimeException(
                         "Unable to load jansi native library. You may want set the `jansi.graceful` system property to true to be able to use Jansi on your platform",
-                        e);
+                        Holder.ERROR);
             }
         }
-        return loaded;
+        return true;
     }
 
     public static String getNativeLibraryPath() {
@@ -107,16 +121,9 @@ public class JansiLoader {
      * on VM-Exit (bug #80)
      */
     static void cleanup() {
-        String tempFolder = getTempDir().getAbsolutePath();
-        File dir = new File(tempFolder);
-
-        File[] nativeLibFiles = dir.listFiles(new FilenameFilter() {
-            private final String searchPattern = "jansi-" + getVersion();
-
-            public boolean accept(File dir, String name) {
-                return name.startsWith(searchPattern) && !name.endsWith(".lck");
-            }
-        });
+        String filePrefix = "jansi-" + getVersion();
+        File[] nativeLibFiles =
+                getTempDir().listFiles((dir1, name) -> name.startsWith(filePrefix) && !name.endsWith(".lck"));
         if (nativeLibFiles != null) {
             for (File nativeLibFile : nativeLibFiles) {
                 File lckFile = new File(nativeLibFile.getAbsolutePath() + ".lck");
@@ -281,11 +288,7 @@ public class JansiLoader {
      * @throws
      */
     private static void loadJansiNativeLibrary() throws Exception {
-        if (loaded) {
-            return;
-        }
-
-        List<String> triedPaths = new LinkedList<String>();
+        List<String> triedPaths = new ArrayList<>();
 
         // Try loading library from library.jansi.path library path */
         String jansiNativeLibraryPath = System.getProperty("library.jansi.path");
@@ -301,14 +304,12 @@ public class JansiLoader {
         if (jansiNativeLibraryPath != null) {
             String withOs = jansiNativeLibraryPath + "/" + OSInfo.getNativeLibFolderPathForCurrentOS();
             if (loadNativeLibrary(new File(withOs, jansiNativeLibraryName))) {
-                loaded = true;
                 return;
             } else {
                 triedPaths.add(withOs);
             }
 
             if (loadNativeLibrary(new File(jansiNativeLibraryPath, jansiNativeLibraryName))) {
-                loaded = true;
                 return;
             } else {
                 triedPaths.add(jansiNativeLibraryPath);
@@ -326,21 +327,19 @@ public class JansiLoader {
             String tempFolder = getTempDir().getAbsolutePath();
             // Try extracting the library from jar
             if (extractAndLoadLibraryFile(jansiNativeLibraryPath, jansiNativeLibraryName, tempFolder)) {
-                loaded = true;
                 return;
             } else {
                 triedPaths.add(jansiNativeLibraryPath);
             }
         }
 
-        // As a last resort try from java.library.path
+        // As a last resort, try from java.library.path
         String javaLibraryPath = System.getProperty("java.library.path", "");
         for (String ldPath : javaLibraryPath.split(File.pathSeparator)) {
             if (ldPath.isEmpty()) {
                 continue;
             }
             if (loadNativeLibrary(new File(ldPath, jansiNativeLibraryName))) {
-                loaded = true;
                 return;
             } else {
                 triedPaths.add(ldPath);
@@ -376,14 +375,11 @@ public class JansiLoader {
      * @return The version of the jansi library.
      */
     public static String getVersion() {
-
-        URL versionFile = JansiLoader.class.getResource("/org/fusesource/jansi/jansi.properties");
-
         String version = "unknown";
-        try {
-            if (versionFile != null) {
+        try (InputStream stream = JansiLoader.class.getResourceAsStream("/org/fusesource/jansi/jansi.properties")) {
+            if (stream != null) {
                 Properties versionData = new Properties();
-                versionData.load(versionFile.openStream());
+                versionData.load(stream);
                 version = versionData.getProperty("version", version);
                 version = version.trim().replaceAll("[^0-9.]", "");
             }

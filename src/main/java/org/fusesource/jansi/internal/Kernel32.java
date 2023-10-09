@@ -28,7 +28,7 @@ import org.fusesource.jansi.WindowsSupport;
 public class Kernel32 {
 
     static {
-        if (JansiLoader.initialize()) {
+        if (JansiLoader.initialize(true)) {
             init();
         }
     }
@@ -65,7 +65,7 @@ public class Kernel32 {
      */
     public static class SMALL_RECT {
         static {
-            JansiLoader.initialize();
+            JansiLoader.initialize(true);
             init();
         }
 
@@ -104,7 +104,7 @@ public class Kernel32 {
     public static class COORD {
 
         static {
-            JansiLoader.initialize();
+            JansiLoader.initialize(true);
             init();
         }
 
@@ -129,7 +129,7 @@ public class Kernel32 {
     public static class CONSOLE_SCREEN_BUFFER_INFO {
 
         static {
-            JansiLoader.initialize();
+            JansiLoader.initialize(true);
             init();
         }
 
@@ -247,8 +247,9 @@ public class Kernel32 {
     public static class CHAR_INFO {
 
         static {
-            JansiLoader.initialize();
-            init();
+            if (JansiLoader.initialize(true)) {
+                init();
+            }
         }
 
         private static native void init();
@@ -275,8 +276,9 @@ public class Kernel32 {
     public static class KEY_EVENT_RECORD {
 
         static {
-            JansiLoader.initialize();
-            init();
+            if (JansiLoader.initialize(true)) {
+                init();
+            }
         }
 
         private static native void init();
@@ -316,8 +318,9 @@ public class Kernel32 {
     public static class MOUSE_EVENT_RECORD {
 
         static {
-            JansiLoader.initialize();
-            init();
+            if (JansiLoader.initialize(true)) {
+                init();
+            }
         }
 
         private static native void init();
@@ -364,8 +367,9 @@ public class Kernel32 {
     public static class WINDOW_BUFFER_SIZE_RECORD {
 
         static {
-            JansiLoader.initialize();
-            init();
+            if (JansiLoader.initialize(true)) {
+                init();
+            }
         }
 
         private static native void init();
@@ -384,8 +388,9 @@ public class Kernel32 {
      */
     public static class FOCUS_EVENT_RECORD {
         static {
-            JansiLoader.initialize();
-            init();
+            if (JansiLoader.initialize(true)) {
+                init();
+            }
         }
 
         private static native void init();
@@ -399,8 +404,9 @@ public class Kernel32 {
      */
     public static class MENU_EVENT_RECORD {
         static {
-            JansiLoader.initialize();
-            init();
+            if (JansiLoader.initialize(true)) {
+                init();
+            }
         }
 
         private static native void init();
@@ -415,8 +421,9 @@ public class Kernel32 {
     public static class INPUT_RECORD {
 
         static {
-            JansiLoader.initialize();
-            init();
+            if (JansiLoader.initialize(true)) {
+                init();
+            }
         }
 
         private static native void init();
