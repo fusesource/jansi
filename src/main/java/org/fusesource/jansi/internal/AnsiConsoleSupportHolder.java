@@ -44,11 +44,10 @@ public final class AnsiConsoleSupportHolder {
         RuntimeException error = null;
 
         for (String provider : providers) {
+            String className = "org.fusesource.jansi.internal." + provider.replace("-", "") + ".AnsiConsoleSupportImpl";
             try {
                 return (AnsiConsoleSupport)
-                        Class.forName("org.fusesource.jansi.internal." + provider + ".AnsiConsoleSupportImpl")
-                                .getConstructor()
-                                .newInstance();
+                        Class.forName(className).getConstructor().newInstance();
             } catch (Throwable t) {
                 if (error == null) {
                     error = new RuntimeException("Unable to create AnsiConsoleSupport provider");

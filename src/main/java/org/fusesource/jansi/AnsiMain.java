@@ -29,7 +29,7 @@ import org.fusesource.jansi.Ansi.Attribute;
 import org.fusesource.jansi.internal.AnsiConsoleSupport;
 import org.fusesource.jansi.internal.AnsiConsoleSupportHolder;
 import org.fusesource.jansi.internal.JansiLoader;
-import org.fusesource.jansi.internal.MingwSupport;
+import org.fusesource.jansi.internal.stty.Stty;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.fusesource.jansi.Ansi.ansi;
@@ -208,11 +208,10 @@ public class AnsiMain {
             long console = AnsiConsoleSupportHolder.getKernel32().getStdHandle(!stderr);
             isatty = AnsiConsoleSupportHolder.getKernel32().isTty(console);
             if ((AnsiConsole.IS_CONEMU || AnsiConsole.IS_CYGWIN || AnsiConsole.IS_MSYSTEM) && isatty == 0) {
-                MingwSupport mingw = new MingwSupport();
-                String name = mingw.getConsoleName(!stderr);
+                String name = Stty.getConsoleName(!stderr);
                 if (name != null && !name.isEmpty()) {
                     isatty = 1;
-                    width = mingw.getTerminalWidth(name);
+                    width = Stty.getTerminalWidth(name);
                 } else {
                     isatty = 0;
                     width = 0;

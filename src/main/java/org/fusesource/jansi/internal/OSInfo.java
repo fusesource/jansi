@@ -135,6 +135,10 @@ public class OSInfo {
         return System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("win");
     }
 
+    public static boolean isMacOS() {
+        return System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("mac");
+    }
+
     public static boolean isAndroid() {
         return System.getProperty("java.runtime.name", "")
                 .toLowerCase(Locale.ROOT)
