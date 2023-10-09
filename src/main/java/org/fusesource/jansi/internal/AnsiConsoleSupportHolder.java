@@ -15,6 +15,8 @@
  */
 package org.fusesource.jansi.internal;
 
+import org.fusesource.jansi.internal.stty.Stty;
+
 import static org.fusesource.jansi.AnsiConsole.JANSI_PROVIDERS;
 
 public final class AnsiConsoleSupportHolder {
@@ -34,7 +36,14 @@ public final class AnsiConsoleSupportHolder {
             }
         }
 
-        return new org.fusesource.jansi.internal.jni.AnsiConsoleSupportImpl();
+        try {
+            return new org.fusesource.jansi.internal.jni.AnsiConsoleSupportImpl();
+        } catch (Throwable e) {
+            if (!OSInfo.isWindows() && !OSInfo.isMacOS() && Stty.isFoundStty()) {
+                return new org.fusesource.jansi.internal.stty.AnsiConsoleSupportImpl();
+            }
+            throw e;
+        }
     }
 
     private static AnsiConsoleSupport findProvider(String providerList) {
