@@ -25,14 +25,16 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 
-import org.fusesource.jansi.internal.MingwSupport;
-import org.fusesource.jansi.internal.OSInfo;
 import org.fusesource.jansi.io.AnsiOutputStream;
 import org.fusesource.jansi.io.AnsiProcessor;
 import org.fusesource.jansi.io.FastBufferedOutputStream;
-
-import static org.fusesource.jansi.internal.AnsiConsoleSupportHolder.getCLibrary;
-import static org.fusesource.jansi.internal.AnsiConsoleSupportHolder.getKernel32;
+import org.jline.terminal.Terminal;
+import org.jline.terminal.TerminalBuilder;
+import org.jline.terminal.impl.DumbTerminal;
+import org.jline.terminal.spi.SystemStream;
+import org.jline.terminal.spi.TerminalExt;
+import org.jline.terminal.spi.TerminalProvider;
+import org.jline.utils.OSUtils;
 
 /**
  * Provides consistent access to an ANSI aware console PrintStream or an ANSI codes stripping PrintStream
@@ -173,6 +175,17 @@ public class AnsiConsole {
      * The name of the {@code ffm} provider.
      */
     public static final String JANSI_PROVIDER_FFM = "ffm";
+    /**
+     * The name of the {@code native-image} provider.
+     * <p>This provider uses the
+     * <a href="https://www.graalvm.org/latest/reference-manual/native-image/native-code-interoperability/C-API/">Native Image C API</a>
+     * to call native functions, so it is only available when building to native image.
+     * Additionally, this provider currently does not support Windows.
+     * <p>Note: This is not the only provider available on Native Image,
+     * and it is usually recommended to use ffm or jni provider.
+     * This provider is mainly used when building static native images linked to musl libc.
+     */
+    public static final String JANSI_PROVIDER_NATIVE_IMAGE = "native-image";
 
     /**
      * @deprecated this field will be made private in a future release, use {@link #sysOut()} instead
@@ -209,7 +222,7 @@ public class AnsiConsole {
         return w;
     }
 
-    static final boolean IS_WINDOWS = OSInfo.isWindows();
+    static final boolean IS_WINDOWS = OSUtils.IS_WINDOWS;
 
     static final boolean IS_CYGWIN =
             IS_WINDOWS && System.getenv("PWD") != null && System.getenv("PWD").startsWith("/");
@@ -229,119 +242,86 @@ public class AnsiConsole {
 
     static {
         if (getBoolean(JANSI_EAGER)) {
-            initStreams();
+            doInstall();
         }
     }
 
-    private static boolean initialized;
     private static int installed;
-    private static int virtualProcessing;
+    static Terminal terminal;
 
     private AnsiConsole() {}
 
-    private static AnsiPrintStream ansiStream(boolean stdout) {
-        FileDescriptor descriptor = stdout ? FileDescriptor.out : FileDescriptor.err;
-        final OutputStream out = new FastBufferedOutputStream(new FileOutputStream(descriptor));
+    /**
+     * Initialize the out/err ansi-enabled streams
+     */
+    static synchronized void doInstall() {
+        try {
+            if (terminal == null) {
+                TerminalBuilder builder = TerminalBuilder.builder()
+                        .system(true)
+                        .name("jansi")
+                        .providers(System.getProperty(JANSI_PROVIDERS));
+                String graceful = System.getProperty(JANSI_GRACEFUL);
+                if (graceful != null) {
+                    builder.dumb(Boolean.parseBoolean(graceful));
+                }
+                terminal = builder.build();
+                out = ansiStream(true);
+                err = ansiStream(false);
+            }
+        } catch (IOException e) {
+            throw new IOError(e);
+        }
+    }
 
+    static synchronized void doUninstall() {
+        try {
+            if (terminal != null) {
+                terminal.close();
+            }
+        } catch (IOException e) {
+            throw new IOError(e);
+        } finally {
+            terminal = null;
+            out = null;
+            err = null;
+        }
+    }
+
+    private static AnsiPrintStream ansiStream(boolean stdout) throws IOException {
+        final OutputStream out;
+        final AnsiOutputStream.WidthSupplier width;
+        final AnsiProcessor processor = null;
+        final AnsiType type;
+        final AnsiOutputStream.IoRunnable installer = null;
+        final AnsiOutputStream.IoRunnable uninstaller = null;
+
+        //        TerminalBuilder builder = TerminalBuilder.builder()
+        //                .system(true)
+        //                .name("jansi")
+        //                .providers(System.getProperty(JANSI_PROVIDERS))
+        //                .systemOutput(stdout ? TerminalBuilder.SystemOutput.SysOut :
+        // TerminalBuilder.SystemOutput.SysErr);
+        //        String graceful = System.getProperty(JANSI_GRACEFUL);
+        //        if (graceful != null) {
+        //            builder.dumb(Boolean.parseBoolean(graceful));
+        //        }
+        //        Terminal terminal = builder.build();
+        final TerminalProvider provider = ((TerminalExt) terminal).getProvider();
+        final boolean isatty =
+                provider != null && provider.isSystemStream(stdout ? SystemStream.Output : SystemStream.Error);
+        if (isatty) {
+            out = terminal.output();
+            width = terminal::getWidth;
+            type = terminal instanceof DumbTerminal ? AnsiType.Unsupported : AnsiType.Native;
+        } else {
+            out = new FastBufferedOutputStream(new FileOutputStream(stdout ? FileDescriptor.out : FileDescriptor.err));
+            width = new AnsiOutputStream.ZeroWidthSupplier();
+            type = ((TerminalExt) terminal).getSystemStream() != null ? AnsiType.Redirected : AnsiType.Unsupported;
+        }
         String enc = System.getProperty(stdout ? "stdout.encoding" : "stderr.encoding");
         if (enc == null) {
             enc = System.getProperty(stdout ? "sun.stdout.encoding" : "sun.stderr.encoding");
-        }
-
-        final boolean isatty;
-        boolean isAtty;
-        boolean withException;
-        // Do not use the CLibrary.STDOUT_FILENO to avoid errors in case
-        // the library can not be loaded on unsupported platforms
-        final int fd = stdout ? STDOUT_FILENO : STDERR_FILENO;
-        try {
-            // If we can detect that stdout is not a tty, then setup
-            // to strip the ANSI sequences...
-            isAtty = getCLibrary().isTty(fd) != 0;
-            String term = System.getenv("TERM");
-            String emacs = System.getenv("INSIDE_EMACS");
-            if (isAtty && "dumb".equals(term) && emacs != null && !emacs.contains("comint")) {
-                isAtty = false;
-            }
-            withException = false;
-        } catch (Throwable ignore) {
-            // These errors happen if the JNI lib is not available for your platform.
-            // But since we are on ANSI friendly platform, assume the user is on the console.
-            isAtty = false;
-            withException = true;
-        }
-        isatty = isAtty;
-
-        final AnsiOutputStream.WidthSupplier width;
-        final AnsiProcessor processor;
-        final AnsiType type;
-        final AnsiOutputStream.IoRunnable installer;
-        final AnsiOutputStream.IoRunnable uninstaller;
-        if (!isatty) {
-            processor = null;
-            type = withException ? AnsiType.Unsupported : AnsiType.Redirected;
-            installer = uninstaller = null;
-            width = new AnsiOutputStream.ZeroWidthSupplier();
-        } else if (IS_WINDOWS) {
-            final long console = getKernel32().getStdHandle(stdout);
-            final int[] mode = new int[1];
-            final boolean isConsole = getKernel32().getConsoleMode(console, mode) != 0;
-            if (isConsole && getKernel32().setConsoleMode(console, mode[0] | ENABLE_VIRTUAL_TERMINAL_PROCESSING) != 0) {
-                // set it back for now, but we know it works
-                getKernel32().setConsoleMode(console, mode[0]);
-                processor = null;
-                type = AnsiType.VirtualTerminal;
-                installer = () -> {
-                    virtualProcessing++;
-                    getKernel32().setConsoleMode(console, mode[0] | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
-                };
-                uninstaller = () -> {
-                    if (--virtualProcessing == 0) {
-                        getKernel32().setConsoleMode(console, mode[0]);
-                    }
-                };
-                width = () -> getKernel32().getTerminalWidth(console);
-            } else if ((IS_CONEMU || IS_CYGWIN || IS_MSYSTEM) && !isConsole) {
-                // ANSI-enabled ConEmu, Cygwin or MSYS(2) on Windows...
-                processor = null;
-                type = AnsiType.Native;
-                installer = uninstaller = null;
-                MingwSupport mingw = new MingwSupport();
-                String name = mingw.getConsoleName(stdout);
-                if (name != null && !name.isEmpty()) {
-                    width = () -> mingw.getTerminalWidth(name);
-                } else {
-                    width = () -> -1;
-                }
-            } else {
-                // On Windows, when no ANSI-capable terminal is used, we know the console does not natively interpret
-                // ANSI
-                // codes but we can use jansi Kernel32 API for console
-                AnsiProcessor proc;
-                AnsiType ttype;
-                try {
-                    proc = getKernel32().newProcessor(out, console);
-                    ttype = AnsiType.Emulation;
-                } catch (Throwable ignore) {
-                    // this happens when the stdout is being redirected to a file.
-                    // Use the AnsiProcessor to strip out the ANSI escape sequences.
-                    proc = new AnsiProcessor(out);
-                    ttype = AnsiType.Unsupported;
-                }
-                processor = proc;
-                type = ttype;
-                installer = uninstaller = null;
-                width = () -> getKernel32().getTerminalWidth(console);
-            }
-        }
-
-        // We must be on some Unix variant...
-        else {
-            // ANSI-enabled ConEmu, Cygwin or MSYS(2) on Windows...
-            processor = null;
-            type = AnsiType.Native;
-            installer = uninstaller = null;
-            width = () -> getCLibrary().getTerminalWidth(fd);
         }
 
         AnsiMode mode;
@@ -458,7 +438,7 @@ public class AnsiConsole {
      * @return a PrintStream which is ANSI aware.
      */
     public static AnsiPrintStream out() {
-        initStreams();
+        doInstall();
         return (AnsiPrintStream) out;
     }
 
@@ -480,7 +460,7 @@ public class AnsiConsole {
      * @return a PrintStream which is ANSI aware.
      */
     public static AnsiPrintStream err() {
-        initStreams();
+        doInstall();
         return (AnsiPrintStream) err;
     }
 
@@ -500,13 +480,7 @@ public class AnsiConsole {
      */
     public static synchronized void systemInstall() {
         if (installed == 0) {
-            initStreams();
-            try {
-                ((AnsiPrintStream) out).install();
-                ((AnsiPrintStream) err).install();
-            } catch (IOException e) {
-                throw new IOError(e);
-            }
+            doInstall();
             System.setOut(out);
             System.setErr(err);
         }
@@ -528,26 +502,9 @@ public class AnsiConsole {
     public static synchronized void systemUninstall() {
         installed--;
         if (installed == 0) {
-            try {
-                ((AnsiPrintStream) out).uninstall();
-                ((AnsiPrintStream) err).uninstall();
-            } catch (IOException e) {
-                throw new IOError(e);
-            }
-            initialized = false;
+            doUninstall();
             System.setOut(system_out);
             System.setErr(system_err);
-        }
-    }
-
-    /**
-     * Initialize the out/err ansi-enabled streams
-     */
-    static synchronized void initStreams() {
-        if (!initialized) {
-            out = ansiStream(true);
-            err = ansiStream(false);
-            initialized = true;
         }
     }
 }
