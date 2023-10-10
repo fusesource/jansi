@@ -29,14 +29,14 @@ import java.io.OutputStream;
  * @author <a href="http://hiramchirino.com">Hiram Chirino</a>
  * @author Joris Kuipers
  */
-public final class WindowsAnsiProcessor extends org.fusesource.jansi.internal.WindowsAnsiProcessor {
+public final class WindowsAnsiProcessor extends AnsiProcessor {
 
     public WindowsAnsiProcessor(OutputStream ps, long console) throws IOException {
-        super(ps, console);
+        super(ps);
     }
 
     public WindowsAnsiProcessor(OutputStream ps, boolean stdout) throws IOException {
-        super(ps, stdout);
+        super(ps);
     }
 
     public WindowsAnsiProcessor(OutputStream ps) throws IOException {
