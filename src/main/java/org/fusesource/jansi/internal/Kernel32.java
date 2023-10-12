@@ -16,8 +16,7 @@
 package org.fusesource.jansi.internal;
 
 import java.io.IOException;
-
-import org.fusesource.jansi.WindowsSupport;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Interface to access Win32 base APIs.
@@ -473,7 +472,7 @@ public class Kernel32 {
                     ? PeekConsoleInputW(handle, inputRecordPtr, count, length)
                     : ReadConsoleInputW(handle, inputRecordPtr, count, length);
             if (res == 0) {
-                throw new IOException("ReadConsoleInputW failed: " + WindowsSupport.getLastErrorMessage());
+                throw new IOException("ReadConsoleInputW failed: " + getLastErrorMessage());
             }
             if (length[0] <= 0) {
                 return new INPUT_RECORD[0];
@@ -516,6 +515,22 @@ public class Kernel32 {
                 }
                 return res;
             }
+        }
+    }
+
+    public static String getLastErrorMessage() {
+        int errorCode = GetLastError();
+        return getErrorMessage(errorCode);
+    }
+
+    public static String getErrorMessage(int errorCode) {
+        int bufferSize = 160;
+        byte data[] = new byte[bufferSize];
+        FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, 0, errorCode, 0, data, bufferSize, null);
+        try {
+            return new String(data, "UTF-16LE").trim();
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException(e);
         }
     }
 }

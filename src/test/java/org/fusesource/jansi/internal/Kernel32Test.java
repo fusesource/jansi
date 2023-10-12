@@ -13,19 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fusesource.jansi;
+package org.fusesource.jansi.internal;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-public class WindowsSupportTest {
+public class Kernel32Test {
 
     @Test
+    @EnabledOnOs(OS.WINDOWS)
     public void testErrorMessage() {
-        assumeTrue(AnsiConsole.IS_WINDOWS);
-        String msg = WindowsSupport.getErrorMessage(500);
+        String msg = Kernel32.getErrorMessage(500);
         assertEquals(msg, "User profile cannot be loaded.");
     }
 }

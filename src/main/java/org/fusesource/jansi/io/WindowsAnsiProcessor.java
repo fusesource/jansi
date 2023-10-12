@@ -18,7 +18,7 @@ package org.fusesource.jansi.io;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.fusesource.jansi.WindowsSupport;
+import org.fusesource.jansi.internal.Kernel32;
 import org.fusesource.jansi.internal.Kernel32.CONSOLE_SCREEN_BUFFER_INFO;
 import org.fusesource.jansi.internal.Kernel32.COORD;
 
@@ -115,7 +115,7 @@ public final class WindowsAnsiProcessor extends AnsiProcessor {
     private void getConsoleInfo() throws IOException {
         os.flush();
         if (GetConsoleScreenBufferInfo(console, info) == 0) {
-            throw new IOException("Could not get the screen info: " + WindowsSupport.getLastErrorMessage());
+            throw new IOException("Could not get the screen info: " + Kernel32.getLastErrorMessage());
         }
         if (negative) {
             info.attributes = invertAttributeColors(info.attributes);
@@ -129,7 +129,7 @@ public final class WindowsAnsiProcessor extends AnsiProcessor {
             attributes = invertAttributeColors(attributes);
         }
         if (SetConsoleTextAttribute(console, attributes) == 0) {
-            throw new IOException(WindowsSupport.getLastErrorMessage());
+            throw new IOException(Kernel32.getLastErrorMessage());
         }
     }
 
@@ -145,7 +145,7 @@ public final class WindowsAnsiProcessor extends AnsiProcessor {
 
     private void applyCursorPosition() throws IOException {
         if (SetConsoleCursorPosition(console, info.cursorPosition.copy()) == 0) {
-            throw new IOException(WindowsSupport.getLastErrorMessage());
+            throw new IOException(Kernel32.getLastErrorMessage());
         }
     }
 
@@ -397,7 +397,7 @@ public final class WindowsAnsiProcessor extends AnsiProcessor {
         info.attributes = originalColors;
         info.unicodeChar = ' ';
         if (ScrollConsoleScreenBuffer(console, scroll, scroll, org, info) == 0) {
-            throw new IOException(WindowsSupport.getLastErrorMessage());
+            throw new IOException(Kernel32.getLastErrorMessage());
         }
     }
 
@@ -413,7 +413,7 @@ public final class WindowsAnsiProcessor extends AnsiProcessor {
         info.attributes = originalColors;
         info.unicodeChar = ' ';
         if (ScrollConsoleScreenBuffer(console, scroll, scroll, org, info) == 0) {
-            throw new IOException(WindowsSupport.getLastErrorMessage());
+            throw new IOException(Kernel32.getLastErrorMessage());
         }
     }
 
