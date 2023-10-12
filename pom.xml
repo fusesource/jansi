@@ -25,7 +25,7 @@
 
     <groupId>org.fusesource.jansi</groupId>
     <artifactId>jansi</artifactId>
-    <version>2.4.1-SNAPSHOT</version>
+    <version>2.4.1</version>
     <packaging>jar</packaging>
 
     <name>Jansi</name>
@@ -78,7 +78,7 @@
     <scm>
         <connection>scm:git:git://github.com/fusesource/jansi.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/fusesource/jansi.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>jansi-2.4.1</tag>
         <url>https://github.com/fusesource/jansi</url>
     </scm>
 
@@ -105,7 +105,7 @@
         <jdkTarget>8</jdkTarget>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j-version>1.6.1</slf4j-version>
-        <project.build.outputTimestamp>2021-10-14T05:42:06Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2023-10-12T08:38:47Z</project.build.outputTimestamp>
     </properties>
 
     <dependencies>
