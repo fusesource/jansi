@@ -228,9 +228,9 @@ public class AnsiConsole {
         }
     }
 
-    private static boolean initialized;
-    private static int installed;
-    private static int virtualProcessing;
+    private static boolean initialized; // synchronized on AnsiConsole.class
+    private static int installed; // synchronized on AnsiConsole.class
+    private static int virtualProcessing; // synchronized on AnsiConsole.class
 
     private AnsiConsole() {}
 
@@ -295,12 +295,16 @@ public class AnsiConsole {
                 processor = null;
                 type = AnsiType.VirtualTerminal;
                 installer = () -> {
-                    virtualProcessing++;
-                    SetConsoleMode(console, mode[0] | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+                    synchronized (AnsiConsole.class) {
+                        virtualProcessing++;
+                        SetConsoleMode(console, mode[0] | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+                    }
                 };
                 uninstaller = () -> {
-                    if (--virtualProcessing == 0) {
-                        SetConsoleMode(console, mode[0]);
+                    synchronized (AnsiConsole.class) {
+                        if (--virtualProcessing == 0) {
+                            SetConsoleMode(console, mode[0]);
+                        }
                     }
                 };
                 width = kernel32Width;
