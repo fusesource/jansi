@@ -1,6 +1,37 @@
 # ![Jansi](http://fusesource.github.io/jansi/images/project-logo.png)
 <!-- git log --pretty=format:'* [`%h`](https://github.com/fusesource/jansi/commit/%H) %s' -->
 
+## [Jansi 2.4.1][2_4_1], released 2023-10-12
+[2_4_1]: https://repo.maven.apache.org/maven2/org/fusesource/jansi/jansi/2.4.1
+
+* [`6630498`](https://github.com/fusesource/jansi/commit/6630498b1a21ba79dab4da53c423936d180925d4) Add gnodet's key
+* [`2f6fc0e`](https://github.com/fusesource/jansi/commit/2f6fc0ee13feeecc5d65d665a0eef40186cb2752) Rebuild binaries
+* [`dd7d5e2`](https://github.com/fusesource/jansi/commit/dd7d5e2a63fbeb5e6f17d301b56c703f5ec80e72) Fix missing synchronization in AnsiConsole
+* [`a9dc2a3`](https://github.com/fusesource/jansi/commit/a9dc2a3e597a794eeb655d33968f30605a02cdf9) Deprecate WindowsSupport
+* [`6911f21`](https://github.com/fusesource/jansi/commit/6911f2193a6360e4facc8e87f9cf4471d15cc4fb) Modernize code (#267)
+* [`937ce1c`](https://github.com/fusesource/jansi/commit/937ce1c46cd907f08b7043c9778167a6ae57564c) Fix JVM crash when running java (fixes #216) (#265)
+* [`7bed2b3`](https://github.com/fusesource/jansi/commit/7bed2b332d08b9b29b73a3614ecf08a460d9f9bb) Use verify goal in CI (#271)
+* [`473d6d2`](https://github.com/fusesource/jansi/commit/473d6d20a0cfa3d44826c6cbc7c1af642be0f4a7) Fix terminal width support on MINGW (fixes #233) (#264)
+* [`fa5bea7`](https://github.com/fusesource/jansi/commit/fa5bea78126fda63aa9437fe6c38808437674f4d) Fix rebuilding the project
+* [`edd2de9`](https://github.com/fusesource/jansi/commit/edd2de9b5e935df323a0943191aa71358aeea4c5) Send both SCO and DEC command for save/restore cursor position (fixes #226) (#262)
+* [`d285234`](https://github.com/fusesource/jansi/commit/d285234cd8208d97358126a1bcc3c4435a103a84) Fix wrong output encoding on Windows with JDK >= 19 (fixes #247) (#258)
+* [`cdb8d8c`](https://github.com/fusesource/jansi/commit/cdb8d8c6daf86aaa2de31f8b047bd24acfb56d90) Improve robustness of initial cleanup (fixes #255)
+* [`c3ac54f`](https://github.com/fusesource/jansi/commit/c3ac54f6b04c3c3757f0bf9d9f7223e99d938b93) Fix infinite loop bug (#252)
+* [`58260c6`](https://github.com/fusesource/jansi/commit/58260c6ce08c203e342df7d221c9902ada230d8c) Fix invalid string input (#253)
+* [`7bc5862`](https://github.com/fusesource/jansi/commit/7bc5862085f8626be485a1563e24d22130dd8ebc) Disable JDK 8 on CI
+* [`e29c505`](https://github.com/fusesource/jansi/commit/e29c505b9ea09753142c6c000e4849f2dc474ec4) Target JDK 1.8, build with JDK >= 11
+* [`c817263`](https://github.com/fusesource/jansi/commit/c8172634bb5b39b62e515fd86d64b96a4f2bca3a) Remove @author tags, we have git for that now
+* [`609a874`](https://github.com/fusesource/jansi/commit/609a87472544847ce903537bdd033da2a4c0605b) Reformat
+* [`cb5bf77`](https://github.com/fusesource/jansi/commit/cb5bf77d7b87d9defaebb69a104e105c1212a57e) Use spotless for code formatting
+* [`6b816c1`](https://github.com/fusesource/jansi/commit/6b816c1efa5b964da36165a973ae0333e109bb19) Enable JDK 8 for testing
+* [`a20c74f`](https://github.com/fusesource/jansi/commit/a20c74fa017e389b66a04906cfb7dc3bef0f665c) Add module-info through moditect (#254)
+* [`1293ac3`](https://github.com/fusesource/jansi/commit/1293ac3fb40c50126ff8e1dafc801015f9e401c4) Support windows on ARM, (fixes #238) (#240)
+* [`5f5f95c`](https://github.com/fusesource/jansi/commit/5f5f95c78252ea661d8be55930e3a7c18da9bea8) Only increment counter if install successful (#243)
+* [`80a3799`](https://github.com/fusesource/jansi/commit/80a3799438e1fb0ea3123faaff2be3689fa38c22) Add missing space in SunOS-sparcv9_CCFLAGS (#249)
+* [`00e15cb`](https://github.com/fusesource/jansi/commit/00e15cb1fab9117790580a412f7d54f2c08d2f11) Minor cleanup
+* [`8da0a40`](https://github.com/fusesource/jansi/commit/8da0a402d5b467451efd07f3f2a8460d97a77db9) Improve native builds
+* [`a2da229`](https://github.com/fusesource/jansi/commit/a2da229aa95ea7bc19f9b01e85aae9647ea169b1) Fix project name (#237)
+
 ## [Jansi 2.4.0][2_4_0], released 2021-10-14
 [2_4_0]: https://repo.maven.apache.org/maven2/org/fusesource/jansi/jansi/2.4.0
 
