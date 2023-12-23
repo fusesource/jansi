@@ -164,4 +164,8 @@ public class Colors {
     private static double sqr(double n) {
         return n * n;
     }
+
+    public static String rgbToAnsi(int r, int g, int b) {
+        return String.format("\u001B[38;2;%d;%d;%dm", r, g, b);
+    }
 }
