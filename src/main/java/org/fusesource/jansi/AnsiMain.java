@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.util.Optional;
 import java.util.Properties;
 
 import org.fusesource.jansi.Ansi.Attribute;
@@ -204,11 +205,10 @@ public class AnsiMain {
             int[] mode = new int[1];
             isatty = Kernel32.GetConsoleMode(console, mode);
             if ((AnsiConsole.IS_CONEMU || AnsiConsole.IS_CYGWIN || AnsiConsole.IS_MSYSTEM) && isatty == 0) {
-                MingwSupport mingw = new MingwSupport();
-                String name = mingw.getConsoleName(!stderr);
-                if (name != null && !name.isEmpty()) {
+                Optional<Integer> terminalWidth = MingwSupport.getTerminalWidth();
+                if (terminalWidth.isPresent()) {
                     isatty = 1;
-                    width = mingw.getTerminalWidth(name);
+                    width = terminalWidth.get();
                 } else {
                     isatty = 0;
                     width = 0;
@@ -232,7 +232,6 @@ public class AnsiMain {
     }
 
     private static void testAnsi(boolean stderr) {
-        @SuppressWarnings("resource")
         PrintStream s = stderr ? System.err : System.out;
         s.print("test on System." + (stderr ? "err" : "out") + ":");
         for (Ansi.Color c : Ansi.Color.values()) {
