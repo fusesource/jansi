@@ -123,6 +123,7 @@ public class Ansi implements Appendable {
     /**
      * ED (Erase in Display) / EL (Erase in Line) parameter (see
      * <a href="https://en.wikipedia.org/wiki/ANSI_escape_code#CSI_sequences">CSI sequence J and K</a>)
+     *
      * @see Ansi#eraseScreen(Erase)
      * @see Ansi#eraseLine(Erase)
      */
@@ -402,6 +403,15 @@ public class Ansi implements Appendable {
         return this;
     }
 
+    public Ansi fgRgb(String hex) {
+
+        if (hex.startsWith("#")) {
+            hex = hex.substring(1);
+        }
+
+        return fgRgb(Integer.parseInt(hex, 16));
+    }
+
     public Ansi fgRgb(int color) {
         return fgRgb(color >> 16, color >> 8, color);
     }
@@ -457,6 +467,15 @@ public class Ansi implements Appendable {
         attributeOptions.add(5);
         attributeOptions.add(color & 0xff);
         return this;
+    }
+
+    public Ansi bgRgb(String hex) {
+
+        if (hex.startsWith("#")) {
+            hex = hex.substring(1);
+        }
+
+        return bgRgb(Integer.parseInt(hex, 16));
     }
 
     public Ansi bgRgb(int color) {
