@@ -252,6 +252,7 @@ public class AnsiProcessor {
             if (value == null) {
                 return defaultValue;
             }
+            if (!value.getClass().equals(Integer.class)) throw new IllegalArgumentException();
             return (Integer) value;
         }
         return defaultValue;
