@@ -45,6 +45,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.fusesource.jansi.AnsiConsole;
 
@@ -60,6 +62,8 @@ import org.fusesource.jansi.AnsiConsole;
  */
 public class JansiLoader {
 
+    private static final Logger logger = Logger.getLogger("org.fusesource.jansi");
+    
     private static boolean loaded = false;
     private static String nativeLibraryPath;
     private static String nativeLibrarySourceUrl;
@@ -124,7 +128,7 @@ public class JansiLoader {
                     try {
                         nativeLibFile.delete();
                     } catch (SecurityException e) {
-                        System.err.println("Failed to delete old native lib" + e.getMessage());
+                        logger.log(Level.INFO, "Failed to delete old native lib" + e.getMessage(), e);
                     }
                 }
             }
@@ -229,7 +233,7 @@ public class JansiLoader {
                 return true;
             }
         } catch (IOException e) {
-            System.err.println(e.getMessage());
+            log(Level.WARNING, "Unable to load Jansi's native library", e);
         }
         return false;
     }
@@ -256,17 +260,20 @@ public class JansiLoader {
                     // NOTE: this can be tested using something like:
                     // docker run --rm --tmpfs /tmp -v $PWD:/jansi openjdk:11 java -jar
                     // /jansi/target/jansi-xxx-SNAPSHOT.jar
-                    System.err.printf(
-                            "Failed to load native library:%s. The native library file at %s is not executable, "
-                                    + "make sure that the directory is mounted on a partition without the noexec flag, or set the "
-                                    + "jansi.tmpdir system property to point to a proper location.  osinfo: %s%n",
-                            libPath.getName(), libPath, OSInfo.getNativeLibFolderPathForCurrentOS());
+                    log(
+                        Level.WARNING,
+                        String.format("Failed to load native library:%s. The native library file at %s is not executable, "
+                                + "make sure that the directory is mounted on a partition without the noexec flag, or set the "
+                                + "jansi.tmpdir system property to point to a proper location.  osinfo: %s",
+                            libPath.getName(), libPath, OSInfo.getNativeLibFolderPathForCurrentOS()),
+                        e);
                 } else {
-                    System.err.printf(
-                            "Failed to load native library:%s. osinfo: %s%n",
-                            libPath.getName(), OSInfo.getNativeLibFolderPathForCurrentOS());
+                    log(
+                        Level.WARNING,
+                        String.format("Failed to load native library:%s. osinfo: %s",
+                            libPath.getName(), OSInfo.getNativeLibFolderPathForCurrentOS()),
+                        e);
                 }
-                System.err.println(e);
                 return false;
             }
 
@@ -388,8 +395,18 @@ public class JansiLoader {
                 version = version.trim().replaceAll("[^0-9.]", "");
             }
         } catch (IOException e) {
-            System.err.println(e);
+            log(Level.WARNING, "Unable to load jansi version", e);
         }
         return version;
+    }
+
+    private static void log(Level level, String message, Throwable t) {
+        if (logger.isLoggable(level)) {
+            if (logger.isLoggable(Level.FINE)) {
+                logger.log(level, message, t);
+            } else {
+                logger.log(level, message + " (caused by: " + t + ", enable debug logging for stacktrace)");
+            }
+        }
     }
 }
