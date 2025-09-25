@@ -1,6 +1,10 @@
 # [![Jansi][logo]][Jansi]
 [logo]: http://fusesource.github.io/jansi/images/project-logo.png "Jansi"
 
+⚠️ WARNING
+This library is no longer maintained. It has been merged into `org.jline:jansi`.
+Please update your dependencies to use `org.jline:jansi` instead.
+
 ## Description
 
 [Jansi][Jansi] is a small java library that allows you to use [ANSI escape
