@@ -158,7 +158,7 @@ public class JansiLoader {
                     return "Read size different (" + numRead1 + " vs " + numRead2 + ")";
                 }
                 // Otherwise same number of bytes read
-                if (!Arrays.equals(buffer1, buffer2)) {
+                if (!Arrays.equals(buffer1, 0, numRead1, buffer2, 0, numRead2)) {
                     return "Content differs";
                 }
                 // Otherwise same bytes read, so continue ...

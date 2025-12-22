@@ -101,8 +101,9 @@
     </distributionManagement>
 
     <properties>
-        <javadocSource>8</javadocSource>
-        <jdkTarget>8</jdkTarget>
+        <javadocSource>9</javadocSource>
+        <jdkTarget>9</jdkTarget>
+        <maven.compiler.release>9</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j-version>1.6.1</slf4j-version>
         <project.build.outputTimestamp>2025-04-29T06:22:19Z</project.build.outputTimestamp>
