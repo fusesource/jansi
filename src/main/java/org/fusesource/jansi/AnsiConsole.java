@@ -15,20 +15,13 @@
  */
 package org.fusesource.jansi;
 
-import java.io.FileDescriptor;
-import java.io.FileOutputStream;
-import java.io.IOError;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.Locale;
 
 import org.fusesource.jansi.internal.CLibrary;
 import org.fusesource.jansi.internal.CLibrary.WinSize;
-import org.fusesource.jansi.internal.Kernel32.CONSOLE_SCREEN_BUFFER_INFO;
 import org.fusesource.jansi.internal.MingwSupport;
 import org.fusesource.jansi.io.AnsiOutputStream;
 import org.fusesource.jansi.io.AnsiProcessor;
@@ -37,12 +30,7 @@ import org.fusesource.jansi.io.WindowsAnsiProcessor;
 
 import static org.fusesource.jansi.internal.CLibrary.ioctl;
 import static org.fusesource.jansi.internal.CLibrary.isatty;
-import static org.fusesource.jansi.internal.Kernel32.GetConsoleMode;
-import static org.fusesource.jansi.internal.Kernel32.GetConsoleScreenBufferInfo;
-import static org.fusesource.jansi.internal.Kernel32.GetStdHandle;
-import static org.fusesource.jansi.internal.Kernel32.STD_ERROR_HANDLE;
-import static org.fusesource.jansi.internal.Kernel32.STD_OUTPUT_HANDLE;
-import static org.fusesource.jansi.internal.Kernel32.SetConsoleMode;
+import static org.fusesource.jansi.internal.Kernel32.*;
 
 /**
  * Provides consistent access to an ANSI aware console PrintStream or an ANSI codes stripping PrintStream
@@ -313,13 +301,7 @@ public class AnsiConsole {
                 processor = null;
                 type = AnsiType.Native;
                 installer = uninstaller = null;
-                MingwSupport mingw = new MingwSupport();
-                String name = mingw.getConsoleName(stdout);
-                if (name != null && !name.isEmpty()) {
-                    width = () -> mingw.getTerminalWidth(name);
-                } else {
-                    width = () -> -1;
-                }
+                width = () -> MingwSupport.getTerminalWidth().orElse(-1);
             } else {
                 // On Windows, when no ANSI-capable terminal is used, we know the console does not natively interpret
                 // ANSI
