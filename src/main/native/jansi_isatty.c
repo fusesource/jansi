@@ -81,28 +81,27 @@ JNIEXPORT jint JNICALL CLibrary_NATIVE(isatty)
 			else if (NtQueryObject(h, ObjectNameInformation, buffer, sizeof(buffer) - 2, &result) != 0) {
 				rc = 0;
 			}
+			else if (result < sizeof(*nameinfo) || !nameinfo->Name.Buffer || !nameinfo->Name.Length) {
+				rc = 0;
+			}
 			else {
 
 				name = nameinfo->Name.Buffer;
-				if (name == NULL) {
-				    rc = 0;
+				name[nameinfo->Name.Length / 2] = 0;
+
+				//fprintf( stderr, "Standard stream %d: pipe name: %S\n", arg0, name);
+
+				/*
+					* Check if this could be a MSYS2 pty pipe ('msys-XXXX-ptyN-XX')
+					* or a cygwin pty pipe ('cygwin-XXXX-ptyN-XX')
+					*/
+				if ((wcsstr(name, L"msys-") || wcsstr(name, L"cygwin-")) && wcsstr(name, L"-pty")) {
+					rc = 1;
+				} else {
+					// This is definitely not a tty
+					rc = 0;
 				}
-				else {
-                    name[nameinfo->Name.Length / 2] = 0;
-
-                    //fprintf( stderr, "Standard stream %d: pipe name: %S\n", arg0, name);
-
-                    /*
-                     * Check if this could be a MSYS2 pty pipe ('msys-XXXX-ptyN-XX')
-                     * or a cygwin pty pipe ('cygwin-XXXX-ptyN-XX')
-                     */
-                    if ((wcsstr(name, L"msys-") || wcsstr(name, L"cygwin-")) && wcsstr(name, L"-pty")) {
-                        rc = 1;
-                    } else {
-                        // This is definitely not a tty
-                        rc = 0;
-                    }
-                }
+                
 			}
 		}
 	}
