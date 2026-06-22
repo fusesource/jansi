@@ -99,8 +99,8 @@
     </distributionManagement>
 
     <properties>
-        <javadocSource>8</javadocSource>
-        <jdkTarget>8</jdkTarget>
+        <javadocSource>17</javadocSource>
+        <jdkTarget>17</jdkTarget>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j-version>1.6.1</slf4j-version>
         <project.build.outputTimestamp>2026-03-27T13:05:17Z</project.build.outputTimestamp>
