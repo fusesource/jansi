@@ -19,14 +19,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.fusesource.jansi.internal.Kernel32;
-import org.fusesource.jansi.internal.Kernel32.CONSOLE_SCREEN_BUFFER_INFO;
-import org.fusesource.jansi.internal.Kernel32.COORD;
+
+import org.fusesource.jansi.internal.struct.*;
 
 import static org.fusesource.jansi.internal.Kernel32.BACKGROUND_BLUE;
 import static org.fusesource.jansi.internal.Kernel32.BACKGROUND_GREEN;
 import static org.fusesource.jansi.internal.Kernel32.BACKGROUND_INTENSITY;
 import static org.fusesource.jansi.internal.Kernel32.BACKGROUND_RED;
-import static org.fusesource.jansi.internal.Kernel32.CHAR_INFO;
 import static org.fusesource.jansi.internal.Kernel32.FOREGROUND_BLUE;
 import static org.fusesource.jansi.internal.Kernel32.FOREGROUND_GREEN;
 import static org.fusesource.jansi.internal.Kernel32.FOREGROUND_INTENSITY;
@@ -35,13 +34,11 @@ import static org.fusesource.jansi.internal.Kernel32.FillConsoleOutputAttribute;
 import static org.fusesource.jansi.internal.Kernel32.FillConsoleOutputCharacterW;
 import static org.fusesource.jansi.internal.Kernel32.GetConsoleScreenBufferInfo;
 import static org.fusesource.jansi.internal.Kernel32.GetStdHandle;
-import static org.fusesource.jansi.internal.Kernel32.SMALL_RECT;
 import static org.fusesource.jansi.internal.Kernel32.STD_ERROR_HANDLE;
 import static org.fusesource.jansi.internal.Kernel32.STD_OUTPUT_HANDLE;
 import static org.fusesource.jansi.internal.Kernel32.ScrollConsoleScreenBuffer;
 import static org.fusesource.jansi.internal.Kernel32.SetConsoleCursorPosition;
 import static org.fusesource.jansi.internal.Kernel32.SetConsoleTextAttribute;
-import static org.fusesource.jansi.internal.Kernel32.SetConsoleTitle;
 
 /**
  * A Windows ANSI escape processor, that uses JNA to access native platform
@@ -69,25 +66,25 @@ public final class WindowsAnsiProcessor extends AnsiProcessor {
     private static final short BACKGROUND_WHITE = (short) (BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE);
 
     private static final short[] ANSI_FOREGROUND_COLOR_MAP = {
-        FOREGROUND_BLACK,
-        FOREGROUND_RED,
-        FOREGROUND_GREEN,
-        FOREGROUND_YELLOW,
-        FOREGROUND_BLUE,
-        FOREGROUND_MAGENTA,
-        FOREGROUND_CYAN,
-        FOREGROUND_WHITE,
+            FOREGROUND_BLACK,
+            FOREGROUND_RED,
+            FOREGROUND_GREEN,
+            FOREGROUND_YELLOW,
+            FOREGROUND_BLUE,
+            FOREGROUND_MAGENTA,
+            FOREGROUND_CYAN,
+            FOREGROUND_WHITE,
     };
 
     private static final short[] ANSI_BACKGROUND_COLOR_MAP = {
-        BACKGROUND_BLACK,
-        BACKGROUND_RED,
-        BACKGROUND_GREEN,
-        BACKGROUND_YELLOW,
-        BACKGROUND_BLUE,
-        BACKGROUND_MAGENTA,
-        BACKGROUND_CYAN,
-        BACKGROUND_WHITE,
+            BACKGROUND_BLACK,
+            BACKGROUND_RED,
+            BACKGROUND_GREEN,
+            BACKGROUND_YELLOW,
+            BACKGROUND_BLUE,
+            BACKGROUND_MAGENTA,
+            BACKGROUND_CYAN,
+            BACKGROUND_WHITE,
     };
 
     private final CONSOLE_SCREEN_BUFFER_INFO info = new CONSOLE_SCREEN_BUFFER_INFO();
@@ -112,10 +109,30 @@ public final class WindowsAnsiProcessor extends AnsiProcessor {
         this(ps, true);
     }
 
+    // --- Helper methods for struct copying since they were removed from the JNI generation ---
+
+    private COORD copyCoord(COORD original) {
+        COORD copy = new COORD();
+        copy.x = original.x;
+        copy.y = original.y;
+        return copy;
+    }
+
+    private SMALL_RECT copyRect(SMALL_RECT original) {
+        SMALL_RECT copy = new SMALL_RECT();
+        copy.left = original.left;
+        copy.top = original.top;
+        copy.right = original.right;
+        copy.bottom = original.bottom;
+        return copy;
+    }
+
+    // ------------------------------------------------------------------------------------------
+
     private void getConsoleInfo() throws IOException {
         os.flush();
         if (GetConsoleScreenBufferInfo(console, info) == 0) {
-            throw new IOException("Could not get the screen info: " + Kernel32.getLastErrorMessage());
+            throw new IOException("Could not get the screen info. Win32 Error: " + Kernel32.GetLastError());
         }
         if (negative) {
             info.attributes = invertAttributeColors(info.attributes);
@@ -129,7 +146,7 @@ public final class WindowsAnsiProcessor extends AnsiProcessor {
             attributes = invertAttributeColors(attributes);
         }
         if (SetConsoleTextAttribute(console, attributes) == 0) {
-            throw new IOException(Kernel32.getLastErrorMessage());
+            throw new IOException("Win32 Error: " + Kernel32.GetLastError());
         }
     }
 
@@ -144,8 +161,8 @@ public final class WindowsAnsiProcessor extends AnsiProcessor {
     }
 
     private void applyCursorPosition() throws IOException {
-        if (SetConsoleCursorPosition(console, info.cursorPosition.copy()) == 0) {
-            throw new IOException(Kernel32.getLastErrorMessage());
+        if (SetConsoleCursorPosition(console, copyCoord(info.cursorPosition)) == 0) {
+            throw new IOException("Win32 Error: " + Kernel32.GetLastError());
         }
     }
 
@@ -173,8 +190,8 @@ public final class WindowsAnsiProcessor extends AnsiProcessor {
             case ERASE_SCREEN_TO_END:
                 int lengthToEnd = (info.window.bottom - info.cursorPosition.y) * info.size.x
                         + (info.size.x - info.cursorPosition.x);
-                FillConsoleOutputAttribute(console, info.attributes, lengthToEnd, info.cursorPosition.copy(), written);
-                FillConsoleOutputCharacterW(console, ' ', lengthToEnd, info.cursorPosition.copy(), written);
+                FillConsoleOutputAttribute(console, info.attributes, lengthToEnd, copyCoord(info.cursorPosition), written);
+                FillConsoleOutputCharacterW(console, ' ', lengthToEnd, copyCoord(info.cursorPosition), written);
                 break;
             default:
                 break;
@@ -187,13 +204,13 @@ public final class WindowsAnsiProcessor extends AnsiProcessor {
         int[] written = new int[1];
         switch (eraseOption) {
             case ERASE_LINE:
-                COORD leftColCurrRow = info.cursorPosition.copy();
+                COORD leftColCurrRow = copyCoord(info.cursorPosition);
                 leftColCurrRow.x = 0;
                 FillConsoleOutputAttribute(console, info.attributes, info.size.x, leftColCurrRow, written);
                 FillConsoleOutputCharacterW(console, ' ', info.size.x, leftColCurrRow, written);
                 break;
             case ERASE_LINE_TO_BEGINING:
-                COORD leftColCurrRow2 = info.cursorPosition.copy();
+                COORD leftColCurrRow2 = copyCoord(info.cursorPosition);
                 leftColCurrRow2.x = 0;
                 FillConsoleOutputAttribute(console, info.attributes, info.cursorPosition.x, leftColCurrRow2, written);
                 FillConsoleOutputCharacterW(console, ' ', info.cursorPosition.x, leftColCurrRow2, written);
@@ -201,8 +218,8 @@ public final class WindowsAnsiProcessor extends AnsiProcessor {
             case ERASE_LINE_TO_END:
                 int lengthToLastCol = info.size.x - info.cursorPosition.x;
                 FillConsoleOutputAttribute(
-                        console, info.attributes, lengthToLastCol, info.cursorPosition.copy(), written);
-                FillConsoleOutputCharacterW(console, ' ', lengthToLastCol, info.cursorPosition.copy(), written);
+                        console, info.attributes, lengthToLastCol, copyCoord(info.cursorPosition), written);
+                FillConsoleOutputCharacterW(console, ' ', lengthToLastCol, copyCoord(info.cursorPosition), written);
                 break;
             default:
                 break;
@@ -343,8 +360,8 @@ public final class WindowsAnsiProcessor extends AnsiProcessor {
                 applyAttribute();
                 break;
 
-                // Yeah, setting the background intensity is not underlining.. but it's best we can do
-                // using the Windows console API
+            // Yeah, setting the background intensity is not underlining.. but it's best we can do
+            // using the Windows console API
             case ATTRIBUTE_UNDERLINE:
                 info.attributes = (short) (info.attributes | BACKGROUND_INTENSITY);
                 applyAttribute();
@@ -388,37 +405,45 @@ public final class WindowsAnsiProcessor extends AnsiProcessor {
     @Override
     protected void processInsertLine(int optionInt) throws IOException {
         getConsoleInfo();
-        SMALL_RECT scroll = info.window.copy();
+        SMALL_RECT scroll = copyRect(info.window);
         scroll.top = info.cursorPosition.y;
         COORD org = new COORD();
         org.x = 0;
         org.y = (short) (info.cursorPosition.y + optionInt);
-        CHAR_INFO info = new CHAR_INFO();
-        info.attributes = originalColors;
-        info.unicodeChar = ' ';
-        if (ScrollConsoleScreenBuffer(console, scroll, scroll, org, info) == 0) {
-            throw new IOException(Kernel32.getLastErrorMessage());
+
+        // Renamed variable to charInfo to avoid shadowing the instance field 'info'
+        CHAR_INFO charInfo = new CHAR_INFO();
+        charInfo.attributes = originalColors;
+        charInfo.uChar = ' '; // Updated to match the refactored CHAR_INFO field name
+
+        if (ScrollConsoleScreenBuffer(console, scroll, scroll, org, charInfo) == 0) {
+            throw new IOException("Win32 Error: " + Kernel32.GetLastError());
         }
     }
 
     @Override
     protected void processDeleteLine(int optionInt) throws IOException {
         getConsoleInfo();
-        SMALL_RECT scroll = info.window.copy();
+        SMALL_RECT scroll = copyRect(info.window);
         scroll.top = info.cursorPosition.y;
         COORD org = new COORD();
         org.x = 0;
         org.y = (short) (info.cursorPosition.y - optionInt);
-        CHAR_INFO info = new CHAR_INFO();
-        info.attributes = originalColors;
-        info.unicodeChar = ' ';
-        if (ScrollConsoleScreenBuffer(console, scroll, scroll, org, info) == 0) {
-            throw new IOException(Kernel32.getLastErrorMessage());
+
+        // Renamed variable to charInfo to avoid shadowing the instance field 'info'
+        CHAR_INFO charInfo = new CHAR_INFO();
+        charInfo.attributes = originalColors;
+        charInfo.uChar = ' '; // Updated to match the refactored CHAR_INFO field name
+
+        if (ScrollConsoleScreenBuffer(console, scroll, scroll, org, charInfo) == 0) {
+            throw new IOException("Win32 Error: " + Kernel32.GetLastError());
         }
     }
 
     @Override
     protected void processChangeWindowTitle(String label) {
-        SetConsoleTitle(label);
+        // The Win32 API expects a null-terminated string encoded in UTF-16LE
+        byte[] titleBytes = (label + "\0").getBytes(java.nio.charset.StandardCharsets.UTF_16LE);
+        Kernel32.SetConsoleTitleW(titleBytes);
     }
 }

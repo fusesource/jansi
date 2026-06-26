@@ -20,13 +20,31 @@ import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class Kernel32Test {
 
     @Test
     @EnabledOnOs(OS.WINDOWS)
     public void testErrorMessage() {
-        String msg = Kernel32.getErrorMessage(500);
-        assertEquals(msg, "User profile cannot be loaded.");
+        int errorCode = 500;
+        int bufferSize = 1024;
+        byte[] buffer = new byte[bufferSize];
+
+        int charsWritten = Kernel32.FormatMessageW(
+                Kernel32.FORMAT_MESSAGE_FROM_SYSTEM,
+                0,
+                errorCode,
+                0,
+                buffer,
+                bufferSize,
+                null
+        );
+
+        assertTrue(charsWritten > 0, "FormatMessageW should return characters for a valid error code.");
+
+        String msg = new String(buffer, 0, charsWritten * 2, java.nio.charset.StandardCharsets.UTF_16LE).trim();
+
+        assertEquals("User profile cannot be loaded.", msg);
     }
 }
