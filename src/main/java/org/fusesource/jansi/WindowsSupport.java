@@ -25,11 +25,33 @@ public class WindowsSupport {
 
     @Deprecated
     public static String getLastErrorMessage() {
-        return Kernel32.getLastErrorMessage();
+        // Get the raw integer error code first
+        int errorCode = Kernel32.GetLastError();
+        return getErrorMessage(errorCode);
     }
 
     @Deprecated
     public static String getErrorMessage(int errorCode) {
-        return Kernel32.getErrorMessage(errorCode);
+        int bufferSize = 1024;
+        byte[] buffer = new byte[bufferSize]; // Buffer for UTF-16LE characters
+
+        // Ask Windows to format the integer error code into a human-readable string
+        int charsWritten = Kernel32.FormatMessageW(
+                Kernel32.FORMAT_MESSAGE_FROM_SYSTEM,
+                0,
+                errorCode,
+                0,
+                buffer,
+                bufferSize,
+                null
+        );
+
+        if (charsWritten == 0) {
+            return "Unknown error code: " + errorCode;
+        }
+
+        // Convert the native byte array back into a standard Java String
+        // Multiplied by 2 because UTF-16LE uses 2 bytes per character
+        return new String(buffer, 0, charsWritten * 2, java.nio.charset.StandardCharsets.UTF_16LE).trim();
     }
 }

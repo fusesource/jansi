@@ -33,7 +33,9 @@ import org.fusesource.jansi.internal.MingwSupport;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.fusesource.jansi.Ansi.ansi;
-import static org.fusesource.jansi.internal.Kernel32.GetConsoleScreenBufferInfo;
+// Updated to use the correct structs package containing your refactored classes
+import org.fusesource.jansi.internal.struct.*;
+
 
 /**
  * Main class for the library, providing executable jar to diagnose Jansi setup.
@@ -107,20 +109,23 @@ public class AnsiMain {
         System.out.println(AnsiConsole.JANSI_COLORS + "= " + System.getProperty(AnsiConsole.JANSI_COLORS, ""));
         System.out.println(AnsiConsole.JANSI_OUT_COLORS + "= " + System.getProperty(AnsiConsole.JANSI_OUT_COLORS, ""));
         System.out.println(AnsiConsole.JANSI_ERR_COLORS + "= " + System.getProperty(AnsiConsole.JANSI_ERR_COLORS, ""));
+
+        // Updated to use AnsiPropertyResolver
         System.out.println(
-                AnsiConsole.JANSI_PASSTHROUGH + "= " + AnsiConsole.getBoolean(AnsiConsole.JANSI_PASSTHROUGH));
-        System.out.println(AnsiConsole.JANSI_STRIP + "= " + AnsiConsole.getBoolean(AnsiConsole.JANSI_STRIP));
-        System.out.println(AnsiConsole.JANSI_FORCE + "= " + AnsiConsole.getBoolean(AnsiConsole.JANSI_FORCE));
-        System.out.println(AnsiConsole.JANSI_NORESET + "= " + AnsiConsole.getBoolean(AnsiConsole.JANSI_NORESET));
-        System.out.println(Ansi.DISABLE + "= " + AnsiConsole.getBoolean(Ansi.DISABLE));
+                AnsiConsole.JANSI_PASSTHROUGH + "= " + AnsiPropertyResolver.getBoolean(AnsiConsole.JANSI_PASSTHROUGH));
+        System.out.println(AnsiConsole.JANSI_STRIP + "= " + AnsiPropertyResolver.getBoolean(AnsiConsole.JANSI_STRIP));
+        System.out.println(AnsiConsole.JANSI_FORCE + "= " + AnsiPropertyResolver.getBoolean(AnsiConsole.JANSI_FORCE));
+        System.out.println(AnsiConsole.JANSI_NORESET + "= " + AnsiPropertyResolver.getBoolean(AnsiConsole.JANSI_NORESET));
+        System.out.println(Ansi.DISABLE + "= " + AnsiPropertyResolver.getBoolean(Ansi.DISABLE));
 
         System.out.println();
 
-        System.out.println("IS_WINDOWS: " + AnsiConsole.IS_WINDOWS);
-        if (AnsiConsole.IS_WINDOWS) {
-            System.out.println("IS_CONEMU: " + AnsiConsole.IS_CONEMU);
-            System.out.println("IS_CYGWIN: " + AnsiConsole.IS_CYGWIN);
-            System.out.println("IS_MSYSTEM: " + AnsiConsole.IS_MSYSTEM);
+        // Updated to use AnsiStreamBuilder
+        System.out.println("IS_WINDOWS: " + AnsiStreamBuilder.IS_WINDOWS);
+        if (AnsiStreamBuilder.IS_WINDOWS) {
+            System.out.println("IS_CONEMU: " + AnsiStreamBuilder.IS_CONEMU);
+            System.out.println("IS_CYGWIN: " + AnsiStreamBuilder.IS_CYGWIN);
+            System.out.println("IS_MSYSTEM: " + AnsiStreamBuilder.IS_MSYSTEM);
         }
 
         System.out.println();
@@ -199,11 +204,12 @@ public class AnsiMain {
     private static void diagnoseTty(boolean stderr) {
         int isatty;
         int width;
-        if (AnsiConsole.IS_WINDOWS) {
+        // Updated to use AnsiStreamBuilder
+        if (AnsiStreamBuilder.IS_WINDOWS) {
             long console = Kernel32.GetStdHandle(stderr ? Kernel32.STD_ERROR_HANDLE : Kernel32.STD_OUTPUT_HANDLE);
             int[] mode = new int[1];
             isatty = Kernel32.GetConsoleMode(console, mode);
-            if ((AnsiConsole.IS_CONEMU || AnsiConsole.IS_CYGWIN || AnsiConsole.IS_MSYSTEM) && isatty == 0) {
+            if ((AnsiStreamBuilder.IS_CONEMU || AnsiStreamBuilder.IS_CYGWIN || AnsiStreamBuilder.IS_MSYSTEM) && isatty == 0) {
                 MingwSupport mingw = new MingwSupport();
                 String name = mingw.getConsoleName(!stderr);
                 if (name != null && !name.isEmpty()) {
@@ -214,8 +220,8 @@ public class AnsiMain {
                     width = 0;
                 }
             } else {
-                Kernel32.CONSOLE_SCREEN_BUFFER_INFO info = new Kernel32.CONSOLE_SCREEN_BUFFER_INFO();
-                GetConsoleScreenBufferInfo(console, info);
+                CONSOLE_SCREEN_BUFFER_INFO info = new CONSOLE_SCREEN_BUFFER_INFO();
+                Kernel32.GetConsoleScreenBufferInfo(console, info);
                 width = info.windowWidth();
             }
         } else {
