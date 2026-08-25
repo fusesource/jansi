@@ -34,11 +34,12 @@ package org.fusesource.jansi.internal;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.LinkedList;
 import java.util.List;
@@ -106,18 +107,15 @@ public class JansiLoader {
      * on VM-Exit (bug #80)
      */
     static void cleanup() {
-        String tempFolder = getTempDir().getAbsolutePath();
-        File dir = new File(tempFolder);
+        Path tempDir = getTempDir().toPath();
+        final String searchPattern = "jansi-" + getVersion();
 
-        File[] nativeLibFiles = dir.listFiles(new FilenameFilter() {
-            private final String searchPattern = "jansi-" + getVersion();
-
-            public boolean accept(File dir, String name) {
-                return name.startsWith(searchPattern) && !name.endsWith(".lck");
-            }
-        });
-        if (nativeLibFiles != null) {
-            for (File nativeLibFile : nativeLibFiles) {
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(tempDir, entry -> {
+            String name = entry.getFileName().toString();
+            return name.startsWith(searchPattern) && !name.endsWith(".lck");
+        })) {
+            for (Path entry : stream) {
+                File nativeLibFile = entry.toFile();
                 File lckFile = new File(nativeLibFile.getAbsolutePath() + ".lck");
                 if (!lckFile.exists()) {
                     try {
@@ -127,6 +125,8 @@ public class JansiLoader {
                     }
                 }
             }
+        } catch (IOException e) {
+            // ignore unreadable temp dir, same as a null listFiles() result
         }
     }
 
