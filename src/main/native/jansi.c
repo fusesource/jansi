@@ -15,6 +15,8 @@
  *******************************************************************************/
 #include "jansi.h"
 #include "jansi_structs.h"
+#include <errno.h>
+#include <stdlib.h>
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
   return JNI_VERSION_1_2;
@@ -75,16 +77,46 @@ fail:
 	return rc;
 }
 
+/*
+ * The kernel reads and writes as many bytes as the request's argument needs,
+ * which is unrelated to the length of the java array. The call therefore goes
+ * through a zeroed scratch buffer large enough for any argument, and only the
+ * array's length is copied back, so the java heap is never overrun.
+ */
+#if defined(_IOC_SIZE)
+#define IOCTL_ARG_SIZE(request) ((size_t)_IOC_SIZE((unsigned long)(request)))
+#elif defined(IOCPARM_LEN)
+#define IOCTL_ARG_SIZE(request) ((size_t)IOCPARM_LEN((unsigned long)(request)))
+#else
+#define IOCTL_ARG_SIZE(request) ((size_t)0)
+#endif
+/* covers the requests that do not encode their argument size (e.g. TCGETS) */
+#define IOCTL_MIN_BUFFER_SIZE 4096
+
 JNIEXPORT jint JNICALL CLibrary_NATIVE(ioctl__IJ_3I)
 	(JNIEnv *env, jclass that, jint arg0, jlong arg1, jintArray arg2)
 {
 	jint *lparg2=NULL;
+	jsize len = 0;
+	size_t size;
 	jint rc = 0;
 
-	if (arg2) if ((lparg2 = (*env)->GetIntArrayElements(env, arg2, NULL)) == NULL) goto fail;
+	if (arg2) {
+		len = (*env)->GetArrayLength(env, arg2);
+		size = (size_t)len * sizeof(jint);
+		if (size < IOCTL_ARG_SIZE(arg1)) size = IOCTL_ARG_SIZE(arg1);
+		if (size < IOCTL_MIN_BUFFER_SIZE) size = IOCTL_MIN_BUFFER_SIZE;
+		if ((lparg2 = (jint *)calloc(1, size)) == NULL) {
+			errno = ENOMEM;
+			return -1;
+		}
+		(*env)->GetIntArrayRegion(env, arg2, 0, len, lparg2);
+	}
 	rc = (jint)ioctl(arg0, arg1, lparg2);
-fail:
-	if (arg2 && lparg2) (*env)->ReleaseIntArrayElements(env, arg2, lparg2, 0);
+	if (arg2) {
+		(*env)->SetIntArrayRegion(env, arg2, 0, len, lparg2);
+		free(lparg2);
+	}
 
 	return rc;
 }
